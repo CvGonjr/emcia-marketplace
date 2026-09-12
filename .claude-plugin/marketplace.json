@@ -1,0 +1,19 @@
+{
+  "name": "emcia",
+  "owner": { "name": "EMCIA" },
+  "metadata": {
+    "description": "Nucleo deterministico e playbooks de engenharia de IA de campo."
+  },
+  "plugins": [
+    {
+      "name": "eiac-nucleo",
+      "source": "./eiac-nucleo",
+      "description": "Maquina de etapas, guarda de camada e validador de procedencia. Nao conhece nenhum metodo."
+    },
+    {
+      "name": "eiac-campo",
+      "source": "./eiac-campo",
+      "description": "Playbook Engenharia de IA de Campo. Requer eiac-nucleo."
+    }
+  ]
+}

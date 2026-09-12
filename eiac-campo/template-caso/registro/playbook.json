@@ -1,0 +1,38 @@
+{
+  "nome": "Engenharia de IA de Campo",
+  "versao": "0.2.0",
+  "procedencia": {
+    "contexto": ["campo", "antitese", "conversa", "livre"],
+    "origem": ["verificado", "declarado", "inferido", "externo"],
+    "apuracao": ["medido", "calculado", "estimado"]
+  },
+  "etapas": [
+    { "id": "F0",  "camada": "EX1", "modalidade": "assincrono", "habilidade": "hb-enquadrar" },
+    { "id": "P1",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-mapear-contexto" },
+    { "id": "P2",  "camada": "EX2", "modalidade": "assincrono", "habilidade": "hb-extrair-regras" },
+    { "id": "P3a", "camada": "EX3", "modalidade": "remoto",     "habilidade": "hb-medir" },
+    { "id": "P3b", "camada": "EX4", "modalidade": "presencial", "habilidade": "hb-levantar-regras", "delegavel": false },
+    { "id": "P3d", "camada": "EX3", "modalidade": "remoto",     "habilidade": "hb-confrontar", "depende_de": "P3b" },
+    { "id": "P4",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-priorizar" },
+    { "id": "P5",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-classificar" }
+  ],
+  "entregaveis": [
+    { "id": "E1",   "portao": ["F0"] },
+    { "id": "E2",   "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+    { "id": "E3-D", "portao": ["P4","P5"] },
+    { "id": "E3-E", "portao": ["P5"], "condicao": "P5 concluiu que a solucao e um agente" },
+    { "id": "E4",   "portao": ["P6","P7"], "inegociavel": [2], "portao_pendente": true },
+    { "id": "E5",   "portao": ["P9","P10"], "inegociavel": [4,5], "portao_pendente": true }
+  ],
+  "inegociaveis": [
+    { "n": 1, "item": "Medicao inicial registrada, apuracao diferente de estimado", "passo": "P3a" },
+    { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
+    { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
+    { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
+    { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
+  ],
+  "pendencias": [
+    "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
+    "P6 a P10 sem habilidade: instrumentos ausentes."
+  ]
+}

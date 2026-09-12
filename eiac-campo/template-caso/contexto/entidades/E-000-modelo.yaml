@@ -1,0 +1,15 @@
+id: E-000
+entidade: ""
+atributos:
+  - nome: ""
+    tipo: ""
+    obrigatorio: false
+relacoes:
+  - com: ""
+    cardinalidade: ""
+onde_vive: []
+procedencia:
+  origem: ""
+  fonte: ""
+  data: ""
+  autor: ""

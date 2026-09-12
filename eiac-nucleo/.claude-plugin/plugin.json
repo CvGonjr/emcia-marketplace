@@ -1,0 +1,6 @@
+{
+  "name": "eiac-nucleo",
+  "version": "0.1.0",
+  "description": "Nucleo deterministico: maquina de etapas, guarda de camada e validador de procedencia. Agnostico de metodo.",
+  "author": { "name": "EMCIA" }
+}

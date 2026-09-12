@@ -1,0 +1,14 @@
+id: F-000
+fonte: ""
+tipo: ""
+responsavel: ""
+contrato:
+  estrutura: ""
+  significado: ""   # o que a fonte de fato registra, nao o que o nome sugere
+  qualidade: ""
+acesso: ""
+procedencia:
+  origem: ""
+  fonte: ""
+  data: ""
+  autor: ""
