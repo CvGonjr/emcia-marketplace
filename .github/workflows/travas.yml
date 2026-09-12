@@ -1,0 +1,55 @@
+name: travas
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  negativos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: JSON válido
+        run: |
+          for f in $(find . -name '*.json' -not -path './.git/*'); do
+            python3 -c "import json,sys; json.load(open('$f'))" || exit 1
+          done
+
+      - name: Scripts compilam
+        run: python3 -m py_compile eiac-nucleo/scripts/*.py
+
+      - name: Habilidades com name e description
+        run: |
+          falhou=0
+          for f in eiac-campo/skills/*/SKILL.md; do
+            grep -q '^name:' "$f" || { echo "sem name: $f"; falhou=1; }
+            grep -q '^description:' "$f" || { echo "sem description: $f"; falhou=1; }
+          done
+          exit $falhou
+
+      - name: Referências internas resolvem
+        run: |
+          falhou=0
+          for r in $(grep -rho 'reference/[a-z0-9-]*\.md' eiac-campo/skills/ | sort -u); do
+            test -f "eiac-campo/$r" || { echo "quebrada: $r"; falhou=1; }
+          done
+          exit $falhou
+
+      - name: Testes negativos
+        run: bash testes/negativos.sh
+
+      - name: Versão do plugin mudou junto com o núcleo
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          if git diff --name-only origin/${{ github.base_ref }} | grep -q '^eiac-nucleo/scripts/'; then
+            git diff origin/${{ github.base_ref }} -- eiac-nucleo/.claude-plugin/plugin.json \
+              | grep -q '"version"' \
+              || { echo "scripts mudaram e a versão do eiac-nucleo não subiu"; exit 1; }
+          fi

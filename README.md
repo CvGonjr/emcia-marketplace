@@ -93,3 +93,42 @@ Depois de instalar os dois plugins, rode em um caso recém-aberto:
 ```
 
 E os seis testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
+
+---
+
+## Atualização
+
+Com o marketplace no GitHub:
+
+```bash
+git commit -am "hb-medir: exige amostra e periodo"
+git push
+```
+
+Do lado de quem usa:
+
+```
+/plugin marketplace update emcia
+```
+
+Para atualizar sozinho a cada sessão, ligue `autoUpdate` no marketplace.
+
+### Versionar é obrigatório
+
+Suba a versão no `plugin.json` a cada mudança de comportamento. Com o playbook sendo o método, **versão de plugin e versão de método são a mesma coisa** — e é isso que permite dizer, no relatório, qual versão produziu qual entregável.
+
+O CI recusa mudança em `eiac-nucleo/scripts/` sem que a versão do núcleo suba junto.
+
+### Caso aberto não é afetado
+
+O `playbook.json` vive no repositório do **caso**, copiado na abertura, não no plugin. Atualizar o plugin não muda o método de um caso em andamento.
+
+**Isso é decisão, não acaso.** Se alguém "consertar" isso fazendo o caso ler o playbook do plugin, um caso no P3 pode acordar com outra camada na etapa corrente.
+
+## Testes
+
+```bash
+bash testes/negativos.sh
+```
+
+Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste.

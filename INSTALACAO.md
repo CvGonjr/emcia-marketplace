@@ -34,10 +34,10 @@ Deve imprimir `['eiac-nucleo', 'eiac-campo']`.
 No Claude Code, dentro de qualquer projeto:
 
 ```
-/plugin marketplace add ~/projetos/emcia-marketplace
+/plugin marketplace add <seu-usuario>/emcia-marketplace
 ```
 
-O caminho é local. Quando o repositório estiver no GitHub, use a URL no lugar.
+Para repositório privado, o Claude Code usa as credenciais do seu Git. Se preferir apontar para a cópia local durante o desenvolvimento, use o caminho em vez do nome — mas quem for aplicar o método deve usar o repositório.
 
 **Verificar:**
 
@@ -89,25 +89,38 @@ Deve responder *nenhum caso aberto neste diretório*. Isso confirma que o script
 
 ## 5 · Abrir o primeiro caso
 
-```
-/eiac-campo:abrir-caso medic-plus
-```
-
-Ou manualmente, se preferir ver o que acontece:
+**Onde o caso nasce importa.** Um repositório Git por caso, fora do repositório do marketplace e fora de qualquer outro caso. O selo, a trilha de eventos e o isolamento entre organizações dependem disso.
 
 ```bash
-cp -r ~/.claude/plugins/eiac-campo/template-caso ./medic-plus
-cd medic-plus
-git init -q && git add -A && git commit -qm "abertura do caso"
+mkdir -p ~/casos
+cd ~/casos
+claude
 ```
+
+Dentro da sessão:
+
+```
+/eiac-campo:abrir-caso ~/casos/medic-plus
+```
+
+O comando recusa se o destino já existir ou se o diretório pai estiver dentro de um repositório Git.
 
 Depois:
 
 1. Edite `registro/estado.json` e troque `ALTERE-ME` pelo nome do caso.
 2. Copie os documentos do método para `metodo/` — documento do método, glossário, catálogo de delegação, quadro de ferramentas, instrumento de triagem, modelos E1–E5, plano de verificação, CTX-01.
-3. Edite `CLAUDE.md` e troque o título.
+3. Ajuste o título de `CLAUDE.md`.
 
 **Não altere `registro/playbook.json`.** Ele é o método como arquivo.
+
+### Entre no caso antes de seguir
+
+O núcleo procura `registro/estado.json` no diretório corrente. De fora, a guarda não protege nada.
+
+```bash
+cd ~/casos/medic-plus
+claude
+```
 
 **Verificar:**
 
@@ -117,7 +130,7 @@ Depois:
 
 Deve mostrar: caso medic-plus, etapa F0, camada EX1, modalidade assíncrono.
 
----
+Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está no diretório errado — entre na pasta do caso.
 
 ## 6 · Os seis testes negativos
 

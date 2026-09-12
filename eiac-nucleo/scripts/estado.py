@@ -27,7 +27,14 @@ def evento(tipo, **campos):
 if __name__ == "__main__":
     e = ler()
     if not e:
-        print("Nenhum caso aberto neste diretorio.")
+        # aviso util: caso existente em subdiretorio significa sessao no lugar errado
+        vizinhos = [d.parent.parent.name for d in pathlib.Path(".").glob("*/registro/estado.json")]
+        if vizinhos:
+            print("Nenhum caso aberto AQUI, mas existe caso em: " + ", ".join(vizinhos))
+            print("A guarda so protege dentro do diretorio do caso. "
+                  "Abra a sessao la dentro.")
+        else:
+            print("Nenhum caso aberto neste diretorio.")
         sys.exit(0)
     if "--resumo" in sys.argv:
         print(f"Caso {e['caso']} | etapa {e['etapa_atual']} "
