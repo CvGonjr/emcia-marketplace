@@ -89,38 +89,30 @@ Deve responder *nenhum caso aberto neste diretório*. Isso confirma que o script
 
 ## 5 · Abrir o primeiro caso
 
-**Onde o caso nasce importa.** Um repositório Git por caso, fora do repositório do marketplace e fora de qualquer outro caso. O selo, a trilha de eventos e o isolamento entre organizações dependem disso.
+Fora do Claude Code, no terminal:
 
 ```bash
-mkdir -p ~/casos
-cd ~/casos
-claude
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus
 ```
 
-Dentro da sessão:
+O script cria `~/casos/medic-plus`, preenche o nome no registro e no `CLAUDE.md`, e faz o commit inicial. Ele recusa se o destino já existir ou se o diretório base estiver dentro de um repositório Git — um repositório por caso.
 
+Para outro lugar, passe a base como segundo argumento:
+
+```bash
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus ~/trabalho/clientes
 ```
-/eiac-campo:abrir-caso ~/casos/medic-plus
-```
 
-O comando recusa se o destino já existir ou se o diretório pai estiver dentro de um repositório Git.
+Copie os documentos do método para `metodo/` — documento do método, glossário, catálogo de delegação, quadro de ferramentas, instrumento de triagem, modelos E1–E5, plano de verificação, CTX-01.
 
-Depois:
-
-1. Edite `registro/estado.json` e troque `ALTERE-ME` pelo nome do caso.
-2. Copie os documentos do método para `metodo/` — documento do método, glossário, catálogo de delegação, quadro de ferramentas, instrumento de triagem, modelos E1–E5, plano de verificação, CTX-01.
-3. Ajuste o título de `CLAUDE.md`.
-
-**Não altere `registro/playbook.json`.** Ele é o método como arquivo.
-
-### Entre no caso antes de seguir
-
-O núcleo procura `registro/estado.json` no diretório corrente. De fora, a guarda não protege nada.
+### Abra a sessão dentro do caso
 
 ```bash
 cd ~/casos/medic-plus
 claude
 ```
+
+O núcleo lê `registro/estado.json` do diretório corrente. De fora, a guarda não protege nada.
 
 **Verificar:**
 
@@ -130,7 +122,7 @@ claude
 
 Deve mostrar: caso medic-plus, etapa F0, camada EX1, modalidade assíncrono.
 
-Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está no diretório errado — entre na pasta do caso.
+Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está no diretório errado.
 
 ## 6 · Os seis testes negativos
 

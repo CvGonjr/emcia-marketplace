@@ -21,13 +21,22 @@ As hooks do núcleo registram automaticamente. A trava viaja com o plugin, não 
 
 ## Abrir um caso
 
-```
-cp -r <plugin>/eiac-campo/template-caso caso-medic-plus
-cd caso-medic-plus
-git init && git add -A && git commit -m "abertura do caso"
+```bash
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus
+cd ~/casos/medic-plus && claude
 ```
 
-Edite `registro/estado.json` com o nome do caso. Copie os documentos do método para `metodo/`.
+O script copia o template, preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento muda a base.
+
+Um alias deixa mais curto:
+
+```bash
+alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
+```
+
+Antes de começar, copie os documentos do método para `metodo/`.
+
+**A sessão precisa estar dentro do caso.** O núcleo lê `registro/estado.json` do diretório corrente — de fora, não há guarda nem validador.
 
 ## Percurso
 
