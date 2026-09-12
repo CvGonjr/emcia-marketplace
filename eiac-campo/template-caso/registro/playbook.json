@@ -1,38 +1,93 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.2.0",
+  "versao": "0.3.0",
+  "referencia": "EMCIA-MET-01, EMCIA-CAT-01",
+
+  "niveis": ["N1", "N2", "N3"],
+
   "procedencia": {
     "contexto": ["campo", "antitese", "conversa", "livre"],
     "origem": ["verificado", "declarado", "inferido", "externo"],
     "apuracao": ["medido", "calculado", "estimado"]
   },
+
   "etapas": [
-    { "id": "F0",  "camada": "EX1", "modalidade": "assincrono", "habilidade": "hb-enquadrar" },
-    { "id": "P1",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-mapear-contexto" },
-    { "id": "P2",  "camada": "EX2", "modalidade": "assincrono", "habilidade": "hb-extrair-regras" },
-    { "id": "P3a", "camada": "EX3", "modalidade": "remoto",     "habilidade": "hb-medir" },
-    { "id": "P3b", "camada": "EX4", "modalidade": "presencial", "habilidade": "hb-levantar-regras", "delegavel": false },
-    { "id": "P3d", "camada": "EX3", "modalidade": "remoto",     "habilidade": "hb-confrontar", "depende_de": "P3b" },
-    { "id": "P4",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-priorizar" },
-    { "id": "P5",  "camada": "EX2", "modalidade": "video",      "habilidade": "hb-classificar" }
+    {
+      "id": "F0", "nome": "Enquadramento e triagem",
+      "modalidade": "assincrono", "habilidade": "hb-enquadrar",
+      "hb": ["HB-01", "HB-02", "HB-03"],
+      "camada": { "N1": "EX1", "N2": "EX1", "N3": "EX1" }
+    },
+    {
+      "id": "P1", "nome": "Contexto de negocio",
+      "modalidade": "video", "habilidade": "hb-mapear-contexto",
+      "hb": ["HB-08", "HB-09"],
+      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
+    },
+    {
+      "id": "P2", "nome": "Fontes e regras candidatas",
+      "modalidade": "assincrono", "habilidade": "hb-extrair-regras",
+      "hb": ["HB-07"],
+      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
+    },
+    {
+      "id": "P3a", "nome": "Linha de base",
+      "modalidade": "remoto", "habilidade": "hb-medir",
+      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P3b", "nome": "Levantamento de regras nao documentadas",
+      "modalidade": "presencial", "habilidade": "hb-levantar-regras",
+      "delegavel": false,
+      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
+    },
+    {
+      "id": "P3d", "nome": "Confronto declarado x observado",
+      "modalidade": "remoto", "habilidade": "hb-confrontar",
+      "depende_de": "P3b",
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P4", "nome": "Priorizacao e zona de contencao",
+      "modalidade": "video", "habilidade": "hb-priorizar",
+      "hb": ["HB-10"],
+      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P5", "nome": "Classificacao tecnologica",
+      "modalidade": "video", "habilidade": "hb-classificar",
+      "hb": ["HB-11", "HB-12"],
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    }
   ],
+
+  "deslocamento_por_nivel": {
+    "referencia": "EMCIA-CAT-01 secao 3.6",
+    "N1": { "preparacao_automatizada_ate": "P4", "verificacao_obrigatoria_a_partir_de": "P5" },
+    "N2": { "preparacao_automatizada_ate": "P2", "verificacao_obrigatoria_a_partir_de": "P3a" },
+    "N3": { "preparacao_automatizada_ate": "F0", "verificacao_obrigatoria_a_partir_de": "P1" }
+  },
+
   "entregaveis": [
-    { "id": "E1",   "portao": ["F0"] },
-    { "id": "E2",   "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+    { "id": "E1", "portao": ["F0"] },
+    { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
     { "id": "E3-D", "portao": ["P4","P5"] },
     { "id": "E3-E", "portao": ["P5"], "condicao": "P5 concluiu que a solucao e um agente" },
-    { "id": "E4",   "portao": ["P6","P7"], "inegociavel": [2], "portao_pendente": true },
-    { "id": "E5",   "portao": ["P9","P10"], "inegociavel": [4,5], "portao_pendente": true }
+    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2], "portao_pendente": true },
+    { "id": "E5", "portao": ["P9","P10"], "inegociavel": [4,5], "portao_pendente": true }
   ],
+
   "inegociaveis": [
-    { "n": 1, "item": "Medicao inicial registrada, apuracao diferente de estimado", "passo": "P3a" },
+    { "n": 1, "item": "Linha de base registrada, apuracao diferente de estimado", "passo": "P3a" },
     { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
     { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
   ],
+
   "pendencias": [
     "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
+    "Procedencia: CAT-01 e GLO-01 fixam [D][I][V]; este playbook usa tres dimensoes com externo e antitese. Decidir em um lugar so.",
     "P6 a P10 sem habilidade: instrumentos ausentes."
   ]
 }

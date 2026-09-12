@@ -37,16 +37,25 @@ def main():
     alvo = str(entrada.get("file_path") or entrada.get("path") or "")
     comando = str(entrada.get("command") or "")
     etapa_id = st["etapa_atual"]
+    nivel = st.get("nivel")
     etapa = P.etapa(pb, etapa_id) or {}
+    camada_corrente = P.camada(pb, etapa_id, nivel)
 
-    # G1 — habilidade de etapa nao delegavel
+    # G1 — habilidade de camada humana nao carrega
+    # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
+    # a mesma etapa pode ser EX2 em N1 e EX3 em N3.
     for e in pb["etapas"]:
-        if e.get("delegavel") is False and e.get("habilidade") and e["habilidade"] in alvo:
+        if not e.get("habilidade") or e["habilidade"] not in alvo:
+            continue
+        cam = P.camada(pb, e["id"], nivel)
+        if e.get("delegavel") is False or cam in ("EX3", "EX4"):
+            motivo = ("nao e delegavel a agente" if e.get("delegavel") is False
+                      else f"esta em camada humana ({cam}) para o nivel {nivel or 'nao apurado'}")
             negar(
-                f"{e['camada']}: a etapa {e['id']} nao e delegavel a agente. "
+                f"{cam}: a etapa {e['id']} {motivo}. "
                 f"Modalidade exigida: {e.get('modalidade','?')}. "
                 f"Registre a sessao com /eiac-nucleo:registrar-sessao.",
-                etapa=e["id"], camada_exigida=e["camada"], ferramenta=ferramenta,
+                etapa=e["id"], camada_exigida=cam, nivel=nivel, ferramenta=ferramenta,
             )
 
     # G2 — escrita direta no repositorio do caso
@@ -60,6 +69,14 @@ def main():
             "Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. "
             "Toda assercao exige contexto e origem.",
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
+        )
+
+    # G4 — nivel nao apurado apos F0
+    if etapa_id != "F0" and not nivel:
+        negar(
+            f"Nivel do caso nao apurado. A camada de {etapa_id} depende dele "
+            f"(CAT-01 3.6). Encerre F0 antes de prosseguir.",
+            etapa=etapa_id,
         )
 
     # G3 — dependencia entre etapas

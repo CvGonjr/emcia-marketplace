@@ -16,6 +16,11 @@ def encerrar(st, pb, etapa_id, autor):
     et = P.etapa(pb, etapa_id)
     if not et:
         return f"etapa {etapa_id} nao existe no playbook"
+    if etapa_id == "F0" and not st.get("nivel"):
+        return ("F0 nao encerra sem o nivel apurado. A camada das etapas seguintes "
+                "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
+    if st.get("nivel") and st["nivel"] not in pb["niveis"]:
+        return f"nivel '{st['nivel']}' nao existe no playbook: {pb['niveis']}"
     if et.get("delegavel") is False and not st["cumprimentos"].get(etapa_id, {}).get("sessao"):
         return (f"{etapa_id} e {et['modalidade']} e nao delegavel. "
                 f"Registre a sessao antes de encerrar.")
@@ -28,7 +33,7 @@ def encerrar(st, pb, etapa_id, autor):
     if idx + 1 < len(pb["etapas"]):
         prox = pb["etapas"][idx + 1]
         st["etapa_atual"] = prox["id"]
-        st["camada_atual"] = prox["camada"]
+        st["camada_atual"] = P.camada(pb, prox["id"], st.get("nivel"))
         st["modalidade_atual"] = prox["modalidade"]
     E.evento("EtapaEncerrada", etapa=etapa_id, autor=autor)
     return None

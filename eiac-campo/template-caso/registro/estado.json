@@ -2,7 +2,7 @@
   "caso": "ALTERE-ME",
   "nivel": null,
   "etapa_atual": "F0",
-  "camada_atual": "EX1",
+  "camada_atual": null,
   "modalidade_atual": "assincrono",
   "cumprimentos": {},
   "inegociaveis": {},

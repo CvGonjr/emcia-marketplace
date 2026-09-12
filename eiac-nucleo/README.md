@@ -37,3 +37,15 @@ Nenhuma decisão passa por modelo de linguagem.
 ## Limite honesto
 
 A hook vive no plugin, e o plugin pode ser desinstalado. Continua sendo pedágio com rastro, não parede. A diferença em relação a configuração local é que o contorno exige desinstalar algo versionado, e isso é visível.
+
+## Camada resolvida por nível
+
+A camada de uma etapa **não é fixa**. Em N1 a preparação automatizada vai até o passo 4; em N3, apenas F0. A mesma etapa pode ser `EX2` em um caso e `EX3` em outro.
+
+Por isso o playbook declara `camada` como mapa por nível, e o carregador recusa camada plana:
+
+```json
+"camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
+```
+
+**Sem nível apurado, aplica-se a camada mais restritiva declarada.** Não se assume o nível mais permissivo enquanto a triagem não apurou — e nenhuma etapa após F0 opera até o nível existir.

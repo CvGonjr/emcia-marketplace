@@ -55,6 +55,52 @@ python3 "$S/avancar.py" --encerrar F0 --autor "AG05" >/dev/null 2>&1
 python3 "$S/avancar.py" --emitir E2 --autor "Celso" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "7 emissao com portao fechado recusada" || falha "7 emissao ACEITA indevidamente"
 
+
+# 9 camada desloca com o nivel (CAT-01 3.6)
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['nivel'] = 'N3'; d['etapa_atual'] = 'P1'; p.write_text(json.dumps(d))"
+echo '{"tool_name":"Read","tool_input":{"file_path":"skills/hb-mapear-contexto/SKILL.md"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "9 P1 em N3 negada (EX3)" || falha "9 P1 em N3 NAO foi negada"
+
+# 10 a mesma etapa em N1 passa
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['nivel'] = 'N1'; p.write_text(json.dumps(d))"
+echo '{"tool_name":"Read","tool_input":{"file_path":"skills/hb-mapear-contexto/SKILL.md"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "10 P1 em N1 permitida (EX2)" || falha "10 P1 em N1 NEGADA indevidamente"
+
+# 11 sem nivel apurado, etapa apos F0 e negada
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['nivel'] = None; p.write_text(json.dumps(d))"
+echo '{"tool_name":"Read","tool_input":{"file_path":"metodo/x.md"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "11 etapa sem nivel apurado negada" || falha "11 etapa sem nivel ACEITA"
+
+# 12 F0 nao encerra sem nivel
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
+python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "12 F0 sem nivel nao encerra" || falha "12 F0 encerrou sem nivel"
+
+# 13 playbook com camada plana e recusado
+cp registro/playbook.json /tmp/pb-bom.json
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/playbook.json'); d = json.loads(p.read_text())
+d['etapas'][1]['camada'] = 'EX2'; p.write_text(json.dumps(d))"
+python3 "$S/playbook.py" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "13 camada plana recusada" || falha "13 camada plana ACEITA"
+cp /tmp/pb-bom.json registro/playbook.json
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib

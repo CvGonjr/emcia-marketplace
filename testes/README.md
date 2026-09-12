@@ -21,3 +21,17 @@ Oito verificações. Sete provam que uma trava **recusa**; a quarta é controle 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 
 **Falha aqui é regressão de trava, não de funcionalidade.** Não conserte o teste; conserte a trava.
+
+## Deslocamento da fronteira por nível
+
+Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+
+| # | Prova |
+|---|---|
+| 9 | P1 em N3 é `EX3` — habilidade não carrega |
+| 10 | A mesma P1 em N1 é `EX2` — carrega |
+| 11 | Sem nível apurado, nenhuma etapa após F0 opera |
+| 12 | F0 não encerra sem o nível |
+| 13 | Playbook com camada plana, sem mapa por nível, é recusado |
+
+O par 9 e 10 é o mais importante do conjunto: mesma etapa, mesma habilidade, resultado oposto conforme o nível. Se os dois passarem juntos, a fronteira desloca.
