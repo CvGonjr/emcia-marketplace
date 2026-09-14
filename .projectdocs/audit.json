@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-09-12",
+  "project": "emcia-marketplace",
+  "pipeline": "A",
+  "diataxis_coverage": {
+    "tutorial": true,
+    "howto": true,
+    "reference": true,
+    "explanation": "partial"
+  },
+  "docs_url": null,
+  "modules": [
+    {
+      "name": "eiac-nucleo",
+      "version": "0.2.0",
+      "path": "eiac-nucleo/",
+      "documented": true,
+      "docs": ["README.md", "eiac-nucleo/README.md"],
+      "knows_method": false
+    },
+    {
+      "name": "eiac-campo",
+      "version": "0.3.0",
+      "path": "eiac-campo/",
+      "documented": true,
+      "docs": ["README.md", "eiac-campo/reference/*.md"],
+      "knows_method": true
+    }
+  ],
+  "decisions_registry": "decisoes/ (12 arquivos, README.md como indice)",
+  "tests": "testes/negativos.sh (7 testes negativos, roda no CI)",
+  "canonical_docs": {
+    "path": "docs/",
+    "tracked_by_git": false,
+    "count": 12,
+    "documents": [
+      "EMCIA-MET-01-documento-do-metodo.md",
+      "EMCIA-CAT-01-fronteira-de-delegacao.md",
+      "EMCIA-GLO-01-glossario-do-metodo.md",
+      "EMCIA-HAB-01-protocolo-de-habilitacao.md",
+      "EMCIA-TRI-01-instrumento-de-triagem.md",
+      "EMCIA-FER-01-quadro-de-ferramentas.md",
+      "EMCIA-VER-01-plano-de-verificacao.md",
+      "EMCIA-E1-ficha-de-enquadramento.md",
+      "EMCIA-E2-diagnostico-e-oportunidade.md",
+      "EMCIA-E3-blueprint-da-solucao.md",
+      "EMCIA-E4-guia-operacional.md",
+      "EMCIA-E5-relatorio-de-piloto.md"
+    ],
+    "all_state": "Em revisao, aprovacao pendente",
+    "responsavel": "Celso do Vale"
+  },
+  "gaps": [
+    "sem documento unico de arquitetura ligando guarda->validador->playbook",
+    "eiac-nucleo/README.md e testes/README.md nao lidos neste mapeamento",
+    "docs/ nao esta sob controle de versao ainda",
+    "CAT-01 Anexo A (catalogo de agentes/habilidades) nao conferido contra as skills hb-* reais"
+  ],
+  "open_method_pendencies": [
+    "decisoes/006 em conflito com CAT-01 (procedencia em tres dimensoes) - CONFIRMADO com texto: CAT-01 3.5.4 e GLO-01 3.4 fixam [D][I][V] como dimensao unica; playbook.json usa tres dimensoes independentes (contexto/origem/apuracao) com valores que nao existem em CAT-01/GLO-01",
+    "correspondencia entregavel x passo diverge entre relatorio PFC e docs internos (bloqueia E4/E5)",
+    "P6-P10 sem habilidade: instrumentos ausentes - metodo canonico (MET-01) tem 5 fases/10 passos; playbook do template so cobre 8 etapas (F0..P5), faltam os passos 6-10 descritos em E4/E5"
+  ]
+}
