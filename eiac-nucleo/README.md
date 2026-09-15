@@ -20,6 +20,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
+| `selar.py` | Único caminho de commit no repositório do caso |
 
 Nenhuma decisão passa por modelo de linguagem.
 
@@ -34,6 +35,7 @@ Nenhuma decisão passa por modelo de linguagem.
 | I-7 | Autor é sempre pessoa nomeada | `validar.py`, `avancar.py` |
 | I-9 | Inegociáveis condicionam a emissão | `avancar.py` |
 | I-10 | O nível entra pelo comando, com autor e evento | `avancar.py` |
+| I-11 | O selo sai com o autor nomeado, não com a identidade da máquina | `selar.py` |
 
 ## Limite honesto
 

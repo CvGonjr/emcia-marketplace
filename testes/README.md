@@ -4,7 +4,9 @@
 bash testes/negativos.sh
 ```
 
-Dezoito verificações. Catorze provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
+Vinte e duas verificações. Dezesseis provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
+
+As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
 | # | Prova |
 |---|---|
@@ -21,6 +23,10 @@ Dezoito verificações. Catorze provam que uma trava **recusa**; as demais são 
 | 15 | Nível apurado por agente é recusado |
 | 16 | Nível válido grava e emite `NivelApurado` *(controle positivo)* |
 | 17 | Com o nível apurado pelo comando, F0 encerra *(controle positivo)* |
+| 18 | Selo por agente é recusado |
+| 19 | Selo fora de repositório git é recusado |
+| 20 | Selo grava commit com o autor nomeado e emite `SeloAplicado` *(controle positivo)* |
+| 21 | Selo sem nada a selar é recusado |
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 

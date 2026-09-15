@@ -125,6 +125,37 @@ rastro=$?
 python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
 
+# 18 selo por agente e recusado, e pelo motivo certo
+# (so o exit code nao serve: aqui varias travas recusam, e o teste passaria
+#  mesmo com a recusa de autor-agente removida)
+saida="$(python3 "$S/selar.py" --autor "AG05" --nota "teste" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "pessoa nomeada" \
+  && ok "18 selo por agente recusado" || falha "18 selo por agente ACEITO ou recusado por outro motivo"
+
+# 19 selo fora de repositorio git e recusado, e pelo motivo certo
+saida="$(python3 "$S/selar.py" --autor "Celso" --nota "teste" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "repositorio git" \
+  && ok "19 selo sem repositorio recusado" || falha "19 selo sem repositorio ACEITO ou recusado por outro motivo"
+
+# 20 selo valido commita com o autor nomeado e deixa rastro (controle positivo)
+git init -q . 2>/dev/null
+git config user.name "Identidade Da Maquina"
+git config user.email "maquina@exemplo.com"
+python3 "$S/selar.py" --autor "Celso do Vale" --nota "teste de selo" >/dev/null 2>&1
+selou=$?
+grep -q '"evento": "SeloAplicado"' registro/eventos.jsonl 2>/dev/null
+rastro=$?
+[ "$(git log -1 --format=%an 2>/dev/null)" = "Celso do Vale" ]
+assinatura=$?
+[ $selou -eq 0 ] && [ $rastro -eq 0 ] && [ $assinatura -eq 0 ] \
+  && ok "20 selo commita com autor nomeado e evento" \
+  || falha "20 selo NAO commitou, NAO deixou evento ou assinou com a maquina"
+
+# 21 selar duas vezes seguidas recusa: nada a selar, e pelo motivo certo
+saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "de novo" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "nada a selar" \
+  && ok "21 selo sem mudanca recusado" || falha "21 selo vazio ACEITO ou recusado por outro motivo"
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib
