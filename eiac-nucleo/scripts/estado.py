@@ -38,17 +38,33 @@ if __name__ == "__main__":
         sys.exit(0)
     if "--resumo" in sys.argv:
         cam = e.get("camada_atual")
-        if not cam:
-            try:
-                import playbook as P
-                pb, erro = P.carregar()
-                if pb:
-                    cam = P.camada(pb, e["etapa_atual"], e.get("nivel"))
-            except Exception:
-                pass
+        pb = None
+        try:
+            import playbook as P
+            pb, _ = P.carregar()
+        except Exception:
+            P = None
+        if not cam and pb:
+            cam = P.camada(pb, e["etapa_atual"], e.get("nivel"))
         nivel = e.get("nivel") or "nao apurado"
+        # a camada sozinha so informa quem decorou EX1-EX4; diga o que ela exige
+        sentido = ""
+        if pb:
+            sentido = " · " + P.natureza(pb, e["etapa_atual"], e.get("nivel"))
         print(f"Caso {e['caso']} | nivel {nivel} | etapa {e['etapa_atual']} "
-              f"| camada {cam or '?'} | modalidade {e.get('modalidade_atual','?')}")
+              f"| camada {cam or '?'}{sentido} | modalidade {e.get('modalidade_atual','?')}")
+        if pb:
+            prox = P.proxima_fronteira(pb, e["etapa_atual"], e.get("nivel"))
+            if prox:
+                pid, pcam, motivo = prox
+                ids = [x["id"] for x in pb["etapas"]]
+                i = ids.index(e["etapa_atual"])
+                imediata = i + 1 < len(ids) and ids[i + 1] == pid
+                if imediata:
+                    print(f"Ultima etapa delegavel do caso. A seguinte, {pid} "
+                          f"({pcam}), {motivo}.")
+                else:
+                    print(f"Proxima fronteira: {pid} ({pcam}) {motivo}.")
         if not e.get("nivel") and e["etapa_atual"] != "F0":
             print("ATENCAO: nivel nao apurado. A camada das etapas depende dele.")
     else:

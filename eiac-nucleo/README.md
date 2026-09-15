@@ -21,6 +21,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
 | `selar.py` | Único caminho de commit no repositório do caso |
+| `fronteira.py` | Imprime o que é preparável e o que exige pessoa, para o nível do caso |
 
 Nenhuma decisão passa por modelo de linguagem.
 
@@ -36,6 +37,7 @@ Nenhuma decisão passa por modelo de linguagem.
 | I-9 | Inegociáveis condicionam a emissão | `avancar.py` |
 | I-10 | O nível entra pelo comando, com autor e evento | `avancar.py` |
 | I-11 | O selo sai com o autor nomeado, não com a identidade da máquina | `selar.py` |
+| I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
 
 ## Limite honesto
 

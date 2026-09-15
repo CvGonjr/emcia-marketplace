@@ -156,6 +156,28 @@ saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "de novo" 2>&1)"
 [ $? -ne 0 ] && echo "$saida" | grep -q "nada a selar" \
   && ok "21 selo sem mudanca recusado" || falha "21 selo vazio ACEITO ou recusado por outro motivo"
 
+# 22 a fronteira anunciada acompanha o nivel
+# P3a e EX2 em N1 (delegavel) e EX3 em N2 (humana). Se o aviso nao mudar com
+# o nivel, ele esta decorado em vez de resolvido pelo playbook.
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['etapa_atual'] = 'P2'; d['nivel'] = 'N2'; p.write_text(json.dumps(d))"
+n2="$(python3 "$S/fronteira.py" 2>&1)"
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['nivel'] = 'N1'; p.write_text(json.dumps(d))"
+n1="$(python3 "$S/fronteira.py" 2>&1)"
+echo "$n2" | grep -q "A partir de P3a" && echo "$n1" | grep -qv "A partir de P3a" \
+  && ok "22 fronteira acompanha o nivel" \
+  || falha "22 fronteira NAO muda com o nivel"
+
+# 23 etapa nao delegavel aparece como tal, em qualquer nivel
+echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao delegavel" \
+  && ok "23 P3b marcada nao delegavel nos dois niveis" \
+  || falha "23 P3b NAO marcada como nao delegavel"
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib

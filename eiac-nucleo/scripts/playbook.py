@@ -64,6 +64,45 @@ def camada(pb, etapa_id, nivel):
     return max(c.values(), key=lambda x: ordem.index(x) if x in ordem else 99)
 
 
+HUMANA = ("EX3", "EX4")
+
+
+def humana(cam):
+    """A camada exige pessoa? A guarda ja aplica esta regra em G1."""
+    return cam in HUMANA
+
+
+def natureza(pb, etapa_id, nivel):
+    """Como esta etapa se comporta para este nivel, em uma linha."""
+    e = etapa(pb, etapa_id)
+    if not e:
+        return "?"
+    if e.get("delegavel") is False:
+        return "nao delegavel"
+    return "exige verificacao humana" if humana(camada(pb, etapa_id, nivel)) \
+        else "preparacao delegavel"
+
+
+def proxima_fronteira(pb, etapa_id, nivel):
+    """Primeira etapa daqui em diante que exige pessoa. None se nao houver.
+
+    Devolve (id, camada, motivo) da etapa, ou None se a etapa corrente ja
+    exigir pessoa — nesse caso nao ha fronteira a anunciar, ela ja chegou.
+    """
+    ids = [e["id"] for e in pb["etapas"]]
+    if etapa_id not in ids:
+        return None
+    if humana(camada(pb, etapa_id, nivel)) or (etapa(pb, etapa_id) or {}).get("delegavel") is False:
+        return None
+    for e in pb["etapas"][ids.index(etapa_id) + 1:]:
+        cam = camada(pb, e["id"], nivel)
+        if e.get("delegavel") is False:
+            return e["id"], cam, "nao delegavel"
+        if humana(cam):
+            return e["id"], cam, "exige verificacao humana"
+    return None
+
+
 if __name__ == "__main__":
     pb, erro = carregar()
     if erro:

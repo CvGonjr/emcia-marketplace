@@ -4,7 +4,7 @@
 bash testes/negativos.sh
 ```
 
-Vinte e duas verificações. Dezesseis provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
+Vinte e quatro verificações. Dezesseis provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -27,6 +27,8 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída. 
 | 19 | Selo fora de repositório git é recusado |
 | 20 | Selo grava commit com o autor nomeado e emite `SeloAplicado` *(controle positivo)* |
 | 21 | Selo sem nada a selar é recusado |
+| 22 | A fronteira anunciada acompanha o nível *(controle positivo)* |
+| 23 | Etapa não delegável aparece como tal em qualquer nível *(controle positivo)* |
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 
