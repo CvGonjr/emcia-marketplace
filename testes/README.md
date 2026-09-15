@@ -4,7 +4,7 @@
 bash testes/negativos.sh
 ```
 
-Oito verificações. Sete provam que uma trava **recusa**; a quarta é controle positivo — asserção bem marcada precisa gravar, senão o validador está apenas quebrado.
+Dezoito verificações. Catorze provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
 
 | # | Prova |
 |---|---|
@@ -17,6 +17,10 @@ Oito verificações. Sete provam que uma trava **recusa**; a quarta é controle 
 | 6 | Autor agente é recusado |
 | 7 | Entregável com portão fechado não emite |
 | 8 | Playbook sem itens inegociáveis não carrega |
+| 14 | Nível fora dos declarados no playbook é recusado |
+| 15 | Nível apurado por agente é recusado |
+| 16 | Nível válido grava e emite `NivelApurado` *(controle positivo)* |
+| 17 | Com o nível apurado pelo comando, F0 encerra *(controle positivo)* |
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 

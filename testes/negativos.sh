@@ -101,6 +101,30 @@ python3 "$S/playbook.py" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "13 camada plana recusada" || falha "13 camada plana ACEITA"
 cp /tmp/pb-bom.json registro/playbook.json
 
+# 14 nivel fora do playbook e recusado
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
+python3 "$S/avancar.py" --apurar-nivel N9 --autor "Celso" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "14 nivel fora do playbook recusado" || falha "14 nivel invalido ACEITO"
+
+# 15 apuracao de nivel por agente e recusada
+python3 "$S/avancar.py" --apurar-nivel N2 --autor "AG05" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "15 nivel apurado por agente recusado" || falha "15 nivel por agente ACEITO"
+
+# 16 apuracao valida grava e deixa rastro (controle positivo)
+python3 "$S/avancar.py" --apurar-nivel N2 --autor "Celso" --eixos "DAD 4, GOV 5, CRI 7" >/dev/null 2>&1
+gravou=$?
+grep -q '"evento": "NivelApurado"' registro/eventos.jsonl 2>/dev/null
+rastro=$?
+[ $gravou -eq 0 ] && [ $rastro -eq 0 ] \
+  && ok "16 nivel apurado grava com evento" || falha "16 nivel apurado SEM gravar ou SEM evento"
+
+# 17 com o nivel apurado pelo comando, F0 encerra
+python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib

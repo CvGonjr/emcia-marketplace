@@ -17,7 +17,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 |---|---|
 | `guarda.py` | Hook `PreToolUse`. Três regras, `exit 2` bloqueia |
 | `validar.py` | Único caminho de escrita em `caso/` |
-| `avancar.py` | Encerrar etapa, registrar sessão, emitir entregável |
+| `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
 
@@ -33,6 +33,7 @@ Nenhuma decisão passa por modelo de linguagem.
 | I-4 | Etapa dependente exige sessão registrada | `guarda.py` G3, `avancar.py` |
 | I-7 | Autor é sempre pessoa nomeada | `validar.py`, `avancar.py` |
 | I-9 | Inegociáveis condicionam a emissão | `avancar.py` |
+| I-10 | O nível entra pelo comando, com autor e evento | `avancar.py` |
 
 ## Limite honesto
 
@@ -47,5 +48,7 @@ Por isso o playbook declara `camada` como mapa por nível, e o carregador recusa
 ```json
 "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
 ```
+
+O nível entra por `--apurar-nivel`, com autor nomeado e evento `NivelApurado` na trilha. Reapuração registra o valor anterior. **Editar `registro/estado.json` à mão grava o nível sem autor e sem rastro — não faça.**
 
 **Sem nível apurado, aplica-se a camada mais restritiva declarada.** Não se assume o nível mais permissivo enquanto a triagem não apurou — e nenhuma etapa após F0 opera até o nível existir.

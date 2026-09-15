@@ -1,6 +1,7 @@
 """Maquina de etapas. Unico caminho de avanco.
 
 Uso:
+  python3 avancar.py --apurar-nivel N2 --autor "Nome" --eixos "DAD 4, GOV 5, CRI 7"
   python3 avancar.py --encerrar P2 --autor "Nome"
   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
   python3 avancar.py --emitir E2 --autor "Nome"
@@ -10,6 +11,18 @@ import argparse, pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
+
+
+def apurar_nivel(st, pb, nivel, autor, eixos):
+    if nivel not in pb["niveis"]:
+        return f"nivel '{nivel}' nao existe no playbook: {pb['niveis']}"
+    anterior = st.get("nivel")
+    st["nivel"] = nivel
+    st["camada_atual"] = P.camada(pb, st["etapa_atual"], nivel)
+    if eixos:
+        st["cumprimentos"].setdefault("F0", {})["eixos"] = eixos
+    E.evento("NivelApurado", nivel=nivel, anterior=anterior, autor=autor, eixos=eixos)
+    return None
 
 
 def encerrar(st, pb, etapa_id, autor):
@@ -70,9 +83,11 @@ def emitir(st, pb, ent_id, autor):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--apurar-nivel")
     ap.add_argument("--encerrar"); ap.add_argument("--registrar-sessao")
     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
     ap.add_argument("--participantes", default="")
+    ap.add_argument("--eixos", default="")
     a = ap.parse_args()
 
     st = E.ler()
@@ -82,7 +97,9 @@ def main():
     if a.autor.lower().startswith(("ag0", "agente", "sistema")):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
-    if a.registrar_sessao:
+    if a.apurar_nivel:
+        err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
+    elif a.registrar_sessao:
         err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
     elif a.encerrar:
         err = encerrar(st, pb, a.encerrar, a.autor)
