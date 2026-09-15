@@ -37,7 +37,7 @@ O núcleo lê o `playbook.json` do caso e aplica o que ele declara. Trocar o pla
 bash testes/negativos.sh
 ```
 
-Vinte e quatro testes. Se algum falhar, não commite.
+Vinte e seis testes. Se algum falhar, não commite.
 
 Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/plugin.json`. O CI recusa o contrário — com o playbook sendo o método, versão de plugin e versão de método são a mesma coisa.
 

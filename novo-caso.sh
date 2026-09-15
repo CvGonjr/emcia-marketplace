@@ -51,7 +51,7 @@ c = pathlib.Path("CLAUDE.md")
 c.write_text(c.read_text(encoding="utf-8").replace("ALTERE-ME", nome), encoding="utf-8")
 PY
 
-mkdir -p metodo rascunho caso
+mkdir -p metodo rascunho caso fontes
 touch metodo/.gitkeep rascunho/.gitkeep caso/.gitkeep
 
 git init -q
@@ -74,6 +74,9 @@ Falta uma coisa antes de comecar:
   documento do metodo, glossario, catalogo de delegacao, quadro de
   ferramentas, instrumento de triagem, modelos E1-E5, plano de
   verificacao, CTX-01
+
+Os artefatos da organizacao vao para $destino/fontes/ — leia o README
+de la antes de commitar documento de cliente.
 
 Depois:
 

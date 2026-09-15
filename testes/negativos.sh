@@ -178,6 +178,24 @@ echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao de
   && ok "23 P3b marcada nao delegavel nos dois niveis" \
   || falha "23 P3b NAO marcada como nao delegavel"
 
+# 24 documento citado que nao esta em fontes/ e recusado
+mkdir -p fontes
+printf -- '- [verificado · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
+saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "nao esta em fontes/" \
+  && ok "24 documento citado ausente recusado" \
+  || falha "24 documento ausente ACEITO ou recusado por outro motivo"
+
+# 25 com o documento presente, grava e registra o hash (controle positivo)
+echo "conteudo" > fontes/ausente.xlsx
+python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" >/dev/null 2>&1
+gravou=$?
+grep -q '"documentos": {"ausente.xlsx"' registro/eventos.jsonl 2>/dev/null
+rastro=$?
+[ $gravou -eq 0 ] && [ $rastro -eq 0 ] \
+  && ok "25 documento presente grava com hash na trilha" \
+  || falha "25 documento presente NAO gravou ou NAO registrou hash"
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib

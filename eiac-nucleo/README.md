@@ -25,6 +25,10 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 
 Nenhuma decisão passa por modelo de linguagem.
 
+## Documento citado
+
+Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `fontes/`, e o hash do que foi lido entra no evento. Citação que aponta para fora do repositório não é verificável, e trocar um documento já citado passa a aparecer na trilha em vez de mudar a base da asserção em silêncio.
+
 ## Invariantes
 
 | # | Invariante | Onde |
@@ -38,6 +42,7 @@ Nenhuma decisão passa por modelo de linguagem.
 | I-10 | O nível entra pelo comando, com autor e evento | `avancar.py` |
 | I-11 | O selo sai com o autor nomeado, não com a identidade da máquina | `selar.py` |
 | I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
+| I-13 | Documento citado existe em `fontes/` e tem o hash na trilha | `validar.py` |
 
 ## Limite honesto
 

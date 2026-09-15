@@ -27,6 +27,7 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
 registro/playbook.json    o método como arquivo — não editar durante o caso
 registro/estado.json      etapa corrente e cumprimentos
 registro/eventos.jsonl    trilha de auditoria
+fontes/                   artefatos da organização, só leitura
 rascunho/                 conteúdo proposto, antes do validador
 caso/                     asserções gravadas
 metodo/                   documentos do método, só leitura

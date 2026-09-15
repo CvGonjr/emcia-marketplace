@@ -4,7 +4,7 @@ Uso:  python3 validar.py --arquivo caso/P2-regras.md --autor "Nome"
 Le o conteudo proposto de rascunho/<mesmo-nome> e so grava se todas as
 assercoes passarem. Nove regras, nenhuma avaliada por modelo.
 """
-import argparse, pathlib, re, sys
+import argparse, hashlib, pathlib, re, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
@@ -15,6 +15,16 @@ LINHA = re.compile(r"^\s*-\s*\[(?P<marca>[^\]]+)\]")
 
 def campos(marca):
     return [p.strip() for p in marca.split("·")]
+
+
+def citado(c):
+    """Nome do arquivo citado em 'documento: <nome> [p.N]', ou None."""
+    for x in c:
+        if x.startswith("documento:"):
+            alvo = x.split(":", 1)[1].strip()
+            # a pagina faz parte da citacao, nao do nome do arquivo
+            return re.sub(r"\s+p\.\S+$", "", alvo).strip() or None
+    return None
 
 
 def validar_linha(marca, pb, n):
@@ -38,6 +48,10 @@ def validar_linha(marca, pb, n):
         x.startswith(("observacao", "documento:")) for x in c
     ):
         return f"linha {n}: verificado exige observacao ou documento interno"
+    doc = citado(c)
+    if doc and not (pathlib.Path("fontes") / doc).exists():
+        return (f"linha {n}: documento citado '{doc}' nao esta em fontes/. "
+                f"Citacao que aponta para fora do caso nao e verificavel.")
     apur = next((x for x in c if x in proc.get("apuracao", [])), None)
     if apur == "estimado" and not any(x.startswith("base:") for x in c):
         return f"linha {n}: apuracao estimado exige base"
@@ -65,7 +79,7 @@ def main():
               file=sys.stderr)
         sys.exit(1)
 
-    erros, total = [], 0
+    erros, total, docs = [], 0, {}
     for n, linha in enumerate(rascunho.read_text(encoding="utf-8").splitlines(), 1):
         m = LINHA.match(linha)
         if not m:
@@ -74,6 +88,13 @@ def main():
         e = validar_linha(m.group("marca"), pb, n)
         if e:
             erros.append(e)
+            continue
+        # o hash fixa qual versao do documento sustentou a assercao: trocar o
+        # arquivo depois passa a ser visivel na trilha, nao silencioso
+        doc = citado(campos(m.group("marca")))
+        if doc and doc not in docs:
+            caminho = pathlib.Path("fontes") / doc
+            docs[doc] = hashlib.sha256(caminho.read_bytes()).hexdigest()[:12]
 
     if total == 0:
         print("nenhuma assercao marcada encontrada", file=sys.stderr); sys.exit(1)
@@ -85,8 +106,10 @@ def main():
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
-    E.evento("AssercaoRegistrada", arquivo=a.arquivo, assercoes=total, autor=a.autor)
-    print(f"{total} assercoes gravadas em {a.arquivo}")
+    E.evento("AssercaoRegistrada", arquivo=a.arquivo, assercoes=total,
+             autor=a.autor, documentos=docs or None)
+    print(f"{total} assercoes gravadas em {a.arquivo}"
+          + (f" | documentos: {', '.join(docs)}" if docs else ""))
 
 
 if __name__ == "__main__":

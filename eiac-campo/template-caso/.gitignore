@@ -1,0 +1,7 @@
+# Sujeira de ferramenta. O selo assina o caso, nao o ambiente de quem opera.
+.kilo/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+.DS_Store
