@@ -1,0 +1,32 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T07
+REQUISITO: CTX nao exige duplicacao do detalhe
+DATA/HORA: 2026-09-18T17:03:42-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-007.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-007.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+Regra curada sem documento_diz/observado/justificativa
+
+STDOUT:
+--- comando 1 ---
+divergencia curado: contexto/divergencias/DIV-007.yaml
+--- comando 2 ---
+regra curado: contexto/regras/RN-007.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:03:42", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-007.yaml", "id": "RN-007", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

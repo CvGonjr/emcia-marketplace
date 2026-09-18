@@ -1,0 +1,825 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 6a8fefd..f9cfbfd 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.5",
++  "version": "0.3.6",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/CLAUDE.md b/eiac-campo/template-caso/CLAUDE.md
+index fd59532..946929d 100644
+--- a/eiac-campo/template-caso/CLAUDE.md
++++ b/eiac-campo/template-caso/CLAUDE.md
+@@ -6,7 +6,7 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
+ 
+ **Nunca escreva direto em `caso/`.** Escreva o conteúdo em `rascunho/` e grave com `/eiac-nucleo:gravar`. A guarda bloqueia a escrita direta e registra a tentativa.
+ 
+-**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra ou fonte) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) exige versão nova com histórico — nunca sobrescrita.
++**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra, fonte ou registro de confronto P3d) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) ou de classificação de confronto exige versão nova com histórico — nunca sobrescrita.
+ 
+ **Toda asserção carrega marcação.** Formato:
+ 
+@@ -37,6 +37,6 @@ registro/eventos.jsonl    trilha de auditoria
+ fontes/                   artefatos da organização, só leitura
+ rascunho/                 conteúdo proposto, antes do validador ou curador
+ caso/                     asserções gravadas
+-contexto/                 termos, entidades, regras e fontes curados (CA4)
++contexto/                 termos, entidades, regras, fontes e confrontos P3d curados (CA4)
+ metodo/                   documentos do método, só leitura
+ ```
+diff --git a/eiac-campo/template-caso/contexto/README.md b/eiac-campo/template-caso/contexto/README.md
+index 0749576..16eeabe 100644
+--- a/eiac-campo/template-caso/contexto/README.md
++++ b/eiac-campo/template-caso/contexto/README.md
+@@ -4,12 +4,15 @@ Estrutura definida em `CTX-01`. Quatro objetos, um arquivo por registro.
+ 
+ ```
+ contexto/
+-├── termos/      T-001.yaml   glossário do processo (P2)
+-├── entidades/   E-001.yaml   objetos do domínio (P2, refinado em P3)
+-├── regras/      RN-001.yaml  o objeto central (P2 e P3)
+-└── fontes/      F-001.yaml   contratos de dados (P2)
++├── termos/         T-001.yaml    glossário do processo (P2)
++├── entidades/      E-001.yaml    objetos do domínio (P2, refinado em P3)
++├── regras/         RN-001.yaml   o objeto central (P2 e P3)
++├── fontes/         F-001.yaml    contratos de dados (P2)
++└── divergencias/   DIV-001.yaml  registro de confronto P3d (não é um dos quatro objetos CTX)
+ ```
+ 
++`divergencias/` não é um quinto objeto do CTX-01 — é o registro estruturado do confronto produzido em **P3d**, que `classificacao_confronto.referencia_p3d` da Regra aponta para localizar. Guarda `documento_diz`, `observado`, `justificativa` e `autor`; a Regra não duplica esse detalhe, só a classificação e a referência.
++
+ Os modelos seguem o EMCIA-CTX-01 v0.4. O contrato estrutural executável está
+ em `registro/contexto.schema.json`; ele declara campos obrigatórios, tipos,
+ padrões de identificador e as condições mínimas de procedência.
+@@ -35,9 +38,32 @@ O candidato precisa estar em `rascunho/<mesmo-nome>`. O curador valida a estrutu
+ Quando já existe um registro curado com o mesmo id e a mudança altera a `procedencia` — por exemplo `I` → `V` — o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior (versão, data e responsável). Sobrescrever a versão existente sem esse histórico é recusado; a versão anterior permanece legível dentro do registro atualizado.
+ 
+ O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
+-com `procedencia: I` e premissa. A resolução referencial entre objetos
+-(Regra → Entidade, Regra → Fonte etc.) e a semântica completa de
+-`classificacao_confronto`/`referencia_p3d` pertencem aos pacotes seguintes.
++com `procedencia: I` e premissa. A resolução referencial genérica entre
++objetos (Regra → Entidade, Regra → Fonte etc.) como bateria formal
++CTX-V01–V11 pertence ao pacote 2.5.4.
++
++## Confronto P3d
++
++A taxonomia oficial de classificação é a do EMCIA-ROT-01 3.9: `alinhada`,
++`divergente`, `nao_documentada`, `orfa`, `escrita_inacessivel`. Qualquer
++outro valor em `classificacao_confronto.classe` é recusado.
++
++Só a classe `divergente` exige `referencia_p3d` preenchida e resolvível —
++é a única para a qual o CTX-01 3.5 descreve o conteúdo mínimo que o
++registro referenciado precisa ter. A referência precisa apontar para um
++`contexto/divergencias/<id>.yaml` já curado:
++
++```bash
++python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" \
++  --tipo divergencia --arquivo contexto/divergencias/DIV-001.yaml \
++  --registrado-por "Nome da pessoa" --schema registro/p3d.schema.json
++```
++
++O `autor` do registro de confronto precisa ser pessoa nomeada — P3d é `EX3`
++(EMCIA-CAT-01), o Estúdio prepara e organiza, mas não confirma o confronto
++por conta própria. Mudar `classificacao_confronto` numa Regra já curada é
++mudança relevante do mesmo jeito que mudar `procedencia`: exige versão nova
++com histórico que preserve a versão anterior.
+ 
+ ## Quadro frequência × consequência
+ 
+diff --git a/eiac-campo/template-caso/contexto/divergencias/DIV-000-modelo.yaml b/eiac-campo/template-caso/contexto/divergencias/DIV-000-modelo.yaml
+new file mode 100644
+index 0000000..a6dcca4
+--- /dev/null
++++ b/eiac-campo/template-caso/contexto/divergencias/DIV-000-modelo.yaml
+@@ -0,0 +1,8 @@
++id: DIV-000
++regra_confrontada: ""           # ID da Regra CTX confrontada, ex.: RN-014
++classe: ""                      # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel (EMCIA-ROT-01 3.9)
++documento_diz: ""                # o que o documento/declaracao original dizia
++observado: ""                    # o que foi observado no confronto
++justificativa: ""                # justificativa registrada para a classificacao
++autor: ""                        # pessoa que conduziu/confirmou o confronto (P3d e EX3, humano)
++data: ""
+diff --git a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+index 7b6d4dd..e7ef681 100644
+--- a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+@@ -13,9 +13,11 @@ evidencia:                      # obrigatoria quando procedencia = V
+   tipo: ""                     # observacao | documento | leitura_de_volta
+   referencia: ""
+ 
+-# A semantica e a referencia obrigatoria pertencem ao pacote 2.5.3.
++# Taxonomia oficial do confronto: EMCIA-ROT-01 3.9. So "divergente" exige
++# referencia_p3d resolvivel para contexto/divergencias/<id>.yaml (CTX-01
++# 3.5, 3.13 — CTX-V11 minimo; a bateria formal pertence ao pacote 2.5.4).
+ classificacao_confronto:
+-  classe: ""                   # alinhada | divergente | nao_documentada | orfa | inacessivel
++  classe: ""                   # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel
+   referencia_p3d: ""
+ documento_de_origem: null
+ 
+diff --git a/eiac-campo/template-caso/registro/contexto.schema.json b/eiac-campo/template-caso/registro/contexto.schema.json
+index 78f0b46..9642f87 100644
+--- a/eiac-campo/template-caso/registro/contexto.schema.json
++++ b/eiac-campo/template-caso/registro/contexto.schema.json
+@@ -103,7 +103,11 @@
+         ],
+         "determinismo": ["deterministica", "admite_julgamento"],
+         "frequencia": ["rotineira", "ocasional", "rara"],
+-        "consequencia_do_erro": ["baixa", "media", "alta"]
++        "consequencia_do_erro": ["baixa", "media", "alta"],
++        "classificacao_confronto.classe": [
++          "alinhada", "divergente", "nao_documentada", "orfa",
++          "escrita_inacessivel"
++        ]
+       },
+       "patterns": {
+         "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+diff --git a/eiac-campo/template-caso/registro/p3d.schema.json b/eiac-campo/template-caso/registro/p3d.schema.json
+new file mode 100644
+index 0000000..d58e9ed
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/p3d.schema.json
+@@ -0,0 +1,39 @@
++{
++  "nome": "Registro de confronto P3d",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-ROT-01 3.9, EMCIA-CTX-01 v0.4 3.5/3.13 (CTX-V11)",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "divergencia": {
++      "id_pattern": "DIV-[0-9]{3,}",
++      "required": [
++        "id", "regra_confrontada", "classe", "documento_diz", "observado",
++        "justificativa", "autor", "data"
++      ],
++      "nonempty": [
++        "id", "regra_confrontada", "classe", "documento_diz", "observado",
++        "justificativa", "autor", "data"
++      ],
++      "types": {
++        "id": "string",
++        "regra_confrontada": "string",
++        "classe": "string",
++        "documento_diz": "string",
++        "observado": "string",
++        "justificativa": "string",
++        "autor": "string",
++        "data": "date"
++      },
++      "enums": {
++        "classe": [
++          "alinhada", "divergente", "nao_documentada", "orfa",
++          "escrita_inacessivel"
++        ]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "regra_confrontada": "RN-[0-9]{3,}"
++      }
++    }
++  }
++}
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index c541be0..0002f46 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.8",
++  "version": "0.2.9",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/README.md b/eiac-nucleo/README.md
+index 29582a4..094a46d 100644
+--- a/eiac-nucleo/README.md
++++ b/eiac-nucleo/README.md
+@@ -49,7 +49,8 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
+ | I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
+ | I-13 | Documento citado existe em `fontes/` e tem o hash na trilha | `validar.py` |
+ | I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
+-| I-15 | Mudança de procedência em `contexto/` só entra como versão nova, com histórico | `curar.py` |
++| I-15 | Mudança de procedência ou de classificação de confronto em `contexto/` só entra como versão nova, com histórico | `curar.py` |
++| I-16 | Classe de confronto que exige vínculo com P3d (`divergente`) só cura com `referencia_p3d` resolvível | `curar.py` |
+ 
+ `autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
+ `validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador
+diff --git a/eiac-nucleo/commands/curar.md b/eiac-nucleo/commands/curar.md
+index fea11f1..5b13d32 100644
+--- a/eiac-nucleo/commands/curar.md
++++ b/eiac-nucleo/commands/curar.md
+@@ -1,5 +1,5 @@
+ ---
+-description: Cura um objeto de contexto (termo, entidade, regra ou fonte) do rascunho para contexto/, com versionamento.
++description: Cura um objeto de contexto (termo, entidade, regra, fonte ou divergência de confronto P3d) do rascunho para contexto/, com versionamento.
+ argument-hint: <tipo> <arquivo de destino em contexto/>
+ ---
+ O candidato precisa estar em `rascunho/<nome>`, estruturado conforme o schema do caso.
+@@ -7,6 +7,11 @@ O candidato precisa estar em `rascunho/<nome>`, estruturado conforme o schema do
+ Execute:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo <tipo> --arquivo contexto/<tipo>s/<id>.yaml --registrado-por "<nome da pessoa>"`
+ 
+-Se já existir um registro curado com o mesmo id e a procedência mudar (por exemplo I → V), o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior — a curadoria recusa sobrescrita.
++Para um registro de confronto P3d (`divergencia`), o schema é outro:
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo divergencia --arquivo contexto/divergencias/DIV-001.yaml --registrado-por "<nome da pessoa>" --schema registro/p3d.schema.json`
++
++Se já existir um registro curado com o mesmo id e a `procedencia` ou a `classificacao_confronto` mudar, o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior — a curadoria recusa sobrescrita.
++
++Quando `classificacao_confronto.classe` for `divergente`, `referencia_p3d` precisa apontar para um `contexto/divergencias/<id>.yaml` já curado — referência ausente ou que não resolve é recusada.
+ 
+ Se houver recusa, corrija o rascunho e tente de novo. **Não contorne escrevendo direto em `contexto/`** — a guarda bloqueia e a tentativa fica registrada.
+diff --git a/eiac-nucleo/scripts/curar.py b/eiac-nucleo/scripts/curar.py
+index 2858c96..49c9cb1 100644
+--- a/eiac-nucleo/scripts/curar.py
++++ b/eiac-nucleo/scripts/curar.py
+@@ -27,14 +27,18 @@ def _campo(dados, nome):
+     return dados.get(nome)
+ 
+ 
++CAMPOS_AUTORIA = ("autoria_conteudo", "declarado_por", "registrado_por", "autor")
++
++
+ def checar_autoria(dados):
+     """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
+ 
+-    O objeto Fonte nao tem autoria_conteudo no CTX-01 (so registrado_por);
+-    os demais tres tem os dois campos.
++    Nem todo objeto declara os mesmos campos de autoria (Fonte nao tem
++    autoria_conteudo; um registro de confronto P3d usa so `autor`). Confere
++    qualquer um desses campos que o objeto de fato declarar.
+     """
+     erros = []
+-    for campo in ("autoria_conteudo", "declarado_por", "registrado_por"):
++    for campo in CAMPOS_AUTORIA:
+         valor = dados.get(campo)
+         if valor is None:
+             continue
+@@ -48,8 +52,14 @@ def checar_versao(anterior, candidato, tipo):
+     com historico que preserva a versao anterior recuperavel.
+ 
+     ``anterior`` e o dict ja gravado em contexto/ (ou None se e registro
+-    novo). ``candidato`` e o dict lido do rascunho.
++    novo). ``candidato`` e o dict lido do rascunho. Objetos que nao
++    declaram `versao` (como o registro de confronto P3d, que e observacional
++    e nao iterativo) nao entram nesta checagem — o campo e a marca de que
++    o objeto participa do regime de versionamento do CTX-01 3.11-3.13.
+     """
++    if "versao" not in candidato:
++        return []
++
+     if anterior is None:
+         versao = candidato.get("versao")
+         if versao not in (1, "1"):
+@@ -59,26 +69,34 @@ def checar_versao(anterior, candidato, tipo):
+     erros = []
+     proc_antes = anterior.get("procedencia")
+     proc_depois = candidato.get("procedencia")
++    confronto_antes = anterior.get("classificacao_confronto")
++    confronto_depois = candidato.get("classificacao_confronto")
+     versao_antes = anterior.get("versao")
+     versao_depois = candidato.get("versao")
+ 
+     mudou_procedencia = proc_antes != proc_depois
++    mudou_confronto = confronto_antes != confronto_depois
++    mudanca_relevante = mudou_procedencia or mudou_confronto
+     historico = candidato.get("historico") or []
+ 
+-    if mudou_procedencia:
++    if mudanca_relevante:
++        motivo = (
++            f"procedencia {proc_antes} -> {proc_depois}" if mudou_procedencia
++            else "classificacao_confronto"
++        )
+         try:
+             cresceu = int(versao_depois) > int(versao_antes)
+         except (TypeError, ValueError):
+             cresceu = False
+         if not cresceu:
+             erros.append(
+-                f"mudanca de procedencia {proc_antes} -> {proc_depois} exige "
+-                f"nova versao (recebido versao {versao_antes!r} -> {versao_depois!r}); "
++                f"mudanca de {motivo} exige nova versao "
++                f"(recebido versao {versao_antes!r} -> {versao_depois!r}); "
+                 f"sobrescrita nao e permitida"
+             )
+         if not isinstance(historico, list) or len(historico) < 1:
+             erros.append(
+-                "mudanca de procedencia exige historico com a versao anterior "
++                f"mudanca de {motivo} exige historico com a versao anterior "
+                 "preservada (data, responsavel e motivo)"
+             )
+         else:
+@@ -111,6 +129,36 @@ def checar_versao(anterior, candidato, tipo):
+     return erros
+ 
+ 
++CLASSE_EXIGE_REFERENCIA = ("divergente",)
++DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
++
++
++def checar_confronto(candidato):
++    """Comportamento minimo do CTX-01 3.13 (CTX-V11) para este pacote:
++    quando classificacao_confronto.classe exige vinculo com P3d, a
++    referencia precisa apontar para um registro de divergencia curado e
++    existente. A bateria formal CTX-V01-V11, com os demais objetos e
++    classes, pertence ao pacote 2.5.4 — aqui so a classe `divergente`
++    (a unica para a qual o CTX-01 3.5 descreve o conteudo minimo exigido
++    do registro referenciado) e verificada.
++    """
++    confronto = candidato.get("classificacao_confronto")
++    if not isinstance(confronto, dict):
++        return []
++    classe = confronto.get("classe")
++    if classe not in CLASSE_EXIGE_REFERENCIA:
++        return []
++
++    referencia = confronto.get("referencia_p3d")
++    if not referencia:
++        return [f"classe '{classe}' exige referencia_p3d preenchida"]
++
++    alvo = DIRETORIO_DIVERGENCIAS / f"{referencia}.yaml"
++    if not alvo.exists():
++        return [f"referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
++    return []
++
++
+ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schema.json"):
+     rascunho = pathlib.Path("rascunho") / destino.name
+     if not rascunho.exists():
+@@ -124,6 +172,7 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
+ 
+     erros = X.validar(candidato, schema, tipo)
+     erros += checar_autoria(candidato)
++    erros += checar_confronto(candidato)
+     if E.autor_e_agente(registrado_por):
+         erros.append(f"quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
+ 
+@@ -159,6 +208,8 @@ def main():
+     ap.add_argument("--arquivo", required=True,
+                      help="destino em contexto/<tipo>s/<id>.yaml")
+     ap.add_argument("--registrado-por", required=True)
++    ap.add_argument("--schema", default="registro/contexto.schema.json",
++                     help="schema declarativo que contem o tipo curado")
+     a = ap.parse_args()
+ 
+     destino = pathlib.Path(a.arquivo)
+@@ -166,7 +217,7 @@ def main():
+         print("curadoria so grava dentro de contexto/", file=sys.stderr)
+         sys.exit(1)
+ 
+-    erro = curar(a.tipo, destino, a.registrado_por)
++    erro = curar(a.tipo, destino, a.registrado_por, schema_caminho=a.schema)
+     if erro:
+         print(erro, file=sys.stderr)
+         sys.exit(1)
+diff --git a/testes/README.md b/testes/README.md
+index 686a821..fc1203e 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -20,7 +20,13 @@ Os 17 testes de curadoria, autoria e versionamento I→V rodam separadamente:
+ python3 testes/curadoria.py
+ ```
+ 
+-O total acumulado é de 61 verificações.
++Os 12 testes de integração CTX ↔ P3d rodam separadamente:
++
++```bash
++python3 testes/p3d.py
++```
++
++O total acumulado é de 73 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -108,6 +114,28 @@ Rodam contra uma cópia temporária do template, sem tocar em caso real.
+ 
+ Rodam contra uma cópia temporária do template, sem tocar em caso real.
+ 
++## Integração CTX ↔ P3d — pacote 2.5.3
++
++| ID | Prova |
++|---|---|
++| 2.5.3-T01 | Classificação oficial válida (`alinhada`) é curada |
++| 2.5.3-T02 | Classificação fora da taxonomia de EMCIA-ROT-01 3.9 é recusada |
++| 2.5.3-T03 | `divergente` sem `referencia_p3d` é recusado |
++| 2.5.3-T04 | `divergente` com `referencia_p3d` inexistente é recusado |
++| 2.5.3-T05 | `divergente` com `referencia_p3d` válida é curado |
++| 2.5.3-T06 | A referência resolve para o registro `divergencia` correto |
++| 2.5.3-T07 | A Regra curada não duplica `documento_diz`/`observado`/`justificativa` |
++| 2.5.3-T08 | `estatuto`/`divergencia` (contrato antigo) não existem mais no schema desde o 2.5.1 |
++| 2.5.3-T09 | Classificação que não exige `referencia_p3d` (`nao_documentada`) é curada sem ela |
++| 2.5.3-T10 | Mudar `classificacao_confronto` sem versão/histórico é recusado; com versão nova é aceito |
++| 2.5.3-T11 | Agente como `autor` do registro de confronto é recusado |
++| 2.5.3-T12 | Pessoa nomeada como `autor` do registro de confronto é aceita *(controle positivo)* |
++
++Rodam contra uma cópia temporária do template, sem tocar em caso real. A
++taxonomia oficial usada nos testes (`alinhada`, `divergente`,
++`nao_documentada`, `orfa`, `escrita_inacessivel`) vem de EMCIA-ROT-01 3.9 —
++o CTX-01 não define códigos próprios para as classes.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/p3d.py b/testes/p3d.py
+new file mode 100644
+index 0000000..3ded347
+--- /dev/null
++++ b/testes/p3d.py
+@@ -0,0 +1,390 @@
++#!/usr/bin/env python3
++"""Testes de integracao CTX <-> P3d do pacote 2.5.3."""
++import argparse
++import datetime
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
++
++
++def regra(**over):
++    campos = {
++        "id": "RN-001",
++        "enunciado": "quando a autorizacao chega, a guia e enviada no mesmo dia",
++        "gatilho": "recebimento_da_autorizacao",
++        "procedencia": "D",
++        "autoria_conteudo": "Claudia Ferreira",
++        "registrado_por": "Rafael Nogueira",
++        "data": "2026-09-18",
++        "origem_do_conhecimento": "experiencia_propria",
++        "determinismo": "admite_julgamento",
++        "frequencia": "rotineira",
++        "consequencia_do_erro": "alta",
++        "decisor_quando_nao_cobre": "Claudia Ferreira",
++        "estabilidade": "muda quando o convenio revisa o contrato",
++        "versao": 1,
++        "classe": "",
++        "referencia_p3d": "",
++    }
++    campos.update(over)
++
++    procedencia = campos["procedencia"]
++    premissa = "padrao demonstrado pela amostra" if procedencia == "I" else ""
++    if procedencia == "V":
++        evidencia_linhas = ["evidencia:", "  tipo: observacao", "  referencia: sessao-P3b-001"]
++    else:
++        evidencia_linhas = ['evidencia: ""']
++
++    historico = over.get("historico", [])
++    if not historico:
++        historico_linhas = ["historico: []"]
++    else:
++        historico_linhas = ["historico:"]
++        for h in historico:
++            historico_linhas.append(f"  - versao: {h.get('versao')}")
++            historico_linhas.append(f"    data: \"{h.get('data')}\"")
++            if h.get("procedencia") is not None:
++                historico_linhas.append(f"    procedencia: {h.get('procedencia')}")
++            if h.get("classificacao_confronto") is not None:
++                historico_linhas.append(f"    classificacao_confronto: {h.get('classificacao_confronto')}")
++            if h.get("registrado_por"):
++                historico_linhas.append(f"    registrado_por: {h['registrado_por']}")
++            if h.get("motivo"):
++                historico_linhas.append(f"    motivo: \"{h['motivo']}\"")
++
++    linhas = [
++        f"id: {campos['id']}",
++        f"enunciado: {campos['enunciado']}",
++        f"gatilho: {campos['gatilho']}",
++        f"procedencia: {procedencia}",
++        f"autoria_conteudo: {campos['autoria_conteudo']}",
++        f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f"origem_do_conhecimento: {campos['origem_do_conhecimento']}",
++        f'premissa: "{premissa}"' if premissa else 'premissa: ""',
++    ] + evidencia_linhas + [
++        "classificacao_confronto:",
++        f"  classe: {campos['classe'] or chr(34)+chr(34)}",
++        f"  referencia_p3d: {campos['referencia_p3d'] or chr(34)+chr(34)}",
++        "documento_de_origem: null",
++        f"determinismo: {campos['determinismo']}",
++        f"frequencia: {campos['frequencia']}",
++        f"consequencia_do_erro: {campos['consequencia_do_erro']}",
++        f"decisor_quando_nao_cobre: {campos['decisor_quando_nao_cobre']}",
++        "entradas: []",
++        "excecoes_conhecidas: []",
++        f"estabilidade: {campos['estabilidade']}",
++        f"versao: {campos['versao']}",
++    ] + historico_linhas + [""]
++    return "\n".join(linhas)
++
++
++def divergencia(**over):
++    campos = {
++        "id": "DIV-001",
++        "regra_confrontada": "RN-001",
++        "classe": "divergente",
++        "documento_diz": "prazo de 72h conforme manual interno",
++        "observado": "prazo real e 24h na pratica",
++        "justificativa": "confirmado por leitura de volta com a executora do processo",
++        "autor": "Claudia Ferreira",
++        "data": "2026-09-18",
++    }
++    campos.update(over)
++    linhas = [
++        f"id: {campos['id']}",
++        f"regra_confrontada: {campos['regra_confrontada']}",
++        f"classe: {campos['classe']}",
++        f"documento_diz: {campos['documento_diz']}",
++        f"observado: {campos['observado']}",
++        f"justificativa: {campos['justificativa']}",
++        f"autor: {campos['autor']}",
++        f'data: "{campos["data"]}"',
++        "",
++    ]
++    return "\n".join(linhas)
++
++
++def preparar_caso(raiz_tmp):
++    caso = raiz_tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def curar_regra(caso, destino_relativo, conteudo, registrado_por):
++    nome = pathlib.Path(destino_relativo).name
++    (caso / "rascunho" / nome).write_text(conteudo, encoding="utf-8")
++    comando = [
++        "python3", str(CURADOR), "--tipo", "regra",
++        "--arquivo", destino_relativo, "--registrado-por", registrado_por,
++    ]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return {
++        "comando": " ".join(comando), "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def curar_divergencia(caso, destino_relativo, conteudo, registrado_por):
++    nome = pathlib.Path(destino_relativo).name
++    (caso / "rascunho" / nome).write_text(conteudo, encoding="utf-8")
++    comando = [
++        "python3", str(CURADOR), "--tipo", "divergencia",
++        "--arquivo", destino_relativo, "--registrado-por", registrado_por,
++        "--schema", "registro/p3d.schema.json",
++    ]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return {
++        "comando": " ".join(comando), "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def gravar_evidencia(destino, teste, requisito, esperado, obtido, execucoes, passou, head_inicial,
++                      evento_relacionado="", nao_aplicavel=False, justificativa_na=""):
++    agora = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
++    comandos = "\n".join(f"[{i}] {e['comando']}" for i, e in enumerate(execucoes, 1)) or "(nenhum comando executado)"
++    codigos = "\n".join(f"[{i}] {e['codigo']}" for i, e in enumerate(execucoes, 1)) or "(n/a)"
++    stdout = "".join(f"--- comando {i} ---\n{e['stdout']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    stderr = "".join(f"--- comando {i} ---\n{e['stderr']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    resultado_final = "NAO APLICAVEL" if nao_aplicavel else ("PASS" if passou else "FAIL")
++    extra = f"\nJUSTIFICATIVA NAO APLICAVEL:\n{justificativa_na}\n" if nao_aplicavel else ""
++    conteudo = f"""PACOTE: 2.5.3
++TESTE: {teste}
++REQUISITO: {requisito}
++DATA/HORA: {agora}
++HEAD INICIAL: {head_inicial}
++COMANDO:
++{comandos}
++EXIT CODE:
++{codigos}
++
++RESULTADO ESPERADO:
++{esperado}
++
++RESULTADO OBTIDO:
++{obtido}
++
++STDOUT:
++{stdout}
++STDERR:
++{stderr}
++EVENTO RELACIONADO:
++{evento_relacionado or '(nenhum aplicavel)'}
++{extra}
++RESULTADO FINAL: {resultado_final}
++"""
++    (destino / f"teste-{teste}.txt").write_text(conteudo, encoding="utf-8")
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--evidencias")
++    ap.add_argument("--head-inicial")
++    args = ap.parse_args()
++
++    destino_ev = pathlib.Path(args.evidencias).resolve() if args.evidencias else None
++    if destino_ev:
++        destino_ev.mkdir(parents=True, exist_ok=True)
++    head_inicial = args.head_inicial or subprocess.run(
++        ["git", "rev-parse", "HEAD"], cwd=RAIZ, text=True,
++        capture_output=True, check=True,
++    ).stdout.strip()
++
++    with tempfile.TemporaryDirectory() as tmp:
++        caso = preparar_caso(pathlib.Path(tmp))
++
++        casos = []
++
++        # T01 — classificacao oficial valida
++        def t01():
++            e = curar_regra(caso, "contexto/regras/RN-001.yaml",
++                             regra(id="RN-001", classe="alinhada"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.3-T01", "classificacao oficial valida (alinhada)", "PASS",
++                       "regra curada com classe da taxonomia oficial", t01))
++
++        # T02 — classificacao fora da taxonomia
++        def t02():
++            e = curar_regra(caso, "contexto/regras/RN-002.yaml",
++                             regra(id="RN-002", classe="qualquer_valor_inventado"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "classificacao_confronto.classe" in e["stderr"]
++        casos.append(("2.5.3-T02", "classificacao fora da taxonomia oficial", "RECUSA",
++                       "recusado: valor invalido em classificacao_confronto.classe", t02))
++
++        # T03 — divergencia sem referencia_p3d
++        def t03():
++            e = curar_regra(caso, "contexto/regras/RN-003.yaml",
++                             regra(id="RN-003", classe="divergente", referencia_p3d=""), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "referencia_p3d" in e["stderr"]
++        casos.append(("2.5.3-T03", "divergencia sem referencia_p3d", "RECUSA",
++                       "recusado: classe 'divergente' exige referencia_p3d preenchida", t03))
++
++        # T04 — divergencia com referencia_p3d inexistente
++        def t04():
++            e = curar_regra(caso, "contexto/regras/RN-004.yaml",
++                             regra(id="RN-004", classe="divergente", referencia_p3d="DIV-999"),
++                             "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "nao resolve para registro existente" in e["stderr"]
++        casos.append(("2.5.3-T04", "divergencia com referencia_p3d inexistente", "RECUSA",
++                       "recusado: DIV-999 nao resolve", t04))
++
++        # T05 — divergencia com referencia_p3d valida
++        def t05():
++            e_div = curar_divergencia(caso, "contexto/divergencias/DIV-005.yaml",
++                                       divergencia(id="DIV-005", regra_confrontada="RN-005"),
++                                       "Rafael Nogueira")
++            e_regra = curar_regra(caso, "contexto/regras/RN-005.yaml",
++                                   regra(id="RN-005", classe="divergente", referencia_p3d="DIV-005"),
++                                   "Rafael Nogueira")
++            return [e_div, e_regra], e_div["codigo"] == 0 and e_regra["codigo"] == 0
++        casos.append(("2.5.3-T05", "divergencia com referencia_p3d valida", "PASS",
++                       "DIV-005 curada, RN-005 referencia e e aceita", t05))
++
++        # T06 — referencia resolve para o registro correto
++        def t06():
++            e_div = curar_divergencia(caso, "contexto/divergencias/DIV-006.yaml",
++                                       divergencia(id="DIV-006", regra_confrontada="RN-006",
++                                                    documento_diz="prazo unico de 72h",
++                                                    observado="prazo efetivo de 24h"),
++                                       "Rafael Nogueira")
++            e_regra = curar_regra(caso, "contexto/regras/RN-006.yaml",
++                                   regra(id="RN-006", classe="divergente", referencia_p3d="DIV-006"),
++                                   "Rafael Nogueira")
++            conteudo_div = (caso / "contexto/divergencias/DIV-006.yaml").read_text()
++            resolve_correto = "regra_confrontada: RN-006" in conteudo_div and "prazo unico de 72h" in conteudo_div
++            return [e_div, e_regra], e_div["codigo"] == 0 and e_regra["codigo"] == 0 and resolve_correto
++        casos.append(("2.5.3-T06", "referencia resolve para o registro correto", "PASS",
++                       "DIV-006 recuperado contem regra_confrontada e conteudo esperados", t06))
++
++        # T07 — CTX nao exige duplicacao do detalhe da divergencia
++        def t07():
++            e_div = curar_divergencia(caso, "contexto/divergencias/DIV-007.yaml",
++                                       divergencia(id="DIV-007", regra_confrontada="RN-007"),
++                                       "Rafael Nogueira")
++            e_regra = curar_regra(caso, "contexto/regras/RN-007.yaml",
++                                   regra(id="RN-007", classe="divergente", referencia_p3d="DIV-007"),
++                                   "Rafael Nogueira")
++            conteudo_regra = (caso / "contexto/regras/RN-007.yaml").read_text()
++            sem_duplicacao = not any(
++                campo in conteudo_regra
++                for campo in ("documento_diz:", "observado:", "justificativa:")
++            )
++            return [e_div, e_regra], e_div["codigo"] == 0 and e_regra["codigo"] == 0 and sem_duplicacao
++        casos.append(("2.5.3-T07", "CTX nao exige duplicacao do detalhe", "PASS",
++                       "Regra curada sem documento_diz/observado/justificativa", t07))
++
++        # T08 — estrutura antiga duplicada (estatuto/divergencia) ja foi migrada no 2.5.1
++        def t08():
++            schema = json.loads((caso / "registro" / "contexto.schema.json").read_text())
++            campos_regra = set(schema["objetos"]["regra"].get("required", [])) | \
++                set(schema["objetos"]["regra"].get("types", {}))
++            obsoletos_ausentes = not ({"estatuto", "divergencia"} & campos_regra)
++            e = curar_regra(caso, "contexto/regras/RN-008.yaml",
++                             regra(id="RN-008", classe="alinhada"), "Rafael Nogueira")
++            return [e], obsoletos_ausentes and e["codigo"] == 0
++        casos.append(("2.5.3-T08", "estrutura antiga estatuto/divergencia nao existe mais", "PASS",
++                       "campos obsoletos ausentes do schema (migrados no 2.5.1); Regra atual usa classificacao_confronto",
++                       t08))
++
++        # T09 — classificacao que nao exige referencia_p3d
++        def t09():
++            e = curar_regra(caso, "contexto/regras/RN-009.yaml",
++                             regra(id="RN-009", classe="nao_documentada", referencia_p3d=""),
++                             "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.3-T09", "classificacao que nao exige referencia_p3d", "PASS",
++                       "'nao_documentada' aceita sem referencia_p3d (ROT-01 3.9 nao define vinculo "
++                       "obrigatorio para essa classe; CTX-01 3.5 so descreve o conteudo minimo "
++                       "exigido quando classe=divergente)", t09))
++
++        # T10 — atualizacao do confronto preserva historico
++        def t10():
++            e1 = curar_regra(caso, "contexto/regras/RN-010.yaml",
++                              regra(id="RN-010", classe="", referencia_p3d="", versao=1),
++                              "Rafael Nogueira")
++            e_div = curar_divergencia(caso, "contexto/divergencias/DIV-010.yaml",
++                                       divergencia(id="DIV-010", regra_confrontada="RN-010"),
++                                       "Rafael Nogueira")
++            e2_sem_historico = curar_regra(
++                caso, "contexto/regras/RN-010.yaml",
++                regra(id="RN-010", classe="divergente", referencia_p3d="DIV-010", versao=1),
++                "Rafael Nogueira",
++            )
++            e3_com_historico = curar_regra(
++                caso, "contexto/regras/RN-010.yaml",
++                regra(id="RN-010", classe="divergente", referencia_p3d="DIV-010", versao=2, historico=[
++                    {"versao": 1, "data": "2026-09-12", "classificacao_confronto": "{}",
++                     "registrado_por": "Rafael Nogueira", "motivo": "confronto classificado apos P3d"},
++                ]),
++                "Rafael Nogueira",
++            )
++            ok = (e1["codigo"] == 0 and e_div["codigo"] == 0
++                  and e2_sem_historico["codigo"] != 0 and "sobrescrita" in e2_sem_historico["stderr"]
++                  and e3_com_historico["codigo"] == 0)
++            return [e1, e_div, e2_sem_historico, e3_com_historico], ok
++        casos.append(("2.5.3-T10", "atualizacao do confronto preserva historico", "PASS",
++                       "mudar classificacao_confronto sem nova versao/historico e recusado; "
++                       "com versao nova e historico e aceito", t10))
++
++        # T11 — agente nao confirma confronto humano
++        def t11():
++            e = curar_divergencia(caso, "contexto/divergencias/DIV-011.yaml",
++                                   divergencia(id="DIV-011", regra_confrontada="RN-011", autor="AG-01"),
++                                   "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "agente" in e["stderr"]
++        casos.append(("2.5.3-T11", "agente nao confirma confronto humano", "RECUSA",
++                       "recusado: autor nao pode ser agente", t11))
++
++        # T12 — controle humano valido
++        def t12():
++            e = curar_divergencia(caso, "contexto/divergencias/DIV-012.yaml",
++                                   divergencia(id="DIV-012", regra_confrontada="RN-012",
++                                                autor="Claudia Ferreira"),
++                                   "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.3-T12", "controle humano valido", "PASS",
++                       "registro de confronto curado por pessoa nomeada", t12))
++
++        falhas = 0
++        print("== integracao CTX <-> P3d — pacote 2.5.3")
++        for teste, requisito, esperado, obtido, executar in casos:
++            execucoes, passou = executar()
++            evento_txt = ""
++            todos = eventos(caso)
++            if todos:
++                evento_txt = json.dumps(todos[-1], ensure_ascii=False)
++            if destino_ev:
++                gravar_evidencia(destino_ev, teste, requisito, esperado, obtido,
++                                  execucoes, passou, head_inicial, evento_txt)
++            if passou:
++                print(f"  ok    {teste} {requisito}")
++            else:
++                falhas += 1
++                print(f"  FALHA {teste} {requisito}")
++                for e in execucoes:
++                    print(f"        stdout={e['stdout']!r} stderr={e['stderr']!r}")
++
++    if falhas:
++        print(f"\n{falhas} teste(s) de integracao CTX<->P3d falharam")
++        raise SystemExit(1)
++    print(f"\n{len(casos)} testes de integracao CTX<->P3d aprovados")
++
++
++if __name__ == "__main__":
++    main()

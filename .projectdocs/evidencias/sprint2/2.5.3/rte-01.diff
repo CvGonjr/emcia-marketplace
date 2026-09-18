@@ -1,0 +1,62 @@
+--- /tmp/claude-1000/-home-netiv-ai-Projetos-AI-PLUGINS-emcia-marketplace/fe141b79-971a-42ab-a29f-19c18bcc9d14/scratchpad/rte01-before-2.5.3.md	2026-09-18 17:05:51.821445667 -0300
++++ "/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md"	2026-09-18 17:06:49.106226540 -0300
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1 e 2.5.2, com evidências contemporâneas no 2.5.1 e no 2.5.2.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1, 2.5.2 e 2.5.3, com evidências contemporâneas no 2.5.1, no 2.5.2 e no 2.5.3.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.4 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.5 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -245,7 +245,7 @@
+ | **2.5.0** | Contexto e Dados | Normalizar o contrato documental D/I/V. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Concluído |
+-| **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Não iniciado |
++| **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Concluído |
+ | **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Não iniciado |
+ | **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Não iniciado |
+ | **2.5.6** | Contexto e Dados | Verificação consolidada da camada. | Não iniciado |
+@@ -329,6 +329,31 @@
+ entre objetos (2.5.4), integração executável P2/P3 → CTX → P4/P5 (2.5.5),
+ nem qualquer item da ação 2.6.
+ 
++#### 3.10.4 Pacote 2.5.3 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.3` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Objetivo** | Integrar a Regra CTX ao confronto P3d por classificação e referência rastreável, sem duplicar a evidência detalhada. |
++| **Requisitos / baseline** | `D-04`, `2.5-BL14`, `2.5-BL15` |
++| **Estado inicial** | `HEAD_INICIAL_2.5.3 = c67ea6219c6c78232850e66641ec05349cd83abe`, working tree limpa. `classificacao_confronto` já existia desde o 2.5.1 (`estatuto`/`divergencia` já haviam sido removidos naquele pacote), mas sem taxonomia verificada nem resolução de `referencia_p3d` — 2.5-BL14 `PARCIAL`, 2.5-BL15 `AUSENTE`. |
++| **Achado documental** | Nenhum documento oficial nem código definia um instrumento estruturado de P3d com registros endereçáveis por ID; a saída real de P3d era (e continua sendo, como preparação da sessão) `caso/P3d-divergencias.md` em texto livre. Decisão de implementação, aprovada antes de codificar: introduzir `contexto/divergencias/DIV-*.yaml`, registro estruturado mínimo curado pelo mesmo caminho de curadoria do 2.5.2, sem alterar `hb-confrontar` nem a fronteira EX3 do P3d. |
++| **Implementação** | Taxonomia oficial extraída de EMCIA-ROT-01 §3.9 (`alinhada`, `divergente`, `nao_documentada`, `orfa`, `escrita_inacessivel`) adicionada como enum de `classificacao_confronto.classe` no schema da Regra. Novo `registro/p3d.schema.json` para o objeto `divergencia`. `curar.py` ganhou `checar_confronto()`: quando `classe: divergente`, exige `referencia_p3d` resolvível contra um registro `divergencia` curado e existente (comportamento mínimo de CTX-V11, não a bateria formal). `checar_versao()` generalizada para tratar mudança de `classificacao_confronto` como mudança relevante, exigindo versão nova com histórico, do mesmo modo que mudança de `procedencia` desde o 2.5.2. |
++| **Testes** | `2.5.3-T01` a `2.5.3-T12` (mínimo obrigatório) + `2.5.3-T13` como regressão acumulada. Nenhum teste ficou `NÃO APLICÁVEL`. |
++| **Defeitos** | Nenhum defeito de código nos pacotes anteriores; o achado foi documental (lacuna do instrumento de P3d, tratada como decisão de implementação, não como defeito). |
++| **Correções** | Não houve correção de defeito pré-existente — o pacote implementou requisitos ausentes/parciais do baseline. |
++| **Reteste** | 73/73 verificações aprovadas, 0 falhas, 0 skips: 61 da suíte anterior (sem regressão) + 12 novas de `p3d.py`. |
++| **Eventos** | `ObjetoContextoCurado` e `CuradoriaRecusada`, emitidos por `curar.py`, agora também para o tipo `divergencia` e para a checagem de `classificacao_confronto`/`referencia_p3d`. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.3/resultado.md` |
++| **Commit** | `323d153` — `feat(context): link CTX rules to P3d confrontation records` |
++| **Estado final** | **CONFORME** |
++
++Este pacote não implementou a bateria formal CTX-V01–V11 completa, o
++resolvedor genérico de referências entre demais objetos CTX (2.5.4), a
++integração executável P2/P3 → CTX → P4/P5 (2.5.5), nem qualquer item da
++ação 2.6.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -399,3 +424,4 @@
+ | 0.2 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.0, commit de implementação, testes cobertos e proveniência das evidências reconstruídas. | — |
+ | 0.3 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.1: quatro objetos CTX, cobertura T01–T11, regressão acumulada, commit e evidências contemporâneas. | — |
+ | 0.4 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.2: curadoria de `contexto/`, autoria dupla, versionamento I→V sem sobrescrita, correção do achado do baseline em `validar.py --autor` e de um defeito adicional na convenção lexical de autor-agente, cobertura T01–T17, regressão acumulada 44→61. | — |
++| 0.5 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.3: taxonomia oficial de confronto (EMCIA-ROT-01 3.9), registro estruturado `contexto/divergencias/` para P3d, resolução mínima de `referencia_p3d` (CTX-V11 mínimo), versionamento estendido a mudança de `classificacao_confronto`, cobertura T01–T13, regressão acumulada 61→73. | — |

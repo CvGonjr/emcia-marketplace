@@ -1,0 +1,43 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T10
+REQUISITO: atualizacao do confronto preserva historico
+DATA/HORA: 2026-09-18T17:03:43-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-010.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-010.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-010.yaml --registrado-por Rafael Nogueira
+[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-010.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+[3] 1
+[4] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+mudar classificacao_confronto sem nova versao/historico e recusado; com versao nova e historico e aceito
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-010.yaml
+--- comando 2 ---
+divergencia curado: contexto/divergencias/DIV-010.yaml
+--- comando 3 ---
+--- comando 4 ---
+regra curado: contexto/regras/RN-010.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+--- comando 3 ---
+mudanca de classificacao_confronto exige nova versao (recebido versao 1 -> 1); sobrescrita nao e permitida
+mudanca de classificacao_confronto exige historico com a versao anterior preservada (data, responsavel e motivo)
+--- comando 4 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:03:43", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-010.yaml", "id": "RN-010", "procedencia": "D", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

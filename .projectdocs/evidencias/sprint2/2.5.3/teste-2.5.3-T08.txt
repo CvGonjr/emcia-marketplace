@@ -1,0 +1,27 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T08
+REQUISITO: estrutura antiga estatuto/divergencia nao existe mais
+DATA/HORA: 2026-09-18T17:03:42-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-008.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+campos obsoletos ausentes do schema (migrados no 2.5.1); Regra atual usa classificacao_confronto
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-008.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:03:42", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-008.yaml", "id": "RN-008", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

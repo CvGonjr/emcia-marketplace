@@ -1,0 +1,27 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T09
+REQUISITO: classificacao que nao exige referencia_p3d
+DATA/HORA: 2026-09-18T17:03:42-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-009.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+'nao_documentada' aceita sem referencia_p3d (ROT-01 3.9 nao define vinculo obrigatorio para essa classe; CTX-01 3.5 so descreve o conteudo minimo exigido quando classe=divergente)
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-009.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:03:42", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-009.yaml", "id": "RN-009", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

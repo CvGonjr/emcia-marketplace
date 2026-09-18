@@ -1,0 +1,27 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T12
+REQUISITO: controle humano valido
+DATA/HORA: 2026-09-18T17:03:43-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-012.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+registro de confronto curado por pessoa nomeada
+
+STDOUT:
+--- comando 1 ---
+divergencia curado: contexto/divergencias/DIV-012.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:03:43", "tipo_objeto": "divergencia", "arquivo": "contexto/divergencias/DIV-012.yaml", "id": "DIV-012", "procedencia": null, "versao": null, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,27 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T04
+REQUISITO: divergencia com referencia_p3d inexistente
+DATA/HORA: 2026-09-18T17:03:42-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-004.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: DIV-999 nao resolve
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+referencia_p3d 'DIV-999' nao resolve para registro existente em contexto/divergencias/
+
+EVENTO RELACIONADO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:03:42", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-004.yaml", "erros": ["referencia_p3d 'DIV-999' nao resolve para registro existente em contexto/divergencias/"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,27 @@
+PACOTE: 2.5.3
+TESTE: 2.5.3-T11
+REQUISITO: agente nao confirma confronto humano
+DATA/HORA: 2026-09-18T17:03:43-03:00
+HEAD INICIAL: c67ea6219c6c78232850e66641ec05349cd83abe
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-011.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: autor nao pode ser agente
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+autor nao pode ser agente: 'AG-01'
+
+EVENTO RELACIONADO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:03:43", "tipo_objeto": "divergencia", "arquivo": "contexto/divergencias/DIV-011.yaml", "erros": ["autor nao pode ser agente: 'AG-01'"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS
