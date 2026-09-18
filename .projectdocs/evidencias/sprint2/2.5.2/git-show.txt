@@ -1,0 +1,923 @@
+commit c9df31f5342b2a81705066b409883874a005fbad
+Author: valejr <CvGonjr@github.com>
+Date:   Fri Sep 18 16:39:41 2026 -0300
+
+    feat(context): enforce curation and immutable provenance history
+    
+    Adiciona curar.py como unico caminho de escrita em contexto/, espelhando
+    validar.py para os quatro objetos CTX estruturados. Fecha o bypass do
+    baseline (guarda.py G2b), impede autor agente em autoria_conteudo/
+    registrado_por/declarado_por, e recusa mudanca de procedencia (I->V) sem
+    nova versao e historico que preserve a versao anterior.
+    
+    Corrige tambem o achado do baseline em validar.py --autor, nunca
+    verificado, e um defeito adicional descoberto na correcao: a convencao
+    lexical de agente nao cobria "AG-01" com hifen. autor_e_agente() e
+    centralizada em estado.py e reutilizada por selar.py, avancar.py,
+    validar.py e curar.py.
+    
+    17 testes novos em testes/curadoria.py, regressao acumulada 44 -> 61,
+    0 FAIL.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ eiac-campo/.claude-plugin/plugin.json              |   2 +-
+ eiac-campo/template-caso/CLAUDE.md                 |   5 +-
+ eiac-campo/template-caso/contexto/README.md        |  19 +-
+ .../contexto/regras/RN-000-modelo.yaml             |   3 +-
+ eiac-nucleo/.claude-plugin/plugin.json             |   2 +-
+ eiac-nucleo/README.md                              |   9 +
+ eiac-nucleo/commands/curar.md                      |  12 +
+ eiac-nucleo/scripts/avancar.py                     |   2 +-
+ eiac-nucleo/scripts/curar.py                       | 177 ++++++++++
+ eiac-nucleo/scripts/estado.py                      |  16 +-
+ eiac-nucleo/scripts/guarda.py                      |  14 +
+ eiac-nucleo/scripts/selar.py                       |   2 +-
+ eiac-nucleo/scripts/validar.py                     |   5 +-
+ testes/README.md                                   |  32 +-
+ testes/curadoria.py                                | 369 +++++++++++++++++++++
+ 15 files changed, 655 insertions(+), 14 deletions(-)
+
+==================================================================
+
+commit c9df31f5342b2a81705066b409883874a005fbad
+Author: valejr <CvGonjr@github.com>
+Date:   Fri Sep 18 16:39:41 2026 -0300
+
+    feat(context): enforce curation and immutable provenance history
+    
+    Adiciona curar.py como unico caminho de escrita em contexto/, espelhando
+    validar.py para os quatro objetos CTX estruturados. Fecha o bypass do
+    baseline (guarda.py G2b), impede autor agente em autoria_conteudo/
+    registrado_por/declarado_por, e recusa mudanca de procedencia (I->V) sem
+    nova versao e historico que preserve a versao anterior.
+    
+    Corrige tambem o achado do baseline em validar.py --autor, nunca
+    verificado, e um defeito adicional descoberto na correcao: a convencao
+    lexical de agente nao cobria "AG-01" com hifen. autor_e_agente() e
+    centralizada em estado.py e reutilizada por selar.py, avancar.py,
+    validar.py e curar.py.
+    
+    17 testes novos em testes/curadoria.py, regressao acumulada 44 -> 61,
+    0 FAIL.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 5f00cec..6a8fefd 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.4",
++  "version": "0.3.5",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/CLAUDE.md b/eiac-campo/template-caso/CLAUDE.md
+index a4eec48..fd59532 100644
+--- a/eiac-campo/template-caso/CLAUDE.md
++++ b/eiac-campo/template-caso/CLAUDE.md
+@@ -6,6 +6,8 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
+ 
+ **Nunca escreva direto em `caso/`.** Escreva o conteúdo em `rascunho/` e grave com `/eiac-nucleo:gravar`. A guarda bloqueia a escrita direta e registra a tentativa.
+ 
++**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra ou fonte) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) exige versão nova com histórico — nunca sobrescrita.
++
+ **Toda asserção carrega marcação.** Formato:
+ 
+ ```
+@@ -33,7 +35,8 @@ registro/playbook.json    o método como arquivo — não editar durante o caso
+ registro/estado.json      etapa corrente e cumprimentos
+ registro/eventos.jsonl    trilha de auditoria
+ fontes/                   artefatos da organização, só leitura
+-rascunho/                 conteúdo proposto, antes do validador
++rascunho/                 conteúdo proposto, antes do validador ou curador
+ caso/                     asserções gravadas
++contexto/                 termos, entidades, regras e fontes curados (CA4)
+ metodo/                   documentos do método, só leitura
+ ```
+diff --git a/eiac-campo/template-caso/contexto/README.md b/eiac-campo/template-caso/contexto/README.md
+index a8b7c8f..0749576 100644
+--- a/eiac-campo/template-caso/contexto/README.md
++++ b/eiac-campo/template-caso/contexto/README.md
+@@ -14,7 +14,7 @@ Os modelos seguem o EMCIA-CTX-01 v0.4. O contrato estrutural executável está
+ em `registro/contexto.schema.json`; ele declara campos obrigatórios, tipos,
+ padrões de identificador e as condições mínimas de procedência.
+ 
+-Para validar uma instância, a partir da raiz do caso:
++Para validar uma instância sem gravar nada, a partir da raiz do caso:
+ 
+ ```bash
+ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/estrutura.py" \
+@@ -23,12 +23,21 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/estrutura.py" \
+ 
+ ## Trava de curadoria
+ 
+-Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `procedencia: I`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
++`contexto/` não aceita escrita direta — a guarda bloqueia `Write`/`Edit`/redirecionamento de shell para dentro do diretório, do mesmo modo que já bloqueia `caso/`. O único caminho de gravação é o curador:
++
++```bash
++python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" \
++  --tipo regra --arquivo contexto/regras/RN-001.yaml --registrado-por "Nome da pessoa"
++```
++
++O candidato precisa estar em `rascunho/<mesmo-nome>`. O curador valida a estrutura pelo schema, confere que `autoria_conteudo`, `declarado_por` e `registrado_por` são pessoa nomeada (nunca agente) e só grava se passar.
++
++Quando já existe um registro curado com o mesmo id e a mudança altera a `procedencia` — por exemplo `I` → `V` — o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior (versão, data e responsável). Sobrescrever a versão existente sem esse histórico é recusado; a versão anterior permanece legível dentro do registro atualizado.
+ 
+ O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
+-com `procedencia: I` e premissa. Os campos de autoria, histórico e confronto
+-já fazem parte da estrutura; as regras comportamentais de curadoria,
+-versionamento e resolução referencial pertencem aos pacotes seguintes.
++com `procedencia: I` e premissa. A resolução referencial entre objetos
++(Regra → Entidade, Regra → Fonte etc.) e a semântica completa de
++`classificacao_confronto`/`referencia_p3d` pertencem aos pacotes seguintes.
+ 
+ ## Quadro frequência × consequência
+ 
+diff --git a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+index 37e53f8..7b6d4dd 100644
+--- a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+@@ -28,6 +28,7 @@ entradas: []                   # IDs de entidades, termos e fontes
+ excecoes_conhecidas: []
+ estabilidade: ""
+ 
+-# A logica de nova versao e de transicao I -> V pertence ao pacote 2.5.2.
++# Mudanca de procedencia exige versao nova e entrada de historico com a
++# versao anterior preservada — curar.py recusa sobrescrita (CTX-01 3.11-3.13).
+ versao: 1
+ historico: []
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 94f42c8..c541be0 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.7",
++  "version": "0.2.8",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/README.md b/eiac-nucleo/README.md
+index 62e64be..29582a4 100644
+--- a/eiac-nucleo/README.md
++++ b/eiac-nucleo/README.md
+@@ -18,6 +18,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
+ | `guarda.py` | Hook `PreToolUse`. Três regras, `exit 2` bloqueia |
+ | `validar.py` | Único caminho de escrita em `caso/` |
+ | `estrutura.py` | Valida objetos estruturados contra schema declarado no caso |
++| `curar.py` | Único caminho de escrita em `contexto/`; impõe versionamento sem sobrescrita |
+ | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
+ | `estado.py` | Lê e grava o Registro; emite eventos |
+ | `playbook.py` | Carrega e valida o playbook |
+@@ -47,6 +48,14 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
+ | I-11 | O selo sai com o autor nomeado, não com a identidade da máquina | `selar.py` |
+ | I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
+ | I-13 | Documento citado existe em `fontes/` e tem o hash na trilha | `validar.py` |
++| I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
++| I-15 | Mudança de procedência em `contexto/` só entra como versão nova, com histórico | `curar.py` |
++
++`autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
++`validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador
++de agente como autor humano. É uma convenção de nome, não identidade tipada
++de ator — limitação assumida enquanto o núcleo não tiver um contrato de
++papel/ator mais rico.
+ 
+ ## Limite honesto
+ 
+diff --git a/eiac-nucleo/commands/curar.md b/eiac-nucleo/commands/curar.md
+new file mode 100644
+index 0000000..fea11f1
+--- /dev/null
++++ b/eiac-nucleo/commands/curar.md
+@@ -0,0 +1,12 @@
++---
++description: Cura um objeto de contexto (termo, entidade, regra ou fonte) do rascunho para contexto/, com versionamento.
++argument-hint: <tipo> <arquivo de destino em contexto/>
++---
++O candidato precisa estar em `rascunho/<nome>`, estruturado conforme o schema do caso.
++
++Execute:
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo <tipo> --arquivo contexto/<tipo>s/<id>.yaml --registrado-por "<nome da pessoa>"`
++
++Se já existir um registro curado com o mesmo id e a procedência mudar (por exemplo I → V), o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior — a curadoria recusa sobrescrita.
++
++Se houver recusa, corrija o rascunho e tente de novo. **Não contorne escrevendo direto em `contexto/`** — a guarda bloqueia e a tentativa fica registrada.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 549c2ac..f00ef16 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -94,7 +94,7 @@ def main():
+     pb, erro = P.carregar()
+     if not st or erro:
+         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
+-    if a.autor.lower().startswith(("ag0", "agente", "sistema")):
++    if E.autor_e_agente(a.autor):
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+ 
+     if a.apurar_nivel:
+diff --git a/eiac-nucleo/scripts/curar.py b/eiac-nucleo/scripts/curar.py
+new file mode 100644
+index 0000000..2858c96
+--- /dev/null
++++ b/eiac-nucleo/scripts/curar.py
+@@ -0,0 +1,177 @@
++"""Curadoria dos objetos CTX. Unico caminho de escrita em contexto/.
++
++Uso:  python3 curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml \
++          --registrado-por "Nome"
++
++Le o candidato de rascunho/<mesmo-nome>, valida a estrutura pelo schema do
++caso (estrutura.py), confere autoria e procedencia, e so grava em
++contexto/<tipo>s/ se tudo passar. Quando ja existe uma versao anterior do
++mesmo id, a gravacao so ocorre como nova versao com historico preservado
++(CTX-01 3.11-3.13) — nunca como sobrescrita do registro anterior.
++
++O nucleo nao decide merito de conteudo; decide apenas se a mudanca de
++procedencia e a trilha de versao estao presentes, conforme o schema
++declarado pelo caso.
++"""
++import argparse
++import pathlib
++import sys
++
++sys.path.insert(0, str(pathlib.Path(__file__).parent))
++import estado as E
++import estrutura as X
++import json
++
++
++def _campo(dados, nome):
++    return dados.get(nome)
++
++
++def checar_autoria(dados):
++    """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
++
++    O objeto Fonte nao tem autoria_conteudo no CTX-01 (so registrado_por);
++    os demais tres tem os dois campos.
++    """
++    erros = []
++    for campo in ("autoria_conteudo", "declarado_por", "registrado_por"):
++        valor = dados.get(campo)
++        if valor is None:
++            continue
++        if E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_versao(anterior, candidato, tipo):
++    """CTX-V04/V10: mudanca de procedencia so entra como versao nova,
++    com historico que preserva a versao anterior recuperavel.
++
++    ``anterior`` e o dict ja gravado em contexto/ (ou None se e registro
++    novo). ``candidato`` e o dict lido do rascunho.
++    """
++    if anterior is None:
++        versao = candidato.get("versao")
++        if versao not in (1, "1"):
++            return [f"registro novo deve nascer na versao 1, recebido {versao!r}"]
++        return []
++
++    erros = []
++    proc_antes = anterior.get("procedencia")
++    proc_depois = candidato.get("procedencia")
++    versao_antes = anterior.get("versao")
++    versao_depois = candidato.get("versao")
++
++    mudou_procedencia = proc_antes != proc_depois
++    historico = candidato.get("historico") or []
++
++    if mudou_procedencia:
++        try:
++            cresceu = int(versao_depois) > int(versao_antes)
++        except (TypeError, ValueError):
++            cresceu = False
++        if not cresceu:
++            erros.append(
++                f"mudanca de procedencia {proc_antes} -> {proc_depois} exige "
++                f"nova versao (recebido versao {versao_antes!r} -> {versao_depois!r}); "
++                f"sobrescrita nao e permitida"
++            )
++        if not isinstance(historico, list) or len(historico) < 1:
++            erros.append(
++                "mudanca de procedencia exige historico com a versao anterior "
++                "preservada (data, responsavel e motivo)"
++            )
++        else:
++            ultima = historico[-1] if isinstance(historico[-1], dict) else {}
++            faltando = [c for c in ("versao", "data") if not ultima.get(c)]
++            responsavel = ultima.get("registrado_por") or ultima.get("confirmado_por")
++            if not responsavel:
++                faltando.append("registrado_por ou confirmado_por")
++            if faltando:
++                erros.append(
++                    f"entrada de historico incompleta para a versao anterior: "
++                    f"faltando {faltando}"
++                )
++            try:
++                if int(ultima.get("versao")) != int(versao_antes):
++                    erros.append(
++                        "historico nao referencia a versao imediatamente anterior"
++                    )
++            except (TypeError, ValueError):
++                erros.append("historico sem numero de versao anterior valido")
++    else:
++        try:
++            regressao = int(versao_depois) < int(versao_antes)
++        except (TypeError, ValueError):
++            regressao = False
++        if regressao:
++            erros.append(
++                f"versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
++            )
++    return erros
++
++
++def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schema.json"):
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, tipo)
++    erros += checar_autoria(candidato)
++    if E.autor_e_agente(registrado_por):
++        erros.append(f"quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
++
++    anterior = None
++    if destino.exists():
++        try:
++            anterior = X.carregar_yaml(destino.read_text(encoding="utf-8"))
++        except (X.ErroYaml, ValueError) as erro:
++            return f"registro curado existente esta ilegivel: {erro}"
++    erros += checar_versao(anterior, candidato, tipo)
++
++    if erros:
++        E.evento(
++            "CuradoriaRecusada", tipo_objeto=tipo, arquivo=str(destino),
++            erros=erros, registrado_por=registrado_por,
++        )
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    E.evento(
++        "ObjetoContextoCurado", tipo_objeto=tipo, arquivo=str(destino),
++        id=candidato.get("id"), procedencia=candidato.get("procedencia"),
++        versao=candidato.get("versao"), registrado_por=registrado_por,
++        versao_anterior=(anterior or {}).get("versao"),
++    )
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--tipo", required=True)
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em contexto/<tipo>s/<id>.yaml")
++    ap.add_argument("--registrado-por", required=True)
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("contexto/"):
++        print("curadoria so grava dentro de contexto/", file=sys.stderr)
++        sys.exit(1)
++
++    erro = curar(a.tipo, destino, a.registrado_por)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"{a.tipo} curado: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-nucleo/scripts/estado.py b/eiac-nucleo/scripts/estado.py
+index ff85dd6..557ff3a 100644
+--- a/eiac-nucleo/scripts/estado.py
++++ b/eiac-nucleo/scripts/estado.py
+@@ -1,5 +1,5 @@
+ """Le e escreve o Registro do Caso. Unico caminho de mudanca de etapa."""
+-import json, pathlib, sys, datetime
++import json, pathlib, re, sys, datetime
+ 
+ CAMINHO = pathlib.Path("registro/estado.json")
+ 
+@@ -24,6 +24,20 @@ def evento(tipo, **campos):
+         f.write(json.dumps(reg, ensure_ascii=False) + "\n")
+ 
+ 
++def autor_e_agente(nome):
++    """Convencao lexical: nomes de agente/sistema nao sao autor humano.
++
++    O nucleo ainda nao tem identidade tipada de ator; esta e a forma minima
++    consistente com o que ja e verificado em selar.py, validar.py e
++    avancar.py. O separador entre "ag" e o numero (hifen, espaco ou nada)
++    e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".
++    Limitacao: um nome humano que comece por essas silabas seria recusado;
++    nenhum caso assim foi observado no metodo ate aqui.
++    """
++    chave = re.sub(r"[\s\-_]", "", (nome or "").strip().lower())
++    return chave.startswith(("ag0", "agente", "sistema"))
++
++
+ if __name__ == "__main__":
+     e = ler()
+     if not e:
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index cc82b8c..33526f8 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -71,6 +71,20 @@ def main():
+             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
+         )
+ 
++    # G2b — escrita direta na camada de contexto curada
++    escrita_ctx = ferramenta in ("Write", "Edit") and alvo.startswith("contexto/")
++    escrita_ctx_bash = ferramenta == "Bash" and " contexto/" in comando and any(
++        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
++    )
++    if escrita_ctx or escrita_ctx_bash:
++        negar(
++            "Escrita direta em contexto/ nao e permitida. "
++            "Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. "
++            "Toda regra, termo, entidade ou fonte curada exige procedencia, "
++            "autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).",
++            etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
++        )
++
+     # G4 — nivel nao apurado apos F0
+     if etapa_id != "F0" and not nivel:
+         negar(
+diff --git a/eiac-nucleo/scripts/selar.py b/eiac-nucleo/scripts/selar.py
+index 801f054..9c637c6 100644
+--- a/eiac-nucleo/scripts/selar.py
++++ b/eiac-nucleo/scripts/selar.py
+@@ -46,7 +46,7 @@ def main():
+     ap.add_argument("--nota", required=True)
+     a = ap.parse_args()
+ 
+-    if a.autor.lower().startswith(("ag0", "agente", "sistema")):
++    if E.autor_e_agente(a.autor):
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+     if not E.ler():
+         print("nenhum caso aberto neste diretorio", file=sys.stderr); sys.exit(1)
+diff --git a/eiac-nucleo/scripts/validar.py b/eiac-nucleo/scripts/validar.py
+index c5d04f0..a82929e 100644
+--- a/eiac-nucleo/scripts/validar.py
++++ b/eiac-nucleo/scripts/validar.py
+@@ -77,7 +77,7 @@ def validar_linha(marca, pb, n):
+         return f"linha {n}: apuracao estimado exige base"
+     if apur == "medido" and not any(x.startswith("amostra:") for x in c):
+         return f"linha {n}: apuracao medido exige amostra"
+-    if any(x.lower().startswith(("ag0", "agente", "sistema")) for x in c):
++    if any(E.autor_e_agente(x) for x in c):
+         return f"linha {n}: autor nao pode ser agente"
+     return None
+ 
+@@ -92,6 +92,9 @@ def main():
+     if erro:
+         print(erro, file=sys.stderr); sys.exit(1)
+ 
++    if E.autor_e_agente(a.autor):
++        print("quem grava precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
++
+     destino = pathlib.Path(a.arquivo)
+     rascunho = pathlib.Path("rascunho") / destino.name
+     if not rascunho.exists():
+diff --git a/testes/README.md b/testes/README.md
+index bcfe9e4..686a821 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -14,7 +14,13 @@ Os 11 testes estruturais dos quatro objetos CTX rodam separadamente:
+ python3 testes/contexto.py
+ ```
+ 
+-O total acumulado é de 44 verificações.
++Os 17 testes de curadoria, autoria e versionamento I→V rodam separadamente:
++
++```bash
++python3 testes/curadoria.py
++```
++
++O total acumulado é de 61 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -78,6 +84,30 @@ Rodam contra uma cópia temporária do template, sem tocar em caso real.
+ 
+ **Falha aqui é regressão de trava, não de funcionalidade.** Não conserte o teste; conserte a trava.
+ 
++## Curadoria, autoria e versionamento I→V — pacote 2.5.2
++
++| ID | Prova |
++|---|---|
++| 2.5.2-T01 | `D` com autoria humana válida é curado |
++| 2.5.2-T02 | `I` sem premissa é recusado |
++| 2.5.2-T03 | `I` com premissa é curado |
++| 2.5.2-T04 | `V` sem evidência é recusado |
++| 2.5.2-T05 | `V` com evidência é curado |
++| 2.5.2-T06 | Agente como `autoria_conteudo` é recusado |
++| 2.5.2-T07 | Pessoa como `autoria_conteudo` é curada |
++| 2.5.2-T08 | `registrado_por` distinto de `autoria_conteudo` é preservado |
++| 2.5.2-T09 | Sobrescrever `I` por `V` sem nova versão/histórico é recusado |
++| 2.5.2-T10 | `I` → `V` com nova versão e histórico é curado |
++| 2.5.2-T11 | A versão anterior permanece legível dentro do histórico |
++| 2.5.2-T12 | Escrita direta em `contexto/` é negada pela guarda |
++| 2.5.2-T13 | Escrita pelo curador em `contexto/` é aceita *(controle positivo)* |
++| 2.5.2-T14 | Conteúdo em `rascunho/` não é tratado como contexto curado |
++| 2.5.2-T15 | Recusa de curadoria emite `CuradoriaRecusada` |
++| 2.5.2-T16 | Curadoria válida emite `ObjetoContextoCurado` *(controle positivo)* |
++| 2.5.2-T-baseline | `--registrado-por AG-01` (com hífen) não passa como autor humano |
++
++Rodam contra uma cópia temporária do template, sem tocar em caso real.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/curadoria.py b/testes/curadoria.py
+new file mode 100644
+index 0000000..4d59423
+--- /dev/null
++++ b/testes/curadoria.py
+@@ -0,0 +1,369 @@
++#!/usr/bin/env python3
++"""Testes de curadoria, autoria e versionamento I->V do pacote 2.5.2."""
++import argparse
++import datetime
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++
++
++def regra(**over):
++    campos = {
++        "id": "RN-001",
++        "enunciado": "quando a autorizacao chega, a guia e enviada no mesmo dia",
++        "gatilho": "recebimento_da_autorizacao",
++        "procedencia": "D",
++        "autoria_conteudo": "Claudia Ferreira",
++        "registrado_por": "Rafael Nogueira",
++        "data": "2026-09-18",
++        "origem_do_conhecimento": "experiencia_propria",
++        "determinismo": "admite_julgamento",
++        "frequencia": "rotineira",
++        "consequencia_do_erro": "alta",
++        "decisor_quando_nao_cobre": "Claudia Ferreira",
++        "estabilidade": "muda quando o convenio revisa o contrato",
++        "versao": 1,
++    }
++    campos.update(over)
++
++    procedencia = campos["procedencia"]
++    premissa = over.get("premissa", "padrao demonstrado pela amostra" if procedencia == "I" else "")
++    evidencia = over.get("evidencia")
++    if evidencia is None:
++        if procedencia == "V":
++            evidencia_linhas = ["evidencia:", "  tipo: observacao", "  referencia: sessao-P3b-001"]
++        else:
++            evidencia_linhas = ['evidencia: ""']
++    elif evidencia == "":
++        evidencia_linhas = ['evidencia: ""']
++    else:
++        evidencia_linhas = [f"evidencia: {evidencia}"]
++
++    historico = over.get("historico", [])
++    historico_linhas = ["historico: []"] if not historico else (
++        ["historico:"] + [
++            "\n".join([
++                f"  - versao: {h.get('versao')}",
++                f"    data: \"{h.get('data')}\"",
++                f"    procedencia: {h.get('procedencia')}",
++            ] + ([f"    registrado_por: {h['registrado_por']}"] if h.get("registrado_por") else [])
++              + ([f"    confirmado_por: {h['confirmado_por']}"] if h.get("confirmado_por") else [])
++              + ([f"    premissa: \"{h['premissa']}\""] if h.get("premissa") else [])
++              + ([f"    mudanca: \"{h['mudanca']}\""] if h.get("mudanca") else []))
++            for h in historico
++        ]
++    )
++
++    linhas = [
++        f"id: {campos['id']}",
++        f"enunciado: {campos['enunciado']}",
++        f"gatilho: {campos['gatilho']}",
++        f"procedencia: {procedencia}",
++        f"autoria_conteudo: {campos['autoria_conteudo']}",
++        f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f"origem_do_conhecimento: {campos['origem_do_conhecimento']}",
++        f'premissa: "{premissa}"' if premissa else 'premissa: ""',
++    ] + evidencia_linhas + [
++        "classificacao_confronto:",
++        '  classe: ""',
++        '  referencia_p3d: ""',
++        "documento_de_origem: null",
++        f"determinismo: {campos['determinismo']}",
++        f"frequencia: {campos['frequencia']}",
++        f"consequencia_do_erro: {campos['consequencia_do_erro']}",
++        f"decisor_quando_nao_cobre: {campos['decisor_quando_nao_cobre']}",
++        "entradas: []",
++        "excecoes_conhecidas: []",
++        f"estabilidade: {campos['estabilidade']}",
++        f"versao: {campos['versao']}",
++    ] + historico_linhas + [""]
++    return "\n".join(linhas)
++
++
++def preparar_caso(raiz_tmp):
++    caso = raiz_tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def curar(caso, tipo, destino_relativo, conteudo_rascunho, registrado_por):
++    nome = pathlib.Path(destino_relativo).name
++    (caso / "rascunho" / nome).write_text(conteudo_rascunho, encoding="utf-8")
++    comando = [
++        "python3", str(CURADOR), "--tipo", tipo,
++        "--arquivo", destino_relativo, "--registrado-por", registrado_por,
++    ]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return {
++        "comando": " ".join(comando), "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def guarda_hook(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(
++        ["python3", str(GUARDA)], cwd=caso, input=entrada,
++        text=True, capture_output=True, check=False,
++    )
++    return {
++        "comando": f"guarda.py <<< {entrada}", "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def gravar_evidencia(destino, teste, requisito, esperado, obtido, execucoes, passou, head_inicial, evento_relacionado=""):
++    agora = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
++    comandos = "\n".join(f"[{i}] {e['comando']}" for i, e in enumerate(execucoes, 1))
++    codigos = "\n".join(f"[{i}] {e['codigo']}" for i, e in enumerate(execucoes, 1))
++    stdout = "".join(f"--- comando {i} ---\n{e['stdout']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    stderr = "".join(f"--- comando {i} ---\n{e['stderr']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    conteudo = f"""PACOTE: 2.5.2
++TESTE: {teste}
++REQUISITO: {requisito}
++DATA/HORA: {agora}
++HEAD INICIAL: {head_inicial}
++COMANDO:
++{comandos}
++EXIT CODE:
++{codigos}
++
++RESULTADO ESPERADO:
++{esperado}
++
++RESULTADO OBTIDO:
++{obtido}
++
++STDOUT:
++{stdout}
++STDERR:
++{stderr}
++EVENTO RELACIONADO:
++{evento_relacionado or '(nenhum aplicavel)'}
++
++RESULTADO FINAL: {'PASS' if passou else 'FAIL'}
++"""
++    (destino / f"teste-{teste}.txt").write_text(conteudo, encoding="utf-8")
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--evidencias")
++    ap.add_argument("--head-inicial")
++    args = ap.parse_args()
++
++    destino_ev = pathlib.Path(args.evidencias).resolve() if args.evidencias else None
++    if destino_ev:
++        destino_ev.mkdir(parents=True, exist_ok=True)
++    head_inicial = args.head_inicial or subprocess.run(
++        ["git", "rev-parse", "HEAD"], cwd=RAIZ, text=True,
++        capture_output=True, check=True,
++    ).stdout.strip()
++
++    with tempfile.TemporaryDirectory() as tmp:
++        caso = preparar_caso(pathlib.Path(tmp))
++
++        casos = []
++
++        # T01 — D com autoria humana valida
++        def t01():
++            e = curar(caso, "regra", "contexto/regras/RN-001.yaml",
++                      regra(id="RN-001", procedencia="D"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.2-T01", "D com autoria humana valida", "PASS", "registro D curado", t01))
++
++        # T02 — I sem premissa
++        def t02():
++            e = curar(caso, "regra", "contexto/regras/RN-010.yaml",
++                      regra(id="RN-010", procedencia="I", premissa=""), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "premissa" in e["stderr"]
++        casos.append(("2.5.2-T02", "I sem premissa", "RECUSA", "recusado por premissa ausente", t02))
++
++        # T03 — I com premissa
++        def t03():
++            e = curar(caso, "regra", "contexto/regras/RN-011.yaml",
++                      regra(id="RN-011", procedencia="I", premissa="padrao observado na amostra"),
++                      "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.2-T03", "I com premissa", "PASS", "registro I curado", t03))
++
++        # T04 — V sem evidencia
++        def t04():
++            e = curar(caso, "regra", "contexto/regras/RN-012.yaml",
++                      regra(id="RN-012", procedencia="V", evidencia=""), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "evidencia" in e["stderr"]
++        casos.append(("2.5.2-T04", "V sem evidencia", "RECUSA", "recusado por evidencia ausente", t04))
++
++        # T05 — V com evidencia
++        def t05():
++            e = curar(caso, "regra", "contexto/regras/RN-013.yaml",
++                      regra(id="RN-013", procedencia="V"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.2-T05", "V com evidencia", "PASS", "registro V curado", t05))
++
++        # T06 — agente como autoria_conteudo
++        def t06():
++            e = curar(caso, "regra", "contexto/regras/RN-014.yaml",
++                      regra(id="RN-014", autoria_conteudo="AG-01"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "autoria_conteudo" in e["stderr"] and "agente" in e["stderr"]
++        casos.append(("2.5.2-T06", "agente como autoria_conteudo", "RECUSA",
++                       "recusado: autoria_conteudo nao pode ser agente", t06))
++
++        # T07 — pessoa como autoria_conteudo
++        def t07():
++            e = curar(caso, "regra", "contexto/regras/RN-015.yaml",
++                      regra(id="RN-015", autoria_conteudo="Ana Beatriz Souza"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.2-T07", "pessoa como autoria_conteudo", "PASS", "registro curado", t07))
++
++        # T08 — registrado_por distinto de autoria_conteudo
++        def t08():
++            e = curar(caso, "regra", "contexto/regras/RN-016.yaml",
++                      regra(id="RN-016", autoria_conteudo="Pessoa A", registrado_por="Pessoa B"),
++                      "Pessoa B")
++            ok = e["codigo"] == 0
++            if ok:
++                conteudo = (caso / "contexto/regras/RN-016.yaml").read_text()
++                ok = "autoria_conteudo: Pessoa A" in conteudo and "registrado_por: Pessoa B" in conteudo
++            return [e], ok
++        casos.append(("2.5.2-T08", "registrado_por distinto de autoria_conteudo", "PASS",
++                       "papeis distintos preservados no registro", t08))
++
++        # T09 — tentativa de sobrescrever I com V sem nova versao/historico
++        def t09():
++            e1 = curar(caso, "regra", "contexto/regras/RN-020.yaml",
++                       regra(id="RN-020", procedencia="I", versao=1), "Rafael Nogueira")
++            e2 = curar(caso, "regra", "contexto/regras/RN-020.yaml",
++                       regra(id="RN-020", procedencia="V", versao=1, historico=[]), "Rafael Nogueira")
++            return [e1, e2], e1["codigo"] == 0 and e2["codigo"] != 0 and "sobrescrita" in e2["stderr"]
++        casos.append(("2.5.2-T09", "sobrescrever I por V sem nova versao", "RECUSA",
++                       "v1 curada, sobrescrita para V recusada", t09))
++
++        # T10 — I -> V com nova versao
++        def t10():
++            e1 = curar(caso, "regra", "contexto/regras/RN-021.yaml",
++                       regra(id="RN-021", procedencia="I", versao=1), "Rafael Nogueira")
++            e2 = curar(caso, "regra", "contexto/regras/RN-021.yaml",
++                       regra(id="RN-021", procedencia="V", versao=2, historico=[
++                           {"versao": 1, "data": "2026-09-12", "procedencia": "I",
++                            "registrado_por": "Rafael Nogueira",
++                            "premissa": "padrao demonstrado pela amostra"},
++                       ]), "Rafael Nogueira")
++            return [e1, e2], e1["codigo"] == 0 and e2["codigo"] == 0
++        casos.append(("2.5.2-T10", "I -> V com nova versao", "PASS",
++                       "v1 (I) curada, v2 (V) curada com historico", t10))
++
++        # T11 — historico preservado (v1 recuperavel apos v2)
++        def t11():
++            e1 = curar(caso, "regra", "contexto/regras/RN-022.yaml",
++                       regra(id="RN-022", procedencia="I", versao=1), "Rafael Nogueira")
++            e2 = curar(caso, "regra", "contexto/regras/RN-022.yaml",
++                       regra(id="RN-022", procedencia="V", versao=2, historico=[
++                           {"versao": 1, "data": "2026-09-12", "procedencia": "I",
++                            "registrado_por": "Rafael Nogueira",
++                            "premissa": "padrao demonstrado pela amostra"},
++                       ]), "Rafael Nogueira")
++            conteudo = (caso / "contexto/regras/RN-022.yaml").read_text()
++            recuperavel = "versao: 1" in conteudo and "procedencia: I" in conteudo
++            return [e1, e2], e1["codigo"] == 0 and e2["codigo"] == 0 and recuperavel
++        casos.append(("2.5.2-T11", "historico preservado", "PASS",
++                       "versao 1 (I) permanece legivel dentro do registro v2", t11))
++
++        # T12 — escrita direta em contexto/ (bypass)
++        def t12():
++            e = guarda_hook(caso, "Write", {"file_path": "contexto/regras/RN-099.yaml"})
++            return [e], e["codigo"] == 2 and "contexto/" in e["stderr"]
++        casos.append(("2.5.2-T12", "escrita direta em contexto/", "RECUSA",
++                       "guarda bloqueia com rc=2", t12))
++
++        # T13 — escrita autorizada em contexto/ (curadoria)
++        def t13():
++            e = curar(caso, "regra", "contexto/regras/RN-023.yaml",
++                      regra(id="RN-023"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("2.5.2-T13", "escrita autorizada em contexto/", "PASS",
++                       "curadoria grava normalmente", t13))
++
++        # T14 — rascunho nao e contexto curado
++        def t14():
++            (caso / "rascunho" / "RN-030.yaml").write_text(regra(id="RN-030"), encoding="utf-8")
++            existe_em_contexto = (caso / "contexto/regras/RN-030.yaml").exists()
++            return [], not existe_em_contexto
++        casos.append(("2.5.2-T14", "rascunho nao e contexto curado", "PASS",
++                       "conteudo em rascunho/ nao aparece em contexto/ sem curadoria", t14))
++
++        # T15 — recusa gera evento
++        def t15():
++            antes = len(eventos(caso))
++            e = curar(caso, "regra", "contexto/regras/RN-040.yaml",
++                      regra(id="RN-040", procedencia="I", premissa=""), "Rafael Nogueira")
++            depois = eventos(caso)
++            gerou = len(depois) > antes and depois[-1].get("evento") == "CuradoriaRecusada"
++            return [e], e["codigo"] != 0 and gerou
++        casos.append(("2.5.2-T15", "recusa gera evento", "RECUSA + evento",
++                       "CuradoriaRecusada registrado em eventos.jsonl", t15))
++
++        # T16 — operacao valida gera trilha suficiente
++        def t16():
++            antes = len(eventos(caso))
++            e = curar(caso, "regra", "contexto/regras/RN-041.yaml",
++                      regra(id="RN-041"), "Rafael Nogueira")
++            depois = eventos(caso)
++            gerou = len(depois) > antes and depois[-1].get("evento") == "ObjetoContextoCurado"
++            return [e], e["codigo"] == 0 and gerou
++        casos.append(("2.5.2-T16", "operacao valida gera trilha", "PASS + evento",
++                       "ObjetoContextoCurado registrado em eventos.jsonl", t16))
++
++        # T-baseline — --autor/--registrado-por AG-01 nao passa como autor humano
++        def t_baseline():
++            e = curar(caso, "regra", "contexto/regras/RN-050.yaml",
++                      regra(id="RN-050"), "AG-01")
++            return [e], e["codigo"] != 0 and "pessoa nomeada" in e["stderr"]
++        casos.append(("2.5.2-T-baseline", "registrado-por AG-01 (achado do baseline)", "RECUSA",
++                       "recusado: quem cura precisa ser pessoa nomeada", t_baseline))
++
++        falhas = 0
++        print("== curadoria, autoria e versionamento I->V — pacote 2.5.2")
++        for teste, requisito, esperado, obtido, executar in casos:
++            execucoes, passou = executar()
++            evento_txt = ""
++            if execucoes:
++                todos = eventos(caso)
++                if todos:
++                    evento_txt = json.dumps(todos[-1], ensure_ascii=False)
++            if destino_ev:
++                gravar_evidencia(destino_ev, teste, requisito, esperado, obtido,
++                                  execucoes, passou, head_inicial, evento_txt)
++            if passou:
++                print(f"  ok    {teste} {requisito}")
++            else:
++                falhas += 1
++                print(f"  FALHA {teste} {requisito}")
++                for e in execucoes:
++                    print(f"        stdout={e['stdout']!r} stderr={e['stderr']!r}")
++
++    if falhas:
++        print(f"\n{falhas} teste(s) de curadoria falharam")
++        raise SystemExit(1)
++    print(f"\n{len(casos)} testes de curadoria aprovados")
++
++
++if __name__ == "__main__":
++    main()

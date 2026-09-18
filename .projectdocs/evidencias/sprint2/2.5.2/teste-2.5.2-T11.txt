@@ -1,0 +1,32 @@
+PACOTE: 2.5.2
+TESTE: 2.5.2-T11
+REQUISITO: historico preservado
+DATA/HORA: 2026-09-18T16:37:19-03:00
+HEAD INICIAL: 61af78ce2886757be2c110ddca8a6a714a272421
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-022.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-022.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+versao 1 (I) permanece legivel dentro do registro v2
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-022.yaml
+--- comando 2 ---
+regra curado: contexto/regras/RN-022.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+
+EVENTO RELACIONADO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T16:37:19", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-022.yaml", "id": "RN-022", "procedencia": "V", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

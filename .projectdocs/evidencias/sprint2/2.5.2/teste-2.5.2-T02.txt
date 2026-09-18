@@ -1,0 +1,27 @@
+PACOTE: 2.5.2
+TESTE: 2.5.2-T02
+REQUISITO: I sem premissa
+DATA/HORA: 2026-09-18T16:37:19-03:00
+HEAD INICIAL: 61af78ce2886757be2c110ddca8a6a714a272421
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-010.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado por premissa ausente
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+procedencia I exige campo preenchido: premissa
+
+EVENTO RELACIONADO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T16:37:19", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-010.yaml", "erros": ["procedencia I exige campo preenchido: premissa"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

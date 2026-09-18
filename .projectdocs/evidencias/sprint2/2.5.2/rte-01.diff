@@ -1,0 +1,61 @@
+--- /tmp/claude-1000/-home-netiv-ai-Projetos-AI-PLUGINS-emcia-marketplace/fe141b79-971a-42ab-a29f-19c18bcc9d14/scratchpad/rte01-before.md	2026-09-18 16:42:17.727292941 -0300
++++ "/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md"	2026-09-18 16:40:43.233418122 -0300
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0 e 2.5.1, com evidências contemporâneas no 2.5.1.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1 e 2.5.2, com evidências contemporâneas no 2.5.1 e no 2.5.2.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.3 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.4 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -244,7 +244,7 @@
+ | **S2-BL** | Transversal | Registrar o estado inicial sem alteração de código. | Concluído |
+ | **2.5.0** | Contexto e Dados | Normalizar o contrato documental D/I/V. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | IMPLEMENTADO MAS DIVERGENTE |
+-| **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Não iniciado |
++| **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Concluído |
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Não iniciado |
+ | **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Não iniciado |
+ | **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Não iniciado |
+@@ -305,6 +305,30 @@
+ semântica obrigatória de P3d, CTX-V01–V11 e integração P2/P3 → P4/P5 não
+ foram antecipados; permanecem atribuídos aos pacotes 2.5.2 a 2.5.5.
+ 
++#### 3.10.3 Pacote 2.5.2 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.2` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Objetivo** | Implementar curadoria, autoria (`autoria_conteudo` × `registrado_por`), premissa/evidência, histórico e transição I→V sem sobrescrita. |
++| **Requisitos / baseline** | `D-03`, `2.5-BL07`, `2.5-BL08`, `2.5-BL09`, `2.5-BL10`, `2.5-BL11`, `2.5-BL12`, `2.5-BL13` |
++| **Estado inicial** | `HEAD_INICIAL_2.5.2 = 61af78ce2886757be2c110ddca8a6a714a272421`, working tree limpa. Evidência/evidência obrigatória e premissa obrigatória já `JÁ IMPLEMENTADO E CONFORME` desde o 2.5.1 (`conditional_nonempty` do schema); autoria dupla, histórico/versionamento, rascunho×contexto e agente-como-autor estavam `PARCIAL` ou `AUSENTE` — os campos existiam no schema, mas nenhum código verificava conteúdo humano, comparava versão anterior ou protegia `contexto/` contra escrita direta. |
++| **Implementação** | Novo `eiac-nucleo/scripts/curar.py`: único caminho de escrita em `contexto/`, reaproveitando `estrutura.validar()` para a checagem estrutural e acrescentando checagem de autoria e de versionamento. Nova regra G2b em `guarda.py` bloqueia escrita direta em `contexto/`, espelhando a proteção já existente para `caso/`. Convenção lexical de autor-agente centralizada em `estado.autor_e_agente()` e reutilizada por `selar.py`, `avancar.py`, `validar.py` e `curar.py`. |
++| **Testes** | `2.5.2-T01` a `2.5.2-T16` (mínimo obrigatório da instrução do pacote) + um teste adicional do achado específico do baseline (`--registrado-por AG-01`) + `2.5.2-T17` como regressão acumulada. |
++| **Defeitos** | (1) Reprodução confirmada do achado do baseline: `validar.py --autor` nunca era verificado contra a convenção de nome de agente. (2) Defeito adicional descoberto durante a correção: a convenção lexical `startswith(("ag0","agente","sistema"))`, já usada desde pacotes anteriores, não cobria `"AG-01"` com hífen, porque `"ag-01"` não começa por `"ag0"`. Os testes anteriores só exercitavam `AG05` (sem hífen), por isso o ponto cego nunca havia aparecido. |
++| **Correções** | `autor_e_agente()` normaliza hífen/espaço/underscore antes de comparar; `validar.py --autor` passa a ser verificado; `curar.py` verifica `--registrado-por` e os campos `autoria_conteudo`/`declarado_por`/`registrado_por` do YAML candidato; `selar.py`/`avancar.py`/`validar.py` passaram a usar a função centralizada em vez de três cópias da mesma regra. |
++| **Reteste** | 61/61 verificações aprovadas, 0 falhas, 0 skips: 33 de `negativos.sh` + 11 de `contexto.py` (sem regressão) + 17 novas de `curadoria.py`. |
++| **Eventos** | `ObjetoContextoCurado` (criação e cada nova versão curada) e `CuradoriaRecusada` (qualquer recusa), emitidos por `curar.py`; `TentativaNegada`, emitido por `guarda.py` G2b, para bypass de escrita direta em `contexto/`. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.2/resultado.md` |
++| **Commit** | `c9df31f` — `feat(context): enforce curation and immutable provenance history` |
++| **Estado final** | **CONFORME** |
++
++Este pacote não implementou `classificacao_confronto`/`referencia_p3d`
++(2.5.3), CTX-V01–V11 como bateria formal completa ou validação referencial
++entre objetos (2.5.4), integração executável P2/P3 → CTX → P4/P5 (2.5.5),
++nem qualquer item da ação 2.6.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -374,3 +398,4 @@
+ | 0.1 | 18/09/2026 | Celso do Vale | Versão inicial: cadeia de evidência, convenção de armazenamento, modelo de registro por pacote, baseline S2-BL, dívidas iniciais e integração com as ações 2.5 e 2.6. | — |
+ | 0.2 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.0, commit de implementação, testes cobertos e proveniência das evidências reconstruídas. | — |
+ | 0.3 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.1: quatro objetos CTX, cobertura T01–T11, regressão acumulada, commit e evidências contemporâneas. | — |
++| 0.4 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.2: curadoria de `contexto/`, autoria dupla, versionamento I→V sem sobrescrita, correção do achado do baseline em `validar.py --autor` e de um defeito adicional na convenção lexical de autor-agente, cobertura T01–T17, regressão acumulada 44→61. | — |

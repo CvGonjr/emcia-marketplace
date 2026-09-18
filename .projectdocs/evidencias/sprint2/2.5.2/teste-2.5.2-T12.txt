@@ -1,0 +1,27 @@
+PACOTE: 2.5.2
+TESTE: 2.5.2-T12
+REQUISITO: escrita direta em contexto/
+DATA/HORA: 2026-09-18T16:37:19-03:00
+HEAD INICIAL: 61af78ce2886757be2c110ddca8a6a714a272421
+COMANDO:
+[1] guarda.py <<< {"tool_name": "Write", "tool_input": {"file_path": "contexto/regras/RN-099.yaml"}}
+EXIT CODE:
+[1] 2
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+guarda bloqueia com rc=2
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).
+
+EVENTO RELACIONADO:
+{"evento": "TentativaNegada", "data": "2026-09-18T16:37:19", "motivo": "Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).", "etapa": "F0", "ferramenta": "Write", "alvo": "contexto/regras/RN-099.yaml"}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,27 @@
+PACOTE: 2.5.2
+TESTE: 2.5.2-T-baseline
+REQUISITO: registrado-por AG-01 (achado do baseline)
+DATA/HORA: 2026-09-18T16:37:19-03:00
+HEAD INICIAL: 61af78ce2886757be2c110ddca8a6a714a272421
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-050.yaml --registrado-por AG-01
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: quem cura precisa ser pessoa nomeada
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+quem cura precisa ser pessoa nomeada, recebido 'AG-01'
+
+EVENTO RELACIONADO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T16:37:19", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-050.yaml", "erros": ["quem cura precisa ser pessoa nomeada, recebido 'AG-01'"], "registrado_por": "AG-01"}
+
+RESULTADO FINAL: PASS
