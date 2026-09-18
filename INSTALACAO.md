@@ -151,12 +151,12 @@ echo '- [Celso · 2026-09-11] alguma regra' > rascunho/P2.md
 python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --autor "Celso"
 ```
 
-**Esperado:** recusa com *origem ausente*, e `AssercaoRecusada` no log.
+**Esperado:** recusa com *procedencia ausente*, e `AssercaoRecusada` no log.
 
 ### Teste 4 — asserção válida
 
 ```bash
-echo '- [inferido · premissa: documento reflete a pratica · Celso] guias seguem fila unica' > rascunho/P2.md
+echo '- [I · premissa: documento reflete a pratica · Celso] guias seguem fila unica' > rascunho/P2.md
 python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --autor "Celso"
 ```
 

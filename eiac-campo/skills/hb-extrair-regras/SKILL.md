@@ -10,7 +10,7 @@ description: Extrai regras candidatas dos documentos entregues e lista o que ele
 
 **Procedimento:** documento do método, passo 2.
 
-**Toda candidata nasce `inferido`,** mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
+**Toda candidata nasce `I`,** mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
 
 **Não sintetize.** Cada candidata exige documento, página e trecho literal. Sem trecho, não grave.
 

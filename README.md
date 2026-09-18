@@ -71,7 +71,7 @@ Antes de confiar em qualquer coisa, prove que ela recusa.
 |---|---|---|
 | 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso | Bloqueio, `TentativaNegada` no log |
 | 2 | Escrever direto em `caso/qualquer.md` | Bloqueio, com instrução de usar o validador |
-| 3 | Gravar rascunho com asserção sem origem | Recusa, `AssercaoRecusada` no log |
+| 3 | Gravar rascunho com asserção sem procedência D/I/V | Recusa, `AssercaoRecusada` no log |
 | 4 | `/eiac-nucleo:encerrar P3b` sem sessão registrada | Recusa |
 | 5 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
 | 6 | `--autor AG05` em qualquer script | Recusa |

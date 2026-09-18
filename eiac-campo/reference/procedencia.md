@@ -1,53 +1,66 @@
-# Procedência — referência obrigatória
+# Procedência documental — referência obrigatória
 
-Toda asserção gravada no repositório do caso carrega três marcações. Duas sempre, a terceira só quando houver número.
+Toda asserção gravada no repositório do caso carrega exatamente uma marca
+de procedência:
 
-## Contexto — quem produziu
+| Código | Rótulo | Quando usar | Exige |
+|---|---|---|---|
+| `D` | Declarada | A organização forneceu a informação, ainda não verificada | Autor e data |
+| `I` | Inferida | Pessoa ou ferramenta deduziu a informação | `premissa:` explícita |
+| `V` | Verificada | Observação, documento-fonte ou leitura de volta confirmou a informação | Evidência identificada |
 
-Atribuído pela etapa, nunca escolhido.
+`D` não significa falsa. `I` não passa automaticamente a `V`. A marca não é
+atribuída por modelo de linguagem: um agente pode propor e apontar evidência,
+mas a confirmação segue a curadoria humana prevista pelo método.
 
-| Valor | Quando |
-|---|---|
-| `campo` | Percurso real do método |
-| `antitese` | Braço de controle, sem humano |
-| `conversa` | Fora de caso |
+## Dimensões separadas
 
-## Origem — como foi obtido
+Procedência não descreve meio de contato, local, braço de execução, tipo de
+fonte nem técnica de apuração.
 
-| Valor | Exige | Entra em entregável |
-|---|---|---|
-| `verificado` | Observação direta ou documento interno, com fonte e data | Sim |
-| `declarado` | Autor nomeado e data | Sim, marcado |
-| `inferido` | Premissa explícita | Sim, marcado, requer confirmação |
-| `externo` | URL, data de captura e limite da fonte | Sim, marcado, requer confirmação |
+Quando houver número, a apuração pode ser registrada separadamente:
 
-## Apuração — só para número
-
-| Valor | Exige |
+| Valor de `apuracao` | Exige |
 |---|---|
 | `medido` | Amostra e período |
 | `calculado` | Fórmula e entradas |
 | `estimado` | Base e margem |
 
-**Medição inicial não aceita `estimado`.**
+Uma fonte externa usa `tipo_fonte: externa`, URL e limite da fonte. `externo`
+não é procedência. Os antigos valores `campo`, `antitese`, `conversa`, `livre`
+e `externo` não são aceitos como marca documental.
 
 ## Formato de linha
 
-```
-- [verificado · documento: contrato-padrao.pdf p.3 · 2026-09-08 · Celso]
-  O aceite do cliente precede a abertura do caso.
+Declaração ainda não verificada:
+
+```text
+- [D · Helena · 2026-09-11]
+  O volume informado é de 86 guias por mês.
 ```
 
-```
-- [inferido · premissa: toda etapa presencial exige deslocamento · Celso]
+Inferência com premissa:
+
+```text
+- [I · premissa: toda etapa presencial exige deslocamento · Celso]
   O custo de campo em N2 é dominado por transporte, não por horas.
 ```
 
+Verificação por documento:
+
+```text
+- [V · documento: contrato-padrao.pdf p.3 · 2026-09-08 · Celso]
+  O aceite do cliente precede a abertura do caso.
 ```
-- [declarado · Celso · 2026-09-11 · medido · amostra: 9 casos simulados · periodo: ago/2026]
-  Cinco de nove casos nao eram caso de agente. valor: 5 unidade: casos
+
+Verificação e apuração coexistindo como dimensões distintas:
+
+```text
+- [V · observacao: amostra de agosto · apuracao: medido · amostra: 86 guias · periodo: ago/2026 · Celso]
+  Cinco de 86 guias exigiram retrabalho.
 ```
 
 ## Regra de ouro
 
-**Se você não sabe qual marcação usar, a asserção não está pronta para ser gravada.** Pergunte ao operador em vez de escolher.
+**Se você não sabe se a marca é D, I ou V, a asserção não está pronta para
+ser gravada.** Pergunte ao operador em vez de escolher.

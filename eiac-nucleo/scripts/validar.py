@@ -1,4 +1,4 @@
-"""Validador de procedencia. Unico caminho de escrita em caso/.
+"""Validador de procedencia documental. Unico caminho de escrita em caso/.
 
 Uso:  python3 validar.py --arquivo caso/P2-regras.md --autor "Nome"
 Le o conteudo proposto de rascunho/<mesmo-nome> e so grava se todas as
@@ -27,32 +27,52 @@ def citado(c):
     return None
 
 
+def valor_campo(campos_marca, nome):
+    prefixo = f"{nome}:"
+    for item in campos_marca:
+        if item.startswith(prefixo):
+            return item.split(":", 1)[1].strip() or None
+    return None
+
+
 def validar_linha(marca, pb, n):
     c = campos(marca)
     if not c:
         return f"linha {n}: marcacao vazia"
     proc = pb["procedencia"]
-    origem = next((x for x in c if x in proc["origem"]), None)
-    if not origem:
-        return f"linha {n}: origem ausente. Esperado um de {proc['origem']}"
-    contexto = next((x for x in c if x in proc["contexto"]), "campo")
-    if contexto != "campo":
-        return f"linha {n}: contexto '{contexto}' nao entra em caso/"
-    if origem == "externo" and not any(x.startswith("http") for x in c):
-        return f"linha {n}: origem externo exige url"
-    if origem == "externo" and not any(x.startswith("limite:") for x in c):
-        return f"linha {n}: origem externo exige limite da fonte"
-    if origem == "inferido" and not any(x.startswith("premissa:") for x in c):
-        return f"linha {n}: origem inferido exige premissa"
-    if origem == "verificado" and not any(
-        x.startswith(("observacao", "documento:")) for x in c
+    valores = proc["valores"]
+    marcas = [x for x in c if x in valores]
+    if not marcas:
+        return f"linha {n}: procedencia ausente. Esperado um de {valores}"
+    if len(marcas) != 1:
+        return f"linha {n}: informe exatamente uma procedencia; recebido {marcas}"
+    procedencia = marcas[0]
+    if procedencia == "I" and not any(x.startswith("premissa:") for x in c):
+        return f"linha {n}: procedencia I exige premissa"
+    if procedencia == "V" and not any(
+        x.startswith(("observacao:", "documento:", "leitura_de_volta:")) for x in c
     ):
-        return f"linha {n}: verificado exige observacao ou documento interno"
+        return (f"linha {n}: procedencia V exige evidencia de observacao, "
+                "documento ou leitura de volta")
+
+    dimensoes = pb.get("dimensoes", {})
+    tipo_fonte = valor_campo(c, "tipo_fonte")
+    tipos_fonte = dimensoes.get("tipo_fonte", [])
+    if tipo_fonte and tipo_fonte not in tipos_fonte:
+        return f"linha {n}: tipo_fonte invalido. Esperado um de {tipos_fonte}"
+    if tipo_fonte == "externa" and not any(x.startswith("http") for x in c):
+        return f"linha {n}: tipo_fonte externa exige url"
+    if tipo_fonte == "externa" and not any(x.startswith("limite:") for x in c):
+        return f"linha {n}: tipo_fonte externa exige limite da fonte"
+
     doc = citado(c)
     if doc and not (pathlib.Path("fontes") / doc).exists():
         return (f"linha {n}: documento citado '{doc}' nao esta em fontes/. "
                 f"Citacao que aponta para fora do caso nao e verificavel.")
-    apur = next((x for x in c if x in proc.get("apuracao", [])), None)
+    apur = valor_campo(c, "apuracao")
+    apuracoes = dimensoes.get("apuracao", [])
+    if apur and apur not in apuracoes:
+        return f"linha {n}: apuracao invalida. Esperado um de {apuracoes}"
     if apur == "estimado" and not any(x.startswith("base:") for x in c):
         return f"linha {n}: apuracao estimado exige base"
     if apur == "medido" and not any(x.startswith("amostra:") for x in c):

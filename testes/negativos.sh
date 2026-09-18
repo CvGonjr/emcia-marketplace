@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Os sete testes negativos. Cada um prova que uma trava recusa.
+# Suíte acumulada de travas e controles positivos.
 # Falha aqui significa que uma trava deixou de existir.
 set -u
 
@@ -33,15 +33,59 @@ echo '{"tool_name":"Bash","tool_input":{"command":"echo oi > caso/x.md"}}' \
   | python3 "$S/guarda.py" >/dev/null 2>&1
 [ $? -eq 2 ] && ok "2b bash para caso/ negado" || falha "2b bash para caso/ NAO foi negado"
 
-# 3 assercao sem origem
+# 3 assercao sem procedencia
 printf -- '- [Celso · 2026-09-11] regra qualquer\n' > rascunho/t.md
 python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
-[ $? -ne 0 ] && ok "3 assercao sem origem recusada" || falha "3 assercao sem origem ACEITA"
+[ $? -ne 0 ] && ok "3 assercao sem procedencia recusada" || falha "3 assercao sem procedencia ACEITA"
 
 # 4 assercao valida grava (teste positivo de controle)
-printf -- '- [inferido · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
+printf -- '- [I · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
 python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "4 assercao valida gravada" || falha "4 assercao valida RECUSADA"
+
+# Pacote 2.5.0 — contrato canonico D/I/V
+
+# T01 D valido nao exige evidencia de verificacao
+printf -- '- [D · Helena · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "2.5.0-T01 D valido aceito" || falha "2.5.0-T01 D valido RECUSADO"
+
+# T02 I sem premissa e recusado
+printf -- '- [I · Celso] inferencia sem premissa\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "2.5.0-T02 I sem premissa recusado" || falha "2.5.0-T02 I sem premissa ACEITO"
+
+# T03 I com premissa e aceito
+printf -- '- [I · premissa: padrao observado nos documentos · Celso] inferencia rastreavel\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "2.5.0-T03 I com premissa aceito" || falha "2.5.0-T03 I com premissa RECUSADO"
+
+# T04 V sem evidencia e recusado
+printf -- '- [V · Celso] verificacao sem evidencia\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+[ $? -ne 0 ] && ok "2.5.0-T04 V sem evidencia recusado" || falha "2.5.0-T04 V sem evidencia ACEITO"
+
+# T05 V com evidencia e aceito
+printf -- '- [V · observacao: sessao-2026-09-18 · Celso] verificacao rastreavel\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "2.5.0-T05 V com evidencia aceito" || falha "2.5.0-T05 V com evidencia RECUSADO"
+
+# T06 valores fora de D/I/V nao sao procedencia
+invalidas_recusadas=1
+for valor in X campo externo; do
+  printf -- '- [%s · Celso] procedencia invalida\n' "$valor" > rascunho/procedencia.md
+  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1; then
+    invalidas_recusadas=0
+  fi
+done
+[ "$invalidas_recusadas" -eq 1 ] \
+  && ok "2.5.0-T06 X/campo/externo recusados como procedencia" \
+  || falha "2.5.0-T06 procedencia fora de D/I/V ACEITA"
+
+# T07 apuracao coexiste em campo distinto da procedencia
+printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso] numero verificado\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "2.5.0-T07 V coexiste com apuracao separada" || falha "2.5.0-T07 dimensao separada RECUSADA"
 
 # 5 encerrar etapa presencial sem sessao
 python3 "$S/avancar.py" --encerrar P3b --autor "Celso" >/dev/null 2>&1
@@ -180,7 +224,7 @@ echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao de
 
 # 24 documento citado que nao esta em fontes/ e recusado
 mkdir -p fontes
-printf -- '- [verificado · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
+printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
 saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" 2>&1)"
 [ $? -ne 0 ] && echo "$saida" | grep -q "nao esta em fontes/" \
   && ok "24 documento citado ausente recusado" \

@@ -15,7 +15,7 @@ description: Confronta regra declarada contra regra observada, item a item, e pr
 
 **Um item por vez.** Cada correção exige justificativa escrita e autor nomeado. Correção sem justificativa não é correção, é reescrita.
 
-**Você prepara o confronto; o operador decide cada item.** A transição para `verificado` cria asserção nova — a original permanece com seu estado.
+**Você prepara o confronto; o operador decide cada item.** A transição para `V` cria asserção nova — a original permanece com seu estado.
 
 **Saída:** `caso/E2-dossie.md` e `caso/P3d-divergencias.md`
 **Encerramento:** critério do passo 3 no documento do método.

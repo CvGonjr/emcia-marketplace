@@ -12,7 +12,11 @@ contexto/
 
 ## Trava de curadoria
 
-Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `origem: inferido`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
+Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `procedencia: I`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
+
+O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
+com `procedencia: I` e premissa. A migração completa destes quatro objetos e
+as regras de versionamento/curadoria pertencem aos pacotes seguintes.
 
 ## Quadro frequência × consequência
 

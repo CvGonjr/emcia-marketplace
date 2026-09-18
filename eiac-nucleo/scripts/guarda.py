@@ -67,7 +67,7 @@ def main():
         negar(
             "Escrita direta em caso/ nao e permitida. "
             "Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. "
-            "Toda assercao exige contexto e origem.",
+            "Toda assercao exige procedencia D, I ou V.",
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 

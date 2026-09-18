@@ -9,11 +9,16 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
 **Toda asserção carrega marcação.** Formato:
 
 ```
-- [origem · fonte · data · autor]  texto da asserção
-- [inferido · premissa: <premissa> · Celso]  texto
-- [externo · https://... · captura: 2026-09-10 · limite: amostra enviesada]  texto
-- [declarado · Helena · 2026-09-11 · medido · amostra: 86 guias · periodo: ago/2026]  texto
+- [D · Helena · 2026-09-11]  texto declarado
+- [I · premissa: <premissa> · Celso]  texto inferido
+- [V · observacao: <referencia> · Celso]  texto verificado
+- [I · premissa: referência externa aplicável · tipo_fonte: externa · https://... · limite: amostra enviesada · Celso]  inferência apoiada em fonte externa
+- [V · observacao: <referencia> · apuracao: medido · amostra: 86 guias · periodo: ago/2026 · Celso]  número medido
 ```
+
+`D`, `I` e `V` são as únicas marcas de procedência. `apuracao` e
+`tipo_fonte` são dimensões separadas. Agente pode propor a marca, mas não
+confirmar autonomamente que uma informação é `V`.
 
 **Autor é sempre pessoa nomeada.** Nunca identificador de agente.
 

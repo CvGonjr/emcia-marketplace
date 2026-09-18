@@ -4,7 +4,9 @@
 bash testes/negativos.sh
 ```
 
-Vinte e seis verificações. Dezesseis provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
+Trinta e três verificações: as 26 do baseline e sete verificações do contrato
+canônico D/I/V. Há negativas e controles positivos — o que é bem formado
+precisa passar, senão a trava está apenas quebrada.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -13,7 +15,7 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída. 
 | 1 | Habilidade de camada não delegável não carrega |
 | 2 | Escrita direta em `caso/` é negada |
 | 2b | Redirecionamento de shell para `caso/` é negado |
-| 3 | Asserção sem origem é recusada |
+| 3 | Asserção sem procedência é recusada |
 | 4 | Asserção bem marcada é gravada |
 | 5 | Etapa presencial não encerra sem sessão registrada |
 | 6 | Autor agente é recusado |
@@ -31,6 +33,22 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída. 
 | 23 | Etapa não delegável aparece como tal em qualquer nível *(controle positivo)* |
 | 24 | Documento citado que não está em `fontes/` é recusado |
 | 25 | Documento presente grava e registra o hash na trilha *(controle positivo)* |
+
+## Contrato D/I/V — pacote 2.5.0
+
+| ID | Prova |
+|---|---|
+| 2.5.0-T01 | `D` válido é aceito sem evidência de verificação |
+| 2.5.0-T02 | `I` sem premissa é recusado |
+| 2.5.0-T03 | `I` com premissa é aceito |
+| 2.5.0-T04 | `V` sem evidência é recusado |
+| 2.5.0-T05 | `V` com evidência é aceito |
+| 2.5.0-T06 | `X`, `campo` e `externo` são recusados como procedência |
+| 2.5.0-T07 | `V` coexiste com `apuracao: medido` em dimensão separada |
+
+O teste 2.5.0-T08 é a execução acumulada desta suíte: os 26 cenários do
+baseline permanecem presentes, com os marcadores por extenso atualizados para
+os códigos canônicos.
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 

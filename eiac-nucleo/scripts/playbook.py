@@ -36,8 +36,15 @@ def carregar():
 
     if not pb.get("inegociaveis"):
         return None, "playbook sem itens inegociaveis"
-    if not pb.get("procedencia", {}).get("origem"):
-        return None, "playbook sem rotulos de origem"
+    procedencia = pb.get("procedencia", {})
+    valores = procedencia.get("valores")
+    rotulos = procedencia.get("rotulos")
+    if not isinstance(valores, list) or not valores:
+        return None, "playbook sem valores de procedencia"
+    if len(valores) != len(set(valores)):
+        return None, "playbook com valores de procedencia duplicados"
+    if not isinstance(rotulos, dict) or set(rotulos) != set(valores):
+        return None, "rotulos de procedencia nao correspondem aos valores declarados"
     return pb, None
 
 

@@ -1,16 +1,15 @@
 id: R-000
 enunciado: ""
 
-procedencia:
-  contexto: campo            # campo | antitese | conversa | livre
-  origem: inferido           # verificado | declarado | inferido | externo
-  fonte:
-    tipo: documento          # observacao | documento | pessoa | publica
-    referencia: ""
-    trecho: ""
-    coautor: ""              # quem executa o processo, quando houver
-  data: ""
-  autor: ""                  # pessoa nomeada, nunca agente
+# D | I | V
+procedencia: I
+premissa: ""                 # obrigatoria quando procedencia = I
+evidencia:                   # obrigatoria quando procedencia = V
+  tipo: ""                  # observacao | documento | leitura_de_volta
+  referencia: ""
+  trecho: ""
+data: ""
+autor: ""                    # pessoa nomeada, nunca agente
 
 estatuto: escrita            # escrita | praticada | ambas | divergente
 documento_de_origem: ""
@@ -33,6 +32,6 @@ versao: 1
 historico:
   - versao: 1
     data: ""
-    origem: ""
+    procedencia: ""
     mudanca: ""
     autor: ""

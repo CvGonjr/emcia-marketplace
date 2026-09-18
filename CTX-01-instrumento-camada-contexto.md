@@ -6,6 +6,10 @@
 **Camada:** `CA4`
 **Versão:** 1.0 · setembro de 2026
 
+> **Nota de compatibilidade:** o contrato de procedência deste documento foi
+> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
+> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
+
 ---
 
 ## 1. O que este instrumento é
@@ -43,7 +47,7 @@ termo: guia
 significado: documento de autorização emitido pelo convênio para um procedimento
 nao_e: nota fiscal, nem prontuário
 sinonimos_em_uso: [autorização, pedido]
-procedencia: [origem, fonte, data, autor]
+procedencia: D
 ```
 
 O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
@@ -66,7 +70,7 @@ relacoes:
   - com: Paciente
     cardinalidade: muitos-para-um
 onde_vive: [F-002]
-procedencia: [...]
+procedencia: D
 ```
 
 ---
@@ -77,16 +81,13 @@ procedencia: [...]
 id: R-014
 enunciado: guias do convênio X são enviadas no mesmo dia da emissão
 
-# procedência, conforme PRO-01
-procedencia:
-  contexto: campo
-  origem: verificado
-  fonte:
-    tipo: observacao
-    referencia: sessão presencial de 2026-09-18
-    coautor: Cláudia Ferreira
-  data: 2026-09-18
-  autor: Rafael Nogueira
+# procedência documental
+procedencia: V
+evidencia:
+  tipo: observacao
+  referencia: sessão presencial de 2026-09-18
+data: 2026-09-18
+autor: Rafael Nogueira
 
 # estatuto — escrita, praticada, ou as duas
 estatuto: praticada
@@ -112,12 +113,13 @@ versao: 2
 historico:
   - versao: 1
     data: 2026-09-12
-    origem: inferido
+    procedencia: I
+    premissa: deduzida do manual interno
     mudanca: registrada a partir do manual interno
     autor: Rafael Nogueira
   - versao: 2
     data: 2026-09-18
-    origem: verificado
+    procedencia: V
     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
     autor: Rafael Nogueira
 ```
@@ -150,7 +152,7 @@ contrato:
   significado: registra envio, não emissão
   qualidade: preenchida ao fim do dia; lacunas em dias de pico
 acesso: leitura, autorizado em 2026-09-10
-procedencia: [...]
+procedencia: V
 ```
 
 O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
@@ -186,7 +188,7 @@ O ciclo de referência das arquiteturas de contexto é observar → refletir →
 
 **Nenhuma regra entra na camada de contexto sem passar pela terceira linha.**
 
-Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
+Na prática: a candidata nasce em `rascunho/`, com `procedencia: I` e premissa. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
 
 ---
 
@@ -194,7 +196,7 @@ Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira 
 
 Toda alteração cria versão nova e preserva a anterior no `historico`, com o que mudou e por quê.
 
-**Confirmação não converte o registro original.** Uma regra `inferido` confirmada em campo ganha versão nova com `origem: verificado` e fonte própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
+**Confirmação não converte o registro original.** Uma regra `I` confirmada em campo ganha versão nova com `procedencia: V` e evidência própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
 
 O arquivo por registro é versionado em Git, e o commit é a data.
 
@@ -219,7 +221,7 @@ O registro de contexto de um caso está completo quando:
 
 1. Todo termo usado nas regras existe no glossário do processo
 2. Toda regra tem os sete campos do bloco central preenchidos
-3. Toda regra `verificado` tem fonte de observação ou documento interno
+3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
 4. Toda divergência tem justificativa e etapa de registro
 5. Toda fonte tem contrato com os três campos
 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada

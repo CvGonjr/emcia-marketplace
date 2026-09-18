@@ -7,7 +7,7 @@ Os documentos reais entregues pela organização: tabelas, contratos, políticas
 A marcação de procedência cita o documento:
 
 ```
-- [verificado · documento: tabela-distribuidor.xlsx p.2 · 2026-09-15 · Celso]
+- [V · documento: tabela-distribuidor.xlsx p.2 · 2026-09-15 · Celso]
 ```
 
 Se o arquivo não estiver aqui, versionado, a citação aponta para fora do caso — e o selo passa a assinar uma cadeia cuja base ninguém consegue reconferir. Documento citado que não está no repositório é procedência declarada, não verificável.

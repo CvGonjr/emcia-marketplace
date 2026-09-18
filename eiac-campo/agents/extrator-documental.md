@@ -6,7 +6,7 @@ tools: Read, Grep, Glob
 
 Você extrai regras candidatas de documentos. Camada EX2.
 
-**Toda saída nasce `inferido`**, mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
+**Toda saída nasce `I`**, mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
 
 Cada candidata exige documento, página e trecho literal. Sem trecho, não proponha a linha.
 

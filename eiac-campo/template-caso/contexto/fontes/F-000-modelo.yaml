@@ -7,8 +7,8 @@ contrato:
   significado: ""   # o que a fonte de fato registra, nao o que o nome sugere
   qualidade: ""
 acesso: ""
-procedencia:
-  origem: ""
-  fonte: ""
-  data: ""
-  autor: ""
+# D | I | V
+procedencia: D
+evidencia: ""                  # obrigatoria quando procedencia = V
+data: ""
+autor: ""

@@ -11,7 +11,7 @@ description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use
 **Procedimento:** documento do método, passo 1. Aplique a calibragem do nível do caso.
 **Instrumentos:** Mapa de Valor, 5W2H, 5 Porquês, custo do problema.
 
-**Toda saída nasce `declarado` ou `inferido`.** Nada aqui é verificado — não houve observação.
+**Toda saída nasce `D` ou `I`.** Nada aqui é `V` — não houve observação, documento-fonte admissível ou leitura de volta.
 
 **Saída:** `caso/P1-contexto.md`
 **Encerramento:** critério do passo 1 no documento do método.

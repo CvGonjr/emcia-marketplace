@@ -3,8 +3,8 @@ termo: ""
 significado: ""
 nao_e: ""
 sinonimos_em_uso: []
-procedencia:
-  origem: ""
-  fonte: ""
-  data: ""
-  autor: ""
+# D | I | V
+procedencia: D
+fonte: ""
+data: ""
+autor: ""

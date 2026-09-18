@@ -13,7 +13,7 @@ description: Emite o dossie verificado. Use quando /emitir E2 for invocado ou ao
 
 ## Recuse a emissão se
 
-- Houver asserção de `contexto` diferente de `campo`
+- Houver asserção sem `procedencia: D | I | V`
 - A medição inicial tiver `apuracao = estimado` — item inegociável 1
 - Houver divergência de P3d sem justificativa
 - Não existir `caso/P3b-sessao.md`

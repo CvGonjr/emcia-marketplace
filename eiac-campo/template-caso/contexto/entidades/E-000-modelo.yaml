@@ -8,8 +8,8 @@ relacoes:
   - com: ""
     cardinalidade: ""
 onde_vive: []
-procedencia:
-  origem: ""
-  fonte: ""
-  data: ""
-  autor: ""
+# D | I | V
+procedencia: D
+fonte: ""
+data: ""
+autor: ""

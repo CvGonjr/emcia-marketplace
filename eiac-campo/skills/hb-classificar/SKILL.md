@@ -23,5 +23,5 @@ Cinco de nove casos da simulação não eram, incluindo os dois de maior priorid
 
 A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates.md`.
 
-**Saída:** `caso/P5-classificacao.md`, marcada `inferido` até o operador confirmar.
+**Saída:** `caso/P5-classificacao.md`, marcada `I` até o operador confirmar.
 **Encerramento:** critério do passo 5 no documento do método.

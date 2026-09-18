@@ -1,14 +1,22 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.3.0",
+  "versao": "0.3.1",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01",
 
   "niveis": ["N1", "N2", "N3"],
 
   "procedencia": {
-    "contexto": ["campo", "antitese", "conversa", "livre"],
-    "origem": ["verificado", "declarado", "inferido", "externo"],
-    "apuracao": ["medido", "calculado", "estimado"]
+    "valores": ["D", "I", "V"],
+    "rotulos": {
+      "D": "Declarada",
+      "I": "Inferida",
+      "V": "Verificada"
+    }
+  },
+
+  "dimensoes": {
+    "apuracao": ["medido", "calculado", "estimado"],
+    "tipo_fonte": ["interna", "externa"]
   },
 
   "etapas": [
@@ -87,7 +95,6 @@
 
   "pendencias": [
     "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
-    "Procedencia: CAT-01 e GLO-01 fixam [D][I][V]; este playbook usa tres dimensoes com externo e antitese. Decidir em um lugar so.",
     "P6 a P10 sem habilidade: instrumentos ausentes."
   ]
 }

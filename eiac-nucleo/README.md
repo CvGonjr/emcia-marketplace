@@ -7,7 +7,7 @@ Lê `registro/playbook.json` do repositório do caso e aplica o que ele declara.
 - toda etapa declara `camada` e `modalidade`
 - todo entregável declara um `portao`
 - existe uma lista de `inegociaveis`, não vazia
-- existem rótulos de `procedencia`
+- existe um contrato não vazio de valores e rótulos de `procedencia`
 
 Playbook que omita qualquer um desses não carrega, e o caso não opera.
 
@@ -33,7 +33,7 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
 
 | # | Invariante | Onde |
 |---|---|---|
-| I-1 | Toda asserção tem contexto e origem | `validar.py` |
+| I-1 | Toda asserção tem procedência documental declarada pelo playbook | `validar.py` |
 | I-2 | Nenhuma ação executa fora da camada da etapa | `guarda.py` G1 |
 | I-3 | Etapa não avança sem cumprimento | `avancar.py` |
 | I-4 | Etapa dependente exige sessão registrada | `guarda.py` G3, `avancar.py` |
