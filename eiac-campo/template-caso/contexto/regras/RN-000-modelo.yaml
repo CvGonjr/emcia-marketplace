@@ -15,7 +15,7 @@ evidencia:                      # obrigatoria quando procedencia = V
 
 # Taxonomia oficial do confronto: EMCIA-ROT-01 3.9. So "divergente" exige
 # referencia_p3d resolvivel para contexto/divergencias/<id>.yaml (CTX-01
-# 3.5, 3.13 — CTX-V11 minimo; a bateria formal pertence ao pacote 2.5.4).
+# 3.5, 3.13 — CTX-V11).
 classificacao_confronto:
   classe: ""                   # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel
   referencia_p3d: ""
@@ -26,7 +26,7 @@ determinismo: ""               # deterministica | admite_julgamento
 frequencia: ""                 # rotineira | ocasional | rara
 consequencia_do_erro: ""       # baixa | media | alta
 decisor_quando_nao_cobre: ""   # nome proprio, ou vazio quando nao se aplica
-entradas: []                   # IDs de entidades, termos e fontes
+entradas: []                   # IDs de entidades (E-*), termos (T-*) e fontes (F-*); cada um precisa resolver para objeto curado (CTX-V05/V06/V07)
 excecoes_conhecidas: []
 estabilidade: ""
 

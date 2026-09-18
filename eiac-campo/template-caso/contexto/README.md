@@ -38,9 +38,22 @@ O candidato precisa estar em `rascunho/<mesmo-nome>`. O curador valida a estrutu
 Quando já existe um registro curado com o mesmo id e a mudança altera a `procedencia` — por exemplo `I` → `V` — o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior (versão, data e responsável). Sobrescrever a versão existente sem esse histórico é recusado; a versão anterior permanece legível dentro do registro atualizado.
 
 O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
-com `procedencia: I` e premissa. A resolução referencial genérica entre
-objetos (Regra → Entidade, Regra → Fonte etc.) como bateria formal
-CTX-V01–V11 pertence ao pacote 2.5.4.
+com `procedencia: I` e premissa.
+
+## Resolução de referências
+
+A Regra referencia Termo, Entidade e Fonte em `entradas` (`T-*`, `E-*`,
+`F-*`); a Entidade referencia Fonte em `onde_vive` (`F-*`). Toda referência
+precisa resolver para um objeto já curado no diretório correspondente —
+`T-999` que não existe em `contexto/termos/` é recusado, e o mesmo vale
+para Entidade e Fonte. Um arquivo físico em `fontes/` **não** é o mesmo que
+um objeto Fonte CTX curado em `contexto/fontes/`: só o segundo satisfaz a
+referência, e precisa ter passado pelo próprio contrato mínimo (`contrato.estrutura`,
+`contrato.significado`, `contrato.qualidade`).
+
+Essa é a bateria formal **CTX-V01–CTX-V11** do EMCIA-CTX-01 3.13, implementada
+em `curar.py`. A matriz completa (regra oficial, implementação, negativo e
+positivo) está em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md`.
 
 ## Confronto P3d
 

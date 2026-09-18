@@ -43,7 +43,7 @@ def checar_autoria(dados):
         if valor is None:
             continue
         if E.autor_e_agente(valor):
-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
+            erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
     return erros
 
 
@@ -84,19 +84,23 @@ def checar_versao(anterior, candidato, tipo):
             f"procedencia {proc_antes} -> {proc_depois}" if mudou_procedencia
             else "classificacao_confronto"
         )
+        # CTX-V04 nomeia literalmente a transicao I->V; a mesma exigencia de
+        # versao crescente para outras mudancas relevantes (classificacao de
+        # confronto) segue o principio geral do CTX-01 3.12, sem codigo proprio.
+        codigo = "CTX-V04" if (proc_antes == "I" and proc_depois == "V") else "CTX-01 3.12"
         try:
             cresceu = int(versao_depois) > int(versao_antes)
         except (TypeError, ValueError):
             cresceu = False
         if not cresceu:
             erros.append(
-                f"mudanca de {motivo} exige nova versao "
+                f"{codigo}: mudanca de {motivo} exige nova versao "
                 f"(recebido versao {versao_antes!r} -> {versao_depois!r}); "
                 f"sobrescrita nao e permitida"
             )
         if not isinstance(historico, list) or len(historico) < 1:
             erros.append(
-                f"mudanca de {motivo} exige historico com a versao anterior "
+                f"CTX-V10: mudanca de {motivo} exige historico com a versao anterior "
                 "preservada (data, responsavel e motivo)"
             )
         else:
@@ -107,16 +111,16 @@ def checar_versao(anterior, candidato, tipo):
                 faltando.append("registrado_por ou confirmado_por")
             if faltando:
                 erros.append(
-                    f"entrada de historico incompleta para a versao anterior: "
+                    f"CTX-V10: entrada de historico incompleta para a versao anterior: "
                     f"faltando {faltando}"
                 )
             try:
                 if int(ultima.get("versao")) != int(versao_antes):
                     erros.append(
-                        "historico nao referencia a versao imediatamente anterior"
+                        "CTX-V10: historico nao referencia a versao imediatamente anterior"
                     )
             except (TypeError, ValueError):
-                erros.append("historico sem numero de versao anterior valido")
+                erros.append("CTX-V10: historico sem numero de versao anterior valido")
     else:
         try:
             regressao = int(versao_depois) < int(versao_antes)
@@ -124,8 +128,62 @@ def checar_versao(anterior, candidato, tipo):
             regressao = False
         if regressao:
             erros.append(
-                f"versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
+                f"CTX-V04: versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
             )
+    return erros
+
+
+def checar_referencias(candidato, schema, tipo):
+    """CTX-V05/V06/V07: toda referencia a Termo, Entidade ou Fonte listada
+    num campo declarado em `references` precisa resolver para um objeto
+    curado existente; quando o alvo e Fonte, o registro referenciado
+    precisa ter o contrato minimo preenchido (mesma validacao que a
+    propria Fonte passa ao ser curada — nao duplica a regra).
+
+    O nucleo nao sabe o que e Termo, Entidade ou Fonte: le o prefixo do
+    id (T-, E-, F-) e o `catalogo_referencias` do schema do caso para
+    decidir onde procurar. Isso mantem a resolucao generica por schema,
+    do mesmo jeito que `estrutura.validar()` ja e generica por tipo.
+    """
+    catalogo = schema.get("catalogo_referencias", {})
+    campos_ref = (schema.get("objetos", {}).get(tipo, {}) or {}).get("references", {})
+    codigo_por_tipo = {"termo": "CTX-V05", "entidade": "CTX-V06", "fonte": "CTX-V07"}
+
+    erros = []
+    for campo, prefixos_permitidos in campos_ref.items():
+        valores = candidato.get(campo) or []
+        if not isinstance(valores, list):
+            continue
+        for ref_id in valores:
+            ref_id = str(ref_id)
+            prefixo = ref_id.split("-", 1)[0] if "-" in ref_id else ref_id
+            entrada = catalogo.get(prefixo)
+            if not entrada or prefixo not in prefixos_permitidos:
+                erros.append(
+                    f"referencia '{ref_id}' em '{campo}' tem prefixo desconhecido "
+                    f"ou nao permitido; esperado um de {prefixos_permitidos}"
+                )
+                continue
+            codigo = codigo_por_tipo.get(entrada["tipo"], "CTX-V05/V06/V07")
+            alvo = pathlib.Path(entrada["diretorio"]) / f"{ref_id}.yaml"
+            if not alvo.exists():
+                erros.append(
+                    f"{codigo}: referencia '{ref_id}' em '{campo}' "
+                    f"nao resolve — {alvo} nao existe"
+                )
+                continue
+            if entrada["tipo"] == "fonte":
+                try:
+                    dados_fonte = X.carregar_yaml(alvo.read_text(encoding="utf-8"))
+                except (X.ErroYaml, ValueError) as erro:
+                    erros.append(f"{codigo}: fonte referenciada '{ref_id}' esta ilegivel: {erro}")
+                    continue
+                erros_fonte = X.validar(dados_fonte, schema, "fonte")
+                if erros_fonte:
+                    erros.append(
+                        f"{codigo}: fonte referenciada '{ref_id}' nao possui contrato minimo valido: "
+                        f"{erros_fonte}"
+                    )
     return erros
 
 
@@ -134,13 +192,10 @@ DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
 
 
 def checar_confronto(candidato):
-    """Comportamento minimo do CTX-01 3.13 (CTX-V11) para este pacote:
-    quando classificacao_confronto.classe exige vinculo com P3d, a
-    referencia precisa apontar para um registro de divergencia curado e
-    existente. A bateria formal CTX-V01-V11, com os demais objetos e
-    classes, pertence ao pacote 2.5.4 — aqui so a classe `divergente`
-    (a unica para a qual o CTX-01 3.5 descreve o conteudo minimo exigido
-    do registro referenciado) e verificada.
+    """CTX-V11: toda classificacao_confronto possui classe e referencia_p3d
+    resolvivel quando a classe exige vinculo com P3d. So a classe
+    `divergente` e verificada aqui — e a unica para a qual o CTX-01 3.5
+    descreve o conteudo minimo exigido do registro referenciado.
     """
     confronto = candidato.get("classificacao_confronto")
     if not isinstance(confronto, dict):
@@ -151,11 +206,11 @@ def checar_confronto(candidato):
 
     referencia = confronto.get("referencia_p3d")
     if not referencia:
-        return [f"classe '{classe}' exige referencia_p3d preenchida"]
+        return [f"CTX-V11: classe '{classe}' exige referencia_p3d preenchida"]
 
     alvo = DIRETORIO_DIVERGENCIAS / f"{referencia}.yaml"
     if not alvo.exists():
-        return [f"referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
+        return [f"CTX-V11: referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
     return []
 
 
@@ -173,8 +228,9 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
     erros = X.validar(candidato, schema, tipo)
     erros += checar_autoria(candidato)
     erros += checar_confronto(candidato)
+    erros += checar_referencias(candidato, schema, tipo)
     if E.autor_e_agente(registrado_por):
-        erros.append(f"quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
+        erros.append(f"CTX-V09: quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
 
     anterior = None
     if destino.exists():

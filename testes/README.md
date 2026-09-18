@@ -26,7 +26,13 @@ Os 12 testes de integração CTX ↔ P3d rodam separadamente:
 python3 testes/p3d.py
 ```
 
-O total acumulado é de 73 verificações.
+As 23 verificações da bateria formal CTX-V01–CTX-V11 rodam separadamente:
+
+```bash
+python3 testes/ctx_v.py
+```
+
+O total acumulado é de 96 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -135,6 +141,34 @@ Rodam contra uma cópia temporária do template, sem tocar em caso real. A
 taxonomia oficial usada nos testes (`alinhada`, `divergente`,
 `nao_documentada`, `orfa`, `escrita_inacessivel`) vem de EMCIA-ROT-01 3.9 —
 o CTX-01 não define códigos próprios para as classes.
+
+## Bateria formal CTX-V01–CTX-V11 — pacote 2.5.4
+
+Cada validação do EMCIA-CTX-01 3.13 tem um teste negativo e um controle
+positivo, extraídos literalmente do documento oficial — a maioria já
+implementada pelos pacotes 2.5.1–2.5.3; este pacote formaliza o vínculo
+com o código `CTX-Vxx` e fecha as três genuinamente ausentes (V05–V07).
+
+| ID | Regra oficial (EMCIA-CTX-01 3.13) |
+|---|---|
+| CTX-V01 | Regra possui os sete campos do bloco de decisão |
+| CTX-V02 | Registro `I` possui premissa escrita |
+| CTX-V03 | Registro `V` possui evidência identificada |
+| CTX-V04 | Mudança `I` → `V` cria nova versão |
+| CTX-V05 | Todo termo referenciado existe |
+| CTX-V06 | Toda entidade referenciada existe |
+| CTX-V07 | Toda fonte referenciada existe e possui contrato mínimo |
+| CTX-V08 | Escrita em `contexto/` passa pela curadoria prevista |
+| CTX-V09 | Autoria de conteúdo e registro são pessoas nomeadas |
+| CTX-V10 | Toda nova versão possui data, responsável e motivo da mudança |
+| CTX-V11 | `classificacao_confronto` completa e resolvível quando `divergente` |
+
+Cada uma tem um teste `2.5.4-Vxx-N` (negativo) e `2.5.4-Vxx-P` (positivo) em
+`testes/ctx_v.py` — 22 verificações — mais `2.5.4-multi`, que confirma a
+política de validação acumulativa: um objeto com duas violações simultâneas
+(`I` sem premissa e Fonte inexistente) é recusado com as duas causas
+relatadas na mesma mensagem, não só a primeira encontrada. A matriz completa
+está em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md`.
 
 ## Deslocamento da fronteira por nível
 

@@ -7,7 +7,7 @@ atributos:
 relacoes:
   - com: ""
     cardinalidade: ""
-onde_vive: []
+onde_vive: []                   # IDs de fontes (F-*); cada um precisa resolver para objeto Fonte curado (CTX-V07)
 # D | I | V
 procedencia: D
 declarado_por: ""

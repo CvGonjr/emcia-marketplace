@@ -1,8 +1,13 @@
 {
   "nome": "Objetos centrais da camada de contexto",
-  "versao": "0.1.0",
+  "versao": "0.2.0",
   "referencia": "EMCIA-CTX-01 v0.4",
   "procedencia": ["D", "I", "V"],
+  "catalogo_referencias": {
+    "T": { "tipo": "termo", "diretorio": "contexto/termos" },
+    "E": { "tipo": "entidade", "diretorio": "contexto/entidades" },
+    "F": { "tipo": "fonte", "diretorio": "contexto/fontes" }
+  },
   "objetos": {
     "termo": {
       "id_pattern": "T-[0-9]{3,}",
@@ -60,6 +65,9 @@
       "conditional_nonempty": {
         "I": ["premissa"],
         "V": ["evidencia"]
+      },
+      "references": {
+        "onde_vive": ["F"]
       }
     },
     "regra": {
@@ -115,6 +123,9 @@
       "conditional_nonempty": {
         "I": ["premissa"],
         "V": ["evidencia"]
+      },
+      "references": {
+        "entradas": ["T", "E", "F"]
       }
     },
     "fonte": {

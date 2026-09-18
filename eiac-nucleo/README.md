@@ -51,12 +51,30 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
 | I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
 | I-15 | Mudança de procedência ou de classificação de confronto em `contexto/` só entra como versão nova, com histórico | `curar.py` |
 | I-16 | Classe de confronto que exige vínculo com P3d (`divergente`) só cura com `referencia_p3d` resolvível | `curar.py` |
+| I-17 | Toda referência declarada em `references` do schema do caso resolve para um objeto curado existente | `curar.py` |
 
 `autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
 `validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador
 de agente como autor humano. É uma convenção de nome, não identidade tipada
 de ator — limitação assumida enquanto o núcleo não tiver um contrato de
 papel/ator mais rico.
+
+## Resolução de referências (I-17)
+
+`curar.py` lê dois blocos declarativos do schema do caso: `catalogo_referencias`
+(prefixo do id → tipo e diretório do objeto) e `references`, por tipo de objeto
+(campo → prefixos aceitos). O núcleo não sabe o que é Termo, Entidade ou Fonte
+— só que um id com um certo prefixo precisa existir em certo diretório, e que
+resolver contra um objeto do tipo declarado como `"fonte"` também exige que
+esse objeto passe pela própria validação estrutural do schema (contrato
+mínimo). O mesmo mecanismo serve qualquer schema que declare esses blocos;
+não há `if tipo == "regra"` nem `if campo == "entradas"` no núcleo.
+
+As onze condições verificáveis do EMCIA-CTX-01 3.13 (CTX-V01–CTX-V11) estão
+todas formalizadas em `curar.py` — a maioria via `estrutura.py` (schema
+genérico), as demais em checagens próprias (autoria, versionamento,
+confronto P3d, resolução de referência). Nenhuma delas hard-codeia
+vocabulário do EMCIA fora dos dados declarados pelo schema do caso.
 
 ## Limite honesto
 

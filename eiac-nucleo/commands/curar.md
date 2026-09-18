@@ -14,4 +14,6 @@ Se já existir um registro curado com o mesmo id e a `procedencia` ou a `classif
 
 Quando `classificacao_confronto.classe` for `divergente`, `referencia_p3d` precisa apontar para um `contexto/divergencias/<id>.yaml` já curado — referência ausente ou que não resolve é recusada.
 
+Toda referência declarada em `entradas` (Regra → Termo/Entidade/Fonte) ou `onde_vive` (Entidade → Fonte) precisa resolver para um objeto já curado — id inexistente é recusado, e uma Fonte referenciada precisa ter contrato mínimo válido.
+
 Se houver recusa, corrija o rascunho e tente de novo. **Não contorne escrevendo direto em `contexto/`** — a guarda bloqueia e a tentativa fica registrada.
