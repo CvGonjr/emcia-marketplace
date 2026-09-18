@@ -1,6 +1,6 @@
 {
   "name": "eiac-nucleo",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
   "author": {
     "name": "EMCIA"

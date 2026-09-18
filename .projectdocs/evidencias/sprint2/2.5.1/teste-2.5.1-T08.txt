@@ -1,0 +1,24 @@
+PACOTE: 2.5.1
+TESTE: 2.5.1-T08
+REQUISITO: Fonte sem contrato.significado
+DATA/HORA: 2026-09-18T16:07:32-03:00
+HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T08.yaml
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+recusa
+
+RESULTADO OBTIDO:
+contrato sem significado recusado
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+campo obrigatorio ausente: contrato.significado
+
+RESULTADO FINAL: PASS

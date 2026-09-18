@@ -1,0 +1,24 @@
+PACOTE: 2.5.1
+TESTE: 2.5.1-T06
+REQUISITO: Entidade sem nome
+DATA/HORA: 2026-09-18T16:07:32-03:00
+HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T06.yaml
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+recusa
+
+RESULTADO OBTIDO:
+campo entidade recusado
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+campo obrigatorio ausente: entidade
+
+RESULTADO FINAL: PASS

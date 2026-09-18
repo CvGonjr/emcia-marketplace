@@ -9,6 +9,7 @@ contrato:
 acesso: ""
 # D | I | V
 procedencia: D
-evidencia: ""                  # obrigatoria quando procedencia = V
+registrado_por: ""
 data: ""
-autor: ""
+premissa: ""                   # obrigatoria quando procedencia = I
+evidencia: ""                  # obrigatoria quando procedencia = V

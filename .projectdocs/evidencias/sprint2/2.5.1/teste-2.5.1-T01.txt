@@ -1,0 +1,24 @@
+PACOTE: 2.5.1
+TESTE: 2.5.1-T01
+REQUISITO: Termo válido
+DATA/HORA: 2026-09-18T16:07:31-03:00
+HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T01.yaml
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+aceite
+
+RESULTADO OBTIDO:
+termo aceito
+
+STDOUT:
+--- comando 1 ---
+termo valido: teste-T01.yaml
+
+STDERR:
+--- comando 1 ---
+
+RESULTADO FINAL: PASS

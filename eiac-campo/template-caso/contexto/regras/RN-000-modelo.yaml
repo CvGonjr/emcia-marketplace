@@ -1,0 +1,33 @@
+id: RN-000
+enunciado: ""
+gatilho: ""
+
+# D | I | V
+procedencia: I
+autoria_conteudo: ""
+registrado_por: ""
+data: ""
+origem_do_conhecimento: ""     # documento | ensino | experiencia_propria | desconhecida
+premissa: ""                   # obrigatoria quando procedencia = I
+evidencia:                      # obrigatoria quando procedencia = V
+  tipo: ""                     # observacao | documento | leitura_de_volta
+  referencia: ""
+
+# A semantica e a referencia obrigatoria pertencem ao pacote 2.5.3.
+classificacao_confronto:
+  classe: ""                   # alinhada | divergente | nao_documentada | orfa | inacessivel
+  referencia_p3d: ""
+documento_de_origem: null
+
+# Bloco interrogado pelos Passos 4 e 5 — os sete campos sao obrigatorios.
+determinismo: ""               # deterministica | admite_julgamento
+frequencia: ""                 # rotineira | ocasional | rara
+consequencia_do_erro: ""       # baixa | media | alta
+decisor_quando_nao_cobre: ""   # nome proprio, ou vazio quando nao se aplica
+entradas: []                   # IDs de entidades, termos e fontes
+excecoes_conhecidas: []
+estabilidade: ""
+
+# A logica de nova versao e de transicao I -> V pertence ao pacote 2.5.2.
+versao: 1
+historico: []

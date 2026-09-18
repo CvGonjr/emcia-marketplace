@@ -1,0 +1,79 @@
+PACOTE: 2.5.1
+TESTE: 2.5.1-T09
+REQUISITO: D/I/V nos quatro objetos
+DATA/HORA: 2026-09-18T16:07:32-03:00
+HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-D.yaml
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-I.yaml
+[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-V.yaml
+[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-D.yaml
+[5] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-I.yaml
+[6] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-V.yaml
+[7] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-D.yaml
+[8] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-I.yaml
+[9] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-V.yaml
+[10] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-D.yaml
+[11] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-I.yaml
+[12] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-V.yaml
+EXIT CODE:
+[1] 0
+[2] 0
+[3] 0
+[4] 0
+[5] 0
+[6] 0
+[7] 0
+[8] 0
+[9] 0
+[10] 0
+[11] 0
+[12] 0
+
+RESULTADO ESPERADO:
+aceite
+
+RESULTADO OBTIDO:
+12 combinações aceitas
+
+STDOUT:
+--- comando 1 ---
+termo valido: teste-T09-termo-D.yaml
+--- comando 2 ---
+termo valido: teste-T09-termo-I.yaml
+--- comando 3 ---
+termo valido: teste-T09-termo-V.yaml
+--- comando 4 ---
+entidade valido: teste-T09-entidade-D.yaml
+--- comando 5 ---
+entidade valido: teste-T09-entidade-I.yaml
+--- comando 6 ---
+entidade valido: teste-T09-entidade-V.yaml
+--- comando 7 ---
+regra valido: teste-T09-regra-D.yaml
+--- comando 8 ---
+regra valido: teste-T09-regra-I.yaml
+--- comando 9 ---
+regra valido: teste-T09-regra-V.yaml
+--- comando 10 ---
+fonte valido: teste-T09-fonte-D.yaml
+--- comando 11 ---
+fonte valido: teste-T09-fonte-I.yaml
+--- comando 12 ---
+fonte valido: teste-T09-fonte-V.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+--- comando 3 ---
+--- comando 4 ---
+--- comando 5 ---
+--- comando 6 ---
+--- comando 7 ---
+--- comando 8 ---
+--- comando 9 ---
+--- comando 10 ---
+--- comando 11 ---
+--- comando 12 ---
+
+RESULTADO FINAL: PASS

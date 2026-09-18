@@ -1,0 +1,2187 @@
+diff --git a/.projectdocs/audit.json b/.projectdocs/audit.json
+index e5200a7..93f002f 100644
+--- a/.projectdocs/audit.json
++++ b/.projectdocs/audit.json
+@@ -1,5 +1,6 @@
+ {
+   "generated_at": "2026-09-12",
++  "last_updated": "2026-09-18",
+   "project": "emcia-marketplace",
+   "pipeline": "A",
+   "diataxis_coverage": {
+@@ -12,7 +13,7 @@
+   "modules": [
+     {
+       "name": "eiac-nucleo",
+-      "version": "0.2.0",
++      "version": "0.2.7",
+       "path": "eiac-nucleo/",
+       "documented": true,
+       "docs": ["README.md", "eiac-nucleo/README.md"],
+@@ -20,7 +21,7 @@
+     },
+     {
+       "name": "eiac-campo",
+-      "version": "0.3.0",
++      "version": "0.3.4",
+       "path": "eiac-campo/",
+       "documented": true,
+       "docs": ["README.md", "eiac-campo/reference/*.md"],
+@@ -28,7 +29,12 @@
+     }
+   ],
+   "decisions_registry": "decisoes/ (12 arquivos, README.md como indice)",
+-  "tests": "testes/negativos.sh (7 testes negativos, roda no CI)",
++  "tests": "44 verificacoes: 33 em testes/negativos.sh e 11 em testes/contexto.py",
++  "evidence_registry": {
++    "official_document": "EMCIA-RTE-01",
++    "local_path": ".projectdocs/evidencias/sprint2/",
++    "latest_package": "2.5.1"
++  },
+   "canonical_docs": {
+     "path": "docs/",
+     "tracked_by_git": false,
+@@ -57,8 +63,10 @@
+     "CAT-01 Anexo A (catalogo de agentes/habilidades) nao conferido contra as skills hb-* reais"
+   ],
+   "open_method_pendencies": [
+-    "decisoes/006 em conflito com CAT-01 (procedencia em tres dimensoes) - CONFIRMADO com texto: CAT-01 3.5.4 e GLO-01 3.4 fixam [D][I][V] como dimensao unica; playbook.json usa tres dimensoes independentes (contexto/origem/apuracao) com valores que nao existem em CAT-01/GLO-01",
+     "correspondencia entregavel x passo diverge entre relatorio PFC e docs internos (bloqueia E4/E5)",
+     "P6-P10 sem habilidade: instrumentos ausentes - metodo canonico (MET-01) tem 5 fases/10 passos; playbook do template so cobre 8 etapas (F0..P5), faltam os passos 6-10 descritos em E4/E5"
++  ],
++  "resolved_method_pendencies": [
++    "procedencia normalizada para D/I/V no pacote 2.5.0; dimensoes de apuracao e tipo de fonte separadas"
+   ]
+ }
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/matriz-schema-inicial.md b/.projectdocs/evidencias/sprint2/2.5.1/matriz-schema-inicial.md
+new file mode 100644
+index 0000000..1577672
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/matriz-schema-inicial.md
+@@ -0,0 +1,84 @@
++# Pacote 2.5.1 — Matriz estrutural anterior à implementação
++
++Produzida em 18/09/2026 sobre o HEAD
++`5421c78edaeb074c3d14e61e6686be42431a2c56`, antes da alteração dos modelos.
++
++Fonte principal: EMCIA-CTX-01 v0.4, seções 3.3 a 3.8 e condição de aceite.
++
++## Contrato canônico extraído do CTX-01 v0.4
++
++| Objeto | Campo | Obrigatório estrutural? | Tipo/formato | Significado | Restrição | Origem documental |
++|---|---|---:|---|---|---|---|
++| Termo | `id` | sim | string `T-NNN` | identificador estável | padrão por tipo | CTX-01 §3.3 |
++| Termo | `termo` | sim | string não vazia | palavra do negócio | recorte do caso | CTX-01 §3.3 |
++| Termo | `significado` | sim | string não vazia | sentido na organização | não é definição genérica | CTX-01 §3.3 |
++| Termo | `nao_e` | sim | string não vazia | exclusão semântica | reduz significado vizinho | CTX-01 §3.3 |
++| Termo | `sinonimos_em_uso` | sim | lista | sinônimos encontrados | pode ser vazia | CTX-01 §3.3 |
++| Termo | `procedencia` | sim | `D | I | V` | estatuto documental | taxonomia única | CTX-01 §2 e §3.3 |
++| Termo | `declarado_por` | sim | string não vazia | quem sustenta o conteúdo | sem regra comportamental neste pacote | CTX-01 §3.3 |
++| Termo | `registrado_por` | sim | string não vazia | quem formalizou o registro | sem validação de autoria neste pacote | CTX-01 §3.3 |
++| Termo | `data` | sim | data ISO | data do registro | formato estrutural | CTX-01 §3.3 |
++| Termo | `premissa` / `evidencia` | condicional | string ou objeto | rastreia I ou V | I exige premissa; V exige evidência | CTX-01 §3.13, V02/V03 |
++| Entidade | `id` | sim | string `E-NNN` | identificador estável | padrão por tipo | CTX-01 §3.4 |
++| Entidade | `entidade` | sim | string não vazia | objeto do domínio | somente recorte necessário | CTX-01 §3.4 |
++| Entidade | `atributos` | sim | lista | atributos relevantes | estrutura representável | CTX-01 §3.4 |
++| Entidade | `relacoes` | sim | lista | relações com entidades | estrutura representável | CTX-01 §3.4 |
++| Entidade | `onde_vive` | sim | lista de IDs `F-*` | fontes relacionadas | referência será validada no 2.5.4 | CTX-01 §3.4 |
++| Entidade | `procedencia` | sim | `D | I | V` | estatuto documental | taxonomia única | CTX-01 §2 e §3.4 |
++| Entidade | `declarado_por` | sim | string não vazia | quem sustenta o conteúdo | comportamento posterior | CTX-01 §3.4 |
++| Entidade | `registrado_por` | sim | string não vazia | quem formalizou | comportamento posterior | CTX-01 §3.4 |
++| Entidade | `data` | sim | data ISO | data do registro | formato estrutural | CTX-01 §3.4 |
++| Entidade | `premissa` / `evidencia` | condicional | string ou objeto | rastreia I ou V | I exige premissa; V exige evidência | CTX-01 §3.13, V02/V03 |
++| Regra | `id` | sim | string `RN-NNN` | identificador estável | contrato oficial usa `RN-*` | CTX-01 §3.5 |
++| Regra | `enunciado` | sim | string não vazia | condição que governa ação/decisão | forma condicional vem do ROT-01 | CTX-01 §3.5; ROT-01 §3.4 |
++| Regra | `gatilho` | sim | string não vazia | condição de acionamento | campo da ficha ROT-01 | CTX-01 §3.5/§3.8 |
++| Regra | `procedencia` | sim | `D | I | V` | estatuto documental | taxonomia única | CTX-01 §3.5 |
++| Regra | `autoria_conteudo` | sim | string não vazia | pessoa que enuncia/confirma | regra de pessoa será 2.5.2/2.5.4 | CTX-01 §3.5 |
++| Regra | `registrado_por` | sim | string não vazia | engenheiro que formaliza | regra de pessoa será posterior | CTX-01 §3.5 |
++| Regra | `data` | sim | data ISO | data do registro | formato estrutural | CTX-01 §3.5 |
++| Regra | `origem_do_conhecimento` | sim | string não vazia | documento, ensino, experiência ou desconhecida | preservar saída do ROT-01 | CTX-01 §3.5/§3.8 |
++| Regra | `premissa` / `evidencia` | condicional | string ou objeto | rastreia I ou V | I exige premissa; V exige evidência | CTX-01 §3.13, V02/V03 |
++| Regra | `classificacao_confronto` | sim, presença | objeto | classe e referência ao P3d | sem obrigatoriedade referencial até 2.5.3 | CTX-01 §3.5 |
++| Regra | `documento_de_origem` | sim, presença | string ou nulo | documento escrito associado | pode ser nulo | CTX-01 §3.5 |
++| Regra | sete campos centrais | sim | escalares/listas | bloco interrogado por P4/P5 | todos estruturalmente presentes | CTX-01 §3.6 e CTX-V01 |
++| Regra | `versao` / `historico` | sim, presença | inteiro/lista | estrutura de versionamento | comportamento I→V fica para 2.5.2 | CTX-01 §3.5/§3.12 |
++| Fonte | `id` | sim | string `F-NNN` | identificador estável | padrão por tipo | CTX-01 §3.7 |
++| Fonte | `fonte` | sim | string não vazia | nome da fonte | não inferir pelo nome | CTX-01 §3.7 |
++| Fonte | `tipo` | sim | string não vazia | tipo da fonte | dimensão própria | CTX-01 §3.7 |
++| Fonte | `responsavel` | sim | string não vazia | responsável pela fonte | pessoa/papel registrado | CTX-01 §3.7 |
++| Fonte | `contrato.estrutura` | sim | string não vazia | forma dos dados | contrato mínimo | CTX-01 §3.7 |
++| Fonte | `contrato.significado` | sim | string não vazia | o que registra de fato | não usar apenas o nome | CTX-01 §3.7 |
++| Fonte | `contrato.qualidade` | sim | string não vazia | condição mínima observada | contrato mínimo | CTX-01 §3.7 |
++| Fonte | `acesso` | sim | string não vazia | forma/condição de acesso | sem validação referencial neste pacote | CTX-01 §3.7 |
++| Fonte | `procedencia` | sim | `D | I | V` | estatuto documental | taxonomia única | CTX-01 §3.7 |
++| Fonte | `registrado_por` | sim | string não vazia | quem formalizou | comportamento posterior | CTX-01 §3.7 |
++| Fonte | `data` | sim | data ISO | data do registro | formato estrutural | CTX-01 §3.7 |
++| Fonte | `premissa` / `evidencia` | condicional | string ou objeto | rastreia I ou V | I exige premissa; V exige evidência | CTX-01 §3.13, V02/V03 |
++
++## Schema atual × CTX-01 v0.4
++
++| Objeto | Campo atual | Campo CTX-01 | Estado | Ação |
++|---|---|---|---|---|
++| Termo | `id`, `termo`, `significado`, `nao_e`, `sinonimos_em_uso`, `procedencia`, `data` | mesmos | CONFORME | manter |
++| Termo | `autor` | `declarado_por`, `registrado_por` | MIGRAR | separar estruturalmente |
++| Termo | `fonte` | `premissa` / `evidencia` condicionais | MIGRAR | substituir campo ambíguo |
++| Entidade | `id`, `entidade`, `atributos`, `relacoes`, `onde_vive`, `procedencia`, `data` | mesmos | CONFORME | manter |
++| Entidade | `autor` | `declarado_por`, `registrado_por` | MIGRAR | separar estruturalmente |
++| Entidade | `fonte` | `premissa` / `evidencia` condicionais | MIGRAR | substituir campo ambíguo |
++| Regra | `id: R-*` | `id: RN-*` | RENOMEAR | alinhar prefixo e nome do modelo |
++| Regra | `enunciado`, sete campos centrais, `documento_de_origem`, `versao`, `historico` | mesmos conceitos | CONFORME | preservar e ajustar metadados internos |
++| Regra | ausente | `gatilho`, `autoria_conteudo`, `registrado_por`, `origem_do_conhecimento` | ADICIONAR | materializar contrato oficial |
++| Regra | `autor` | `autoria_conteudo`, `registrado_por` | MIGRAR | separar papéis sem impor comportamento |
++| Regra | `estatuto` | sem campo correspondente | REMOVER | CTX-01 v0.4 não o utiliza |
++| Regra | `divergencia` embutida | `classificacao_confronto` com referência | MIGRAR | remover duplicação; sem validar referência ainda |
++| Regra | `premissa`, `evidencia` | mesmos | PARCIAL | alinhar forma e manter condição D/I/V |
++| Regra | `historico[].autor` | `historico[].registrado_por` | RENOMEAR | alinhar vocabulário; comportamento posterior |
++| Fonte | `id`, `fonte`, `tipo`, `responsavel`, `contrato`, `acesso`, `procedencia`, `data` | mesmos | CONFORME | manter |
++| Fonte | `autor` | `registrado_por` | RENOMEAR | alinhar rastreabilidade |
++| Fonte | `evidencia` escalar | `premissa` / `evidencia` condicionais | PARCIAL | permitir estrutura condicional |
++
++## Instâncias encontradas
++
++Busca em `/home/netiv-ai/Projetos`: quatro arquivos encontrados, todos modelos
++do template deste repositório. Nenhuma instância real de caso foi localizada.
++Logo, este pacote não executa migração de dados nem reescreve casos existentes.
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/resultado.md b/.projectdocs/evidencias/sprint2/2.5.1/resultado.md
+new file mode 100644
+index 0000000..540e76d
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/resultado.md
+@@ -0,0 +1,142 @@
++# Pacote 2.5.1 — Materialização dos quatro objetos CTX
++
++## 1. Identificação
++
++- **Ação:** 2.5 — Camada de Contexto e Dados
++- **Pacote:** 2.5.1
++- **Execução:** 18/09/2026, 15:53–16:08 -0300
++- **Branch:** `master`
++- **HEAD inicial:** `5421c78edaeb074c3d14e61e6686be42431a2c56`
++- **Commit de implementação:** PENDENTE ANTES DO COMMIT
++- **HEAD final:** PENDENTE ANTES DO FECHAMENTO DOCUMENTAL
++- **eiac-nucleo:** 0.2.6 → 0.2.7
++- **eiac-campo:** 0.3.3 → 0.3.4
++- **Playbook:** 0.3.1, sem alteração
++- **Schema CTX:** 0.1.0
++
++## 2. Documentos consultados
++
++| Documento | Versão | Papel na decisão |
++|---|---:|---|
++| EMCIA-CTX-01 | 0.4 | Fonte canônica dos quatro objetos e dos sete campos da Regra. |
++| EMCIA-MET-01 | 0.1 | Encaixe em P2–P5 e profundidade por nível. |
++| EMCIA-ROT-01 | 0.1 | Origem, autoria, gatilho, exceções e procedência das regras. |
++| EMCIA-GLO-01 | 0.1 | Terminologia de contexto, entidade, contrato de dados e D/I/V. |
++| EMCIA-E2 | 0.1 | Consumo de termos, fontes e regras pelo diagnóstico. |
++| EMCIA-E3 | 0.1 | Consumo dos objetos pelas camadas CA4 e CA5. |
++| EMCIA-ESP-01 | 0.2 | Contrato executável, separação dos plugins e D/I/V. |
++| EMCIA-TST-01 | 0.1 | Testes estruturais, negativas e controles positivos. |
++
++## 3. Baseline relacionado
++
++- D-02 — quatro objetos CTX ainda no schema anterior;
++- 2.5-BL03 — Termo implementado, mas divergente;
++- 2.5-BL04 — Entidade implementada, mas divergente;
++- 2.5-BL05 — Regra implementada, mas divergente;
++- 2.5-BL06 — Fonte implementada, mas divergente.
++
++## 4. Estado inicial
++
++| Objeto | Estado | Evidência | Lacuna |
++|---|---|---|---|
++| Termo | IMPLEMENTADO MAS DIVERGENTE | `T-000-modelo.yaml` | `autor/fonte` não representavam os metadados do CTX-01 v0.4. |
++| Entidade | IMPLEMENTADO MAS DIVERGENTE | `E-000-modelo.yaml` | Mesmo desvio de autoria/rastreabilidade do Termo. |
++| Regra | IMPLEMENTADO MAS DIVERGENTE | `R-000-modelo.yaml` | Prefixo, gatilho, autoria, origem e confronto divergentes; `estatuto/divergencia` duplicavam o P3d. |
++| Fonte | IMPLEMENTADO MAS DIVERGENTE | `F-000-modelo.yaml` | Ausência de `registrado_por` e contrato ainda não verificável estruturalmente. |
++
++Não foram encontradas instâncias reais em `/home/netiv-ai/Projetos`; somente
++os quatro templates deste repositório. Nenhum dado de caso foi migrado.
++
++## 5. Matriz schema atual × CTX-01
++
++A extração integral anterior à implementação está em
++`matriz-schema-inicial.md`. Síntese das decisões:
++
++| Objeto | Campo atual | Campo alvo | Ação |
++|---|---|---|---|
++| Termo | `autor`, `fonte` | `declarado_por`, `registrado_por`, premissa/evidência | migrar estrutura |
++| Entidade | `autor`, `fonte` | `declarado_por`, `registrado_por`, premissa/evidência | migrar estrutura |
++| Regra | `R-*` | `RN-*` | renomear |
++| Regra | ausentes | `gatilho`, `autoria_conteudo`, `registrado_por`, `origem_do_conhecimento` | adicionar |
++| Regra | `estatuto`, `divergencia` | `classificacao_confronto` | remover duplicação e materializar referência |
++| Regra | sete campos centrais | mesmos | preservar e tornar obrigatórios no schema |
++| Regra | `historico[].autor` | `historico[].registrado_por` | alinhar vocabulário |
++| Fonte | `autor` | `registrado_por` | renomear |
++| Fonte | contrato apenas no template | `contrato.estrutura/significado/qualidade` | declarar como estrutura obrigatória |
++| Quatro objetos | procedência parcial | `D | I | V` + premissa/evidência condicionais | alinhar |
++
++## 6. Alterações realizadas
++
++| Arquivo/grupo | Mudança | Justificativa |
++|---|---|---|
++| Quatro modelos em `contexto/` | Materialização dos campos do CTX-01 v0.4; Regra renomeada para `RN-000-modelo.yaml`. | CTX-01 §§3.3–3.8. |
++| `registro/contexto.schema.json` | Contrato declarativo de campos, tipos, IDs e D/I/V. | Estrutura reutilizável e congelada no caso. |
++| `eiac-nucleo/scripts/estrutura.py` | Validador genérico orientado pelo schema do caso. | Mantém o núcleo sem vocabulário específico do EMCIA. |
++| `testes/contexto.py` | T01–T11 com geração contemporânea de evidência. | TST-01: negativa + controle positivo. |
++| Documentação diretamente afetada | Exemplos, instruções, inventário e contagem de testes alinhados. | Evita consumo do schema antigo. |
++| Manifests | Núcleo 0.2.7 e Campo 0.3.4. | Scripts do núcleo e contrato do campo mudaram. |
++
++## 7. Testes
++
++| ID | Cenário | Esperado | Obtido | Resultado | Evidência |
++|---|---|---|---|---|---|
++| 2.5.1-T01 | Termo válido | aceite | aceite | PASS | `teste-2.5.1-T01.txt` |
++| 2.5.1-T02 | Entidade válida | aceite | aceite | PASS | `teste-2.5.1-T02.txt` |
++| 2.5.1-T03 | Regra válida | aceite | aceite | PASS | `teste-2.5.1-T03.txt` |
++| 2.5.1-T04 | Fonte válida | aceite | aceite | PASS | `teste-2.5.1-T04.txt` |
++| 2.5.1-T05 | Termo sem significado | recusa | recusa | PASS | `teste-2.5.1-T05.txt` |
++| 2.5.1-T06 | Entidade sem nome | recusa | recusa | PASS | `teste-2.5.1-T06.txt` |
++| 2.5.1-T07 | Regra sem estabilidade | recusa | recusa | PASS | `teste-2.5.1-T07.txt` |
++| 2.5.1-T08 | Fonte sem contrato.significado | recusa | recusa | PASS | `teste-2.5.1-T08.txt` |
++| 2.5.1-T09 | D/I/V nos quatro objetos | 12 aceites | 12 aceites | PASS | `teste-2.5.1-T09.txt` |
++| 2.5.1-T10 | Taxonomias obsoletas | 8 recusas | 8 recusas | PASS | `teste-2.5.1-T10.txt` |
++| 2.5.1-T11 | Sete campos centrais | presentes | presentes | PASS | `teste-2.5.1-T11.txt` |
++| 2.5.1-T12 | Regressão acumulada | sem regressão | 44 aprovações | PASS | `teste-regressao-final.txt` |
++
++## 8. Regressão
++
++- **Antes:** 33 total / 33 PASS / 0 FAIL / 0 SKIP.
++- **Depois:** 44 total / 44 PASS / 0 FAIL / 0 SKIP.
++
++A contagem aumentou em 11 pelos testes estruturais T01–T11. T12 é a execução
++acumulada, não uma décima segunda verificação adicional.
++
++## 9. Defeitos encontrados
++
++Nenhum novo defeito funcional demonstrável. O pacote tratou D-02 e os achados
++2.5-BL03 a 2.5-BL06 já registrados no baseline.
++
++## 10. Correções realizadas
++
++- alinhamento de Termo, Entidade, Regra e Fonte ao CTX-01 v0.4;
++- remoção estrutural de `estatuto` e da divergência duplicada na Regra;
++- prefixo estável `RN-*`;
++- sete campos centrais obrigatórios no schema;
++- contrato D/I/V aplicável aos quatro objetos;
++- contrato mínimo de Fonte estruturalmente verificável;
++- validador genérico e testes positivos/negativos correspondentes.
++
++## 11. Itens deliberadamente adiados
++
++- **2.5.2:** curadoria, restrição de autoria, proteção de escrita e
++  versionamento comportamental I→V;
++- **2.5.3:** semântica de `classificacao_confronto` e obrigatoriedade de
++  `referencia_p3d`;
++- **2.5.4:** CTX-V01–V11 completos e resolução de referências entre objetos;
++- **2.5.5:** integração P2/P3 → CTX → P4/P5;
++- **2.5.6:** verificação consolidada da camada.
++
++## 12. Eventos
++
++Nenhum evento é aplicável. O validador deste pacote é estrutural, somente
++leitura e não grava estado. Eventos de recusa e curadoria pertencem aos
++pacotes comportamentais posteriores.
++
++## 13. Commit
++
++PENDENTE ANTES DO COMMIT DE IMPLEMENTAÇÃO.
++
++## 14. Estado final
++
++**CONFORME**, condicionado apenas ao registro do commit e à atualização do
++RTE-01 com o hash efetivo. Os critérios técnicos e de teste estão atendidos.
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T01.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T01.txt
+new file mode 100644
+index 0000000..b54e015
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T01.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T01
++REQUISITO: Termo válido
++DATA/HORA: 2026-09-18T16:07:31-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T01.yaml
++EXIT CODE:
++[1] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++termo aceito
++
++STDOUT:
++--- comando 1 ---
++termo valido: teste-T01.yaml
++
++STDERR:
++--- comando 1 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T02.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T02.txt
+new file mode 100644
+index 0000000..e311aca
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T02.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T02
++REQUISITO: Entidade válida
++DATA/HORA: 2026-09-18T16:07:31-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T02.yaml
++EXIT CODE:
++[1] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++entidade aceita
++
++STDOUT:
++--- comando 1 ---
++entidade valido: teste-T02.yaml
++
++STDERR:
++--- comando 1 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T03.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T03.txt
+new file mode 100644
+index 0000000..b500943
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T03.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T03
++REQUISITO: Regra válida
++DATA/HORA: 2026-09-18T16:07:31-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T03.yaml
++EXIT CODE:
++[1] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++regra aceita
++
++STDOUT:
++--- comando 1 ---
++regra valido: teste-T03.yaml
++
++STDERR:
++--- comando 1 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T04.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T04.txt
+new file mode 100644
+index 0000000..fea1a82
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T04.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T04
++REQUISITO: Fonte válida
++DATA/HORA: 2026-09-18T16:07:31-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T04.yaml
++EXIT CODE:
++[1] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++fonte aceita
++
++STDOUT:
++--- comando 1 ---
++fonte valido: teste-T04.yaml
++
++STDERR:
++--- comando 1 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T05.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T05.txt
+new file mode 100644
+index 0000000..c22f610
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T05.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T05
++REQUISITO: Termo sem significado
++DATA/HORA: 2026-09-18T16:07:32-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T05.yaml
++EXIT CODE:
++[1] 1
++
++RESULTADO ESPERADO:
++recusa
++
++RESULTADO OBTIDO:
++campo significado recusado
++
++STDOUT:
++--- comando 1 ---
++
++STDERR:
++--- comando 1 ---
++campo obrigatorio ausente: significado
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T06.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T06.txt
+new file mode 100644
+index 0000000..9f0d944
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T06.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T06
++REQUISITO: Entidade sem nome
++DATA/HORA: 2026-09-18T16:07:32-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T06.yaml
++EXIT CODE:
++[1] 1
++
++RESULTADO ESPERADO:
++recusa
++
++RESULTADO OBTIDO:
++campo entidade recusado
++
++STDOUT:
++--- comando 1 ---
++
++STDERR:
++--- comando 1 ---
++campo obrigatorio ausente: entidade
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T07.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T07.txt
+new file mode 100644
+index 0000000..c8ba8c5
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T07.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T07
++REQUISITO: Regra sem estabilidade
++DATA/HORA: 2026-09-18T16:07:32-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T07.yaml
++EXIT CODE:
++[1] 1
++
++RESULTADO ESPERADO:
++recusa
++
++RESULTADO OBTIDO:
++campo central estabilidade recusado
++
++STDOUT:
++--- comando 1 ---
++
++STDERR:
++--- comando 1 ---
++campo obrigatorio ausente: estabilidade
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T08.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T08.txt
+new file mode 100644
+index 0000000..f73f3ba
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T08.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T08
++REQUISITO: Fonte sem contrato.significado
++DATA/HORA: 2026-09-18T16:07:32-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T08.yaml
++EXIT CODE:
++[1] 1
++
++RESULTADO ESPERADO:
++recusa
++
++RESULTADO OBTIDO:
++contrato sem significado recusado
++
++STDOUT:
++--- comando 1 ---
++
++STDERR:
++--- comando 1 ---
++campo obrigatorio ausente: contrato.significado
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T09.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T09.txt
+new file mode 100644
+index 0000000..33be69c
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T09.txt
+@@ -0,0 +1,79 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T09
++REQUISITO: D/I/V nos quatro objetos
++DATA/HORA: 2026-09-18T16:07:32-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-D.yaml
++[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-I.yaml
++[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T09-termo-V.yaml
++[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-D.yaml
++[5] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-I.yaml
++[6] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo entidade --arquivo teste-T09-entidade-V.yaml
++[7] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-D.yaml
++[8] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-I.yaml
++[9] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T09-regra-V.yaml
++[10] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-D.yaml
++[11] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-I.yaml
++[12] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo fonte --arquivo teste-T09-fonte-V.yaml
++EXIT CODE:
++[1] 0
++[2] 0
++[3] 0
++[4] 0
++[5] 0
++[6] 0
++[7] 0
++[8] 0
++[9] 0
++[10] 0
++[11] 0
++[12] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++12 combinações aceitas
++
++STDOUT:
++--- comando 1 ---
++termo valido: teste-T09-termo-D.yaml
++--- comando 2 ---
++termo valido: teste-T09-termo-I.yaml
++--- comando 3 ---
++termo valido: teste-T09-termo-V.yaml
++--- comando 4 ---
++entidade valido: teste-T09-entidade-D.yaml
++--- comando 5 ---
++entidade valido: teste-T09-entidade-I.yaml
++--- comando 6 ---
++entidade valido: teste-T09-entidade-V.yaml
++--- comando 7 ---
++regra valido: teste-T09-regra-D.yaml
++--- comando 8 ---
++regra valido: teste-T09-regra-I.yaml
++--- comando 9 ---
++regra valido: teste-T09-regra-V.yaml
++--- comando 10 ---
++fonte valido: teste-T09-fonte-D.yaml
++--- comando 11 ---
++fonte valido: teste-T09-fonte-I.yaml
++--- comando 12 ---
++fonte valido: teste-T09-fonte-V.yaml
++
++STDERR:
++--- comando 1 ---
++--- comando 2 ---
++--- comando 3 ---
++--- comando 4 ---
++--- comando 5 ---
++--- comando 6 ---
++--- comando 7 ---
++--- comando 8 ---
++--- comando 9 ---
++--- comando 10 ---
++--- comando 11 ---
++--- comando 12 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T10.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T10.txt
+new file mode 100644
+index 0000000..0f017e2
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T10.txt
+@@ -0,0 +1,59 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T10
++REQUISITO: Taxonomias obsoletas
++DATA/HORA: 2026-09-18T16:07:33-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-campo.yaml
++[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-antitese.yaml
++[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-conversa.yaml
++[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-livre.yaml
++[5] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-externo.yaml
++[6] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-declarado.yaml
++[7] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-inferido.yaml
++[8] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo termo --arquivo teste-T10-verificado.yaml
++EXIT CODE:
++[1] 1
++[2] 1
++[3] 1
++[4] 1
++[5] 1
++[6] 1
++[7] 1
++[8] 1
++
++RESULTADO ESPERADO:
++recusa
++
++RESULTADO OBTIDO:
++8 valores obsoletos recusados
++
++STDOUT:
++--- comando 1 ---
++--- comando 2 ---
++--- comando 3 ---
++--- comando 4 ---
++--- comando 5 ---
++--- comando 6 ---
++--- comando 7 ---
++--- comando 8 ---
++
++STDERR:
++--- comando 1 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 2 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 3 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 4 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 5 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 6 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 7 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++--- comando 8 ---
++procedencia invalida: esperado um de ['D', 'I', 'V']
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T11.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T11.txt
+new file mode 100644
+index 0000000..fe8859c
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-2.5.1-T11.txt
+@@ -0,0 +1,25 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T11
++REQUISITO: Sete campos centrais da Regra
++DATA/HORA: 2026-09-18T16:07:33-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/estrutura.py --tipo regra --arquivo teste-T11.yaml
++EXIT CODE:
++[1] 0
++
++RESULTADO ESPERADO:
++aceite
++
++RESULTADO OBTIDO:
++sete campos presentes e regra aceita
++
++STDOUT:
++--- comando 1 ---
++regra valido: teste-T11.yaml
++sete campos centrais presentes no schema
++
++STDERR:
++--- comando 1 ---
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-final.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-final.txt
+new file mode 100644
+index 0000000..6b4f53f
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-final.txt
+@@ -0,0 +1,75 @@
++PACOTE: 2.5.1
++TESTE: 2.5.1-T12 / regressao final acumulada
++REQUISITO: preservar suite anterior e executar T01-T11
++DATA/HORA: 2026-09-18T16:08:05-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO:
++[1] bash testes/negativos.sh
++[2] python3 testes/contexto.py
++EXIT CODE:
++[1] 0
++[2] 0
++
++RESULTADO ESPERADO:
++33 verificacoes anteriores e 11 testes estruturais aprovados, sem falhas.
++
++RESULTADO OBTIDO:
++44 verificacoes aprovadas, 0 falhas, 0 skips.
++
++STDOUT:
++== testes negativos
++  ok    1 habilidade EX4 negada
++  ok    2 escrita direta negada
++  ok    2b bash para caso/ negado
++  ok    3 assercao sem procedencia recusada
++  ok    4 assercao valida gravada
++  ok    2.5.0-T01 D valido aceito
++  ok    2.5.0-T02 I sem premissa recusado
++  ok    2.5.0-T03 I com premissa aceito
++  ok    2.5.0-T04 V sem evidencia recusado
++  ok    2.5.0-T05 V com evidencia aceito
++  ok    2.5.0-T06 X/campo/externo recusados como procedencia
++  ok    2.5.0-T07 V coexiste com apuracao separada
++  ok    5 encerramento sem sessao recusado
++  ok    6 autor agente recusado
++  ok    7 emissao com portao fechado recusada
++  ok    9 P1 em N3 negada (EX3)
++  ok    10 P1 em N1 permitida (EX2)
++  ok    11 etapa sem nivel apurado negada
++  ok    12 F0 sem nivel nao encerra
++  ok    13 camada plana recusada
++  ok    14 nivel fora do playbook recusado
++  ok    15 nivel apurado por agente recusado
++  ok    16 nivel apurado grava com evento
++  ok    17 F0 encerra apos nivel apurado
++  ok    18 selo por agente recusado
++  ok    19 selo sem repositorio recusado
++  ok    20 selo commita com autor nomeado e evento
++  ok    21 selo sem mudanca recusado
++  ok    22 fronteira acompanha o nivel
++  ok    23 P3b marcada nao delegavel nos dois niveis
++  ok    24 documento citado ausente recusado
++  ok    25 documento presente grava com hash na trilha
++  ok    8 playbook incompleto recusado
++
++todas as travas recusam como devem
++== objetos CTX — pacote 2.5.1
++  ok    2.5.1-T01 Termo válido
++  ok    2.5.1-T02 Entidade válida
++  ok    2.5.1-T03 Regra válida
++  ok    2.5.1-T04 Fonte válida
++  ok    2.5.1-T05 Termo sem significado
++  ok    2.5.1-T06 Entidade sem nome
++  ok    2.5.1-T07 Regra sem estabilidade
++  ok    2.5.1-T08 Fonte sem contrato.significado
++  ok    2.5.1-T09 D/I/V nos quatro objetos
++  ok    2.5.1-T10 Taxonomias obsoletas
++  ok    2.5.1-T11 Sete campos centrais da Regra
++
++11 testes estruturais aprovados
++EXIT_NEGATIVOS=0
++EXIT_CONTEXTO=0
++
++STDERR:
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-inicial.txt b/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-inicial.txt
+new file mode 100644
+index 0000000..99995bb
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.5.1/teste-regressao-inicial.txt
+@@ -0,0 +1,55 @@
++PACOTE: 2.5.1
++TESTE: regressao inicial
++REQUISITO: preservar a suite do estado inicial
++DATA/HORA: 2026-09-18T15:53:37-03:00
++HEAD INICIAL: 5421c78edaeb074c3d14e61e6686be42431a2c56
++COMANDO: bash testes/negativos.sh
++EXIT CODE: 0
++
++RESULTADO ESPERADO:
++33 verificacoes aprovadas, 0 falhas.
++
++RESULTADO OBTIDO:
++33 verificacoes aprovadas, 0 falhas.
++
++STDOUT:
++== testes negativos
++  ok    1 habilidade EX4 negada
++  ok    2 escrita direta negada
++  ok    2b bash para caso/ negado
++  ok    3 assercao sem procedencia recusada
++  ok    4 assercao valida gravada
++  ok    2.5.0-T01 D valido aceito
++  ok    2.5.0-T02 I sem premissa recusado
++  ok    2.5.0-T03 I com premissa aceito
++  ok    2.5.0-T04 V sem evidencia recusado
++  ok    2.5.0-T05 V com evidencia aceito
++  ok    2.5.0-T06 X/campo/externo recusados como procedencia
++  ok    2.5.0-T07 V coexiste com apuracao separada
++  ok    5 encerramento sem sessao recusado
++  ok    6 autor agente recusado
++  ok    7 emissao com portao fechado recusada
++  ok    9 P1 em N3 negada (EX3)
++  ok    10 P1 em N1 permitida (EX2)
++  ok    11 etapa sem nivel apurado negada
++  ok    12 F0 sem nivel nao encerra
++  ok    13 camada plana recusada
++  ok    14 nivel fora do playbook recusado
++  ok    15 nivel apurado por agente recusado
++  ok    16 nivel apurado grava com evento
++  ok    17 F0 encerra apos nivel apurado
++  ok    18 selo por agente recusado
++  ok    19 selo sem repositorio recusado
++  ok    20 selo commita com autor nomeado e evento
++  ok    21 selo sem mudanca recusado
++  ok    22 fronteira acompanha o nivel
++  ok    23 P3b marcada nao delegavel nos dois niveis
++  ok    24 documento citado ausente recusado
++  ok    25 documento presente grava com hash na trilha
++  ok    8 playbook incompleto recusado
++
++todas as travas recusam como devem
++
++STDERR:
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index eb231b4..e93958b 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -2,6 +2,19 @@
+ 
+ Gerado em: 2026-09-12 (docs-mapper, Pipeline A)
+ 
++> Atualizado em: 2026-09-18 — D/I/V normalizado no pacote 2.5.0; modelos
++> Termo, Entidade, Regra e Fonte alinhados ao CTX-01 v0.4 no pacote 2.5.1.
++
++## Atualização da Sprint 2
++
++- `eiac-nucleo` 0.2.7: validador estrutural genérico orientado por schema.
++- `eiac-campo` 0.3.4: quatro modelos CTX e
++  `registro/contexto.schema.json`.
++- Suíte acumulada: 44 verificações — 33 de regressão e 11 estruturais CTX.
++- Evidências: `.projectdocs/evidencias/sprint2/2.5.0/` e `2.5.1/`.
++- O conteúdo abaixo preserva o retrato original produzido em 12/09/2026;
++  esta atualização registra somente a evolução diretamente relacionada.
++
+ ## O que é o projeto
+ 
+ Marketplace de dois plugins Claude Code que instrumentam um método de engenharia
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 704fa7b..c746058 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -35,9 +35,11 @@ O núcleo lê o `playbook.json` do caso e aplica o que ele declara. Trocar o pla
+ 
+ ```bash
+ bash testes/negativos.sh
++python3 testes/contexto.py
+ ```
+ 
+-Trinta e três verificações. Se alguma falhar, não commite.
++Quarenta e quatro verificações: 33 de regressão e 11 dos objetos CTX. Se
++alguma falhar, não commite.
+ 
+ Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/plugin.json`. O CI recusa o contrário — com o playbook sendo o método, versão de plugin e versão de método são a mesma coisa.
+ 
+diff --git a/CTX-01-instrumento-camada-contexto.md b/CTX-01-instrumento-camada-contexto.md
+index a14b36b..764fb03 100644
+--- a/CTX-01-instrumento-camada-contexto.md
++++ b/CTX-01-instrumento-camada-contexto.md
+@@ -4,11 +4,12 @@
+ **Ação:** 2.2 — Construir o instrumento de registro de regras verificadas da camada de contexto
+ **Entregável:** estrutura de glossário, entidades e regras verificadas que alimenta o passo 5
+ **Camada:** `CA4`
+-**Versão:** 1.0 · setembro de 2026
++**Compatibilidade:** EMCIA-CTX-01 v0.4 · setembro de 2026
+ 
+-> **Nota de compatibilidade:** o contrato de procedência deste documento foi
+-> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
+-> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
++> **Nota de implementação:** os quatro modelos e o schema estrutural do caso
++> foram alinhados ao EMCIA-CTX-01 v0.4 no pacote 2.5.1. Curadoria,
++> versionamento comportamental e referências P3d permanecem nos pacotes
++> seguintes.
+ 
+ ---
+ 
+@@ -47,7 +48,11 @@ termo: guia
+ significado: documento de autorização emitido pelo convênio para um procedimento
+ nao_e: nota fiscal, nem prontuário
+ sinonimos_em_uso: [autorização, pedido]
+-procedencia: D
++procedencia: V
++declarado_por: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-18
++evidencia: leitura de volta da sessão de 2026-09-18
+ ```
+ 
+ O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
+@@ -71,6 +76,9 @@ relacoes:
+     cardinalidade: muitos-para-um
+ onde_vive: [F-002]
+ procedencia: D
++declarado_por: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-12
+ ```
+ 
+ ---
+@@ -78,25 +86,23 @@ procedencia: D
+ ## 6. Registro de Regra — o objeto central
+ 
+ ```yaml
+-id: R-014
+-enunciado: guias do convênio X são enviadas no mesmo dia da emissão
++id: RN-014
++enunciado: quando o convênio X emite a autorização, a guia é enviada no mesmo dia
++gatilho: recebimento_da_autorizacao
+ 
+-# procedência documental
+ procedencia: V
++autoria_conteudo: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-18
++origem_do_conhecimento: experiencia_propria
+ evidencia:
+   tipo: observacao
+-  referencia: sessão presencial de 2026-09-18
+-data: 2026-09-18
+-autor: Rafael Nogueira
++  referencia: sessao_P3b_2026-09-18_ficha_07
+ 
+-# estatuto — escrita, praticada, ou as duas
+-estatuto: praticada
++classificacao_confronto:
++  classe: nao_documentada
++  referencia_p3d: confronto-007
+ documento_de_origem: null
+-divergencia:
+-  documento_diz: fila única por ordem de chegada
+-  observado: três convênios saem no mesmo dia
+-  justificativa: convênio glosa se o envio passar de 24h
+-  registrada_em: P3d
+ 
+ # o que o passo 5 interroga
+ determinismo: admite_julgamento
+@@ -116,12 +122,13 @@ historico:
+     procedencia: I
+     premissa: deduzida do manual interno
+     mudanca: registrada a partir do manual interno
+-    autor: Rafael Nogueira
++    registrado_por: Rafael Nogueira
+   - versao: 2
+     data: 2026-09-18
+     procedencia: V
+     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
+-    autor: Rafael Nogueira
++    confirmado_por: Claudia Ferreira
++    registrado_por: Rafael Nogueira
+ ```
+ 
+ ### 6.1 Por que cada campo do bloco central existe
+@@ -153,6 +160,8 @@ contrato:
+   qualidade: preenchida ao fim do dia; lacunas em dias de pico
+ acesso: leitura, autorizado em 2026-09-10
+ procedencia: V
++registrado_por: Rafael Nogueira
++data: 2026-09-10
+ ```
+ 
+ O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
+@@ -222,7 +231,7 @@ O registro de contexto de um caso está completo quando:
+ 1. Todo termo usado nas regras existe no glossário do processo
+ 2. Toda regra tem os sete campos do bloco central preenchidos
+ 3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
+-4. Toda divergência tem justificativa e etapa de registro
++4. Toda classificação de confronto pode apontar para o registro correspondente de P3d
+ 5. Toda fonte tem contrato com os três campos
+ 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada
+ 
+@@ -232,7 +241,10 @@ O registro de contexto de um caso está completo quando:
+ 
+ **Não cobre o domínio inteiro.** Registra o que o caso priorizado exige, não a organização toda. Mapeamento completo de domínio é projeto próprio.
+ 
+-**Não é executável.** É estrutura de registro, não grafo consultável em tempo de execução. A conversão para grafo, se o cliente a quiser, é trabalho de implantação — fora do método.
++**Não é uma base de conhecimento em produção.** O schema estrutural é
++executável pelo Estúdio, mas não constitui grafo, mecanismo de recuperação ou
++serviço consultável pela solução do cliente. Essa implantação permanece fora
++do método.
+ 
+ **Depende do levantamento.** Se o P3b não acontecer, este instrumento registra apenas regra escrita, e o quadro da seção 8 fica com metade das células vazias. O instrumento não compensa a ausência do passo; apenas a torna visível.
+ 
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 6f9056a..5f00cec 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.3",
++  "version": "0.3.4",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+index a14b36b..764fb03 100644
+--- a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
++++ b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+@@ -4,11 +4,12 @@
+ **Ação:** 2.2 — Construir o instrumento de registro de regras verificadas da camada de contexto
+ **Entregável:** estrutura de glossário, entidades e regras verificadas que alimenta o passo 5
+ **Camada:** `CA4`
+-**Versão:** 1.0 · setembro de 2026
++**Compatibilidade:** EMCIA-CTX-01 v0.4 · setembro de 2026
+ 
+-> **Nota de compatibilidade:** o contrato de procedência deste documento foi
+-> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
+-> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
++> **Nota de implementação:** os quatro modelos e o schema estrutural do caso
++> foram alinhados ao EMCIA-CTX-01 v0.4 no pacote 2.5.1. Curadoria,
++> versionamento comportamental e referências P3d permanecem nos pacotes
++> seguintes.
+ 
+ ---
+ 
+@@ -47,7 +48,11 @@ termo: guia
+ significado: documento de autorização emitido pelo convênio para um procedimento
+ nao_e: nota fiscal, nem prontuário
+ sinonimos_em_uso: [autorização, pedido]
+-procedencia: D
++procedencia: V
++declarado_por: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-18
++evidencia: leitura de volta da sessão de 2026-09-18
+ ```
+ 
+ O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
+@@ -71,6 +76,9 @@ relacoes:
+     cardinalidade: muitos-para-um
+ onde_vive: [F-002]
+ procedencia: D
++declarado_por: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-12
+ ```
+ 
+ ---
+@@ -78,25 +86,23 @@ procedencia: D
+ ## 6. Registro de Regra — o objeto central
+ 
+ ```yaml
+-id: R-014
+-enunciado: guias do convênio X são enviadas no mesmo dia da emissão
++id: RN-014
++enunciado: quando o convênio X emite a autorização, a guia é enviada no mesmo dia
++gatilho: recebimento_da_autorizacao
+ 
+-# procedência documental
+ procedencia: V
++autoria_conteudo: Claudia Ferreira
++registrado_por: Rafael Nogueira
++data: 2026-09-18
++origem_do_conhecimento: experiencia_propria
+ evidencia:
+   tipo: observacao
+-  referencia: sessão presencial de 2026-09-18
+-data: 2026-09-18
+-autor: Rafael Nogueira
++  referencia: sessao_P3b_2026-09-18_ficha_07
+ 
+-# estatuto — escrita, praticada, ou as duas
+-estatuto: praticada
++classificacao_confronto:
++  classe: nao_documentada
++  referencia_p3d: confronto-007
+ documento_de_origem: null
+-divergencia:
+-  documento_diz: fila única por ordem de chegada
+-  observado: três convênios saem no mesmo dia
+-  justificativa: convênio glosa se o envio passar de 24h
+-  registrada_em: P3d
+ 
+ # o que o passo 5 interroga
+ determinismo: admite_julgamento
+@@ -116,12 +122,13 @@ historico:
+     procedencia: I
+     premissa: deduzida do manual interno
+     mudanca: registrada a partir do manual interno
+-    autor: Rafael Nogueira
++    registrado_por: Rafael Nogueira
+   - versao: 2
+     data: 2026-09-18
+     procedencia: V
+     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
+-    autor: Rafael Nogueira
++    confirmado_por: Claudia Ferreira
++    registrado_por: Rafael Nogueira
+ ```
+ 
+ ### 6.1 Por que cada campo do bloco central existe
+@@ -153,6 +160,8 @@ contrato:
+   qualidade: preenchida ao fim do dia; lacunas em dias de pico
+ acesso: leitura, autorizado em 2026-09-10
+ procedencia: V
++registrado_por: Rafael Nogueira
++data: 2026-09-10
+ ```
+ 
+ O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
+@@ -222,7 +231,7 @@ O registro de contexto de um caso está completo quando:
+ 1. Todo termo usado nas regras existe no glossário do processo
+ 2. Toda regra tem os sete campos do bloco central preenchidos
+ 3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
+-4. Toda divergência tem justificativa e etapa de registro
++4. Toda classificação de confronto pode apontar para o registro correspondente de P3d
+ 5. Toda fonte tem contrato com os três campos
+ 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada
+ 
+@@ -232,7 +241,10 @@ O registro de contexto de um caso está completo quando:
+ 
+ **Não cobre o domínio inteiro.** Registra o que o caso priorizado exige, não a organização toda. Mapeamento completo de domínio é projeto próprio.
+ 
+-**Não é executável.** É estrutura de registro, não grafo consultável em tempo de execução. A conversão para grafo, se o cliente a quiser, é trabalho de implantação — fora do método.
++**Não é uma base de conhecimento em produção.** O schema estrutural é
++executável pelo Estúdio, mas não constitui grafo, mecanismo de recuperação ou
++serviço consultável pela solução do cliente. Essa implantação permanece fora
++do método.
+ 
+ **Depende do levantamento.** Se o P3b não acontecer, este instrumento registra apenas regra escrita, e o quadro da seção 8 fica com metade das células vazias. O instrumento não compensa a ausência do passo; apenas a torna visível.
+ 
+diff --git a/eiac-campo/template-caso/contexto/README.md b/eiac-campo/template-caso/contexto/README.md
+index 2e71237..a8b7c8f 100644
+--- a/eiac-campo/template-caso/contexto/README.md
++++ b/eiac-campo/template-caso/contexto/README.md
+@@ -6,17 +6,29 @@ Estrutura definida em `CTX-01`. Quatro objetos, um arquivo por registro.
+ contexto/
+ ├── termos/      T-001.yaml   glossário do processo (P2)
+ ├── entidades/   E-001.yaml   objetos do domínio (P2, refinado em P3)
+-├── regras/      R-001.yaml   o objeto central (P2 e P3)
++├── regras/      RN-001.yaml  o objeto central (P2 e P3)
+ └── fontes/      F-001.yaml   contratos de dados (P2)
+ ```
+ 
++Os modelos seguem o EMCIA-CTX-01 v0.4. O contrato estrutural executável está
++em `registro/contexto.schema.json`; ele declara campos obrigatórios, tipos,
++padrões de identificador e as condições mínimas de procedência.
++
++Para validar uma instância, a partir da raiz do caso:
++
++```bash
++python3 "${CLAUDE_PLUGIN_ROOT}/scripts/estrutura.py" \
++  --tipo regra --arquivo contexto/regras/RN-001.yaml
++```
++
+ ## Trava de curadoria
+ 
+ Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `procedencia: I`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
+ 
+ O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
+-com `procedencia: I` e premissa. A migração completa destes quatro objetos e
+-as regras de versionamento/curadoria pertencem aos pacotes seguintes.
++com `procedencia: I` e premissa. Os campos de autoria, histórico e confronto
++já fazem parte da estrutura; as regras comportamentais de curadoria,
++versionamento e resolução referencial pertencem aos pacotes seguintes.
+ 
+ ## Quadro frequência × consequência
+ 
+diff --git a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+index c161a77..1f1bfd5 100644
+--- a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+@@ -10,6 +10,8 @@ relacoes:
+ onde_vive: []
+ # D | I | V
+ procedencia: D
+-fonte: ""
++declarado_por: ""
++registrado_por: ""
+ data: ""
+-autor: ""
++premissa: ""                    # obrigatoria quando procedencia = I
++evidencia: ""                   # obrigatoria quando procedencia = V
+diff --git a/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml b/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
+index e38b466..893aa8b 100644
+--- a/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
+@@ -9,6 +9,7 @@ contrato:
+ acesso: ""
+ # D | I | V
+ procedencia: D
+-evidencia: ""                  # obrigatoria quando procedencia = V
++registrado_por: ""
+ data: ""
+-autor: ""
++premissa: ""                   # obrigatoria quando procedencia = I
++evidencia: ""                  # obrigatoria quando procedencia = V
+diff --git a/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml
+deleted file mode 100644
+index 4d6222c..0000000
+--- a/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml
++++ /dev/null
+@@ -1,37 +0,0 @@
+-id: R-000
+-enunciado: ""
+-
+-# D | I | V
+-procedencia: I
+-premissa: ""                 # obrigatoria quando procedencia = I
+-evidencia:                   # obrigatoria quando procedencia = V
+-  tipo: ""                  # observacao | documento | leitura_de_volta
+-  referencia: ""
+-  trecho: ""
+-data: ""
+-autor: ""                    # pessoa nomeada, nunca agente
+-
+-estatuto: escrita            # escrita | praticada | ambas | divergente
+-documento_de_origem: ""
+-divergencia:
+-  documento_diz: ""
+-  observado: ""
+-  justificativa: ""
+-  registrada_em: ""          # etapa
+-
+-# bloco que o passo 5 interroga — os sete campos sao obrigatorios
+-determinismo: ""             # deterministica | admite_julgamento
+-frequencia: ""               # rotineira | ocasional | rara
+-consequencia_do_erro: ""     # baixa | media | alta
+-decisor_quando_nao_cobre: "" # nome proprio, ou vazio se nao ha
+-entradas: []                 # ids de entidade e fonte
+-excecoes_conhecidas: []
+-estabilidade: ""
+-
+-versao: 1
+-historico:
+-  - versao: 1
+-    data: ""
+-    procedencia: ""
+-    mudanca: ""
+-    autor: ""
+diff --git a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+new file mode 100644
+index 0000000..37e53f8
+--- /dev/null
++++ b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+@@ -0,0 +1,33 @@
++id: RN-000
++enunciado: ""
++gatilho: ""
++
++# D | I | V
++procedencia: I
++autoria_conteudo: ""
++registrado_por: ""
++data: ""
++origem_do_conhecimento: ""     # documento | ensino | experiencia_propria | desconhecida
++premissa: ""                   # obrigatoria quando procedencia = I
++evidencia:                      # obrigatoria quando procedencia = V
++  tipo: ""                     # observacao | documento | leitura_de_volta
++  referencia: ""
++
++# A semantica e a referencia obrigatoria pertencem ao pacote 2.5.3.
++classificacao_confronto:
++  classe: ""                   # alinhada | divergente | nao_documentada | orfa | inacessivel
++  referencia_p3d: ""
++documento_de_origem: null
++
++# Bloco interrogado pelos Passos 4 e 5 — os sete campos sao obrigatorios.
++determinismo: ""               # deterministica | admite_julgamento
++frequencia: ""                 # rotineira | ocasional | rara
++consequencia_do_erro: ""       # baixa | media | alta
++decisor_quando_nao_cobre: ""   # nome proprio, ou vazio quando nao se aplica
++entradas: []                   # IDs de entidades, termos e fontes
++excecoes_conhecidas: []
++estabilidade: ""
++
++# A logica de nova versao e de transicao I -> V pertence ao pacote 2.5.2.
++versao: 1
++historico: []
+diff --git a/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml b/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
+index 2a3d062..409af22 100644
+--- a/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
+@@ -5,6 +5,8 @@ nao_e: ""
+ sinonimos_em_uso: []
+ # D | I | V
+ procedencia: D
+-fonte: ""
++declarado_por: ""
++registrado_por: ""
+ data: ""
+-autor: ""
++premissa: ""                    # obrigatoria quando procedencia = I
++evidencia: ""                   # obrigatoria quando procedencia = V
+diff --git a/eiac-campo/template-caso/registro/contexto.schema.json b/eiac-campo/template-caso/registro/contexto.schema.json
+new file mode 100644
+index 0000000..78f0b46
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/contexto.schema.json
+@@ -0,0 +1,151 @@
++{
++  "nome": "Objetos centrais da camada de contexto",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CTX-01 v0.4",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "termo": {
++      "id_pattern": "T-[0-9]{3,}",
++      "required": [
++        "id", "termo", "significado", "nao_e", "sinonimos_em_uso",
++        "procedencia", "declarado_por", "registrado_por", "data"
++      ],
++      "nonempty": [
++        "id", "termo", "significado", "nao_e", "procedencia",
++        "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "termo": "string",
++        "significado": "string",
++        "nao_e": "string",
++        "sinonimos_em_uso": "list",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date"
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    },
++    "entidade": {
++      "id_pattern": "E-[0-9]{3,}",
++      "required": [
++        "id", "entidade", "atributos", "relacoes", "onde_vive",
++        "procedencia", "declarado_por", "registrado_por", "data"
++      ],
++      "nonempty": [
++        "id", "entidade", "procedencia", "declarado_por",
++        "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "entidade": "string",
++        "atributos": "list",
++        "relacoes": "list",
++        "onde_vive": "list",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date"
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    },
++    "regra": {
++      "id_pattern": "RN-[0-9]{3,}",
++      "required": [
++        "id", "enunciado", "gatilho", "procedencia", "autoria_conteudo",
++        "registrado_por", "data", "origem_do_conhecimento",
++        "classificacao_confronto", "documento_de_origem", "determinismo",
++        "frequencia", "consequencia_do_erro", "decisor_quando_nao_cobre",
++        "entradas", "excecoes_conhecidas", "estabilidade", "versao",
++        "historico"
++      ],
++      "nonempty": [
++        "id", "enunciado", "gatilho", "procedencia", "autoria_conteudo",
++        "registrado_por", "data", "origem_do_conhecimento", "determinismo",
++        "frequencia", "consequencia_do_erro", "estabilidade", "versao"
++      ],
++      "types": {
++        "id": "string",
++        "enunciado": "string",
++        "gatilho": "string",
++        "procedencia": "string",
++        "autoria_conteudo": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "origem_do_conhecimento": "string",
++        "classificacao_confronto": "object",
++        "determinismo": "string",
++        "frequencia": "string",
++        "consequencia_do_erro": "string",
++        "decisor_quando_nao_cobre": "string",
++        "entradas": "list",
++        "excecoes_conhecidas": "list",
++        "estabilidade": "string",
++        "versao": "integer",
++        "historico": "list"
++      },
++      "enums": {
++        "origem_do_conhecimento": [
++          "documento", "ensino", "experiencia_propria", "desconhecida"
++        ],
++        "determinismo": ["deterministica", "admite_julgamento"],
++        "frequencia": ["rotineira", "ocasional", "rara"],
++        "consequencia_do_erro": ["baixa", "media", "alta"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    },
++    "fonte": {
++      "id_pattern": "F-[0-9]{3,}",
++      "required": [
++        "id", "fonte", "tipo", "responsavel", "contrato",
++        "contrato.estrutura", "contrato.significado", "contrato.qualidade",
++        "acesso", "procedencia", "registrado_por", "data"
++      ],
++      "nonempty": [
++        "id", "fonte", "tipo", "responsavel", "contrato.estrutura",
++        "contrato.significado", "contrato.qualidade", "acesso",
++        "procedencia", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "fonte": "string",
++        "tipo": "string",
++        "responsavel": "string",
++        "contrato": "object",
++        "contrato.estrutura": "string",
++        "contrato.significado": "string",
++        "contrato.qualidade": "string",
++        "acesso": "string",
++        "procedencia": "string",
++        "registrado_por": "string",
++        "data": "date"
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    }
++  }
++}
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 9ed61af..94f42c8 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.6",
++  "version": "0.2.7",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/README.md b/eiac-nucleo/README.md
+index 57504b3..62e64be 100644
+--- a/eiac-nucleo/README.md
++++ b/eiac-nucleo/README.md
+@@ -17,6 +17,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
+ |---|---|
+ | `guarda.py` | Hook `PreToolUse`. Três regras, `exit 2` bloqueia |
+ | `validar.py` | Único caminho de escrita em `caso/` |
++| `estrutura.py` | Valida objetos estruturados contra schema declarado no caso |
+ | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
+ | `estado.py` | Lê e grava o Registro; emite eventos |
+ | `playbook.py` | Carrega e valida o playbook |
+@@ -25,6 +26,9 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
+ 
+ Nenhuma decisão passa por modelo de linguagem.
+ 
++`estrutura.py` não conhece os objetos do EMCIA. Tipos, campos obrigatórios,
++formatos e valores de procedência são lidos do schema congelado no caso.
++
+ ## Documento citado
+ 
+ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `fontes/`, e o hash do que foi lido entra no evento. Citação que aponta para fora do repositório não é verificável, e trocar um documento já citado passa a aparecer na trilha em vez de mudar a base da asserção em silêncio.
+diff --git a/eiac-nucleo/scripts/estrutura.py b/eiac-nucleo/scripts/estrutura.py
+new file mode 100755
+index 0000000..d504386
+--- /dev/null
++++ b/eiac-nucleo/scripts/estrutura.py
+@@ -0,0 +1,294 @@
++"""Validador estrutural genérico orientado por schema declarado no caso.
++
++O núcleo não conhece Termo, Entidade, Regra ou Fonte. Ele lê os tipos,
++campos e restrições de ``registro/contexto.schema.json`` e valida um arquivo
++YAML sem decidir mérito, curadoria ou referências entre objetos.
++"""
++import argparse
++import ast
++import datetime
++import json
++import pathlib
++import re
++import sys
++
++try:
++    import yaml
++except ImportError:
++    yaml = None
++
++
++class ErroYaml(ValueError):
++    """Erro de sintaxe no subconjunto YAML usado pelos modelos do Estúdio."""
++
++
++def _sem_comentario(texto):
++    aspas = None
++    escape = False
++    for indice, caractere in enumerate(texto):
++        if escape:
++            escape = False
++            continue
++        if caractere == "\\" and aspas == '"':
++            escape = True
++            continue
++        if caractere in ("'", '"'):
++            if aspas == caractere:
++                aspas = None
++            elif aspas is None:
++                aspas = caractere
++            continue
++        if caractere == "#" and aspas is None:
++            return texto[:indice].rstrip()
++    return texto.rstrip()
++
++
++def _itens_inline(texto):
++    itens, atual, aspas = [], [], None
++    for caractere in texto:
++        if caractere in ("'", '"'):
++            if aspas == caractere:
++                aspas = None
++            elif aspas is None:
++                aspas = caractere
++            atual.append(caractere)
++        elif caractere == "," and aspas is None:
++            itens.append("".join(atual).strip())
++            atual = []
++        else:
++            atual.append(caractere)
++    itens.append("".join(atual).strip())
++    return itens
++
++
++def _escalar(valor):
++    valor = valor.strip()
++    if valor in ("null", "Null", "NULL", "~"):
++        return None
++    if valor.lower() == "true":
++        return True
++    if valor.lower() == "false":
++        return False
++    if valor.startswith("[") and valor.endswith("]"):
++        miolo = valor[1:-1].strip()
++        return [] if not miolo else [_escalar(item) for item in _itens_inline(miolo)]
++    if valor.startswith(("'", '"')) and valor.endswith(("'", '"')):
++        try:
++            return ast.literal_eval(valor)
++        except (SyntaxError, ValueError):
++            return valor[1:-1]
++    if re.fullmatch(r"-?\d+", valor):
++        return int(valor)
++    return valor
++
++
++def _tokens(texto):
++    saida = []
++    for numero, original in enumerate(texto.splitlines(), 1):
++        if "\t" in original[:len(original) - len(original.lstrip())]:
++            raise ErroYaml(f"linha {numero}: tabulacao nao permitida na indentacao")
++        linha = _sem_comentario(original)
++        if not linha.strip():
++            continue
++        indentacao = len(linha) - len(linha.lstrip(" "))
++        saida.append((indentacao, linha.strip(), numero))
++    return saida
++
++
++def _separar_chave(conteudo, numero):
++    if ":" not in conteudo:
++        raise ErroYaml(f"linha {numero}: esperado campo no formato chave: valor")
++    chave, valor = conteudo.split(":", 1)
++    chave = chave.strip()
++    if not chave:
++        raise ErroYaml(f"linha {numero}: chave vazia")
++    return chave, valor.strip()
++
++
++def _mapa(tokens, indice, indentacao):
++    resultado = {}
++    while indice < len(tokens):
++        nivel, conteudo, numero = tokens[indice]
++        if nivel < indentacao:
++            break
++        if nivel > indentacao:
++            raise ErroYaml(f"linha {numero}: indentacao inesperada")
++        if conteudo.startswith("- ") or conteudo == "-":
++            break
++        chave, valor = _separar_chave(conteudo, numero)
++        if chave in resultado:
++            raise ErroYaml(f"linha {numero}: campo duplicado '{chave}'")
++        indice += 1
++        if valor:
++            resultado[chave] = _escalar(valor)
++        elif indice < len(tokens) and tokens[indice][0] > nivel:
++            resultado[chave], indice = _bloco(tokens, indice, tokens[indice][0])
++        else:
++            resultado[chave] = None
++    return resultado, indice
++
++
++def _lista(tokens, indice, indentacao):
++    resultado = []
++    while indice < len(tokens):
++        nivel, conteudo, numero = tokens[indice]
++        if nivel < indentacao:
++            break
++        if nivel != indentacao or not (conteudo.startswith("- ") or conteudo == "-"):
++            break
++        item = conteudo[1:].strip()
++        indice += 1
++        if not item:
++            if indice >= len(tokens) or tokens[indice][0] <= nivel:
++                resultado.append(None)
++            else:
++                valor, indice = _bloco(tokens, indice, tokens[indice][0])
++                resultado.append(valor)
++            continue
++        if ":" not in item:
++            resultado.append(_escalar(item))
++            continue
++
++        chave, valor = _separar_chave(item, numero)
++        mapa = {chave: _escalar(valor) if valor else None}
++        if indice < len(tokens) and tokens[indice][0] > nivel:
++            proximo_nivel = tokens[indice][0]
++            if valor:
++                complemento, indice = _mapa(tokens, indice, proximo_nivel)
++                mapa.update(complemento)
++            else:
++                mapa[chave], indice = _bloco(tokens, indice, proximo_nivel)
++        resultado.append(mapa)
++    return resultado, indice
++
++
++def _bloco(tokens, indice, indentacao):
++    if tokens[indice][1].startswith("-"):
++        return _lista(tokens, indice, indentacao)
++    return _mapa(tokens, indice, indentacao)
++
++
++def carregar_yaml(texto):
++    """Carrega YAML com PyYAML ou com parser determinístico sem dependência."""
++    if yaml:
++        dados = yaml.safe_load(texto)
++        return dados or {}
++    tokens = _tokens(texto)
++    if not tokens:
++        return {}
++    if tokens[0][0] != 0:
++        raise ErroYaml("primeiro campo deve iniciar sem indentacao")
++    dados, indice = _bloco(tokens, 0, 0)
++    if indice != len(tokens):
++        _, _, numero = tokens[indice]
++        raise ErroYaml(f"linha {numero}: conteudo nao interpretado")
++    return dados
++
++
++def _caminho(dados, caminho):
++    atual = dados
++    for parte in caminho.split("."):
++        if not isinstance(atual, dict) or parte not in atual:
++            return False, None
++        atual = atual[parte]
++    return True, atual
++
++
++def _vazio(valor):
++    return valor is None or valor == "" or valor == [] or valor == {}
++
++
++TIPOS = {
++    "string": str,
++    "date": (str, datetime.date),
++    "integer": int,
++    "boolean": bool,
++    "list": list,
++    "object": dict,
++}
++
++
++def validar(dados, schema, tipo):
++    objetos = schema.get("objetos", {})
++    contrato = objetos.get(tipo)
++    if not contrato:
++        return [f"tipo desconhecido '{tipo}'. Esperado um de {sorted(objetos)}"]
++    if not isinstance(dados, dict):
++        return ["raiz do registro deve ser um objeto"]
++
++    erros = []
++    for caminho in contrato.get("required", []):
++        existe, _ = _caminho(dados, caminho)
++        if not existe:
++            erros.append(f"campo obrigatorio ausente: {caminho}")
++
++    for caminho in contrato.get("nonempty", []):
++        existe, valor = _caminho(dados, caminho)
++        if existe and _vazio(valor):
++            erros.append(f"campo obrigatorio vazio: {caminho}")
++
++    for caminho, nome_tipo in contrato.get("types", {}).items():
++        existe, valor = _caminho(dados, caminho)
++        esperado = TIPOS.get(nome_tipo)
++        if existe and valor is not None and esperado and not isinstance(valor, esperado):
++            erros.append(f"tipo invalido em {caminho}: esperado {nome_tipo}")
++
++    for caminho, valores_permitidos in contrato.get("enums", {}).items():
++        existe, valor = _caminho(dados, caminho)
++        if existe and not _vazio(valor) and valor not in valores_permitidos:
++            erros.append(
++                f"valor invalido em {caminho}: esperado um de {valores_permitidos}"
++            )
++
++    for caminho, padrao_campo in contrato.get("patterns", {}).items():
++        existe, valor = _caminho(dados, caminho)
++        if not existe or _vazio(valor):
++            continue
++        texto = valor.isoformat() if isinstance(valor, datetime.date) else str(valor)
++        if not re.fullmatch(padrao_campo, texto):
++            erros.append(f"formato invalido em {caminho}: esperado {padrao_campo}")
++
++    existe_id, identificador = _caminho(dados, "id")
++    padrao = contrato.get("id_pattern")
++    if existe_id and padrao and (
++        not isinstance(identificador, str) or not re.fullmatch(padrao, identificador)
++    ):
++        erros.append(f"id invalido para {tipo}: esperado padrao {padrao}")
++
++    existe_proc, procedencia = _caminho(dados, "procedencia")
++    valores = schema.get("procedencia", [])
++    if existe_proc and procedencia not in valores:
++        erros.append(f"procedencia invalida: esperado um de {valores}")
++
++    condicionais = contrato.get("conditional_nonempty", {})
++    for caminho in condicionais.get(str(procedencia), []):
++        existe, valor = _caminho(dados, caminho)
++        if not existe or _vazio(valor):
++            erros.append(f"procedencia {procedencia} exige campo preenchido: {caminho}")
++    return erros
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--schema", default="registro/contexto.schema.json")
++    ap.add_argument("--tipo", required=True)
++    ap.add_argument("--arquivo", required=True)
++    args = ap.parse_args()
++
++    try:
++        schema = json.loads(pathlib.Path(args.schema).read_text(encoding="utf-8"))
++        dados = carregar_yaml(pathlib.Path(args.arquivo).read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, ErroYaml, ValueError) as erro:
++        print(f"estrutura invalida: {erro}", file=sys.stderr)
++        sys.exit(1)
++
++    erros = validar(dados, schema, args.tipo)
++    if erros:
++        for erro in erros:
++            print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"{args.tipo} valido: {args.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/testes/README.md b/testes/README.md
+index c621407..bcfe9e4 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -8,6 +8,14 @@ Trinta e três verificações: as 26 do baseline e sete verificações do contra
+ canônico D/I/V. Há negativas e controles positivos — o que é bem formado
+ precisa passar, senão a trava está apenas quebrada.
+ 
++Os 11 testes estruturais dos quatro objetos CTX rodam separadamente:
++
++```bash
++python3 testes/contexto.py
++```
++
++O total acumulado é de 44 verificações.
++
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+ | # | Prova |
+@@ -50,6 +58,22 @@ O teste 2.5.0-T08 é a execução acumulada desta suíte: os 26 cenários do
+ baseline permanecem presentes, com os marcadores por extenso atualizados para
+ os códigos canônicos.
+ 
++## Objetos CTX — pacote 2.5.1
++
++| ID | Prova |
++|---|---|
++| 2.5.1-T01 | Termo mínimo válido é aceito |
++| 2.5.1-T02 | Entidade mínima válida é aceita |
++| 2.5.1-T03 | Regra mínima válida é aceita |
++| 2.5.1-T04 | Fonte mínima válida é aceita |
++| 2.5.1-T05 | Termo sem `significado` é recusado |
++| 2.5.1-T06 | Entidade sem `entidade` é recusada |
++| 2.5.1-T07 | Regra sem `estabilidade` é recusada |
++| 2.5.1-T08 | Fonte sem `contrato.significado` é recusada |
++| 2.5.1-T09 | D/I/V é representável nos quatro objetos |
++| 2.5.1-T10 | Taxonomias obsoletas são recusadas como procedência |
++| 2.5.1-T11 | Os sete campos centrais da Regra são obrigatórios no schema |
++
+ Rodam contra uma cópia temporária do template, sem tocar em caso real.
+ 
+ **Falha aqui é regressão de trava, não de funcionalidade.** Não conserte o teste; conserte a trava.
+diff --git a/testes/contexto.py b/testes/contexto.py
+new file mode 100755
+index 0000000..9f00691
+--- /dev/null
++++ b/testes/contexto.py
+@@ -0,0 +1,322 @@
++#!/usr/bin/env python3
++"""Testes estruturais do pacote 2.5.1 com evidência bruta opcional."""
++import argparse
++import datetime
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import textwrap
++
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++VALIDADOR = RAIZ / "eiac-nucleo" / "scripts" / "estrutura.py"
++CENTRAIS = {
++    "determinismo", "frequencia", "consequencia_do_erro",
++    "decisor_quando_nao_cobre", "entradas", "excecoes_conhecidas",
++    "estabilidade",
++}
++
++
++def bloco_procedencia(procedencia, evidencia_objeto=False):
++    if procedencia == "I":
++        return 'premissa: "padrão demonstrado pela amostra"\nevidencia: ""'
++    if procedencia == "V" and evidencia_objeto:
++        return textwrap.dedent("""\
++            premissa: ""
++            evidencia:
++              tipo: observacao
++              referencia: sessao-P3b-001""")
++    if procedencia == "V":
++        return 'premissa: ""\nevidencia: "leitura de volta de 2026-09-18"'
++    return 'premissa: ""\nevidencia: ""'
++
++
++def termo(procedencia="D"):
++    return "\n".join([
++        "id: T-001",
++        "termo: guia",
++        "significado: documento de autorizacao do convenio",
++        "nao_e: nota fiscal",
++        "sinonimos_em_uso: [autorizacao, pedido]",
++        f"procedencia: {procedencia}",
++        "declarado_por: Claudia Ferreira",
++        "registrado_por: Rafael Nogueira",
++        'data: "2026-09-18"',
++        bloco_procedencia(procedencia),
++        "",
++    ])
++
++
++def entidade(procedencia="D"):
++    return "\n".join([
++        "id: E-001",
++        "entidade: Guia",
++        "atributos:",
++        "  - nome: convenio",
++        "    tipo: categoria",
++        "    obrigatorio: true",
++        "relacoes:",
++        "  - com: Paciente",
++        "    cardinalidade: muitos-para-um",
++        "onde_vive: [F-001]",
++        f"procedencia: {procedencia}",
++        "declarado_por: Claudia Ferreira",
++        "registrado_por: Rafael Nogueira",
++        'data: "2026-09-18"',
++        bloco_procedencia(procedencia),
++        "",
++    ])
++
++
++def regra(procedencia="D"):
++    return "\n".join([
++        "id: RN-001",
++        "enunciado: quando a autorizacao chega, a guia e enviada no mesmo dia",
++        "gatilho: recebimento_da_autorizacao",
++        f"procedencia: {procedencia}",
++        "autoria_conteudo: Claudia Ferreira",
++        "registrado_por: Rafael Nogueira",
++        'data: "2026-09-18"',
++        "origem_do_conhecimento: experiencia_propria",
++        bloco_procedencia(procedencia, evidencia_objeto=True),
++        "classificacao_confronto:",
++        '  classe: ""',
++        '  referencia_p3d: ""',
++        "documento_de_origem: null",
++        "determinismo: admite_julgamento",
++        "frequencia: rotineira",
++        "consequencia_do_erro: alta",
++        "decisor_quando_nao_cobre: Claudia Ferreira",
++        "entradas: [E-001, T-001, F-001]",
++        "excecoes_conhecidas: []",
++        "estabilidade: muda quando o convenio revisa o contrato",
++        "versao: 1",
++        "historico: []",
++        "",
++    ])
++
++
++def fonte(procedencia="D"):
++    return "\n".join([
++        "id: F-001",
++        "fonte: planilha de controle de envios",
++        "tipo: planilha",
++        "responsavel: Claudia Ferreira",
++        "contrato:",
++        "  estrutura: uma linha por guia enviada",
++        "  significado: registra envio, nao emissao",
++        "  qualidade: preenchida ao fim do dia",
++        "acesso: leitura autorizada",
++        f"procedencia: {procedencia}",
++        "registrado_por: Rafael Nogueira",
++        'data: "2026-09-18"',
++        bloco_procedencia(procedencia),
++        "",
++    ])
++
++
++FABRICAS = {
++    "termo": termo,
++    "entidade": entidade,
++    "regra": regra,
++    "fonte": fonte,
++}
++
++
++def sem_linha(texto, prefixo):
++    return "\n".join(
++        linha for linha in texto.splitlines()
++        if not linha.lstrip().startswith(prefixo)
++    ) + "\n"
++
++
++def executar_validador(caso, tipo, conteudo, sufixo):
++    arquivo = caso / f"teste-{sufixo}.yaml"
++    arquivo.write_text(conteudo, encoding="utf-8")
++    comando = [
++        "python3", str(VALIDADOR), "--tipo", tipo,
++        "--arquivo", str(arquivo.relative_to(caso)),
++    ]
++    proc = subprocess.run(
++        comando, cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return {
++        "comando": " ".join(comando),
++        "codigo": proc.returncode,
++        "stdout": proc.stdout,
++        "stderr": proc.stderr,
++    }
++
++
++def resultado_simples(caso, tipo, conteudo, sufixo, codigo, trecho=None):
++    execucao = executar_validador(caso, tipo, conteudo, sufixo)
++    passou = execucao["codigo"] == codigo
++    if trecho:
++        passou = passou and trecho in execucao["stderr"]
++    return [execucao], passou
++
++
++def t09(caso):
++    execucoes = []
++    for tipo, fabrica in FABRICAS.items():
++        for procedencia in ("D", "I", "V"):
++            execucoes.append(executar_validador(
++                caso, tipo, fabrica(procedencia), f"T09-{tipo}-{procedencia}",
++            ))
++    return execucoes, all(item["codigo"] == 0 for item in execucoes)
++
++
++def t10(caso):
++    execucoes = []
++    obsoletas = ("campo", "antitese", "conversa", "livre", "externo",
++                 "declarado", "inferido", "verificado")
++    for valor in obsoletas:
++        execucoes.append(executar_validador(
++            caso, "termo", termo().replace("procedencia: D", f"procedencia: {valor}"),
++            f"T10-{valor}",
++        ))
++    passou = all(
++        item["codigo"] == 1 and "procedencia invalida" in item["stderr"]
++        for item in execucoes
++    )
++    return execucoes, passou
++
++
++def t11(caso):
++    execucao = executar_validador(caso, "regra", regra(), "T11")
++    schema = json.loads((caso / "registro" / "contexto.schema.json").read_text())
++    obrigatorios = set(schema["objetos"]["regra"]["required"])
++    faltando = sorted(CENTRAIS - obrigatorios)
++    execucao["stdout"] += (
++        "sete campos centrais presentes no schema\n" if not faltando
++        else f"campos centrais ausentes no schema: {faltando}\n"
++    )
++    return [execucao], execucao["codigo"] == 0 and not faltando
++
++
++def gravar_evidencia(destino, teste, requisito, esperado, obtido,
++                     execucoes, passou, head_inicial):
++    agora = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
++    comandos = "\n".join(
++        f"[{indice}] {item['comando']}" for indice, item in enumerate(execucoes, 1)
++    )
++    codigos = "\n".join(
++        f"[{indice}] {item['codigo']}" for indice, item in enumerate(execucoes, 1)
++    )
++    stdout = "".join(
++        f"--- comando {indice} ---\n{item['stdout']}"
++        for indice, item in enumerate(execucoes, 1)
++    ) or "(vazio)\n"
++    stderr = "".join(
++        f"--- comando {indice} ---\n{item['stderr']}"
++        for indice, item in enumerate(execucoes, 1)
++    ) or "(vazio)\n"
++    conteudo = f"""PACOTE: 2.5.1
++TESTE: {teste}
++REQUISITO: {requisito}
++DATA/HORA: {agora}
++HEAD INICIAL: {head_inicial}
++COMANDO:
++{comandos}
++EXIT CODE:
++{codigos}
++
++RESULTADO ESPERADO:
++{esperado}
++
++RESULTADO OBTIDO:
++{obtido}
++
++STDOUT:
++{stdout}
++STDERR:
++{stderr}
++RESULTADO FINAL: {'PASS' if passou else 'FAIL'}
++"""
++    (destino / f"teste-{teste}.txt").write_text(conteudo, encoding="utf-8")
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--evidencias")
++    ap.add_argument("--head-inicial")
++    args = ap.parse_args()
++
++    destino = pathlib.Path(args.evidencias).resolve() if args.evidencias else None
++    if destino:
++        destino.mkdir(parents=True, exist_ok=True)
++    head_inicial = args.head_inicial or subprocess.run(
++        ["git", "rev-parse", "HEAD"], cwd=RAIZ, text=True,
++        capture_output=True, check=True,
++    ).stdout.strip()
++
++    with tempfile.TemporaryDirectory() as temporario:
++        caso = pathlib.Path(temporario) / "caso"
++        shutil.copytree(TEMPLATE, caso)
++        casos = [
++            ("2.5.1-T01", "Termo válido", "aceite", "termo aceito",
++             lambda: resultado_simples(caso, "termo", termo(), "T01", 0)),
++            ("2.5.1-T02", "Entidade válida", "aceite", "entidade aceita",
++             lambda: resultado_simples(caso, "entidade", entidade(), "T02", 0)),
++            ("2.5.1-T03", "Regra válida", "aceite", "regra aceita",
++             lambda: resultado_simples(caso, "regra", regra(), "T03", 0)),
++            ("2.5.1-T04", "Fonte válida", "aceite", "fonte aceita",
++             lambda: resultado_simples(caso, "fonte", fonte(), "T04", 0)),
++            ("2.5.1-T05", "Termo sem significado", "recusa",
++             "campo significado recusado",
++             lambda: resultado_simples(
++                 caso, "termo", sem_linha(termo(), "significado:"), "T05", 1,
++                 "campo obrigatorio ausente: significado",
++             )),
++            ("2.5.1-T06", "Entidade sem nome", "recusa",
++             "campo entidade recusado",
++             lambda: resultado_simples(
++                 caso, "entidade", sem_linha(entidade(), "entidade:"), "T06", 1,
++                 "campo obrigatorio ausente: entidade",
++             )),
++            ("2.5.1-T07", "Regra sem estabilidade", "recusa",
++             "campo central estabilidade recusado",
++             lambda: resultado_simples(
++                 caso, "regra", sem_linha(regra(), "estabilidade:"), "T07", 1,
++                 "campo obrigatorio ausente: estabilidade",
++             )),
++            ("2.5.1-T08", "Fonte sem contrato.significado", "recusa",
++             "contrato sem significado recusado",
++             lambda: resultado_simples(
++                 caso, "fonte", sem_linha(fonte(), "significado:"), "T08", 1,
++                 "campo obrigatorio ausente: contrato.significado",
++             )),
++            ("2.5.1-T09", "D/I/V nos quatro objetos", "aceite",
++             "12 combinações aceitas", lambda: t09(caso)),
++            ("2.5.1-T10", "Taxonomias obsoletas", "recusa",
++             "8 valores obsoletos recusados", lambda: t10(caso)),
++            ("2.5.1-T11", "Sete campos centrais da Regra", "aceite",
++             "sete campos presentes e regra aceita", lambda: t11(caso)),
++        ]
++
++        falhas = 0
++        print("== objetos CTX — pacote 2.5.1")
++        for teste, requisito, esperado, obtido, executar in casos:
++            execucoes, passou = executar()
++            if destino:
++                gravar_evidencia(
++                    destino, teste, requisito, esperado, obtido,
++                    execucoes, passou, head_inicial,
++                )
++            if passou:
++                print(f"  ok    {teste} {requisito}")
++            else:
++                falhas += 1
++                print(f"  FALHA {teste} {requisito}")
++
++    if falhas:
++        print(f"\n{falhas} teste(s) estrutural(is) falharam")
++        raise SystemExit(1)
++    print("\n11 testes estruturais aprovados")
++
++
++if __name__ == "__main__":
++    main()

@@ -4,11 +4,12 @@
 **Ação:** 2.2 — Construir o instrumento de registro de regras verificadas da camada de contexto
 **Entregável:** estrutura de glossário, entidades e regras verificadas que alimenta o passo 5
 **Camada:** `CA4`
-**Versão:** 1.0 · setembro de 2026
+**Compatibilidade:** EMCIA-CTX-01 v0.4 · setembro de 2026
 
-> **Nota de compatibilidade:** o contrato de procedência deste documento foi
-> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
-> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
+> **Nota de implementação:** os quatro modelos e o schema estrutural do caso
+> foram alinhados ao EMCIA-CTX-01 v0.4 no pacote 2.5.1. Curadoria,
+> versionamento comportamental e referências P3d permanecem nos pacotes
+> seguintes.
 
 ---
 
@@ -47,7 +48,11 @@ termo: guia
 significado: documento de autorização emitido pelo convênio para um procedimento
 nao_e: nota fiscal, nem prontuário
 sinonimos_em_uso: [autorização, pedido]
-procedencia: D
+procedencia: V
+declarado_por: Claudia Ferreira
+registrado_por: Rafael Nogueira
+data: 2026-09-18
+evidencia: leitura de volta da sessão de 2026-09-18
 ```
 
 O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
@@ -71,6 +76,9 @@ relacoes:
     cardinalidade: muitos-para-um
 onde_vive: [F-002]
 procedencia: D
+declarado_por: Claudia Ferreira
+registrado_por: Rafael Nogueira
+data: 2026-09-12
 ```
 
 ---
@@ -78,25 +86,23 @@ procedencia: D
 ## 6. Registro de Regra — o objeto central
 
 ```yaml
-id: R-014
-enunciado: guias do convênio X são enviadas no mesmo dia da emissão
+id: RN-014
+enunciado: quando o convênio X emite a autorização, a guia é enviada no mesmo dia
+gatilho: recebimento_da_autorizacao
 
-# procedência documental
 procedencia: V
+autoria_conteudo: Claudia Ferreira
+registrado_por: Rafael Nogueira
+data: 2026-09-18
+origem_do_conhecimento: experiencia_propria
 evidencia:
   tipo: observacao
-  referencia: sessão presencial de 2026-09-18
-data: 2026-09-18
-autor: Rafael Nogueira
+  referencia: sessao_P3b_2026-09-18_ficha_07
 
-# estatuto — escrita, praticada, ou as duas
-estatuto: praticada
+classificacao_confronto:
+  classe: nao_documentada
+  referencia_p3d: confronto-007
 documento_de_origem: null
-divergencia:
-  documento_diz: fila única por ordem de chegada
-  observado: três convênios saem no mesmo dia
-  justificativa: convênio glosa se o envio passar de 24h
-  registrada_em: P3d
 
 # o que o passo 5 interroga
 determinismo: admite_julgamento
@@ -116,12 +122,13 @@ historico:
     procedencia: I
     premissa: deduzida do manual interno
     mudanca: registrada a partir do manual interno
-    autor: Rafael Nogueira
+    registrado_por: Rafael Nogueira
   - versao: 2
     data: 2026-09-18
     procedencia: V
     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
-    autor: Rafael Nogueira
+    confirmado_por: Claudia Ferreira
+    registrado_por: Rafael Nogueira
 ```
 
 ### 6.1 Por que cada campo do bloco central existe
@@ -153,6 +160,8 @@ contrato:
   qualidade: preenchida ao fim do dia; lacunas em dias de pico
 acesso: leitura, autorizado em 2026-09-10
 procedencia: V
+registrado_por: Rafael Nogueira
+data: 2026-09-10
 ```
 
 O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
@@ -222,7 +231,7 @@ O registro de contexto de um caso está completo quando:
 1. Todo termo usado nas regras existe no glossário do processo
 2. Toda regra tem os sete campos do bloco central preenchidos
 3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
-4. Toda divergência tem justificativa e etapa de registro
+4. Toda classificação de confronto pode apontar para o registro correspondente de P3d
 5. Toda fonte tem contrato com os três campos
 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada
 
@@ -232,7 +241,10 @@ O registro de contexto de um caso está completo quando:
 
 **Não cobre o domínio inteiro.** Registra o que o caso priorizado exige, não a organização toda. Mapeamento completo de domínio é projeto próprio.
 
-**Não é executável.** É estrutura de registro, não grafo consultável em tempo de execução. A conversão para grafo, se o cliente a quiser, é trabalho de implantação — fora do método.
+**Não é uma base de conhecimento em produção.** O schema estrutural é
+executável pelo Estúdio, mas não constitui grafo, mecanismo de recuperação ou
+serviço consultável pela solução do cliente. Essa implantação permanece fora
+do método.
 
 **Depende do levantamento.** Se o P3b não acontecer, este instrumento registra apenas regra escrita, e o quadro da seção 8 fica com metade das células vazias. O instrumento não compensa a ausência do passo; apenas a torna visível.
 

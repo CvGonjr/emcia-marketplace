@@ -1,5 +1,6 @@
 {
   "generated_at": "2026-09-12",
+  "last_updated": "2026-09-18",
   "project": "emcia-marketplace",
   "pipeline": "A",
   "diataxis_coverage": {
@@ -12,7 +13,7 @@
   "modules": [
     {
       "name": "eiac-nucleo",
-      "version": "0.2.0",
+      "version": "0.2.7",
       "path": "eiac-nucleo/",
       "documented": true,
       "docs": ["README.md", "eiac-nucleo/README.md"],
@@ -20,7 +21,7 @@
     },
     {
       "name": "eiac-campo",
-      "version": "0.3.0",
+      "version": "0.3.4",
       "path": "eiac-campo/",
       "documented": true,
       "docs": ["README.md", "eiac-campo/reference/*.md"],
@@ -28,7 +29,12 @@
     }
   ],
   "decisions_registry": "decisoes/ (12 arquivos, README.md como indice)",
-  "tests": "testes/negativos.sh (7 testes negativos, roda no CI)",
+  "tests": "44 verificacoes: 33 em testes/negativos.sh e 11 em testes/contexto.py",
+  "evidence_registry": {
+    "official_document": "EMCIA-RTE-01",
+    "local_path": ".projectdocs/evidencias/sprint2/",
+    "latest_package": "2.5.1"
+  },
   "canonical_docs": {
     "path": "docs/",
     "tracked_by_git": false,
@@ -57,8 +63,10 @@
     "CAT-01 Anexo A (catalogo de agentes/habilidades) nao conferido contra as skills hb-* reais"
   ],
   "open_method_pendencies": [
-    "decisoes/006 em conflito com CAT-01 (procedencia em tres dimensoes) - CONFIRMADO com texto: CAT-01 3.5.4 e GLO-01 3.4 fixam [D][I][V] como dimensao unica; playbook.json usa tres dimensoes independentes (contexto/origem/apuracao) com valores que nao existem em CAT-01/GLO-01",
     "correspondencia entregavel x passo diverge entre relatorio PFC e docs internos (bloqueia E4/E5)",
     "P6-P10 sem habilidade: instrumentos ausentes - metodo canonico (MET-01) tem 5 fases/10 passos; playbook do template so cobre 8 etapas (F0..P5), faltam os passos 6-10 descritos em E4/E5"
+  ],
+  "resolved_method_pendencies": [
+    "procedencia normalizada para D/I/V no pacote 2.5.0; dimensoes de apuracao e tipo de fonte separadas"
   ]
 }

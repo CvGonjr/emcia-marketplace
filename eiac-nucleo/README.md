@@ -17,6 +17,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 |---|---|
 | `guarda.py` | Hook `PreToolUse`. Três regras, `exit 2` bloqueia |
 | `validar.py` | Único caminho de escrita em `caso/` |
+| `estrutura.py` | Valida objetos estruturados contra schema declarado no caso |
 | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
@@ -24,6 +25,9 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 | `fronteira.py` | Imprime o que é preparável e o que exige pessoa, para o nível do caso |
 
 Nenhuma decisão passa por modelo de linguagem.
+
+`estrutura.py` não conhece os objetos do EMCIA. Tipos, campos obrigatórios,
+formatos e valores de procedência são lidos do schema congelado no caso.
 
 ## Documento citado
 

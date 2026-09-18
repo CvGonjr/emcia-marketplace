@@ -8,6 +8,14 @@ Trinta e três verificações: as 26 do baseline e sete verificações do contra
 canônico D/I/V. Há negativas e controles positivos — o que é bem formado
 precisa passar, senão a trava está apenas quebrada.
 
+Os 11 testes estruturais dos quatro objetos CTX rodam separadamente:
+
+```bash
+python3 testes/contexto.py
+```
+
+O total acumulado é de 44 verificações.
+
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
 | # | Prova |
@@ -49,6 +57,22 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída. 
 O teste 2.5.0-T08 é a execução acumulada desta suíte: os 26 cenários do
 baseline permanecem presentes, com os marcadores por extenso atualizados para
 os códigos canônicos.
+
+## Objetos CTX — pacote 2.5.1
+
+| ID | Prova |
+|---|---|
+| 2.5.1-T01 | Termo mínimo válido é aceito |
+| 2.5.1-T02 | Entidade mínima válida é aceita |
+| 2.5.1-T03 | Regra mínima válida é aceita |
+| 2.5.1-T04 | Fonte mínima válida é aceita |
+| 2.5.1-T05 | Termo sem `significado` é recusado |
+| 2.5.1-T06 | Entidade sem `entidade` é recusada |
+| 2.5.1-T07 | Regra sem `estabilidade` é recusada |
+| 2.5.1-T08 | Fonte sem `contrato.significado` é recusada |
+| 2.5.1-T09 | D/I/V é representável nos quatro objetos |
+| 2.5.1-T10 | Taxonomias obsoletas são recusadas como procedência |
+| 2.5.1-T11 | Os sete campos centrais da Regra são obrigatórios no schema |
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 

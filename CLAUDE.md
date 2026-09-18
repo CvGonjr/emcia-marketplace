@@ -35,9 +35,11 @@ O núcleo lê o `playbook.json` do caso e aplica o que ele declara. Trocar o pla
 
 ```bash
 bash testes/negativos.sh
+python3 testes/contexto.py
 ```
 
-Trinta e três verificações. Se alguma falhar, não commite.
+Quarenta e quatro verificações: 33 de regressão e 11 dos objetos CTX. Se
+alguma falhar, não commite.
 
 Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/plugin.json`. O CI recusa o contrário — com o playbook sendo o método, versão de plugin e versão de método são a mesma coisa.
 

@@ -10,6 +10,8 @@ relacoes:
 onde_vive: []
 # D | I | V
 procedencia: D
-fonte: ""
+declarado_por: ""
+registrado_por: ""
 data: ""
-autor: ""
+premissa: ""                    # obrigatoria quando procedencia = I
+evidencia: ""                   # obrigatoria quando procedencia = V

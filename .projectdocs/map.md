@@ -2,6 +2,19 @@
 
 Gerado em: 2026-09-12 (docs-mapper, Pipeline A)
 
+> Atualizado em: 2026-09-18 — D/I/V normalizado no pacote 2.5.0; modelos
+> Termo, Entidade, Regra e Fonte alinhados ao CTX-01 v0.4 no pacote 2.5.1.
+
+## Atualização da Sprint 2
+
+- `eiac-nucleo` 0.2.7: validador estrutural genérico orientado por schema.
+- `eiac-campo` 0.3.4: quatro modelos CTX e
+  `registro/contexto.schema.json`.
+- Suíte acumulada: 44 verificações — 33 de regressão e 11 estruturais CTX.
+- Evidências: `.projectdocs/evidencias/sprint2/2.5.0/` e `2.5.1/`.
+- O conteúdo abaixo preserva o retrato original produzido em 12/09/2026;
+  esta atualização registra somente a evolução diretamente relacionada.
+
 ## O que é o projeto
 
 Marketplace de dois plugins Claude Code que instrumentam um método de engenharia
