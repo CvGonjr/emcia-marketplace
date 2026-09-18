@@ -18,4 +18,7 @@ description: Confronta regra declarada contra regra observada, item a item, e pr
 **Você prepara o confronto; o operador decide cada item.** A transição para `V` cria asserção nova — a original permanece com seu estado.
 
 **Saída:** `caso/E2-dossie.md` e `caso/P3d-divergencias.md`
+
+**Do confronto para o contexto:** quando um item classificado exigir vínculo formal (`classe: divergente`), escreva o registro em `rascunho/DIV-*.yaml` e cure com `/eiac-nucleo:curar --tipo divergencia --schema registro/p3d.schema.json`. Depois, a Regra correspondente em `contexto/regras/` referencia esse registro por `classificacao_confronto.referencia_p3d` — a Regra não duplica `documento_diz`/`observado`/`justificativa`, só aponta para onde estão. Alterar a classificação de uma Regra já curada é mudança de versão, não edição (CTX-01 3.12) — preserva o histórico.
+
 **Encerramento:** critério do passo 3 no documento do método.

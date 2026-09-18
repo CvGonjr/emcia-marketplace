@@ -3,6 +3,9 @@
   "versao": "0.1.0",
   "referencia": "EMCIA-ROT-01 3.9, EMCIA-CTX-01 v0.4 3.5/3.13 (CTX-V11)",
   "procedencia": ["D", "I", "V"],
+  "catalogo_referencias": {
+    "DIV": { "tipo": "divergencia", "diretorio": "contexto/divergencias" }
+  },
   "objetos": {
     "divergencia": {
       "id_pattern": "DIV-[0-9]{3,}",

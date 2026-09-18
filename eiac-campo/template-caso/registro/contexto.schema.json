@@ -6,7 +6,9 @@
   "catalogo_referencias": {
     "T": { "tipo": "termo", "diretorio": "contexto/termos" },
     "E": { "tipo": "entidade", "diretorio": "contexto/entidades" },
-    "F": { "tipo": "fonte", "diretorio": "contexto/fontes" }
+    "F": { "tipo": "fonte", "diretorio": "contexto/fontes" },
+    "RN": { "tipo": "regra", "diretorio": "contexto/regras" },
+    "DIV": { "tipo": "divergencia", "diretorio": "contexto/divergencias" }
   },
   "objetos": {
     "termo": {

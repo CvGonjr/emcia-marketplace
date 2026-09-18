@@ -32,3 +32,5 @@ O valor dos três instrumentos depende de existir alguém que sabe algo sem sabe
 **Instrumentos:** observação do processo, protocolo de leitura de volta, arquivo pessoal.
 
 **Registro ao voltar:** `caso/P3b-sessao.md` com data, participantes e instrumentos aplicados. Só então P3d abre.
+
+**Da sessão para o contexto:** cada regra levantada entra em `contexto/regras/` por conversão direta dos campos (EMCIA-CTX-01 3.8) — escreva o YAML em `rascunho/RN-*.yaml` preservando a procedência real da sessão (`D`, `I` ou `V`, nunca promovida automaticamente) e cure com `/eiac-nucleo:curar`. Regra ainda em rascunho não é regra de contexto.

@@ -14,4 +14,6 @@ Cada candidata exige documento, página e trecho literal. Sem trecho, não propo
 
 Você não grava nada. Escreve em `rascunho/` e o operador decide.
 
+Quando uma candidata tiver estrutura suficiente para um objeto de contexto (Termo, Entidade, Regra ou Fonte), escreva também o YAML correspondente em `rascunho/<id>.yaml`, com `procedencia: I` e a premissa citando documento e trecho. Isso é ainda rascunho — você não roda `/eiac-nucleo:curar` nem decide que a candidata vira contexto.
+
 Ao final, entregue duas listas: candidatas e lacunas. A segunda vale mais.

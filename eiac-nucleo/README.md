@@ -19,6 +19,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 | `validar.py` | Único caminho de escrita em `caso/` |
 | `estrutura.py` | Valida objetos estruturados contra schema declarado no caso |
 | `curar.py` | Único caminho de escrita em `contexto/`; impõe versionamento sem sobrescrita |
+| `consultar.py` | Leitura somente-consulta de um objeto curado por id, para consumo por etapas posteriores (P4/P5) |
 | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
@@ -75,6 +76,18 @@ todas formalizadas em `curar.py` — a maioria via `estrutura.py` (schema
 genérico), as demais em checagens próprias (autoria, versionamento,
 confronto P3d, resolução de referência). Nenhuma delas hard-codeia
 vocabulário do EMCIA fora dos dados declarados pelo schema do caso.
+
+## Consulta somente-leitura (`consultar.py`)
+
+Mesma lógica de `catalogo_referencias` reaproveitada na direção inversa:
+dado um id, `consultar.py` acha o tipo/diretório pelo prefixo, valida o
+objeto contra o schema e imprime os campos (o objeto inteiro ou só os
+pedidos via `--campo`, repetível). Não grava nada, não decide mérito — é
+o caminho para uma etapa posterior (P4, P5) ler contexto já curado como
+dado estruturado, em vez de reabrir arquivo por caminho fixo ou
+reinterpretar prosa que já foi convertida em campo. `procedencia` sempre
+vem na saída; decidir o que fazer com `D`/`I`/`V` é responsabilidade de
+quem consome, não do núcleo.
 
 ## Limite honesto
 

@@ -32,7 +32,13 @@ As 23 verificações da bateria formal CTX-V01–CTX-V11 rodam separadamente:
 python3 testes/ctx_v.py
 ```
 
-O total acumulado é de 96 verificações.
+Os 17 testes de integração P2/P3 → CTX → P4/P5 rodam separadamente:
+
+```bash
+python3 testes/integracao.py
+```
+
+O total acumulado é de 113 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -169,6 +175,36 @@ política de validação acumulativa: um objeto com duas violações simultânea
 (`I` sem premissa e Fonte inexistente) é recusado com as duas causas
 relatadas na mesma mensagem, não só a primeira encontrada. A matriz completa
 está em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md`.
+
+## Integração P2/P3 → CTX → P4/P5 — pacote 2.5.5
+
+| ID | Prova |
+|---|---|
+| 2.5.5-T01 | P2 produz candidato CTX em `rascunho/`, sem virar contexto sozinho |
+| 2.5.5-T02 | Candidato de P2 sem curadoria não é consumido (`consultar.py` recusa) |
+| 2.5.5-T03 | Candidato de P2 curado entra no CTX |
+| 2.5.5-T04 | P3b gera Regra candidata rastreável (referencia Termo) |
+| 2.5.5-T05 | P3d atualiza vínculo de confronto sem sobrescrever histórico |
+| 2.5.5-T05b | Mudança de confronto com histórico correto é aceita *(controle positivo)* |
+| 2.5.5-T06 | P4 consome contexto válido via `quadro.py` |
+| 2.5.5-T07 | P4 com `contexto/regras/` vazio ainda roda, sinaliza célula crítica vazia |
+| 2.5.5-T08 | P4 não reinfere `frequencia`/`consequencia_do_erro` — lê direto do YAML curado |
+| 2.5.5-T09 | P5 consome os sete campos centrais via `consultar.py --campo` |
+| 2.5.5-T10 | P5 com Regra incompleta (nunca cura, logo nunca é consultável) |
+| 2.5.5-T11 | P5 distingue `I` de `V` — `procedencia` exposta explicitamente, nunca mascarada |
+| 2.5.5-T12 | P5 com `V` válida |
+| 2.5.5-T13 | CTX inválido (referência quebrada) não é consumido |
+| 2.5.5-T14 | Falha de curadoria/consumo emite `CuradoriaRecusada` |
+| 2.5.5-T15 | Fluxo mínimo P2 → CTX → P4 |
+| 2.5.5-T16 | Fluxo mínimo P3 → CTX → P5 |
+
+Rodam contra uma cópia temporária do template, sem tocar em caso real.
+Um defeito real de `quadro.py` foi corrigido durante este pacote: o script
+tratava `entradas: []` e `excecoes_conhecidas: []` como campos "ausentes"
+mesmo quando o schema já os considera válidos sem conteúdo (`required` sem
+`nonempty`) — o mesmo tratamento que o script já dava a
+`decisor_quando_nao_cobre`. Corrigido para usar a mesma semântica de
+presença do schema, em vez de uma regra própria e mais restritiva.
 
 ## Deslocamento da fronteira por nível
 

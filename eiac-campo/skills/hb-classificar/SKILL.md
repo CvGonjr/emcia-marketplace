@@ -19,6 +19,12 @@ Cinco de nove casos da simulação não eram, incluindo os dois de maior priorid
 
 **"Não é agente" é resultado, não descarte.** Registre qual tecnologia atende, para que o caso siga.
 
+## Consulte o contexto curado
+
+Para cada Regra que sustenta a classificação, consulte o objeto — não reinterprete prosa já estruturada: `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/consultar.py" --id RN-XXX`. A saída traz os sete campos centrais e a `procedencia`.
+
+**D, I e V não têm o mesmo peso na decisão.** Preserve o estatuto documental de cada Regra consultada — não trate `I` como se fosse `V`. Quando a classificação depender especificamente de conhecimento verificado (por exemplo, decidir a zona de contenção sobre uma exceção que só `V` sustenta), uma Regra `I` não substitui esse requisito; registre a lacuna em vez de decidir sobre premissa não confirmada. Regra `D` ou `I` seguem utilizáveis para tudo que o método não exigir verificação.
+
 ## Efeito no entregável
 
 A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates.md`.

@@ -17,4 +17,7 @@ description: Extrai regras candidatas dos documentos entregues e lista o que ele
 **A lista de lacunas vale mais que a de regras** — é o insumo do roteiro de campo.
 
 **Saída:** `caso/P2-regras-candidatas.md` e `caso/P2-lacunas.md`
+
+**Candidata que já nasce endereçável ao contexto:** quando o documento sustenta um Termo, Entidade, Regra ou Fonte com estrutura suficiente para o schema de `contexto/`, escreva-a também em `rascunho/<id>.yaml`, sempre com `procedencia: I` e `premissa` citando o documento e o trecho. Isso não substitui `caso/P2-regras-candidatas.md`; é o mesmo candidato, em forma curável. **Você não cura.** O operador decide com `/eiac-nucleo:curar` — a candidata em `rascunho/` não é contexto até isso acontecer (CTX-01 3.11).
+
 **Encerramento:** critério do passo 2 no documento do método.

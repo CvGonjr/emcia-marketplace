@@ -35,6 +35,11 @@ def ler_yaml(texto):
 CENTRAL = ["determinismo", "frequencia", "consequencia_do_erro",
            "decisor_quando_nao_cobre", "entradas", "excecoes_conhecidas",
            "estabilidade"]
+# decisor_quando_nao_cobre, entradas e excecoes_conhecidas podem ser
+# legitimamente vazios (CTX-01 3.6 exige presenca do campo no bloco de
+# decisao, nao que ele tenha conteudo nao-trivial) — mesmo contrato que
+# contexto.schema.json aplica em `required` sem `nonempty` para os tres.
+NAO_EXIGE_CONTEUDO = {"decisor_quando_nao_cobre", "entradas", "excecoes_conhecidas"}
 FREQ = ["rotineira", "ocasional", "rara"]
 CONS = ["baixa", "media", "alta"]
 
@@ -53,7 +58,7 @@ def main():
         r = ler_yaml(f.read_text(encoding="utf-8"))
         total += 1
         faltando = [c for c in CENTRAL
-                    if r.get(c) in (None, "", []) and c != "decisor_quando_nao_cobre"]
+                    if c not in r and c not in NAO_EXIGE_CONTEUDO]
         if faltando:
             incompletas.append((r.get("id", f.name), faltando))
         fq, cs = r.get("frequencia"), r.get("consequencia_do_erro")
