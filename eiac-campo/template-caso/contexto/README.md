@@ -4,11 +4,14 @@ Estrutura definida em `CTX-01`. Quatro objetos, um arquivo por registro.
 
 ```
 contexto/
-├── termos/      T-001.yaml   glossário do processo (P2)
-├── entidades/   E-001.yaml   objetos do domínio (P2, refinado em P3)
-├── regras/      RN-001.yaml  o objeto central (P2 e P3)
-└── fontes/      F-001.yaml   contratos de dados (P2)
+├── termos/         T-001.yaml    glossário do processo (P2)
+├── entidades/      E-001.yaml    objetos do domínio (P2, refinado em P3)
+├── regras/         RN-001.yaml   o objeto central (P2 e P3)
+├── fontes/         F-001.yaml    contratos de dados (P2)
+└── divergencias/   DIV-001.yaml  registro de confronto P3d (não é um dos quatro objetos CTX)
 ```
+
+`divergencias/` não é um quinto objeto do CTX-01 — é o registro estruturado do confronto produzido em **P3d**, que `classificacao_confronto.referencia_p3d` da Regra aponta para localizar. Guarda `documento_diz`, `observado`, `justificativa` e `autor`; a Regra não duplica esse detalhe, só a classificação e a referência.
 
 Os modelos seguem o EMCIA-CTX-01 v0.4. O contrato estrutural executável está
 em `registro/contexto.schema.json`; ele declara campos obrigatórios, tipos,
@@ -35,9 +38,32 @@ O candidato precisa estar em `rascunho/<mesmo-nome>`. O curador valida a estrutu
 Quando já existe um registro curado com o mesmo id e a mudança altera a `procedencia` — por exemplo `I` → `V` — o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior (versão, data e responsável). Sobrescrever a versão existente sem esse histórico é recusado; a versão anterior permanece legível dentro do registro atualizado.
 
 O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
-com `procedencia: I` e premissa. A resolução referencial entre objetos
-(Regra → Entidade, Regra → Fonte etc.) e a semântica completa de
-`classificacao_confronto`/`referencia_p3d` pertencem aos pacotes seguintes.
+com `procedencia: I` e premissa. A resolução referencial genérica entre
+objetos (Regra → Entidade, Regra → Fonte etc.) como bateria formal
+CTX-V01–V11 pertence ao pacote 2.5.4.
+
+## Confronto P3d
+
+A taxonomia oficial de classificação é a do EMCIA-ROT-01 3.9: `alinhada`,
+`divergente`, `nao_documentada`, `orfa`, `escrita_inacessivel`. Qualquer
+outro valor em `classificacao_confronto.classe` é recusado.
+
+Só a classe `divergente` exige `referencia_p3d` preenchida e resolvível —
+é a única para a qual o CTX-01 3.5 descreve o conteúdo mínimo que o
+registro referenciado precisa ter. A referência precisa apontar para um
+`contexto/divergencias/<id>.yaml` já curado:
+
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" \
+  --tipo divergencia --arquivo contexto/divergencias/DIV-001.yaml \
+  --registrado-por "Nome da pessoa" --schema registro/p3d.schema.json
+```
+
+O `autor` do registro de confronto precisa ser pessoa nomeada — P3d é `EX3`
+(EMCIA-CAT-01), o Estúdio prepara e organiza, mas não confirma o confronto
+por conta própria. Mudar `classificacao_confronto` numa Regra já curada é
+mudança relevante do mesmo jeito que mudar `procedencia`: exige versão nova
+com histórico que preserve a versão anterior.
 
 ## Quadro frequência × consequência
 

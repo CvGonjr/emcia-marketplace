@@ -13,9 +13,11 @@ evidencia:                      # obrigatoria quando procedencia = V
   tipo: ""                     # observacao | documento | leitura_de_volta
   referencia: ""
 
-# A semantica e a referencia obrigatoria pertencem ao pacote 2.5.3.
+# Taxonomia oficial do confronto: EMCIA-ROT-01 3.9. So "divergente" exige
+# referencia_p3d resolvivel para contexto/divergencias/<id>.yaml (CTX-01
+# 3.5, 3.13 — CTX-V11 minimo; a bateria formal pertence ao pacote 2.5.4).
 classificacao_confronto:
-  classe: ""                   # alinhada | divergente | nao_documentada | orfa | inacessivel
+  classe: ""                   # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel
   referencia_p3d: ""
 documento_de_origem: null
 

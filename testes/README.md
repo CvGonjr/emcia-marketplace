@@ -20,7 +20,13 @@ Os 17 testes de curadoria, autoria e versionamento I→V rodam separadamente:
 python3 testes/curadoria.py
 ```
 
-O total acumulado é de 61 verificações.
+Os 12 testes de integração CTX ↔ P3d rodam separadamente:
+
+```bash
+python3 testes/p3d.py
+```
+
+O total acumulado é de 73 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -107,6 +113,28 @@ Rodam contra uma cópia temporária do template, sem tocar em caso real.
 | 2.5.2-T-baseline | `--registrado-por AG-01` (com hífen) não passa como autor humano |
 
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
+
+## Integração CTX ↔ P3d — pacote 2.5.3
+
+| ID | Prova |
+|---|---|
+| 2.5.3-T01 | Classificação oficial válida (`alinhada`) é curada |
+| 2.5.3-T02 | Classificação fora da taxonomia de EMCIA-ROT-01 3.9 é recusada |
+| 2.5.3-T03 | `divergente` sem `referencia_p3d` é recusado |
+| 2.5.3-T04 | `divergente` com `referencia_p3d` inexistente é recusado |
+| 2.5.3-T05 | `divergente` com `referencia_p3d` válida é curado |
+| 2.5.3-T06 | A referência resolve para o registro `divergencia` correto |
+| 2.5.3-T07 | A Regra curada não duplica `documento_diz`/`observado`/`justificativa` |
+| 2.5.3-T08 | `estatuto`/`divergencia` (contrato antigo) não existem mais no schema desde o 2.5.1 |
+| 2.5.3-T09 | Classificação que não exige `referencia_p3d` (`nao_documentada`) é curada sem ela |
+| 2.5.3-T10 | Mudar `classificacao_confronto` sem versão/histórico é recusado; com versão nova é aceito |
+| 2.5.3-T11 | Agente como `autor` do registro de confronto é recusado |
+| 2.5.3-T12 | Pessoa nomeada como `autor` do registro de confronto é aceita *(controle positivo)* |
+
+Rodam contra uma cópia temporária do template, sem tocar em caso real. A
+taxonomia oficial usada nos testes (`alinhada`, `divergente`,
+`nao_documentada`, `orfa`, `escrita_inacessivel`) vem de EMCIA-ROT-01 3.9 —
+o CTX-01 não define códigos próprios para as classes.
 
 ## Deslocamento da fronteira por nível
 

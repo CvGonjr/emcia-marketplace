@@ -49,7 +49,8 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
 | I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
 | I-13 | Documento citado existe em `fontes/` e tem o hash na trilha | `validar.py` |
 | I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
-| I-15 | Mudança de procedência em `contexto/` só entra como versão nova, com histórico | `curar.py` |
+| I-15 | Mudança de procedência ou de classificação de confronto em `contexto/` só entra como versão nova, com histórico | `curar.py` |
+| I-16 | Classe de confronto que exige vínculo com P3d (`divergente`) só cura com `referencia_p3d` resolvível | `curar.py` |
 
 `autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
 `validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador

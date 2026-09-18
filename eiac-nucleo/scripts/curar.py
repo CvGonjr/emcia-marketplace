@@ -27,14 +27,18 @@ def _campo(dados, nome):
     return dados.get(nome)
 
 
+CAMPOS_AUTORIA = ("autoria_conteudo", "declarado_por", "registrado_por", "autor")
+
+
 def checar_autoria(dados):
     """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
 
-    O objeto Fonte nao tem autoria_conteudo no CTX-01 (so registrado_por);
-    os demais tres tem os dois campos.
+    Nem todo objeto declara os mesmos campos de autoria (Fonte nao tem
+    autoria_conteudo; um registro de confronto P3d usa so `autor`). Confere
+    qualquer um desses campos que o objeto de fato declarar.
     """
     erros = []
-    for campo in ("autoria_conteudo", "declarado_por", "registrado_por"):
+    for campo in CAMPOS_AUTORIA:
         valor = dados.get(campo)
         if valor is None:
             continue
@@ -48,8 +52,14 @@ def checar_versao(anterior, candidato, tipo):
     com historico que preserva a versao anterior recuperavel.
 
     ``anterior`` e o dict ja gravado em contexto/ (ou None se e registro
-    novo). ``candidato`` e o dict lido do rascunho.
+    novo). ``candidato`` e o dict lido do rascunho. Objetos que nao
+    declaram `versao` (como o registro de confronto P3d, que e observacional
+    e nao iterativo) nao entram nesta checagem — o campo e a marca de que
+    o objeto participa do regime de versionamento do CTX-01 3.11-3.13.
     """
+    if "versao" not in candidato:
+        return []
+
     if anterior is None:
         versao = candidato.get("versao")
         if versao not in (1, "1"):
@@ -59,26 +69,34 @@ def checar_versao(anterior, candidato, tipo):
     erros = []
     proc_antes = anterior.get("procedencia")
     proc_depois = candidato.get("procedencia")
+    confronto_antes = anterior.get("classificacao_confronto")
+    confronto_depois = candidato.get("classificacao_confronto")
     versao_antes = anterior.get("versao")
     versao_depois = candidato.get("versao")
 
     mudou_procedencia = proc_antes != proc_depois
+    mudou_confronto = confronto_antes != confronto_depois
+    mudanca_relevante = mudou_procedencia or mudou_confronto
     historico = candidato.get("historico") or []
 
-    if mudou_procedencia:
+    if mudanca_relevante:
+        motivo = (
+            f"procedencia {proc_antes} -> {proc_depois}" if mudou_procedencia
+            else "classificacao_confronto"
+        )
         try:
             cresceu = int(versao_depois) > int(versao_antes)
         except (TypeError, ValueError):
             cresceu = False
         if not cresceu:
             erros.append(
-                f"mudanca de procedencia {proc_antes} -> {proc_depois} exige "
-                f"nova versao (recebido versao {versao_antes!r} -> {versao_depois!r}); "
+                f"mudanca de {motivo} exige nova versao "
+                f"(recebido versao {versao_antes!r} -> {versao_depois!r}); "
                 f"sobrescrita nao e permitida"
             )
         if not isinstance(historico, list) or len(historico) < 1:
             erros.append(
-                "mudanca de procedencia exige historico com a versao anterior "
+                f"mudanca de {motivo} exige historico com a versao anterior "
                 "preservada (data, responsavel e motivo)"
             )
         else:
@@ -111,6 +129,36 @@ def checar_versao(anterior, candidato, tipo):
     return erros
 
 
+CLASSE_EXIGE_REFERENCIA = ("divergente",)
+DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
+
+
+def checar_confronto(candidato):
+    """Comportamento minimo do CTX-01 3.13 (CTX-V11) para este pacote:
+    quando classificacao_confronto.classe exige vinculo com P3d, a
+    referencia precisa apontar para um registro de divergencia curado e
+    existente. A bateria formal CTX-V01-V11, com os demais objetos e
+    classes, pertence ao pacote 2.5.4 — aqui so a classe `divergente`
+    (a unica para a qual o CTX-01 3.5 descreve o conteudo minimo exigido
+    do registro referenciado) e verificada.
+    """
+    confronto = candidato.get("classificacao_confronto")
+    if not isinstance(confronto, dict):
+        return []
+    classe = confronto.get("classe")
+    if classe not in CLASSE_EXIGE_REFERENCIA:
+        return []
+
+    referencia = confronto.get("referencia_p3d")
+    if not referencia:
+        return [f"classe '{classe}' exige referencia_p3d preenchida"]
+
+    alvo = DIRETORIO_DIVERGENCIAS / f"{referencia}.yaml"
+    if not alvo.exists():
+        return [f"referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
+    return []
+
+
 def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schema.json"):
     rascunho = pathlib.Path("rascunho") / destino.name
     if not rascunho.exists():
@@ -124,6 +172,7 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
 
     erros = X.validar(candidato, schema, tipo)
     erros += checar_autoria(candidato)
+    erros += checar_confronto(candidato)
     if E.autor_e_agente(registrado_por):
         erros.append(f"quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
 
@@ -159,6 +208,8 @@ def main():
     ap.add_argument("--arquivo", required=True,
                      help="destino em contexto/<tipo>s/<id>.yaml")
     ap.add_argument("--registrado-por", required=True)
+    ap.add_argument("--schema", default="registro/contexto.schema.json",
+                     help="schema declarativo que contem o tipo curado")
     a = ap.parse_args()
 
     destino = pathlib.Path(a.arquivo)
@@ -166,7 +217,7 @@ def main():
         print("curadoria so grava dentro de contexto/", file=sys.stderr)
         sys.exit(1)
 
-    erro = curar(a.tipo, destino, a.registrado_por)
+    erro = curar(a.tipo, destino, a.registrado_por, schema_caminho=a.schema)
     if erro:
         print(erro, file=sys.stderr)
         sys.exit(1)

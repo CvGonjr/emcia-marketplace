@@ -1,0 +1,8 @@
+id: DIV-000
+regra_confrontada: ""           # ID da Regra CTX confrontada, ex.: RN-014
+classe: ""                      # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel (EMCIA-ROT-01 3.9)
+documento_diz: ""                # o que o documento/declaracao original dizia
+observado: ""                    # o que foi observado no confronto
+justificativa: ""                # justificativa registrada para a classificacao
+autor: ""                        # pessoa que conduziu/confirmou o confronto (P3d e EX3, humano)
+data: ""

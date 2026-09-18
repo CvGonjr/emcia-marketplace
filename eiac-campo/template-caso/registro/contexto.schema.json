@@ -103,7 +103,11 @@
         ],
         "determinismo": ["deterministica", "admite_julgamento"],
         "frequencia": ["rotineira", "ocasional", "rara"],
-        "consequencia_do_erro": ["baixa", "media", "alta"]
+        "consequencia_do_erro": ["baixa", "media", "alta"],
+        "classificacao_confronto.classe": [
+          "alinhada", "divergente", "nao_documentada", "orfa",
+          "escrita_inacessivel"
+        ]
       },
       "patterns": {
         "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"

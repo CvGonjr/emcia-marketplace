@@ -6,7 +6,7 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
 
 **Nunca escreva direto em `caso/`.** Escreva o conteúdo em `rascunho/` e grave com `/eiac-nucleo:gravar`. A guarda bloqueia a escrita direta e registra a tentativa.
 
-**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra ou fonte) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) exige versão nova com histórico — nunca sobrescrita.
+**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra, fonte ou registro de confronto P3d) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) ou de classificação de confronto exige versão nova com histórico — nunca sobrescrita.
 
 **Toda asserção carrega marcação.** Formato:
 
@@ -37,6 +37,6 @@ registro/eventos.jsonl    trilha de auditoria
 fontes/                   artefatos da organização, só leitura
 rascunho/                 conteúdo proposto, antes do validador ou curador
 caso/                     asserções gravadas
-contexto/                 termos, entidades, regras e fontes curados (CA4)
+contexto/                 termos, entidades, regras, fontes e confrontos P3d curados (CA4)
 metodo/                   documentos do método, só leitura
 ```
