@@ -94,7 +94,7 @@ def main():
     pb, erro = P.carregar()
     if not st or erro:
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
-    if a.autor.lower().startswith(("ag0", "agente", "sistema")):
+    if E.autor_e_agente(a.autor):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
     if a.apurar_nivel:

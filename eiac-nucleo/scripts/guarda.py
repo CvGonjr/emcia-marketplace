@@ -71,6 +71,20 @@ def main():
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 
+    # G2b — escrita direta na camada de contexto curada
+    escrita_ctx = ferramenta in ("Write", "Edit") and alvo.startswith("contexto/")
+    escrita_ctx_bash = ferramenta == "Bash" and " contexto/" in comando and any(
+        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
+    )
+    if escrita_ctx or escrita_ctx_bash:
+        negar(
+            "Escrita direta em contexto/ nao e permitida. "
+            "Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. "
+            "Toda regra, termo, entidade ou fonte curada exige procedencia, "
+            "autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).",
+            etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
+        )
+
     # G4 — nivel nao apurado apos F0
     if etapa_id != "F0" and not nivel:
         negar(

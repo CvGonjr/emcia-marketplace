@@ -1,6 +1,6 @@
 {
   "name": "eiac-campo",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
   "author": {
     "name": "EMCIA"

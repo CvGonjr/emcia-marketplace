@@ -28,6 +28,7 @@ entradas: []                   # IDs de entidades, termos e fontes
 excecoes_conhecidas: []
 estabilidade: ""
 
-# A logica de nova versao e de transicao I -> V pertence ao pacote 2.5.2.
+# Mudanca de procedencia exige versao nova e entrada de historico com a
+# versao anterior preservada — curar.py recusa sobrescrita (CTX-01 3.11-3.13).
 versao: 1
 historico: []

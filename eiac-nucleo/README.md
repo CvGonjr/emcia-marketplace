@@ -18,6 +18,7 @@ Playbook que omita qualquer um desses não carrega, e o caso não opera.
 | `guarda.py` | Hook `PreToolUse`. Três regras, `exit 2` bloqueia |
 | `validar.py` | Único caminho de escrita em `caso/` |
 | `estrutura.py` | Valida objetos estruturados contra schema declarado no caso |
+| `curar.py` | Único caminho de escrita em `contexto/`; impõe versionamento sem sobrescrita |
 | `avancar.py` | Apurar nível, encerrar etapa, registrar sessão, emitir entregável |
 | `estado.py` | Lê e grava o Registro; emite eventos |
 | `playbook.py` | Carrega e valida o playbook |
@@ -47,6 +48,14 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
 | I-11 | O selo sai com o autor nomeado, não com a identidade da máquina | `selar.py` |
 | I-12 | A fronteira humana é anunciada antes de ser aplicada | `estado.py`, `fronteira.py` |
 | I-13 | Documento citado existe em `fontes/` e tem o hash na trilha | `validar.py` |
+| I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
+| I-15 | Mudança de procedência em `contexto/` só entra como versão nova, com histórico | `curar.py` |
+
+`autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
+`validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador
+de agente como autor humano. É uma convenção de nome, não identidade tipada
+de ator — limitação assumida enquanto o núcleo não tiver um contrato de
+papel/ator mais rico.
 
 ## Limite honesto
 

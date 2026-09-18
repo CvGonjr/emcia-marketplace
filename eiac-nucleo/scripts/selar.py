@@ -46,7 +46,7 @@ def main():
     ap.add_argument("--nota", required=True)
     a = ap.parse_args()
 
-    if a.autor.lower().startswith(("ag0", "agente", "sistema")):
+    if E.autor_e_agente(a.autor):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
     if not E.ler():
         print("nenhum caso aberto neste diretorio", file=sys.stderr); sys.exit(1)

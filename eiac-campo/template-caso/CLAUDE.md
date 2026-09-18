@@ -6,6 +6,8 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
 
 **Nunca escreva direto em `caso/`.** Escreva o conteúdo em `rascunho/` e grave com `/eiac-nucleo:gravar`. A guarda bloqueia a escrita direta e registra a tentativa.
 
+**Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra ou fonte) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) exige versão nova com histórico — nunca sobrescrita.
+
 **Toda asserção carrega marcação.** Formato:
 
 ```
@@ -33,7 +35,8 @@ registro/playbook.json    o método como arquivo — não editar durante o caso
 registro/estado.json      etapa corrente e cumprimentos
 registro/eventos.jsonl    trilha de auditoria
 fontes/                   artefatos da organização, só leitura
-rascunho/                 conteúdo proposto, antes do validador
+rascunho/                 conteúdo proposto, antes do validador ou curador
 caso/                     asserções gravadas
+contexto/                 termos, entidades, regras e fontes curados (CA4)
 metodo/                   documentos do método, só leitura
 ```

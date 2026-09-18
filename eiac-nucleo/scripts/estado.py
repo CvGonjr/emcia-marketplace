@@ -1,5 +1,5 @@
 """Le e escreve o Registro do Caso. Unico caminho de mudanca de etapa."""
-import json, pathlib, sys, datetime
+import json, pathlib, re, sys, datetime
 
 CAMINHO = pathlib.Path("registro/estado.json")
 
@@ -22,6 +22,20 @@ def evento(tipo, **campos):
     reg.update(campos)
     with log.open("a", encoding="utf-8") as f:
         f.write(json.dumps(reg, ensure_ascii=False) + "\n")
+
+
+def autor_e_agente(nome):
+    """Convencao lexical: nomes de agente/sistema nao sao autor humano.
+
+    O nucleo ainda nao tem identidade tipada de ator; esta e a forma minima
+    consistente com o que ja e verificado em selar.py, validar.py e
+    avancar.py. O separador entre "ag" e o numero (hifen, espaco ou nada)
+    e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".
+    Limitacao: um nome humano que comece por essas silabas seria recusado;
+    nenhum caso assim foi observado no metodo ate aqui.
+    """
+    chave = re.sub(r"[\s\-_]", "", (nome or "").strip().lower())
+    return chave.startswith(("ag0", "agente", "sistema"))
 
 
 if __name__ == "__main__":

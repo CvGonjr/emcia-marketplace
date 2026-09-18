@@ -77,7 +77,7 @@ def validar_linha(marca, pb, n):
         return f"linha {n}: apuracao estimado exige base"
     if apur == "medido" and not any(x.startswith("amostra:") for x in c):
         return f"linha {n}: apuracao medido exige amostra"
-    if any(x.lower().startswith(("ag0", "agente", "sistema")) for x in c):
+    if any(E.autor_e_agente(x) for x in c):
         return f"linha {n}: autor nao pode ser agente"
     return None
 
@@ -91,6 +91,9 @@ def main():
     pb, erro = P.carregar()
     if erro:
         print(erro, file=sys.stderr); sys.exit(1)
+
+    if E.autor_e_agente(a.autor):
+        print("quem grava precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
     destino = pathlib.Path(a.arquivo)
     rascunho = pathlib.Path("rascunho") / destino.name

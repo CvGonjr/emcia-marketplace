@@ -14,7 +14,13 @@ Os 11 testes estruturais dos quatro objetos CTX rodam separadamente:
 python3 testes/contexto.py
 ```
 
-O total acumulado é de 44 verificações.
+Os 17 testes de curadoria, autoria e versionamento I→V rodam separadamente:
+
+```bash
+python3 testes/curadoria.py
+```
+
+O total acumulado é de 61 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -77,6 +83,30 @@ os códigos canônicos.
 Rodam contra uma cópia temporária do template, sem tocar em caso real.
 
 **Falha aqui é regressão de trava, não de funcionalidade.** Não conserte o teste; conserte a trava.
+
+## Curadoria, autoria e versionamento I→V — pacote 2.5.2
+
+| ID | Prova |
+|---|---|
+| 2.5.2-T01 | `D` com autoria humana válida é curado |
+| 2.5.2-T02 | `I` sem premissa é recusado |
+| 2.5.2-T03 | `I` com premissa é curado |
+| 2.5.2-T04 | `V` sem evidência é recusado |
+| 2.5.2-T05 | `V` com evidência é curado |
+| 2.5.2-T06 | Agente como `autoria_conteudo` é recusado |
+| 2.5.2-T07 | Pessoa como `autoria_conteudo` é curada |
+| 2.5.2-T08 | `registrado_por` distinto de `autoria_conteudo` é preservado |
+| 2.5.2-T09 | Sobrescrever `I` por `V` sem nova versão/histórico é recusado |
+| 2.5.2-T10 | `I` → `V` com nova versão e histórico é curado |
+| 2.5.2-T11 | A versão anterior permanece legível dentro do histórico |
+| 2.5.2-T12 | Escrita direta em `contexto/` é negada pela guarda |
+| 2.5.2-T13 | Escrita pelo curador em `contexto/` é aceita *(controle positivo)* |
+| 2.5.2-T14 | Conteúdo em `rascunho/` não é tratado como contexto curado |
+| 2.5.2-T15 | Recusa de curadoria emite `CuradoriaRecusada` |
+| 2.5.2-T16 | Curadoria válida emite `ObjetoContextoCurado` *(controle positivo)* |
+| 2.5.2-T-baseline | `--registrado-por AG-01` (com hífen) não passa como autor humano |
+
+Rodam contra uma cópia temporária do template, sem tocar em caso real.
 
 ## Deslocamento da fronteira por nível
 
