@@ -1,0 +1,3 @@
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:36:49", "tipo_objeto": "termo", "arquivo": "contexto/termos/T-001.yaml", "id": "T-001", "procedencia": "D", "versao": null, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:49", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-001.yaml", "erros": ["CTX-V05: referencia 'T-999' em 'entradas' nao resolve — contexto/termos/T-999.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:36:49", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-002.yaml", "id": "RN-002", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}

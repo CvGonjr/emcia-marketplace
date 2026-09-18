@@ -1,0 +1,33 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V11
+TIPO: P
+REQUISITO: classificacao_confronto completa e resolvivel quando divergente
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-115.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-116.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+DIV-115 curada, RN-116 referencia e e aceita
+
+STDOUT:
+--- comando 1 ---
+divergencia curado: contexto/divergencias/DIV-115.yaml
+--- comando 2 ---
+regra curado: contexto/regras/RN-116.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+
+EVENTO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:36:34", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-116.yaml", "id": "RN-116", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

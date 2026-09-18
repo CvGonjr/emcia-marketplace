@@ -1,0 +1,29 @@
+PACOTE: 2.5.4
+VALIDACAO: multiplas-violacoes
+TIPO: N
+REQUISITO: I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-200.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA com as duas causas relatadas
+
+RESULTADO OBTIDO:
+ambos os motivos presentes na mesma recusa (CTX-01 nao define ordem; curar.py acumula todas as violacoes num unico erro, nao para na primeira)
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+procedencia I exige campo preenchido: premissa
+CTX-V07: referencia 'F-999' em 'entradas' nao resolve — contexto/fontes/F-999.yaml nao existe
+
+EVENTO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:34", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-200.yaml", "erros": ["procedencia I exige campo preenchido: premissa", "CTX-V07: referencia 'F-999' em 'entradas' nao resolve — contexto/fontes/F-999.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,933 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index f9cfbfd..be66103 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.6",
++  "version": "0.3.7",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/contexto/README.md b/eiac-campo/template-caso/contexto/README.md
+index 16eeabe..ee45a99 100644
+--- a/eiac-campo/template-caso/contexto/README.md
++++ b/eiac-campo/template-caso/contexto/README.md
+@@ -38,9 +38,22 @@ O candidato precisa estar em `rascunho/<mesmo-nome>`. O curador valida a estrutu
+ Quando já existe um registro curado com o mesmo id e a mudança altera a `procedencia` — por exemplo `I` → `V` — o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior (versão, data e responsável). Sobrescrever a versão existente sem esse histórico é recusado; a versão anterior permanece legível dentro do registro atualizado.
+ 
+ O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
+-com `procedencia: I` e premissa. A resolução referencial genérica entre
+-objetos (Regra → Entidade, Regra → Fonte etc.) como bateria formal
+-CTX-V01–V11 pertence ao pacote 2.5.4.
++com `procedencia: I` e premissa.
++
++## Resolução de referências
++
++A Regra referencia Termo, Entidade e Fonte em `entradas` (`T-*`, `E-*`,
++`F-*`); a Entidade referencia Fonte em `onde_vive` (`F-*`). Toda referência
++precisa resolver para um objeto já curado no diretório correspondente —
++`T-999` que não existe em `contexto/termos/` é recusado, e o mesmo vale
++para Entidade e Fonte. Um arquivo físico em `fontes/` **não** é o mesmo que
++um objeto Fonte CTX curado em `contexto/fontes/`: só o segundo satisfaz a
++referência, e precisa ter passado pelo próprio contrato mínimo (`contrato.estrutura`,
++`contrato.significado`, `contrato.qualidade`).
++
++Essa é a bateria formal **CTX-V01–CTX-V11** do EMCIA-CTX-01 3.13, implementada
++em `curar.py`. A matriz completa (regra oficial, implementação, negativo e
++positivo) está em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md`.
+ 
+ ## Confronto P3d
+ 
+diff --git a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+index 1f1bfd5..ced5331 100644
+--- a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+@@ -7,7 +7,7 @@ atributos:
+ relacoes:
+   - com: ""
+     cardinalidade: ""
+-onde_vive: []
++onde_vive: []                   # IDs de fontes (F-*); cada um precisa resolver para objeto Fonte curado (CTX-V07)
+ # D | I | V
+ procedencia: D
+ declarado_por: ""
+diff --git a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+index e7ef681..03f42d1 100644
+--- a/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/regras/RN-000-modelo.yaml
+@@ -15,7 +15,7 @@ evidencia:                      # obrigatoria quando procedencia = V
+ 
+ # Taxonomia oficial do confronto: EMCIA-ROT-01 3.9. So "divergente" exige
+ # referencia_p3d resolvivel para contexto/divergencias/<id>.yaml (CTX-01
+-# 3.5, 3.13 — CTX-V11 minimo; a bateria formal pertence ao pacote 2.5.4).
++# 3.5, 3.13 — CTX-V11).
+ classificacao_confronto:
+   classe: ""                   # alinhada | divergente | nao_documentada | orfa | escrita_inacessivel
+   referencia_p3d: ""
+@@ -26,7 +26,7 @@ determinismo: ""               # deterministica | admite_julgamento
+ frequencia: ""                 # rotineira | ocasional | rara
+ consequencia_do_erro: ""       # baixa | media | alta
+ decisor_quando_nao_cobre: ""   # nome proprio, ou vazio quando nao se aplica
+-entradas: []                   # IDs de entidades, termos e fontes
++entradas: []                   # IDs de entidades (E-*), termos (T-*) e fontes (F-*); cada um precisa resolver para objeto curado (CTX-V05/V06/V07)
+ excecoes_conhecidas: []
+ estabilidade: ""
+ 
+diff --git a/eiac-campo/template-caso/registro/contexto.schema.json b/eiac-campo/template-caso/registro/contexto.schema.json
+index 9642f87..fffbe3c 100644
+--- a/eiac-campo/template-caso/registro/contexto.schema.json
++++ b/eiac-campo/template-caso/registro/contexto.schema.json
+@@ -1,8 +1,13 @@
+ {
+   "nome": "Objetos centrais da camada de contexto",
+-  "versao": "0.1.0",
++  "versao": "0.2.0",
+   "referencia": "EMCIA-CTX-01 v0.4",
+   "procedencia": ["D", "I", "V"],
++  "catalogo_referencias": {
++    "T": { "tipo": "termo", "diretorio": "contexto/termos" },
++    "E": { "tipo": "entidade", "diretorio": "contexto/entidades" },
++    "F": { "tipo": "fonte", "diretorio": "contexto/fontes" }
++  },
+   "objetos": {
+     "termo": {
+       "id_pattern": "T-[0-9]{3,}",
+@@ -60,6 +65,9 @@
+       "conditional_nonempty": {
+         "I": ["premissa"],
+         "V": ["evidencia"]
++      },
++      "references": {
++        "onde_vive": ["F"]
+       }
+     },
+     "regra": {
+@@ -115,6 +123,9 @@
+       "conditional_nonempty": {
+         "I": ["premissa"],
+         "V": ["evidencia"]
++      },
++      "references": {
++        "entradas": ["T", "E", "F"]
+       }
+     },
+     "fonte": {
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 0002f46..24689d5 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.9",
++  "version": "0.2.10",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/README.md b/eiac-nucleo/README.md
+index 094a46d..7ba612f 100644
+--- a/eiac-nucleo/README.md
++++ b/eiac-nucleo/README.md
+@@ -51,6 +51,7 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
+ | I-14 | Nenhuma escrita direta em `contexto/`; só o curador grava | `guarda.py` G2b, `curar.py` |
+ | I-15 | Mudança de procedência ou de classificação de confronto em `contexto/` só entra como versão nova, com histórico | `curar.py` |
+ | I-16 | Classe de confronto que exige vínculo com P3d (`divergente`) só cura com `referencia_p3d` resolvível | `curar.py` |
++| I-17 | Toda referência declarada em `references` do schema do caso resolve para um objeto curado existente | `curar.py` |
+ 
+ `autor_e_agente`, em `estado.py`, centraliza a convenção lexical usada por
+ `validar.py`, `avancar.py`, `selar.py` e `curar.py` para recusar identificador
+@@ -58,6 +59,23 @@ de agente como autor humano. É uma convenção de nome, não identidade tipada
+ de ator — limitação assumida enquanto o núcleo não tiver um contrato de
+ papel/ator mais rico.
+ 
++## Resolução de referências (I-17)
++
++`curar.py` lê dois blocos declarativos do schema do caso: `catalogo_referencias`
++(prefixo do id → tipo e diretório do objeto) e `references`, por tipo de objeto
++(campo → prefixos aceitos). O núcleo não sabe o que é Termo, Entidade ou Fonte
++— só que um id com um certo prefixo precisa existir em certo diretório, e que
++resolver contra um objeto do tipo declarado como `"fonte"` também exige que
++esse objeto passe pela própria validação estrutural do schema (contrato
++mínimo). O mesmo mecanismo serve qualquer schema que declare esses blocos;
++não há `if tipo == "regra"` nem `if campo == "entradas"` no núcleo.
++
++As onze condições verificáveis do EMCIA-CTX-01 3.13 (CTX-V01–CTX-V11) estão
++todas formalizadas em `curar.py` — a maioria via `estrutura.py` (schema
++genérico), as demais em checagens próprias (autoria, versionamento,
++confronto P3d, resolução de referência). Nenhuma delas hard-codeia
++vocabulário do EMCIA fora dos dados declarados pelo schema do caso.
++
+ ## Limite honesto
+ 
+ A hook vive no plugin, e o plugin pode ser desinstalado. Continua sendo pedágio com rastro, não parede. A diferença em relação a configuração local é que o contorno exige desinstalar algo versionado, e isso é visível.
+diff --git a/eiac-nucleo/commands/curar.md b/eiac-nucleo/commands/curar.md
+index 5b13d32..e04f590 100644
+--- a/eiac-nucleo/commands/curar.md
++++ b/eiac-nucleo/commands/curar.md
+@@ -14,4 +14,6 @@ Se já existir um registro curado com o mesmo id e a `procedencia` ou a `classif
+ 
+ Quando `classificacao_confronto.classe` for `divergente`, `referencia_p3d` precisa apontar para um `contexto/divergencias/<id>.yaml` já curado — referência ausente ou que não resolve é recusada.
+ 
++Toda referência declarada em `entradas` (Regra → Termo/Entidade/Fonte) ou `onde_vive` (Entidade → Fonte) precisa resolver para um objeto já curado — id inexistente é recusado, e uma Fonte referenciada precisa ter contrato mínimo válido.
++
+ Se houver recusa, corrija o rascunho e tente de novo. **Não contorne escrevendo direto em `contexto/`** — a guarda bloqueia e a tentativa fica registrada.
+diff --git a/eiac-nucleo/scripts/curar.py b/eiac-nucleo/scripts/curar.py
+index 49c9cb1..0dcc141 100644
+--- a/eiac-nucleo/scripts/curar.py
++++ b/eiac-nucleo/scripts/curar.py
+@@ -43,7 +43,7 @@ def checar_autoria(dados):
+         if valor is None:
+             continue
+         if E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++            erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+@@ -84,19 +84,23 @@ def checar_versao(anterior, candidato, tipo):
+             f"procedencia {proc_antes} -> {proc_depois}" if mudou_procedencia
+             else "classificacao_confronto"
+         )
++        # CTX-V04 nomeia literalmente a transicao I->V; a mesma exigencia de
++        # versao crescente para outras mudancas relevantes (classificacao de
++        # confronto) segue o principio geral do CTX-01 3.12, sem codigo proprio.
++        codigo = "CTX-V04" if (proc_antes == "I" and proc_depois == "V") else "CTX-01 3.12"
+         try:
+             cresceu = int(versao_depois) > int(versao_antes)
+         except (TypeError, ValueError):
+             cresceu = False
+         if not cresceu:
+             erros.append(
+-                f"mudanca de {motivo} exige nova versao "
++                f"{codigo}: mudanca de {motivo} exige nova versao "
+                 f"(recebido versao {versao_antes!r} -> {versao_depois!r}); "
+                 f"sobrescrita nao e permitida"
+             )
+         if not isinstance(historico, list) or len(historico) < 1:
+             erros.append(
+-                f"mudanca de {motivo} exige historico com a versao anterior "
++                f"CTX-V10: mudanca de {motivo} exige historico com a versao anterior "
+                 "preservada (data, responsavel e motivo)"
+             )
+         else:
+@@ -107,16 +111,16 @@ def checar_versao(anterior, candidato, tipo):
+                 faltando.append("registrado_por ou confirmado_por")
+             if faltando:
+                 erros.append(
+-                    f"entrada de historico incompleta para a versao anterior: "
++                    f"CTX-V10: entrada de historico incompleta para a versao anterior: "
+                     f"faltando {faltando}"
+                 )
+             try:
+                 if int(ultima.get("versao")) != int(versao_antes):
+                     erros.append(
+-                        "historico nao referencia a versao imediatamente anterior"
++                        "CTX-V10: historico nao referencia a versao imediatamente anterior"
+                     )
+             except (TypeError, ValueError):
+-                erros.append("historico sem numero de versao anterior valido")
++                erros.append("CTX-V10: historico sem numero de versao anterior valido")
+     else:
+         try:
+             regressao = int(versao_depois) < int(versao_antes)
+@@ -124,23 +128,74 @@ def checar_versao(anterior, candidato, tipo):
+             regressao = False
+         if regressao:
+             erros.append(
+-                f"versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
++                f"CTX-V04: versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
+             )
+     return erros
+ 
+ 
++def checar_referencias(candidato, schema, tipo):
++    """CTX-V05/V06/V07: toda referencia a Termo, Entidade ou Fonte listada
++    num campo declarado em `references` precisa resolver para um objeto
++    curado existente; quando o alvo e Fonte, o registro referenciado
++    precisa ter o contrato minimo preenchido (mesma validacao que a
++    propria Fonte passa ao ser curada — nao duplica a regra).
++
++    O nucleo nao sabe o que e Termo, Entidade ou Fonte: le o prefixo do
++    id (T-, E-, F-) e o `catalogo_referencias` do schema do caso para
++    decidir onde procurar. Isso mantem a resolucao generica por schema,
++    do mesmo jeito que `estrutura.validar()` ja e generica por tipo.
++    """
++    catalogo = schema.get("catalogo_referencias", {})
++    campos_ref = (schema.get("objetos", {}).get(tipo, {}) or {}).get("references", {})
++    codigo_por_tipo = {"termo": "CTX-V05", "entidade": "CTX-V06", "fonte": "CTX-V07"}
++
++    erros = []
++    for campo, prefixos_permitidos in campos_ref.items():
++        valores = candidato.get(campo) or []
++        if not isinstance(valores, list):
++            continue
++        for ref_id in valores:
++            ref_id = str(ref_id)
++            prefixo = ref_id.split("-", 1)[0] if "-" in ref_id else ref_id
++            entrada = catalogo.get(prefixo)
++            if not entrada or prefixo not in prefixos_permitidos:
++                erros.append(
++                    f"referencia '{ref_id}' em '{campo}' tem prefixo desconhecido "
++                    f"ou nao permitido; esperado um de {prefixos_permitidos}"
++                )
++                continue
++            codigo = codigo_por_tipo.get(entrada["tipo"], "CTX-V05/V06/V07")
++            alvo = pathlib.Path(entrada["diretorio"]) / f"{ref_id}.yaml"
++            if not alvo.exists():
++                erros.append(
++                    f"{codigo}: referencia '{ref_id}' em '{campo}' "
++                    f"nao resolve — {alvo} nao existe"
++                )
++                continue
++            if entrada["tipo"] == "fonte":
++                try:
++                    dados_fonte = X.carregar_yaml(alvo.read_text(encoding="utf-8"))
++                except (X.ErroYaml, ValueError) as erro:
++                    erros.append(f"{codigo}: fonte referenciada '{ref_id}' esta ilegivel: {erro}")
++                    continue
++                erros_fonte = X.validar(dados_fonte, schema, "fonte")
++                if erros_fonte:
++                    erros.append(
++                        f"{codigo}: fonte referenciada '{ref_id}' nao possui contrato minimo valido: "
++                        f"{erros_fonte}"
++                    )
++    return erros
++
++
+ CLASSE_EXIGE_REFERENCIA = ("divergente",)
+ DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
+ 
+ 
+ def checar_confronto(candidato):
+-    """Comportamento minimo do CTX-01 3.13 (CTX-V11) para este pacote:
+-    quando classificacao_confronto.classe exige vinculo com P3d, a
+-    referencia precisa apontar para um registro de divergencia curado e
+-    existente. A bateria formal CTX-V01-V11, com os demais objetos e
+-    classes, pertence ao pacote 2.5.4 — aqui so a classe `divergente`
+-    (a unica para a qual o CTX-01 3.5 descreve o conteudo minimo exigido
+-    do registro referenciado) e verificada.
++    """CTX-V11: toda classificacao_confronto possui classe e referencia_p3d
++    resolvivel quando a classe exige vinculo com P3d. So a classe
++    `divergente` e verificada aqui — e a unica para a qual o CTX-01 3.5
++    descreve o conteudo minimo exigido do registro referenciado.
+     """
+     confronto = candidato.get("classificacao_confronto")
+     if not isinstance(confronto, dict):
+@@ -151,11 +206,11 @@ def checar_confronto(candidato):
+ 
+     referencia = confronto.get("referencia_p3d")
+     if not referencia:
+-        return [f"classe '{classe}' exige referencia_p3d preenchida"]
++        return [f"CTX-V11: classe '{classe}' exige referencia_p3d preenchida"]
+ 
+     alvo = DIRETORIO_DIVERGENCIAS / f"{referencia}.yaml"
+     if not alvo.exists():
+-        return [f"referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
++        return [f"CTX-V11: referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
+     return []
+ 
+ 
+@@ -173,8 +228,9 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
+     erros = X.validar(candidato, schema, tipo)
+     erros += checar_autoria(candidato)
+     erros += checar_confronto(candidato)
++    erros += checar_referencias(candidato, schema, tipo)
+     if E.autor_e_agente(registrado_por):
+-        erros.append(f"quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
++        erros.append(f"CTX-V09: quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
+ 
+     anterior = None
+     if destino.exists():
+diff --git a/testes/README.md b/testes/README.md
+index fc1203e..6cc0663 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -26,7 +26,13 @@ Os 12 testes de integração CTX ↔ P3d rodam separadamente:
+ python3 testes/p3d.py
+ ```
+ 
+-O total acumulado é de 73 verificações.
++As 23 verificações da bateria formal CTX-V01–CTX-V11 rodam separadamente:
++
++```bash
++python3 testes/ctx_v.py
++```
++
++O total acumulado é de 96 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -136,6 +142,34 @@ taxonomia oficial usada nos testes (`alinhada`, `divergente`,
+ `nao_documentada`, `orfa`, `escrita_inacessivel`) vem de EMCIA-ROT-01 3.9 —
+ o CTX-01 não define códigos próprios para as classes.
+ 
++## Bateria formal CTX-V01–CTX-V11 — pacote 2.5.4
++
++Cada validação do EMCIA-CTX-01 3.13 tem um teste negativo e um controle
++positivo, extraídos literalmente do documento oficial — a maioria já
++implementada pelos pacotes 2.5.1–2.5.3; este pacote formaliza o vínculo
++com o código `CTX-Vxx` e fecha as três genuinamente ausentes (V05–V07).
++
++| ID | Regra oficial (EMCIA-CTX-01 3.13) |
++|---|---|
++| CTX-V01 | Regra possui os sete campos do bloco de decisão |
++| CTX-V02 | Registro `I` possui premissa escrita |
++| CTX-V03 | Registro `V` possui evidência identificada |
++| CTX-V04 | Mudança `I` → `V` cria nova versão |
++| CTX-V05 | Todo termo referenciado existe |
++| CTX-V06 | Toda entidade referenciada existe |
++| CTX-V07 | Toda fonte referenciada existe e possui contrato mínimo |
++| CTX-V08 | Escrita em `contexto/` passa pela curadoria prevista |
++| CTX-V09 | Autoria de conteúdo e registro são pessoas nomeadas |
++| CTX-V10 | Toda nova versão possui data, responsável e motivo da mudança |
++| CTX-V11 | `classificacao_confronto` completa e resolvível quando `divergente` |
++
++Cada uma tem um teste `2.5.4-Vxx-N` (negativo) e `2.5.4-Vxx-P` (positivo) em
++`testes/ctx_v.py` — 22 verificações — mais `2.5.4-multi`, que confirma a
++política de validação acumulativa: um objeto com duas violações simultâneas
++(`I` sem premissa e Fonte inexistente) é recusado com as duas causas
++relatadas na mesma mensagem, não só a primeira encontrada. A matriz completa
++está em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md`.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/ctx_v.py b/testes/ctx_v.py
+new file mode 100644
+index 0000000..2bfda0d
+--- /dev/null
++++ b/testes/ctx_v.py
+@@ -0,0 +1,531 @@
++#!/usr/bin/env python3
++"""Bateria formal CTX-V01-CTX-V11 do pacote 2.5.4.
++
++Cada validacao ja pode ter sido implementada por um pacote anterior
++(2.5.1-2.5.3); este arquivo formaliza o vinculo com o codigo CTX-Vxx do
++EMCIA-CTX-01 3.13 e cobre cada uma com um teste negativo e um controle
++positivo, extraidos literalmente do documento oficial.
++"""
++import argparse
++import datetime
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++
++
++def regra(**over):
++    campos = {
++        "id": "RN-001",
++        "enunciado": "quando a autorizacao chega, a guia e enviada no mesmo dia",
++        "gatilho": "recebimento_da_autorizacao",
++        "procedencia": "D",
++        "autoria_conteudo": "Claudia Ferreira",
++        "registrado_por": "Rafael Nogueira",
++        "data": "2026-09-18",
++        "origem_do_conhecimento": "experiencia_propria",
++        "determinismo": "admite_julgamento",
++        "frequencia": "rotineira",
++        "consequencia_do_erro": "alta",
++        "decisor_quando_nao_cobre": "Claudia Ferreira",
++        "estabilidade": "muda quando o convenio revisa o contrato",
++        "versao": 1,
++        "classe": "",
++        "referencia_p3d": "",
++        "entradas": "[]",
++        "omitir_estabilidade": False,
++        "premissa": None,
++        "evidencia_presente": None,
++    }
++    campos.update(over)
++
++    procedencia = campos["procedencia"]
++    if campos["premissa"] is not None:
++        premissa = campos["premissa"]
++    else:
++        premissa = "padrao demonstrado pela amostra" if procedencia == "I" else ""
++    evidencia_presente = campos["evidencia_presente"]
++    if evidencia_presente is None:
++        evidencia_presente = procedencia == "V"
++    if evidencia_presente:
++        evidencia_linhas = ["evidencia:", "  tipo: observacao", "  referencia: sessao-P3b-001"]
++    else:
++        evidencia_linhas = ['evidencia: ""']
++
++    historico = over.get("historico", [])
++    if not historico:
++        historico_linhas = ["historico: []"]
++    else:
++        historico_linhas = ["historico:"]
++        for h in historico:
++            historico_linhas.append(f"  - versao: {h.get('versao')}")
++            historico_linhas.append(f"    data: \"{h.get('data')}\"")
++            if h.get("procedencia") is not None:
++                historico_linhas.append(f"    procedencia: {h.get('procedencia')}")
++            if h.get("registrado_por"):
++                historico_linhas.append(f"    registrado_por: {h['registrado_por']}")
++
++    linhas = [
++        f"id: {campos['id']}",
++        f"enunciado: {campos['enunciado']}",
++        f"gatilho: {campos['gatilho']}",
++        f"procedencia: {procedencia}",
++        f"autoria_conteudo: {campos['autoria_conteudo']}",
++        f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f"origem_do_conhecimento: {campos['origem_do_conhecimento']}",
++        f'premissa: "{premissa}"' if premissa else 'premissa: ""',
++    ] + evidencia_linhas + [
++        "classificacao_confronto:",
++        f"  classe: {campos['classe'] or chr(34)+chr(34)}",
++        f"  referencia_p3d: {campos['referencia_p3d'] or chr(34)+chr(34)}",
++        "documento_de_origem: null",
++        f"determinismo: {campos['determinismo']}",
++        f"frequencia: {campos['frequencia']}",
++        f"consequencia_do_erro: {campos['consequencia_do_erro']}",
++        f"decisor_quando_nao_cobre: {campos['decisor_quando_nao_cobre']}",
++        f"entradas: {campos['entradas']}",
++        "excecoes_conhecidas: []",
++    ]
++    if not campos["omitir_estabilidade"]:
++        linhas.append(f"estabilidade: {campos['estabilidade']}")
++    linhas.append(f"versao: {campos['versao']}")
++    linhas += historico_linhas + [""]
++    return "\n".join(linhas)
++
++
++def _premissa_evidencia(campos):
++    procedencia = campos["procedencia"]
++    premissa = campos["premissa"]
++    if premissa is None:
++        premissa = "padrao observado" if procedencia == "I" else ""
++    evidencia_presente = campos["evidencia_presente"]
++    if evidencia_presente is None:
++        evidencia_presente = procedencia == "V"
++    evidencia = "leitura de volta" if evidencia_presente else ""
++    return premissa, evidencia
++
++
++def termo(**over):
++    campos = {
++        "id": "T-001", "termo": "guia", "significado": "documento de autorizacao",
++        "nao_e": "nota fiscal", "procedencia": "D",
++        "declarado_por": "Claudia Ferreira", "registrado_por": "Rafael Nogueira",
++        "data": "2026-09-18", "premissa": None, "evidencia_presente": None,
++    }
++    campos.update(over)
++    premissa, evidencia = _premissa_evidencia(campos)
++    return "\n".join([
++        f"id: {campos['id']}", f"termo: {campos['termo']}",
++        f"significado: {campos['significado']}", f"nao_e: {campos['nao_e']}",
++        "sinonimos_em_uso: [autorizacao]", f"procedencia: {campos['procedencia']}",
++        f"declarado_por: {campos['declarado_por']}",
++        f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f'premissa: "{premissa}"', f'evidencia: "{evidencia}"', "",
++    ])
++
++
++def entidade(**over):
++    campos = {
++        "id": "E-001", "entidade": "Guia", "onde_vive": "[]", "procedencia": "D",
++        "declarado_por": "Claudia Ferreira", "registrado_por": "Rafael Nogueira",
++        "data": "2026-09-18", "premissa": None, "evidencia_presente": None,
++    }
++    campos.update(over)
++    premissa, evidencia = _premissa_evidencia(campos)
++    return "\n".join([
++        f"id: {campos['id']}", f"entidade: {campos['entidade']}",
++        "atributos:", "  - nome: convenio", "    tipo: categoria", "    obrigatorio: true",
++        "relacoes: []", f"onde_vive: {campos['onde_vive']}", f"procedencia: {campos['procedencia']}",
++        f"declarado_por: {campos['declarado_por']}",
++        f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f'premissa: "{premissa}"', f'evidencia: "{evidencia}"', "",
++    ])
++
++
++def fonte(**over):
++    campos = {
++        "id": "F-001", "fonte": "planilha de controle", "tipo": "planilha",
++        "responsavel": "Claudia Ferreira", "estrutura": "uma linha por guia",
++        "significado": "registra envio", "qualidade": "preenchida ao fim do dia",
++        "acesso": "leitura autorizada", "procedencia": "D",
++        "registrado_por": "Rafael Nogueira", "data": "2026-09-18",
++        "premissa": None, "evidencia_presente": None,
++    }
++    campos.update(over)
++    premissa, evidencia = _premissa_evidencia(campos)
++    return "\n".join([
++        f"id: {campos['id']}", f"fonte: {campos['fonte']}", f"tipo: {campos['tipo']}",
++        f"responsavel: {campos['responsavel']}", "contrato:",
++        f"  estrutura: {campos['estrutura']}", f"  significado: {campos['significado']}",
++        f"  qualidade: {campos['qualidade']}", f"acesso: {campos['acesso']}",
++        f"procedencia: {campos['procedencia']}", f"registrado_por: {campos['registrado_por']}",
++        f'data: "{campos["data"]}"',
++        f'premissa: "{premissa}"', f'evidencia: "{evidencia}"', "",
++    ])
++
++
++def divergencia(**over):
++    campos = {
++        "id": "DIV-001", "regra_confrontada": "RN-001", "classe": "divergente",
++        "documento_diz": "prazo de 72h", "observado": "prazo real de 24h",
++        "justificativa": "confirmado por leitura de volta",
++        "autor": "Claudia Ferreira", "data": "2026-09-18",
++    }
++    campos.update(over)
++    return "\n".join([
++        f"id: {campos['id']}", f"regra_confrontada: {campos['regra_confrontada']}",
++        f"classe: {campos['classe']}", f"documento_diz: {campos['documento_diz']}",
++        f"observado: {campos['observado']}", f"justificativa: {campos['justificativa']}",
++        f"autor: {campos['autor']}", f'data: "{campos["data"]}"', "",
++    ])
++
++
++def preparar_caso(raiz_tmp):
++    caso = raiz_tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def curar(caso, tipo, destino_relativo, conteudo, registrado_por, schema=None):
++    nome = pathlib.Path(destino_relativo).name
++    (caso / "rascunho" / nome).write_text(conteudo, encoding="utf-8")
++    comando = [
++        "python3", str(CURADOR), "--tipo", tipo,
++        "--arquivo", destino_relativo, "--registrado-por", registrado_por,
++    ]
++    if schema:
++        comando += ["--schema", schema]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return {
++        "comando": " ".join(comando), "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def guarda_hook(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(
++        ["python3", str(GUARDA)], cwd=caso, input=entrada,
++        text=True, capture_output=True, check=False,
++    )
++    return {
++        "comando": f"guarda.py <<< {entrada}", "codigo": proc.returncode,
++        "stdout": proc.stdout, "stderr": proc.stderr,
++    }
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def gravar_evidencia(destino, nome_arquivo, validacao, tipo_teste, requisito, esperado, obtido,
++                      execucoes, passou, head_inicial, evento_relacionado=""):
++    agora = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
++    comandos = "\n".join(f"[{i}] {e['comando']}" for i, e in enumerate(execucoes, 1)) or "(nenhum comando)"
++    codigos = "\n".join(f"[{i}] {e['codigo']}" for i, e in enumerate(execucoes, 1)) or "(n/a)"
++    stdout = "".join(f"--- comando {i} ---\n{e['stdout']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    stderr = "".join(f"--- comando {i} ---\n{e['stderr']}" for i, e in enumerate(execucoes, 1)) or "(vazio)\n"
++    conteudo = f"""PACOTE: 2.5.4
++VALIDACAO: {validacao}
++TIPO: {tipo_teste}
++REQUISITO: {requisito}
++DATA/HORA: {agora}
++HEAD INICIAL: {head_inicial}
++COMANDO:
++{comandos}
++EXIT CODE:
++{codigos}
++
++RESULTADO ESPERADO:
++{esperado}
++
++RESULTADO OBTIDO:
++{obtido}
++
++STDOUT:
++{stdout}
++STDERR:
++{stderr}
++EVENTO:
++{evento_relacionado or '(nenhum aplicavel)'}
++
++RESULTADO FINAL: {'PASS' if passou else 'FAIL'}
++"""
++    (destino / nome_arquivo).write_text(conteudo, encoding="utf-8")
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--evidencias")
++    ap.add_argument("--head-inicial")
++    args = ap.parse_args()
++
++    destino_ev = pathlib.Path(args.evidencias).resolve() if args.evidencias else None
++    if destino_ev:
++        destino_ev.mkdir(parents=True, exist_ok=True)
++    head_inicial = args.head_inicial or subprocess.run(
++        ["git", "rev-parse", "HEAD"], cwd=RAIZ, text=True,
++        capture_output=True, check=True,
++    ).stdout.strip()
++
++    with tempfile.TemporaryDirectory() as tmp:
++        caso = preparar_caso(pathlib.Path(tmp))
++        casos = []
++
++        # CTX-V01 — Regra possui os sete campos do bloco de decisao
++        def v01_n():
++            e = curar(caso, "regra", "contexto/regras/RN-101.yaml",
++                      regra(id="RN-101", omitir_estabilidade=True), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "estabilidade" in e["stderr"]
++        casos.append(("CTX-V01", "N", "2.5.4-V01-N",
++                       "Regra possui os sete campos do bloco de decisao", "RECUSA",
++                       "recusado: campo obrigatorio ausente: estabilidade", v01_n))
++
++        def v01_p():
++            e = curar(caso, "regra", "contexto/regras/RN-102.yaml",
++                      regra(id="RN-102"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("CTX-V01", "P", "2.5.4-V01-P",
++                       "Regra possui os sete campos do bloco de decisao", "PASS",
++                       "regra curada com os sete campos presentes", v01_p))
++
++        # CTX-V02 — Registro I possui premissa escrita
++        def v02_n():
++            e = curar(caso, "regra", "contexto/regras/RN-103.yaml",
++                      regra(id="RN-103", procedencia="I", premissa=""), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "premissa" in e["stderr"]
++        casos.append(("CTX-V02", "N", "2.5.4-V02-N", "Registro I possui premissa escrita",
++                       "RECUSA", "recusado: procedencia I exige premissa", v02_n))
++
++        def v02_p():
++            e = curar(caso, "termo", "contexto/termos/T-101.yaml",
++                      termo(id="T-101", procedencia="I"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("CTX-V02", "P", "2.5.4-V02-P", "Registro I possui premissa escrita",
++                       "PASS", "Termo I com premissa curado", v02_p))
++
++        # CTX-V03 — Registro V possui evidencia identificada
++        def v03_n():
++            e = curar(caso, "entidade", "contexto/entidades/E-101.yaml",
++                      entidade(id="E-101", procedencia="V", evidencia_presente=False),
++                      "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "evidencia" in e["stderr"]
++        casos.append(("CTX-V03", "N", "2.5.4-V03-N", "Registro V possui evidencia identificada",
++                       "RECUSA", "recusado: procedencia V exige evidencia", v03_n))
++
++        def v03_p():
++            e = curar(caso, "fonte", "contexto/fontes/F-101.yaml",
++                      fonte(id="F-101", procedencia="V"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("CTX-V03", "P", "2.5.4-V03-P", "Registro V possui evidencia identificada",
++                       "PASS", "Fonte V com evidencia curada", v03_p))
++
++        # CTX-V04 — mudanca I -> V cria nova versao
++        def v04_n():
++            e1 = curar(caso, "regra", "contexto/regras/RN-104.yaml",
++                       regra(id="RN-104", procedencia="I", versao=1), "Rafael Nogueira")
++            e2 = curar(caso, "regra", "contexto/regras/RN-104.yaml",
++                       regra(id="RN-104", procedencia="V", versao=1, historico=[]), "Rafael Nogueira")
++            return [e1, e2], e1["codigo"] == 0 and e2["codigo"] != 0 and "CTX-V04" in e2["stderr"]
++        casos.append(("CTX-V04", "N", "2.5.4-V04-N", "Mudanca I->V cria nova versao",
++                       "RECUSA", "recusado: CTX-V04, sobrescrita nao permitida", v04_n))
++
++        def v04_p():
++            e2 = curar(caso, "regra", "contexto/regras/RN-104.yaml",
++                       regra(id="RN-104", procedencia="V", versao=2, historico=[
++                           {"versao": 1, "data": "2026-09-12", "procedencia": "I",
++                            "registrado_por": "Rafael Nogueira"},
++                       ]), "Rafael Nogueira")
++            return [e2], e2["codigo"] == 0
++        casos.append(("CTX-V04", "P", "2.5.4-V04-P", "Mudanca I->V cria nova versao",
++                       "PASS", "v2 (V) curada com historico da v1", v04_p))
++
++        # CTX-V05 — todo termo referenciado existe
++        def v05_n():
++            e = curar(caso, "regra", "contexto/regras/RN-105.yaml",
++                      regra(id="RN-105", entradas="[T-999]"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "CTX-V05" in e["stderr"]
++        casos.append(("CTX-V05", "N", "2.5.4-V05-N", "Todo termo referenciado existe",
++                       "RECUSA", "recusado: CTX-V05, T-999 nao existe", v05_n))
++
++        def v05_p():
++            e_t = curar(caso, "termo", "contexto/termos/T-105.yaml",
++                        termo(id="T-105"), "Rafael Nogueira")
++            e_r = curar(caso, "regra", "contexto/regras/RN-106.yaml",
++                        regra(id="RN-106", entradas="[T-105]"), "Rafael Nogueira")
++            return [e_t, e_r], e_t["codigo"] == 0 and e_r["codigo"] == 0
++        casos.append(("CTX-V05", "P", "2.5.4-V05-P", "Todo termo referenciado existe",
++                       "PASS", "T-105 curado, RN-106 referencia e e aceita", v05_p))
++
++        # CTX-V06 — toda entidade referenciada existe
++        def v06_n():
++            e = curar(caso, "regra", "contexto/regras/RN-107.yaml",
++                      regra(id="RN-107", entradas="[E-999]"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "CTX-V06" in e["stderr"]
++        casos.append(("CTX-V06", "N", "2.5.4-V06-N", "Toda entidade referenciada existe",
++                       "RECUSA", "recusado: CTX-V06, E-999 nao existe", v06_n))
++
++        def v06_p():
++            e_e = curar(caso, "entidade", "contexto/entidades/E-107.yaml",
++                        entidade(id="E-107"), "Rafael Nogueira")
++            e_r = curar(caso, "regra", "contexto/regras/RN-108.yaml",
++                        regra(id="RN-108", entradas="[E-107]"), "Rafael Nogueira")
++            return [e_e, e_r], e_e["codigo"] == 0 and e_r["codigo"] == 0
++        casos.append(("CTX-V06", "P", "2.5.4-V06-P", "Toda entidade referenciada existe",
++                       "PASS", "E-107 curada, RN-108 referencia e e aceita", v06_p))
++
++        # CTX-V07 — toda fonte referenciada existe e possui contrato minimo
++        def v07_n():
++            e = curar(caso, "regra", "contexto/regras/RN-109.yaml",
++                      regra(id="RN-109", entradas="[F-999]"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "CTX-V07" in e["stderr"]
++        casos.append(("CTX-V07", "N", "2.5.4-V07-N",
++                       "Toda fonte referenciada existe e possui contrato minimo",
++                       "RECUSA", "recusado: CTX-V07, F-999 nao existe", v07_n))
++
++        def v07_p():
++            e_f = curar(caso, "fonte", "contexto/fontes/F-109.yaml",
++                        fonte(id="F-109"), "Rafael Nogueira")
++            e_r = curar(caso, "regra", "contexto/regras/RN-110.yaml",
++                        regra(id="RN-110", entradas="[F-109]"), "Rafael Nogueira")
++            return [e_f, e_r], e_f["codigo"] == 0 and e_r["codigo"] == 0
++        casos.append(("CTX-V07", "P", "2.5.4-V07-P",
++                       "Toda fonte referenciada existe e possui contrato minimo",
++                       "PASS", "F-109 curada com contrato, RN-110 referencia e e aceita", v07_p))
++
++        # CTX-V08 — escrita em contexto/ passa pela curadoria prevista
++        def v08_n():
++            e = guarda_hook(caso, "Write", {"file_path": "contexto/regras/RN-999.yaml"})
++            return [e], e["codigo"] == 2 and "contexto/" in e["stderr"]
++        casos.append(("CTX-V08", "N", "2.5.4-V08-N", "Escrita em contexto/ passa pela curadoria prevista",
++                       "RECUSA", "guarda bloqueia escrita direta, rc=2", v08_n))
++
++        def v08_p():
++            e = curar(caso, "regra", "contexto/regras/RN-111.yaml",
++                      regra(id="RN-111"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("CTX-V08", "P", "2.5.4-V08-P", "Escrita em contexto/ passa pela curadoria prevista",
++                       "PASS", "curador grava normalmente", v08_p))
++
++        # CTX-V09 — autoria de conteudo e registro sao pessoas nomeadas
++        def v09_n():
++            e = curar(caso, "regra", "contexto/regras/RN-112.yaml",
++                      regra(id="RN-112", autoria_conteudo="AG-01"), "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "CTX-V09" in e["stderr"]
++        casos.append(("CTX-V09", "N", "2.5.4-V09-N",
++                       "Autoria de conteudo e registro sao pessoas nomeadas",
++                       "RECUSA", "recusado: CTX-V09, autoria_conteudo agente", v09_n))
++
++        def v09_p():
++            e = curar(caso, "regra", "contexto/regras/RN-113.yaml",
++                      regra(id="RN-113", autoria_conteudo="Ana Beatriz Souza"), "Rafael Nogueira")
++            return [e], e["codigo"] == 0
++        casos.append(("CTX-V09", "P", "2.5.4-V09-P",
++                       "Autoria de conteudo e registro sao pessoas nomeadas",
++                       "PASS", "pessoa nomeada aceita como autoria_conteudo", v09_p))
++
++        # CTX-V10 — toda nova versao possui data, responsavel e motivo da mudanca
++        def v10_n():
++            e1 = curar(caso, "regra", "contexto/regras/RN-114.yaml",
++                       regra(id="RN-114", procedencia="I", versao=1), "Rafael Nogueira")
++            e2 = curar(caso, "regra", "contexto/regras/RN-114.yaml",
++                       regra(id="RN-114", procedencia="V", versao=2, historico=[
++                           {"versao": 1, "procedencia": "I"},
++                       ]), "Rafael Nogueira")
++            return [e1, e2], e1["codigo"] == 0 and e2["codigo"] != 0 and "CTX-V10" in e2["stderr"]
++        casos.append(("CTX-V10", "N", "2.5.4-V10-N",
++                       "Toda nova versao possui data, responsavel e motivo da mudanca",
++                       "RECUSA", "recusado: CTX-V10, historico incompleto (sem data/responsavel)", v10_n))
++
++        def v10_p():
++            e2 = curar(caso, "regra", "contexto/regras/RN-114.yaml",
++                       regra(id="RN-114", procedencia="V", versao=2, historico=[
++                           {"versao": 1, "data": "2026-09-12", "procedencia": "I",
++                            "registrado_por": "Rafael Nogueira"},
++                       ]), "Rafael Nogueira")
++            return [e2], e2["codigo"] == 0
++        casos.append(("CTX-V10", "P", "2.5.4-V10-P",
++                       "Toda nova versao possui data, responsavel e motivo da mudanca",
++                       "PASS", "historico completo aceito", v10_p))
++
++        # CTX-V11 — classificacao_confronto completa e resolvivel quando divergente
++        def v11_n():
++            e = curar(caso, "regra", "contexto/regras/RN-115.yaml",
++                      regra(id="RN-115", classe="divergente", referencia_p3d="DIV-999"),
++                      "Rafael Nogueira")
++            return [e], e["codigo"] != 0 and "CTX-V11" in e["stderr"]
++        casos.append(("CTX-V11", "N", "2.5.4-V11-N",
++                       "classificacao_confronto completa e resolvivel quando divergente",
++                       "RECUSA", "recusado: CTX-V11, referencia_p3d inexistente", v11_n))
++
++        def v11_p():
++            e_d = curar(caso, "divergencia", "contexto/divergencias/DIV-115.yaml",
++                        divergencia(id="DIV-115", regra_confrontada="RN-116"),
++                        "Rafael Nogueira", schema="registro/p3d.schema.json")
++            e_r = curar(caso, "regra", "contexto/regras/RN-116.yaml",
++                        regra(id="RN-116", classe="divergente", referencia_p3d="DIV-115"),
++                        "Rafael Nogueira")
++            return [e_d, e_r], e_d["codigo"] == 0 and e_r["codigo"] == 0
++        casos.append(("CTX-V11", "P", "2.5.4-V11-P",
++                       "classificacao_confronto completa e resolvivel quando divergente",
++                       "PASS", "DIV-115 curada, RN-116 referencia e e aceita", v11_p))
++
++        # Teste adicional: multiplas violacoes no mesmo objeto (politica acumulativa)
++        def multi():
++            e = curar(caso, "regra", "contexto/regras/RN-200.yaml",
++                      regra(id="RN-200", procedencia="I", premissa="", entradas="[F-999]"),
++                      "Rafael Nogueira")
++            tem_v02 = "premissa" in e["stderr"]
++            tem_v07 = "CTX-V07" in e["stderr"]
++            return [e], e["codigo"] != 0 and tem_v02 and tem_v07
++        casos.append(("multiplas-violacoes", "N", "2.5.4-multi",
++                       "I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)",
++                       "RECUSA com as duas causas relatadas",
++                       "ambos os motivos presentes na mesma recusa (CTX-01 nao define ordem; "
++                       "curar.py acumula todas as violacoes num unico erro, nao para na primeira)",
++                       multi))
++
++        falhas = 0
++        print("== bateria CTX-V01-V11 — pacote 2.5.4")
++        for ctxv, tipo_teste, teste_id, requisito, esperado, obtido, executar in casos:
++            execucoes, passou = executar()
++            evento_txt = ""
++            todos = eventos(caso)
++            if todos:
++                evento_txt = json.dumps(todos[-1], ensure_ascii=False)
++            if destino_ev:
++                sufixo = "negativo" if tipo_teste == "N" else "positivo"
++                nome_arquivo = (f"{ctxv}-{sufixo}.txt" if ctxv.startswith("CTX-V")
++                                 else f"{teste_id}.txt")
++                gravar_evidencia(destino_ev, nome_arquivo, ctxv, tipo_teste, requisito,
++                                  esperado, obtido, execucoes, passou, head_inicial, evento_txt)
++            if passou:
++                print(f"  ok    {teste_id} {ctxv} [{tipo_teste}] {requisito}")
++            else:
++                falhas += 1
++                print(f"  FALHA {teste_id} {ctxv} [{tipo_teste}] {requisito}")
++                for e in execucoes:
++                    print(f"        stdout={e['stdout']!r} stderr={e['stderr']!r}")
++
++    if falhas:
++        print(f"\n{falhas} verificacao(oes) CTX-V falharam")
++        raise SystemExit(1)
++    print(f"\n{len(casos)} verificacoes CTX-V01-V11 aprovadas")
++
++
++if __name__ == "__main__":
++    main()

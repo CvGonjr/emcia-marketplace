@@ -1,0 +1,33 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V07
+TIPO: P
+REQUISITO: Toda fonte referenciada existe e possui contrato minimo
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo fonte --arquivo contexto/fontes/F-109.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-110.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+F-109 curada com contrato, RN-110 referencia e e aceita
+
+STDOUT:
+--- comando 1 ---
+fonte curado: contexto/fontes/F-109.yaml
+--- comando 2 ---
+regra curado: contexto/regras/RN-110.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+
+EVENTO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:36:34", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-110.yaml", "id": "RN-110", "procedencia": "D", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

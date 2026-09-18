@@ -1,0 +1,28 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V01
+TIPO: N
+REQUISITO: Regra possui os sete campos do bloco de decisao
+DATA/HORA: 2026-09-18T17:36:33-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-101.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: campo obrigatorio ausente: estabilidade
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+campo obrigatorio ausente: estabilidade
+
+EVENTO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:33", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-101.yaml", "erros": ["campo obrigatorio ausente: estabilidade"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

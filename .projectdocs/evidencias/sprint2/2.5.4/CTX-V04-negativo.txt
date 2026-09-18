@@ -1,0 +1,34 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V04
+TIPO: N
+REQUISITO: Mudanca I->V cria nova versao
+DATA/HORA: 2026-09-18T17:36:33-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-104.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-104.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: CTX-V04, sobrescrita nao permitida
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-104.yaml
+--- comando 2 ---
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+CTX-V04: mudanca de procedencia I -> V exige nova versao (recebido versao 1 -> 1); sobrescrita nao e permitida
+CTX-V10: mudanca de procedencia I -> V exige historico com a versao anterior preservada (data, responsavel e motivo)
+
+EVENTO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:33", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-104.yaml", "erros": ["CTX-V04: mudanca de procedencia I -> V exige nova versao (recebido versao 1 -> 1); sobrescrita nao e permitida", "CTX-V10: mudanca de procedencia I -> V exige historico com a versao anterior preservada (data, responsavel e motivo)"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

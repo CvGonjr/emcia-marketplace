@@ -1,0 +1,28 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V03
+TIPO: P
+REQUISITO: Registro V possui evidencia identificada
+DATA/HORA: 2026-09-18T17:36:33-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo fonte --arquivo contexto/fontes/F-101.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+Fonte V com evidencia curada
+
+STDOUT:
+--- comando 1 ---
+fonte curado: contexto/fontes/F-101.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTO:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T17:36:33", "tipo_objeto": "fonte", "arquivo": "contexto/fontes/F-101.yaml", "id": "F-101", "procedencia": "V", "versao": null, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,64 @@
+--- /tmp/claude-1000/-home-netiv-ai-Projetos-AI-PLUGINS-emcia-marketplace/fe141b79-971a-42ab-a29f-19c18bcc9d14/scratchpad/rte01-before-2.5.4.md	2026-09-18 17:38:48.291512178 -0300
++++ "/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md"	2026-09-18 17:39:48.813254847 -0300
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1, 2.5.2 e 2.5.3, com evidências contemporâneas no 2.5.1, no 2.5.2 e no 2.5.3.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1, 2.5.2, 2.5.3 e 2.5.4, com evidências contemporâneas no 2.5.1 ao 2.5.4.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.5 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.6 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -246,7 +246,7 @@
+ | **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Concluído |
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Concluído |
+-| **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Não iniciado |
++| **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Concluído |
+ | **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Não iniciado |
+ | **2.5.6** | Contexto e Dados | Verificação consolidada da camada. | Não iniciado |
+ | **2.6.0** | Agentes e Protocolos | Congelar contrato executável F0–P10. | Não iniciado |
+@@ -354,6 +354,33 @@
+ integração executável P2/P3 → CTX → P4/P5 (2.5.5), nem qualquer item da
+ ação 2.6.
+ 
++#### 3.10.5 Pacote 2.5.4 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.4` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Objetivo** | Formalizar as onze validações determinísticas do contrato CTX (CTX-V01–CTX-V11), extraídas literalmente de EMCIA-CTX-01 §3.13. |
++| **Requisitos / baseline** | `D-05`, `2.5-BL16`, `2.5-BL17`, `2.5-BL18`, `2.5-BL19` |
++| **Estado inicial** | `HEAD_INICIAL_2.5.4 = 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53`, working tree limpa. Oito das onze CTX-V (`V01`–`V04`, `V08`–`V11`) já estavam corretamente implementadas pelos pacotes 2.5.0–2.5.3, mas sem o código formal `CTX-Vxx` associado — origem do "0/11" registrado no S2-BL. As três genuinamente ausentes eram `V05`, `V06` e `V07`: `entradas` (Regra) e `onde_vive` (Entidade) eram validados só como tipo `list`, sem resolução contra objetos curados existentes. |
++| **Implementação** | Oito CTX-V formalizadas: mensagens de erro e eventos de `curar.py` passaram a citar o código (`CTX-V04`, `CTX-V09`, `CTX-V10`, `CTX-V11`), sem reescrever a lógica já correta. As três ausentes (`V05`–`V07`) implementadas por um resolvedor genérico e declarativo: `catalogo_referencias` (prefixo do id → tipo/diretório) e `references` (campo → prefixos aceitos), ambos lidos do schema do caso por `checar_referencias()`, sem hard-code de vocabulário EMCIA no núcleo. Fonte referenciada também passa pela própria validação estrutural (contrato mínimo); um arquivo físico em `fontes/` nunca satisfaz sozinho uma referência a Fonte CTX. |
++| **Testes** | 22 pares negativo/positivo (`2.5.4-V01-N/P` a `2.5.4-V11-N/P`) + 1 teste de violações múltiplas (`2.5.4-multi`, confirmando política de validação acumulativa) = 23 verificações. |
++| **Defeitos** | Nenhum defeito de código nos pacotes anteriores. Um erro de fixture nos próprios testes novos (valores de `premissa`/`evidencia` auto-preenchidos mascarando cenários negativos) foi corrigido antes da execução registrada como evidência. |
++| **Correções** | Não houve correção de defeito pré-existente — implementação das três validações ausentes e formalização das oito existentes. |
++| **Reteste** | 96/96 verificações aprovadas, 0 falhas, 0 skips: 73 da suíte anterior (sem regressão) + 23 novas de `ctx_v.py`. |
++| **Eventos** | `CuradoriaRecusada`/`ObjetoContextoCurado` de `curar.py` agora incluem o código `CTX-Vxx` na lista de motivos, quando aplicável. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.4/resultado.md`; matriz completa em `.projectdocs/evidencias/sprint2/2.5.4/matriz-ctx-validacoes.md` |
++| **Commit** | `e3d0bea` — `feat(context): enforce CTX validation contract` |
++| **Estado final** | **CONFORME** |
++
++**Indicador CTX-V:** baseline `0/11` → final `11/11`. Nenhuma validação foi
++contabilizada apenas por constar no documento — todas as onze têm teste
++negativo e controle positivo executados e persistidos.
++
++Este pacote não implementou a integração executável P2/P3 → CTX → P4/P5
++(2.5.5), a verificação consolidada da camada (2.5.6), nem qualquer item da
++ação 2.6.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -425,3 +452,4 @@
+ | 0.3 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.1: quatro objetos CTX, cobertura T01–T11, regressão acumulada, commit e evidências contemporâneas. | — |
+ | 0.4 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.2: curadoria de `contexto/`, autoria dupla, versionamento I→V sem sobrescrita, correção do achado do baseline em `validar.py --autor` e de um defeito adicional na convenção lexical de autor-agente, cobertura T01–T17, regressão acumulada 44→61. | — |
+ | 0.5 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.3: taxonomia oficial de confronto (EMCIA-ROT-01 3.9), registro estruturado `contexto/divergencias/` para P3d, resolução mínima de `referencia_p3d` (CTX-V11 mínimo), versionamento estendido a mudança de `classificacao_confronto`, cobertura T01–T13, regressão acumulada 61→73. | — |
++| 0.6 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.4: formalização das onze CTX-V01–CTX-V11 (oito já implementadas, três novas — resolução de referência a Termo/Entidade/Fonte), indicador CTX-V 0/11→11/11, cobertura de 23 verificações, regressão acumulada 73→96. | — |

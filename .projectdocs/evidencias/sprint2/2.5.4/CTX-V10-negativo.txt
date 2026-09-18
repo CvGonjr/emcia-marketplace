@@ -1,0 +1,33 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V10
+TIPO: N
+REQUISITO: Toda nova versao possui data, responsavel e motivo da mudanca
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-114.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-114.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: CTX-V10, historico incompleto (sem data/responsavel)
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-114.yaml
+--- comando 2 ---
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+CTX-V10: entrada de historico incompleta para a versao anterior: faltando ['registrado_por ou confirmado_por']
+
+EVENTO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:34", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-114.yaml", "erros": ["CTX-V10: entrada de historico incompleta para a versao anterior: faltando ['registrado_por ou confirmado_por']"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

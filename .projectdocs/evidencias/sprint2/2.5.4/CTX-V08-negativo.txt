@@ -1,0 +1,28 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V08
+TIPO: N
+REQUISITO: Escrita em contexto/ passa pela curadoria prevista
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] guarda.py <<< {"tool_name": "Write", "tool_input": {"file_path": "contexto/regras/RN-999.yaml"}}
+EXIT CODE:
+[1] 2
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+guarda bloqueia escrita direta, rc=2
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).
+
+EVENTO:
+{"evento": "TentativaNegada", "data": "2026-09-18T17:36:34", "motivo": "Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).", "etapa": "F0", "ferramenta": "Write", "alvo": "contexto/regras/RN-999.yaml"}
+
+RESULTADO FINAL: PASS

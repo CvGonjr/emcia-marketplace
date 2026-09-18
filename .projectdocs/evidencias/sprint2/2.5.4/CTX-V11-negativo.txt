@@ -1,0 +1,28 @@
+PACOTE: 2.5.4
+VALIDACAO: CTX-V11
+TIPO: N
+REQUISITO: classificacao_confronto completa e resolvivel quando divergente
+DATA/HORA: 2026-09-18T17:36:34-03:00
+HEAD INICIAL: 004b42813c63ab7ba7bb3c2c86c7e74df99a9d53
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-115.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+recusado: CTX-V11, referencia_p3d inexistente
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+CTX-V11: referencia_p3d 'DIV-999' nao resolve para registro existente em contexto/divergencias/
+
+EVENTO:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T17:36:34", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-115.yaml", "erros": ["CTX-V11: referencia_p3d 'DIV-999' nao resolve para registro existente em contexto/divergencias/"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS
