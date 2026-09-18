@@ -7,8 +7,8 @@
 - **Execução:** 18/09/2026, 15:53–16:08 -0300
 - **Branch:** `master`
 - **HEAD inicial:** `5421c78edaeb074c3d14e61e6686be42431a2c56`
-- **Commit de implementação:** PENDENTE ANTES DO COMMIT
-- **HEAD final:** PENDENTE ANTES DO FECHAMENTO DOCUMENTAL
+- **Commit de implementação:** `92179256f078880f92fbfe5d395ee4a61dccfbf7`
+- **HEAD técnico final:** `92179256f078880f92fbfe5d395ee4a61dccfbf7`
 - **eiac-nucleo:** 0.2.6 → 0.2.7
 - **eiac-campo:** 0.3.3 → 0.3.4
 - **Playbook:** 0.3.1, sem alteração
@@ -134,9 +134,16 @@ pacotes comportamentais posteriores.
 
 ## 13. Commit
 
-PENDENTE ANTES DO COMMIT DE IMPLEMENTAÇÃO.
+- **Implementação:** `92179256f078880f92fbfe5d395ee4a61dccfbf7` —
+  `feat(context): materialize CTX core objects`.
+- **Diff anterior ao commit:** `diff.patch`.
+- **Commit materializado:** `git-show.txt`.
+- **Atualização do RTE-01 oficial:** `rte-01.diff`.
+- **Logs brutos:** `teste-2.5.1-T01.txt` a `teste-2.5.1-T11.txt`,
+  `teste-regressao-inicial.txt` e `teste-regressao-final.txt`.
+- **Matriz anterior:** `matriz-schema-inicial.md`.
 
 ## 14. Estado final
 
-**CONFORME**, condicionado apenas ao registro do commit e à atualização do
-RTE-01 com o hash efetivo. Os critérios técnicos e de teste estão atendidos.
+**CONFORME.** Os critérios técnicos e de teste estão atendidos, o commit está
+registrado e o EMCIA-RTE-01 oficial foi atualizado para a versão 0.3.

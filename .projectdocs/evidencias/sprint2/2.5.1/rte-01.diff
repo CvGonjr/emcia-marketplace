@@ -1,0 +1,63 @@
+diff --git a/tmp/emcia-rte-2.5.1.lRpDnf/RTE-01-before.md b/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md
+index f36828f..fd9ba28 100644
+--- a/tmp/emcia-rte-2.5.1.lRpDnf/RTE-01-before.md
++++ b/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md	
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo do pacote 2.5.0 e de suas evidências reconstruídas.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0 e 2.5.1, com evidências contemporâneas no 2.5.1.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.2 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.3 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -243,7 +243,7 @@ O baseline identificou dois arquivos de agente funcionalmente existentes, mas ne
+ |---|---|---|---|
+ | **S2-BL** | Transversal | Registrar o estado inicial sem alteração de código. | Concluído |
+ | **2.5.0** | Contexto e Dados | Normalizar o contrato documental D/I/V. | IMPLEMENTADO MAS DIVERGENTE |
+-| **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | Não iniciado |
++| **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Não iniciado |
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Não iniciado |
+ | **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Não iniciado |
+@@ -281,6 +281,30 @@ são evidências contemporâneas da implementação. `resultado.md`,
+ posteriormente a partir do Git preservado e de uma reexecução no commit final.
+ Não foram encontrados logs brutos nem eventos preservados da execução original.
+ 
++#### 3.10.2 Pacote 2.5.1 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.1` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Objetivo** | Materializar Termo, Entidade, Regra e Fonte conforme o EMCIA-CTX-01 v0.4. |
++| **Requisitos / baseline** | `D-02`, `2.5-BL03`, `2.5-BL04`, `2.5-BL05`, `2.5-BL06` |
++| **Estado inicial** | `IMPLEMENTADO MAS DIVERGENTE` no HEAD `5421c78edaeb074c3d14e61e6686be42431a2c56`: os quatro modelos existiam, mas ainda representavam o schema anterior. |
++| **Resultado inicial** | Regressão anterior com 33/33 verificações aprovadas; Termo e Entidade usavam `autor/fonte`; Regra usava `R-*`, `estatuto` e divergência embutida, sem todos os metadados do CTX-01 v0.4; Fonte não possuía `registrado_por` nem contrato estrutural executável. Não foram localizadas instâncias reais para migração. |
++| **Implementação** | Os quatro modelos foram alinhados ao CTX-01 v0.4; Regra passou a `RN-*`, preservou os sete campos centrais e recebeu gatilho, autoria, registro, origem, confronto e histórico estruturais; Fonte recebeu contrato mínimo verificável; todos os objetos adotaram D/I/V e metadados de rastreabilidade. O `eiac-campo` passou a declarar `registro/contexto.schema.json`, enquanto o `eiac-nucleo` recebeu um validador genérico orientado pelo schema, sem regras específicas do EMCIA. |
++| **Testes** | `2.5.1-T01` a `2.5.1-T11`: quatro controles positivos, quatro negativas por campo obrigatório, D/I/V nos quatro objetos, recusa de oito taxonomias obsoletas e presença dos sete campos centrais da Regra; regressão acumulada `2.5.1-T12`. |
++| **Defeitos** | Nenhum defeito novo demonstrável. O pacote tratou os desvios já registrados em `D-02` e `2.5-BL03` a `2.5-BL06`. |
++| **Correções** | Migração estrutural dos templates, schema declarativo, validador genérico, documentação compatível, versões `eiac-nucleo` 0.2.7 e `eiac-campo` 0.3.4 e cobertura estrutural positiva/negativa. |
++| **Reteste** | 44/44 verificações aprovadas, 0 falhas e 0 skips: 33 da suíte anterior e 11 testes estruturais novos. |
++| **Eventos** | Não aplicáveis: o pacote valida estrutura em modo somente leitura; não executa curadoria nem transição de estado. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.1/resultado.md` |
++| **Commit** | `92179256f078880f92fbfe5d395ee4a61dccfbf7` — `feat(context): materialize CTX core objects` |
++| **Estado final** | **CONFORME** |
++
++Os comportamentos de curadoria, restrição de autoria, versionamento I→V,
++semântica obrigatória de P3d, CTX-V01–V11 e integração P2/P3 → P4/P5 não
++foram antecipados; permanecem atribuídos aos pacotes 2.5.2 a 2.5.5.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -349,3 +373,4 @@ Para o fechamento da Sprint 2, cada pacote executado deve possuir `resultado.md`
+ |---|---|---|---|---|
+ | 0.1 | 18/09/2026 | Celso do Vale | Versão inicial: cadeia de evidência, convenção de armazenamento, modelo de registro por pacote, baseline S2-BL, dívidas iniciais e integração com as ações 2.5 e 2.6. | — |
+ | 0.2 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.0, commit de implementação, testes cobertos e proveniência das evidências reconstruídas. | — |
++| 0.3 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.1: quatro objetos CTX, cobertura T01–T11, regressão acumulada, commit e evidências contemporâneas. | — |
