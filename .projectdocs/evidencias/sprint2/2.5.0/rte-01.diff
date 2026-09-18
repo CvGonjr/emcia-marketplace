@@ -1,0 +1,62 @@
+diff --git a/tmp/emcia-rte-01-before-2.5.0.md b/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md
+index 7697f0a..f36828f 100644
+--- a/tmp/emcia-rte-01-before-2.5.0.md
++++ b/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md	
+@@ -2,9 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
++> Atualizado em: 18/09/2026 — registro efetivo do pacote 2.5.0 e de suas evidências reconstruídas.
++
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.1 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.2 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -240,7 +242,7 @@ O baseline identificou dois arquivos de agente funcionalmente existentes, mas ne
+ | Pacote | Camada | Escopo | Estado inicial do pacote |
+ |---|---|---|---|
+ | **S2-BL** | Transversal | Registrar o estado inicial sem alteração de código. | Concluído |
+-| **2.5.0** | Contexto e Dados | Normalizar o contrato documental D/I/V. | Não iniciado |
++| **2.5.0** | Contexto e Dados | Normalizar o contrato documental D/I/V. | IMPLEMENTADO MAS DIVERGENTE |
+ | **2.5.1** | Contexto e Dados | Migrar Termo, Entidade, Regra e Fonte para CTX-01. | Não iniciado |
+ | **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Não iniciado |
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Não iniciado |
+@@ -255,6 +257,30 @@ O baseline identificou dois arquivos de agente funcionalmente existentes, mas ne
+ | **2.6.5** | Agentes e Protocolos | Ativar seis autorizações, inegociáveis e geração dos entregáveis. | Não iniciado |
+ | **2.6.6** | Agentes e Protocolos | Executar caso de controle F0–P10 e suíte end-to-end. | Não iniciado |
+ 
++#### 3.10.1 Pacote 2.5.0 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.0` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Requisitos** | `D-01`, `2.5-BL01`, `2.5-BL02` |
++| **Baseline** | `IMPLEMENTADO MAS DIVERGENTE` no HEAD `9a54017411c20cf54ab3a28fa488678c945a34b1` |
++| **Resultado inicial** | O playbook mantinha procedência multidimensional e taxonomias concorrentes a D/I/V. |
++| **Implementação** | Normalização da procedência para `D`, `I` e `V`; separação de `apuracao` e `tipo_fonte`; I passou a exigir premissa; V passou a exigir evidência; valores externos ao contrato passaram a ser recusados. O diff também atualizou consumidores ativos, modelos mínimos, documentação diretamente afetada, versões e cobertura de testes. |
++| **Testes** | `2.5.0-T01` a `2.5.0-T07`; `2.5.0-T08` como regressão dos 26 cenários anteriores. Os testes constam no commit, mas o stdout/stderr bruto da execução original não foi preservado. |
++| **Defeito** | `D-01` — taxonomia documental concorrente: `campo`, `antitese`, `conversa`, `livre`, `externo` e `apuracao` apareciam misturados ou concorrendo com declarado/inferido/verificado. |
++| **Correção** | Contrato canônico `D = Declarada`, `I = Inferida`, `V = Verificada`; dimensões ainda válidas representadas separadamente. |
++| **Reteste** | Evidência reconstruída em 18/09/2026 15:41:28 -0300 no commit final: 33 verificações aprovadas, 0 falhas, exit code 0. Não substitui o log original, que não foi preservado. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.0/resultado.md` |
++| **Commit** | `acf35f963bff718cfaa25981c4c84753f661c367` — `refactor(context): normalize documentary provenance to DIV` |
++| **Estado final** | **CONFORME** |
++
++**Proveniência da evidência.** O commit, seu conteúdo e os testes versionados
++são evidências contemporâneas da implementação. `resultado.md`,
++`git-show.txt`, `diff.patch` e `teste-regressao-final.txt` foram reconstruídos
++posteriormente a partir do Git preservado e de uma reexecução no commit final.
++Não foram encontrados logs brutos nem eventos preservados da execução original.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -322,3 +348,4 @@ Para o fechamento da Sprint 2, cada pacote executado deve possuir `resultado.md`
+ | Versão | Data | Autor | Descrição da alteração | Aprovação |
+ |---|---|---|---|---|
+ | 0.1 | 18/09/2026 | Celso do Vale | Versão inicial: cadeia de evidência, convenção de armazenamento, modelo de registro por pacote, baseline S2-BL, dívidas iniciais e integração com as ações 2.5 e 2.6. | — |
++| 0.2 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.0, commit de implementação, testes cobertos e proveniência das evidências reconstruídas. | — |

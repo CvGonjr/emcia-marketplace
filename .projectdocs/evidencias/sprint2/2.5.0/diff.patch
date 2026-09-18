@@ -1,0 +1,924 @@
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 8455dbd..704fa7b 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -37,7 +37,7 @@ O núcleo lê o `playbook.json` do caso e aplica o que ele declara. Trocar o pla
+ bash testes/negativos.sh
+ ```
+ 
+-Vinte e seis testes. Se algum falhar, não commite.
++Trinta e três verificações. Se alguma falhar, não commite.
+ 
+ Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/plugin.json`. O CI recusa o contrário — com o playbook sendo o método, versão de plugin e versão de método são a mesma coisa.
+ 
+diff --git a/CTX-01-instrumento-camada-contexto.md b/CTX-01-instrumento-camada-contexto.md
+index 697afe4..a14b36b 100644
+--- a/CTX-01-instrumento-camada-contexto.md
++++ b/CTX-01-instrumento-camada-contexto.md
+@@ -6,6 +6,10 @@
+ **Camada:** `CA4`
+ **Versão:** 1.0 · setembro de 2026
+ 
++> **Nota de compatibilidade:** o contrato de procedência deste documento foi
++> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
++> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
++
+ ---
+ 
+ ## 1. O que este instrumento é
+@@ -43,7 +47,7 @@ termo: guia
+ significado: documento de autorização emitido pelo convênio para um procedimento
+ nao_e: nota fiscal, nem prontuário
+ sinonimos_em_uso: [autorização, pedido]
+-procedencia: [origem, fonte, data, autor]
++procedencia: D
+ ```
+ 
+ O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
+@@ -66,7 +70,7 @@ relacoes:
+   - com: Paciente
+     cardinalidade: muitos-para-um
+ onde_vive: [F-002]
+-procedencia: [...]
++procedencia: D
+ ```
+ 
+ ---
+@@ -77,16 +81,13 @@ procedencia: [...]
+ id: R-014
+ enunciado: guias do convênio X são enviadas no mesmo dia da emissão
+ 
+-# procedência, conforme PRO-01
+-procedencia:
+-  contexto: campo
+-  origem: verificado
+-  fonte:
+-    tipo: observacao
+-    referencia: sessão presencial de 2026-09-18
+-    coautor: Cláudia Ferreira
+-  data: 2026-09-18
+-  autor: Rafael Nogueira
++# procedência documental
++procedencia: V
++evidencia:
++  tipo: observacao
++  referencia: sessão presencial de 2026-09-18
++data: 2026-09-18
++autor: Rafael Nogueira
+ 
+ # estatuto — escrita, praticada, ou as duas
+ estatuto: praticada
+@@ -112,12 +113,13 @@ versao: 2
+ historico:
+   - versao: 1
+     data: 2026-09-12
+-    origem: inferido
++    procedencia: I
++    premissa: deduzida do manual interno
+     mudanca: registrada a partir do manual interno
+     autor: Rafael Nogueira
+   - versao: 2
+     data: 2026-09-18
+-    origem: verificado
++    procedencia: V
+     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
+     autor: Rafael Nogueira
+ ```
+@@ -150,7 +152,7 @@ contrato:
+   significado: registra envio, não emissão
+   qualidade: preenchida ao fim do dia; lacunas em dias de pico
+ acesso: leitura, autorizado em 2026-09-10
+-procedencia: [...]
++procedencia: V
+ ```
+ 
+ O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
+@@ -186,7 +188,7 @@ O ciclo de referência das arquiteturas de contexto é observar → refletir →
+ 
+ **Nenhuma regra entra na camada de contexto sem passar pela terceira linha.**
+ 
+-Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
++Na prática: a candidata nasce em `rascunho/`, com `procedencia: I` e premissa. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
+ 
+ ---
+ 
+@@ -194,7 +196,7 @@ Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira
+ 
+ Toda alteração cria versão nova e preserva a anterior no `historico`, com o que mudou e por quê.
+ 
+-**Confirmação não converte o registro original.** Uma regra `inferido` confirmada em campo ganha versão nova com `origem: verificado` e fonte própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
++**Confirmação não converte o registro original.** Uma regra `I` confirmada em campo ganha versão nova com `procedencia: V` e evidência própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
+ 
+ O arquivo por registro é versionado em Git, e o commit é a data.
+ 
+@@ -219,7 +221,7 @@ O registro de contexto de um caso está completo quando:
+ 
+ 1. Todo termo usado nas regras existe no glossário do processo
+ 2. Toda regra tem os sete campos do bloco central preenchidos
+-3. Toda regra `verificado` tem fonte de observação ou documento interno
++3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
+ 4. Toda divergência tem justificativa e etapa de registro
+ 5. Toda fonte tem contrato com os três campos
+ 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index e2bc83f..fcf7c57 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -151,12 +151,12 @@ echo '- [Celso · 2026-09-11] alguma regra' > rascunho/P2.md
+ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --autor "Celso"
+ ```
+ 
+-**Esperado:** recusa com *origem ausente*, e `AssercaoRecusada` no log.
++**Esperado:** recusa com *procedencia ausente*, e `AssercaoRecusada` no log.
+ 
+ ### Teste 4 — asserção válida
+ 
+ ```bash
+-echo '- [inferido · premissa: documento reflete a pratica · Celso] guias seguem fila unica' > rascunho/P2.md
++echo '- [I · premissa: documento reflete a pratica · Celso] guias seguem fila unica' > rascunho/P2.md
+ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --autor "Celso"
+ ```
+ 
+diff --git a/README.md b/README.md
+index f3fb522..0c20394 100644
+--- a/README.md
++++ b/README.md
+@@ -71,7 +71,7 @@ Antes de confiar em qualquer coisa, prove que ela recusa.
+ |---|---|---|
+ | 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso | Bloqueio, `TentativaNegada` no log |
+ | 2 | Escrever direto em `caso/qualquer.md` | Bloqueio, com instrução de usar o validador |
+-| 3 | Gravar rascunho com asserção sem origem | Recusa, `AssercaoRecusada` no log |
++| 3 | Gravar rascunho com asserção sem procedência D/I/V | Recusa, `AssercaoRecusada` no log |
+ | 4 | `/eiac-nucleo:encerrar P3b` sem sessão registrada | Recusa |
+ | 5 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
+ | 6 | `--autor AG05` em qualquer script | Recusa |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 1dab6cf..6f9056a 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,8 +1,8 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.2",
++  "version": "0.3.3",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/eiac-campo/agents/extrator-documental.md b/eiac-campo/agents/extrator-documental.md
+index 9d60803..93f8402 100644
+--- a/eiac-campo/agents/extrator-documental.md
++++ b/eiac-campo/agents/extrator-documental.md
+@@ -6,7 +6,7 @@ tools: Read, Grep, Glob
+ 
+ Você extrai regras candidatas de documentos. Camada EX2.
+ 
+-**Toda saída nasce `inferido`**, mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
++**Toda saída nasce `I`**, mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
+ 
+ Cada candidata exige documento, página e trecho literal. Sem trecho, não proponha a linha.
+ 
+diff --git a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+index 697afe4..a14b36b 100644
+--- a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
++++ b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+@@ -6,6 +6,10 @@
+ **Camada:** `CA4`
+ **Versão:** 1.0 · setembro de 2026
+ 
++> **Nota de compatibilidade:** o contrato de procedência deste documento foi
++> normalizado para `D | I | V`. A migração integral dos quatro objetos para o
++> EMCIA-CTX-01 v0.4 pertence ao pacote 2.5.1.
++
+ ---
+ 
+ ## 1. O que este instrumento é
+@@ -43,7 +47,7 @@ termo: guia
+ significado: documento de autorização emitido pelo convênio para um procedimento
+ nao_e: nota fiscal, nem prontuário
+ sinonimos_em_uso: [autorização, pedido]
+-procedencia: [origem, fonte, data, autor]
++procedencia: D
+ ```
+ 
+ O campo `nao_e` faz o mesmo trabalho que faz no glossário do método: a ambiguidade raramente vem de ausência de definição, e sim de significado vizinho.
+@@ -66,7 +70,7 @@ relacoes:
+   - com: Paciente
+     cardinalidade: muitos-para-um
+ onde_vive: [F-002]
+-procedencia: [...]
++procedencia: D
+ ```
+ 
+ ---
+@@ -77,16 +81,13 @@ procedencia: [...]
+ id: R-014
+ enunciado: guias do convênio X são enviadas no mesmo dia da emissão
+ 
+-# procedência, conforme PRO-01
+-procedencia:
+-  contexto: campo
+-  origem: verificado
+-  fonte:
+-    tipo: observacao
+-    referencia: sessão presencial de 2026-09-18
+-    coautor: Cláudia Ferreira
+-  data: 2026-09-18
+-  autor: Rafael Nogueira
++# procedência documental
++procedencia: V
++evidencia:
++  tipo: observacao
++  referencia: sessão presencial de 2026-09-18
++data: 2026-09-18
++autor: Rafael Nogueira
+ 
+ # estatuto — escrita, praticada, ou as duas
+ estatuto: praticada
+@@ -112,12 +113,13 @@ versao: 2
+ historico:
+   - versao: 1
+     data: 2026-09-12
+-    origem: inferido
++    procedencia: I
++    premissa: deduzida do manual interno
+     mudanca: registrada a partir do manual interno
+     autor: Rafael Nogueira
+   - versao: 2
+     data: 2026-09-18
+-    origem: verificado
++    procedencia: V
+     mudanca: corrigida na leitura de volta; prazo real é 24h, não 72h
+     autor: Rafael Nogueira
+ ```
+@@ -150,7 +152,7 @@ contrato:
+   significado: registra envio, não emissão
+   qualidade: preenchida ao fim do dia; lacunas em dias de pico
+ acesso: leitura, autorizado em 2026-09-10
+-procedencia: [...]
++procedencia: V
+ ```
+ 
+ O campo `significado` é o que evita o erro mais caro da camada de dados: tratar uma fonte pelo nome em vez de pelo que ela de fato registra.
+@@ -186,7 +188,7 @@ O ciclo de referência das arquiteturas de contexto é observar → refletir →
+ 
+ **Nenhuma regra entra na camada de contexto sem passar pela terceira linha.**
+ 
+-Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
++Na prática: a candidata nasce em `rascunho/`, com `procedencia: I` e premissa. Só vira registro de contexto quando uma pessoa a curou, e a curadoria exige mudança de versão com autor, data e justificativa.
+ 
+ ---
+ 
+@@ -194,7 +196,7 @@ Na prática: a candidata nasce em `rascunho/`, com `origem: inferido`. Só vira
+ 
+ Toda alteração cria versão nova e preserva a anterior no `historico`, com o que mudou e por quê.
+ 
+-**Confirmação não converte o registro original.** Uma regra `inferido` confirmada em campo ganha versão nova com `origem: verificado` e fonte própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
++**Confirmação não converte o registro original.** Uma regra `I` confirmada em campo ganha versão nova com `procedencia: V` e evidência própria. A versão anterior permanece. Hipótese confirmada não vira evidência retroativamente.
+ 
+ O arquivo por registro é versionado em Git, e o commit é a data.
+ 
+@@ -219,7 +221,7 @@ O registro de contexto de um caso está completo quando:
+ 
+ 1. Todo termo usado nas regras existe no glossário do processo
+ 2. Toda regra tem os sete campos do bloco central preenchidos
+-3. Toda regra `verificado` tem fonte de observação ou documento interno
++3. Toda regra `V` tem evidência de observação, documento-fonte ou leitura de volta
+ 4. Toda divergência tem justificativa e etapa de registro
+ 5. Toda fonte tem contrato com os três campos
+ 6. O quadro frequência × consequência foi produzido e a célula crítica foi confrontada
+diff --git a/eiac-campo/reference/procedencia.md b/eiac-campo/reference/procedencia.md
+index 7216927..b20831a 100644
+--- a/eiac-campo/reference/procedencia.md
++++ b/eiac-campo/reference/procedencia.md
+@@ -1,53 +1,66 @@
+-# Procedência — referência obrigatória
++# Procedência documental — referência obrigatória
+ 
+-Toda asserção gravada no repositório do caso carrega três marcações. Duas sempre, a terceira só quando houver número.
++Toda asserção gravada no repositório do caso carrega exatamente uma marca
++de procedência:
+ 
+-## Contexto — quem produziu
++| Código | Rótulo | Quando usar | Exige |
++|---|---|---|---|
++| `D` | Declarada | A organização forneceu a informação, ainda não verificada | Autor e data |
++| `I` | Inferida | Pessoa ou ferramenta deduziu a informação | `premissa:` explícita |
++| `V` | Verificada | Observação, documento-fonte ou leitura de volta confirmou a informação | Evidência identificada |
+ 
+-Atribuído pela etapa, nunca escolhido.
++`D` não significa falsa. `I` não passa automaticamente a `V`. A marca não é
++atribuída por modelo de linguagem: um agente pode propor e apontar evidência,
++mas a confirmação segue a curadoria humana prevista pelo método.
+ 
+-| Valor | Quando |
+-|---|---|
+-| `campo` | Percurso real do método |
+-| `antitese` | Braço de controle, sem humano |
+-| `conversa` | Fora de caso |
+-
+-## Origem — como foi obtido
++## Dimensões separadas
+ 
+-| Valor | Exige | Entra em entregável |
+-|---|---|---|
+-| `verificado` | Observação direta ou documento interno, com fonte e data | Sim |
+-| `declarado` | Autor nomeado e data | Sim, marcado |
+-| `inferido` | Premissa explícita | Sim, marcado, requer confirmação |
+-| `externo` | URL, data de captura e limite da fonte | Sim, marcado, requer confirmação |
++Procedência não descreve meio de contato, local, braço de execução, tipo de
++fonte nem técnica de apuração.
+ 
+-## Apuração — só para número
++Quando houver número, a apuração pode ser registrada separadamente:
+ 
+-| Valor | Exige |
++| Valor de `apuracao` | Exige |
+ |---|---|
+ | `medido` | Amostra e período |
+ | `calculado` | Fórmula e entradas |
+ | `estimado` | Base e margem |
+ 
+-**Medição inicial não aceita `estimado`.**
++Uma fonte externa usa `tipo_fonte: externa`, URL e limite da fonte. `externo`
++não é procedência. Os antigos valores `campo`, `antitese`, `conversa`, `livre`
++e `externo` não são aceitos como marca documental.
+ 
+ ## Formato de linha
+ 
+-```
+-- [verificado · documento: contrato-padrao.pdf p.3 · 2026-09-08 · Celso]
+-  O aceite do cliente precede a abertura do caso.
+-```
++Declaração ainda não verificada:
+ 
++```text
++- [D · Helena · 2026-09-11]
++  O volume informado é de 86 guias por mês.
+ ```
+-- [inferido · premissa: toda etapa presencial exige deslocamento · Celso]
++
++Inferência com premissa:
++
++```text
++- [I · premissa: toda etapa presencial exige deslocamento · Celso]
+   O custo de campo em N2 é dominado por transporte, não por horas.
+ ```
+ 
++Verificação por documento:
++
++```text
++- [V · documento: contrato-padrao.pdf p.3 · 2026-09-08 · Celso]
++  O aceite do cliente precede a abertura do caso.
+ ```
+-- [declarado · Celso · 2026-09-11 · medido · amostra: 9 casos simulados · periodo: ago/2026]
+-  Cinco de nove casos nao eram caso de agente. valor: 5 unidade: casos
++
++Verificação e apuração coexistindo como dimensões distintas:
++
++```text
++- [V · observacao: amostra de agosto · apuracao: medido · amostra: 86 guias · periodo: ago/2026 · Celso]
++  Cinco de 86 guias exigiram retrabalho.
+ ```
+ 
+ ## Regra de ouro
+ 
+-**Se você não sabe qual marcação usar, a asserção não está pronta para ser gravada.** Pergunte ao operador em vez de escolher.
++**Se você não sabe se a marca é D, I ou V, a asserção não está pronta para
++ser gravada.** Pergunte ao operador em vez de escolher.
+diff --git a/eiac-campo/skills/hb-classificar/SKILL.md b/eiac-campo/skills/hb-classificar/SKILL.md
+index 44093f1..4bacb66 100644
+--- a/eiac-campo/skills/hb-classificar/SKILL.md
++++ b/eiac-campo/skills/hb-classificar/SKILL.md
+@@ -23,5 +23,5 @@ Cinco de nove casos da simulação não eram, incluindo os dois de maior priorid
+ 
+ A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates.md`.
+ 
+-**Saída:** `caso/P5-classificacao.md`, marcada `inferido` até o operador confirmar.
++**Saída:** `caso/P5-classificacao.md`, marcada `I` até o operador confirmar.
+ **Encerramento:** critério do passo 5 no documento do método.
+diff --git a/eiac-campo/skills/hb-confrontar/SKILL.md b/eiac-campo/skills/hb-confrontar/SKILL.md
+index 2a26c9d..76a4dcc 100644
+--- a/eiac-campo/skills/hb-confrontar/SKILL.md
++++ b/eiac-campo/skills/hb-confrontar/SKILL.md
+@@ -15,7 +15,7 @@ description: Confronta regra declarada contra regra observada, item a item, e pr
+ 
+ **Um item por vez.** Cada correção exige justificativa escrita e autor nomeado. Correção sem justificativa não é correção, é reescrita.
+ 
+-**Você prepara o confronto; o operador decide cada item.** A transição para `verificado` cria asserção nova — a original permanece com seu estado.
++**Você prepara o confronto; o operador decide cada item.** A transição para `V` cria asserção nova — a original permanece com seu estado.
+ 
+ **Saída:** `caso/E2-dossie.md` e `caso/P3d-divergencias.md`
+ **Encerramento:** critério do passo 3 no documento do método.
+diff --git a/eiac-campo/skills/hb-emitir-e2/SKILL.md b/eiac-campo/skills/hb-emitir-e2/SKILL.md
+index d853980..55732ee 100644
+--- a/eiac-campo/skills/hb-emitir-e2/SKILL.md
++++ b/eiac-campo/skills/hb-emitir-e2/SKILL.md
+@@ -13,7 +13,7 @@ description: Emite o dossie verificado. Use quando /emitir E2 for invocado ou ao
+ 
+ ## Recuse a emissão se
+ 
+-- Houver asserção de `contexto` diferente de `campo`
++- Houver asserção sem `procedencia: D | I | V`
+ - A medição inicial tiver `apuracao = estimado` — item inegociável 1
+ - Houver divergência de P3d sem justificativa
+ - Não existir `caso/P3b-sessao.md`
+diff --git a/eiac-campo/skills/hb-extrair-regras/SKILL.md b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+index 22b465f..8629cf1 100644
+--- a/eiac-campo/skills/hb-extrair-regras/SKILL.md
++++ b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+@@ -10,7 +10,7 @@ description: Extrai regras candidatas dos documentos entregues e lista o que ele
+ 
+ **Procedimento:** documento do método, passo 2.
+ 
+-**Toda candidata nasce `inferido`,** mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
++**Toda candidata nasce `I`,** mesmo quando o documento parece inequívoco. Documento diz o que foi escrito, não o que é praticado.
+ 
+ **Não sintetize.** Cada candidata exige documento, página e trecho literal. Sem trecho, não grave.
+ 
+diff --git a/eiac-campo/skills/hb-mapear-contexto/SKILL.md b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+index 29d5a94..339d63f 100644
+--- a/eiac-campo/skills/hb-mapear-contexto/SKILL.md
++++ b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+@@ -11,7 +11,7 @@ description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use
+ **Procedimento:** documento do método, passo 1. Aplique a calibragem do nível do caso.
+ **Instrumentos:** Mapa de Valor, 5W2H, 5 Porquês, custo do problema.
+ 
+-**Toda saída nasce `declarado` ou `inferido`.** Nada aqui é verificado — não houve observação.
++**Toda saída nasce `D` ou `I`.** Nada aqui é `V` — não houve observação, documento-fonte admissível ou leitura de volta.
+ 
+ **Saída:** `caso/P1-contexto.md`
+ **Encerramento:** critério do passo 1 no documento do método.
+diff --git a/eiac-campo/template-caso/CLAUDE.md b/eiac-campo/template-caso/CLAUDE.md
+index 2bead1d..a4eec48 100644
+--- a/eiac-campo/template-caso/CLAUDE.md
++++ b/eiac-campo/template-caso/CLAUDE.md
+@@ -9,12 +9,17 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
+ **Toda asserção carrega marcação.** Formato:
+ 
+ ```
+-- [origem · fonte · data · autor]  texto da asserção
+-- [inferido · premissa: <premissa> · Celso]  texto
+-- [externo · https://... · captura: 2026-09-10 · limite: amostra enviesada]  texto
+-- [declarado · Helena · 2026-09-11 · medido · amostra: 86 guias · periodo: ago/2026]  texto
++- [D · Helena · 2026-09-11]  texto declarado
++- [I · premissa: <premissa> · Celso]  texto inferido
++- [V · observacao: <referencia> · Celso]  texto verificado
++- [I · premissa: referência externa aplicável · tipo_fonte: externa · https://... · limite: amostra enviesada · Celso]  inferência apoiada em fonte externa
++- [V · observacao: <referencia> · apuracao: medido · amostra: 86 guias · periodo: ago/2026 · Celso]  número medido
+ ```
+ 
++`D`, `I` e `V` são as únicas marcas de procedência. `apuracao` e
++`tipo_fonte` são dimensões separadas. Agente pode propor a marca, mas não
++confirmar autonomamente que uma informação é `V`.
++
+ **Autor é sempre pessoa nomeada.** Nunca identificador de agente.
+ 
+ **A etapa corrente decide o que pode ser feito.** Consulte com `/eiac-nucleo:estado`. Se a guarda recusar uma ação, apresente o motivo e pare — não contorne.
+diff --git a/eiac-campo/template-caso/contexto/README.md b/eiac-campo/template-caso/contexto/README.md
+index 7742dfa..2e71237 100644
+--- a/eiac-campo/template-caso/contexto/README.md
++++ b/eiac-campo/template-caso/contexto/README.md
+@@ -12,7 +12,11 @@ contexto/
+ 
+ ## Trava de curadoria
+ 
+-Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `origem: inferido`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
++Nenhum registro entra aqui sem curadoria humana — `EX4`. A candidata nasce em `rascunho/` com `procedencia: I`; vira registro de contexto quando uma pessoa a cura, e a curadoria cria versão nova com autor, data e justificativa.
++
++O contrato documental é `procedencia: D | I | V`. A candidata inferida nasce
++com `procedencia: I` e premissa. A migração completa destes quatro objetos e
++as regras de versionamento/curadoria pertencem aos pacotes seguintes.
+ 
+ ## Quadro frequência × consequência
+ 
+diff --git a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+index 3d6c42b..c161a77 100644
+--- a/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/entidades/E-000-modelo.yaml
+@@ -8,8 +8,8 @@ relacoes:
+   - com: ""
+     cardinalidade: ""
+ onde_vive: []
+-procedencia:
+-  origem: ""
+-  fonte: ""
+-  data: ""
+-  autor: ""
++# D | I | V
++procedencia: D
++fonte: ""
++data: ""
++autor: ""
+diff --git a/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml b/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
+index 5575136..e38b466 100644
+--- a/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/fontes/F-000-modelo.yaml
+@@ -7,8 +7,8 @@ contrato:
+   significado: ""   # o que a fonte de fato registra, nao o que o nome sugere
+   qualidade: ""
+ acesso: ""
+-procedencia:
+-  origem: ""
+-  fonte: ""
+-  data: ""
+-  autor: ""
++# D | I | V
++procedencia: D
++evidencia: ""                  # obrigatoria quando procedencia = V
++data: ""
++autor: ""
+diff --git a/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml b/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml
+index 6e99194..4d6222c 100644
+--- a/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/regras/R-000-modelo.yaml
+@@ -1,16 +1,15 @@
+ id: R-000
+ enunciado: ""
+ 
+-procedencia:
+-  contexto: campo            # campo | antitese | conversa | livre
+-  origem: inferido           # verificado | declarado | inferido | externo
+-  fonte:
+-    tipo: documento          # observacao | documento | pessoa | publica
+-    referencia: ""
+-    trecho: ""
+-    coautor: ""              # quem executa o processo, quando houver
+-  data: ""
+-  autor: ""                  # pessoa nomeada, nunca agente
++# D | I | V
++procedencia: I
++premissa: ""                 # obrigatoria quando procedencia = I
++evidencia:                   # obrigatoria quando procedencia = V
++  tipo: ""                  # observacao | documento | leitura_de_volta
++  referencia: ""
++  trecho: ""
++data: ""
++autor: ""                    # pessoa nomeada, nunca agente
+ 
+ estatuto: escrita            # escrita | praticada | ambas | divergente
+ documento_de_origem: ""
+@@ -33,6 +32,6 @@ versao: 1
+ historico:
+   - versao: 1
+     data: ""
+-    origem: ""
++    procedencia: ""
+     mudanca: ""
+     autor: ""
+diff --git a/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml b/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
+index 7a6bf4f..2a3d062 100644
+--- a/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
++++ b/eiac-campo/template-caso/contexto/termos/T-000-modelo.yaml
+@@ -3,8 +3,8 @@ termo: ""
+ significado: ""
+ nao_e: ""
+ sinonimos_em_uso: []
+-procedencia:
+-  origem: ""
+-  fonte: ""
+-  data: ""
+-  autor: ""
++# D | I | V
++procedencia: D
++fonte: ""
++data: ""
++autor: ""
+diff --git a/eiac-campo/template-caso/fontes/README.md b/eiac-campo/template-caso/fontes/README.md
+index 52c0f81..97df292 100644
+--- a/eiac-campo/template-caso/fontes/README.md
++++ b/eiac-campo/template-caso/fontes/README.md
+@@ -7,7 +7,7 @@ Os documentos reais entregues pela organização: tabelas, contratos, políticas
+ A marcação de procedência cita o documento:
+ 
+ ```
+-- [verificado · documento: tabela-distribuidor.xlsx p.2 · 2026-09-15 · Celso]
++- [V · documento: tabela-distribuidor.xlsx p.2 · 2026-09-15 · Celso]
+ ```
+ 
+ Se o arquivo não estiver aqui, versionado, a citação aponta para fora do caso — e o selo passa a assinar uma cadeia cuja base ninguém consegue reconferir. Documento citado que não está no repositório é procedência declarada, não verificável.
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 13116d6..4236a82 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,14 +1,22 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.3.0",
++  "versao": "0.3.1",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+ 
+   "procedencia": {
+-    "contexto": ["campo", "antitese", "conversa", "livre"],
+-    "origem": ["verificado", "declarado", "inferido", "externo"],
+-    "apuracao": ["medido", "calculado", "estimado"]
++    "valores": ["D", "I", "V"],
++    "rotulos": {
++      "D": "Declarada",
++      "I": "Inferida",
++      "V": "Verificada"
++    }
++  },
++
++  "dimensoes": {
++    "apuracao": ["medido", "calculado", "estimado"],
++    "tipo_fonte": ["interna", "externa"]
+   },
+ 
+   "etapas": [
+@@ -87,7 +95,6 @@
+ 
+   "pendencias": [
+     "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
+-    "Procedencia: CAT-01 e GLO-01 fixam [D][I][V]; este playbook usa tres dimensoes com externo e antitese. Decidir em um lugar so.",
+     "P6 a P10 sem habilidade: instrumentos ausentes."
+   ]
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 633d5ca..9ed61af 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,8 +1,8 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.5",
++  "version": "0.2.6",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/eiac-nucleo/README.md b/eiac-nucleo/README.md
+index 0623d3a..57504b3 100644
+--- a/eiac-nucleo/README.md
++++ b/eiac-nucleo/README.md
+@@ -7,7 +7,7 @@ Lê `registro/playbook.json` do repositório do caso e aplica o que ele declara.
+ - toda etapa declara `camada` e `modalidade`
+ - todo entregável declara um `portao`
+ - existe uma lista de `inegociaveis`, não vazia
+-- existem rótulos de `procedencia`
++- existe um contrato não vazio de valores e rótulos de `procedencia`
+ 
+ Playbook que omita qualquer um desses não carrega, e o caso não opera.
+ 
+@@ -33,7 +33,7 @@ Uma asserção que cita `documento: <nome>` só grava se o arquivo estiver em `f
+ 
+ | # | Invariante | Onde |
+ |---|---|---|
+-| I-1 | Toda asserção tem contexto e origem | `validar.py` |
++| I-1 | Toda asserção tem procedência documental declarada pelo playbook | `validar.py` |
+ | I-2 | Nenhuma ação executa fora da camada da etapa | `guarda.py` G1 |
+ | I-3 | Etapa não avança sem cumprimento | `avancar.py` |
+ | I-4 | Etapa dependente exige sessão registrada | `guarda.py` G3, `avancar.py` |
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 1ebc97d..cc82b8c 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -67,7 +67,7 @@ def main():
+         negar(
+             "Escrita direta em caso/ nao e permitida. "
+             "Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. "
+-            "Toda assercao exige contexto e origem.",
++            "Toda assercao exige procedencia D, I ou V.",
+             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
+         )
+ 
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index b227566..28947ed 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -36,8 +36,15 @@ def carregar():
+ 
+     if not pb.get("inegociaveis"):
+         return None, "playbook sem itens inegociaveis"
+-    if not pb.get("procedencia", {}).get("origem"):
+-        return None, "playbook sem rotulos de origem"
++    procedencia = pb.get("procedencia", {})
++    valores = procedencia.get("valores")
++    rotulos = procedencia.get("rotulos")
++    if not isinstance(valores, list) or not valores:
++        return None, "playbook sem valores de procedencia"
++    if len(valores) != len(set(valores)):
++        return None, "playbook com valores de procedencia duplicados"
++    if not isinstance(rotulos, dict) or set(rotulos) != set(valores):
++        return None, "rotulos de procedencia nao correspondem aos valores declarados"
+     return pb, None
+ 
+ 
+diff --git a/eiac-nucleo/scripts/validar.py b/eiac-nucleo/scripts/validar.py
+index ac2d391..c5d04f0 100644
+--- a/eiac-nucleo/scripts/validar.py
++++ b/eiac-nucleo/scripts/validar.py
+@@ -1,4 +1,4 @@
+-"""Validador de procedencia. Unico caminho de escrita em caso/.
++"""Validador de procedencia documental. Unico caminho de escrita em caso/.
+ 
+ Uso:  python3 validar.py --arquivo caso/P2-regras.md --autor "Nome"
+ Le o conteudo proposto de rascunho/<mesmo-nome> e so grava se todas as
+@@ -27,32 +27,52 @@ def citado(c):
+     return None
+ 
+ 
++def valor_campo(campos_marca, nome):
++    prefixo = f"{nome}:"
++    for item in campos_marca:
++        if item.startswith(prefixo):
++            return item.split(":", 1)[1].strip() or None
++    return None
++
++
+ def validar_linha(marca, pb, n):
+     c = campos(marca)
+     if not c:
+         return f"linha {n}: marcacao vazia"
+     proc = pb["procedencia"]
+-    origem = next((x for x in c if x in proc["origem"]), None)
+-    if not origem:
+-        return f"linha {n}: origem ausente. Esperado um de {proc['origem']}"
+-    contexto = next((x for x in c if x in proc["contexto"]), "campo")
+-    if contexto != "campo":
+-        return f"linha {n}: contexto '{contexto}' nao entra em caso/"
+-    if origem == "externo" and not any(x.startswith("http") for x in c):
+-        return f"linha {n}: origem externo exige url"
+-    if origem == "externo" and not any(x.startswith("limite:") for x in c):
+-        return f"linha {n}: origem externo exige limite da fonte"
+-    if origem == "inferido" and not any(x.startswith("premissa:") for x in c):
+-        return f"linha {n}: origem inferido exige premissa"
+-    if origem == "verificado" and not any(
+-        x.startswith(("observacao", "documento:")) for x in c
++    valores = proc["valores"]
++    marcas = [x for x in c if x in valores]
++    if not marcas:
++        return f"linha {n}: procedencia ausente. Esperado um de {valores}"
++    if len(marcas) != 1:
++        return f"linha {n}: informe exatamente uma procedencia; recebido {marcas}"
++    procedencia = marcas[0]
++    if procedencia == "I" and not any(x.startswith("premissa:") for x in c):
++        return f"linha {n}: procedencia I exige premissa"
++    if procedencia == "V" and not any(
++        x.startswith(("observacao:", "documento:", "leitura_de_volta:")) for x in c
+     ):
+-        return f"linha {n}: verificado exige observacao ou documento interno"
++        return (f"linha {n}: procedencia V exige evidencia de observacao, "
++                "documento ou leitura de volta")
++
++    dimensoes = pb.get("dimensoes", {})
++    tipo_fonte = valor_campo(c, "tipo_fonte")
++    tipos_fonte = dimensoes.get("tipo_fonte", [])
++    if tipo_fonte and tipo_fonte not in tipos_fonte:
++        return f"linha {n}: tipo_fonte invalido. Esperado um de {tipos_fonte}"
++    if tipo_fonte == "externa" and not any(x.startswith("http") for x in c):
++        return f"linha {n}: tipo_fonte externa exige url"
++    if tipo_fonte == "externa" and not any(x.startswith("limite:") for x in c):
++        return f"linha {n}: tipo_fonte externa exige limite da fonte"
++
+     doc = citado(c)
+     if doc and not (pathlib.Path("fontes") / doc).exists():
+         return (f"linha {n}: documento citado '{doc}' nao esta em fontes/. "
+                 f"Citacao que aponta para fora do caso nao e verificavel.")
+-    apur = next((x for x in c if x in proc.get("apuracao", [])), None)
++    apur = valor_campo(c, "apuracao")
++    apuracoes = dimensoes.get("apuracao", [])
++    if apur and apur not in apuracoes:
++        return f"linha {n}: apuracao invalida. Esperado um de {apuracoes}"
+     if apur == "estimado" and not any(x.startswith("base:") for x in c):
+         return f"linha {n}: apuracao estimado exige base"
+     if apur == "medido" and not any(x.startswith("amostra:") for x in c):
+diff --git a/testes/README.md b/testes/README.md
+index e4e7800..c621407 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -4,7 +4,9 @@
+ bash testes/negativos.sh
+ ```
+ 
+-Vinte e seis verificações. Dezesseis provam que uma trava **recusa**; as demais são controle positivo — o que é bem formado precisa passar, senão a trava está apenas quebrada.
++Trinta e três verificações: as 26 do baseline e sete verificações do contrato
++canônico D/I/V. Há negativas e controles positivos — o que é bem formado
++precisa passar, senão a trava está apenas quebrada.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -13,7 +15,7 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída.
+ | 1 | Habilidade de camada não delegável não carrega |
+ | 2 | Escrita direta em `caso/` é negada |
+ | 2b | Redirecionamento de shell para `caso/` é negado |
+-| 3 | Asserção sem origem é recusada |
++| 3 | Asserção sem procedência é recusada |
+ | 4 | Asserção bem marcada é gravada |
+ | 5 | Etapa presencial não encerra sem sessão registrada |
+ | 6 | Autor agente é recusado |
+@@ -32,6 +34,22 @@ As recusas são verificadas **pela mensagem**, não só pelo código de saída.
+ | 24 | Documento citado que não está em `fontes/` é recusado |
+ | 25 | Documento presente grava e registra o hash na trilha *(controle positivo)* |
+ 
++## Contrato D/I/V — pacote 2.5.0
++
++| ID | Prova |
++|---|---|
++| 2.5.0-T01 | `D` válido é aceito sem evidência de verificação |
++| 2.5.0-T02 | `I` sem premissa é recusado |
++| 2.5.0-T03 | `I` com premissa é aceito |
++| 2.5.0-T04 | `V` sem evidência é recusado |
++| 2.5.0-T05 | `V` com evidência é aceito |
++| 2.5.0-T06 | `X`, `campo` e `externo` são recusados como procedência |
++| 2.5.0-T07 | `V` coexiste com `apuracao: medido` em dimensão separada |
++
++O teste 2.5.0-T08 é a execução acumulada desta suíte: os 26 cenários do
++baseline permanecem presentes, com os marcadores por extenso atualizados para
++os códigos canônicos.
++
+ Rodam contra uma cópia temporária do template, sem tocar em caso real.
+ 
+ **Falha aqui é regressão de trava, não de funcionalidade.** Não conserte o teste; conserte a trava.
+diff --git a/testes/negativos.sh b/testes/negativos.sh
+index ac7e8d4..c1f4889 100644
+--- a/testes/negativos.sh
++++ b/testes/negativos.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Os sete testes negativos. Cada um prova que uma trava recusa.
++# Suíte acumulada de travas e controles positivos.
+ # Falha aqui significa que uma trava deixou de existir.
+ set -u
+ 
+@@ -33,16 +33,60 @@ echo '{"tool_name":"Bash","tool_input":{"command":"echo oi > caso/x.md"}}' \
+   | python3 "$S/guarda.py" >/dev/null 2>&1
+ [ $? -eq 2 ] && ok "2b bash para caso/ negado" || falha "2b bash para caso/ NAO foi negado"
+ 
+-# 3 assercao sem origem
++# 3 assercao sem procedencia
+ printf -- '- [Celso · 2026-09-11] regra qualquer\n' > rascunho/t.md
+ python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
+-[ $? -ne 0 ] && ok "3 assercao sem origem recusada" || falha "3 assercao sem origem ACEITA"
++[ $? -ne 0 ] && ok "3 assercao sem procedencia recusada" || falha "3 assercao sem procedencia ACEITA"
+ 
+ # 4 assercao valida grava (teste positivo de controle)
+-printf -- '- [inferido · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
++printf -- '- [I · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
+ python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "4 assercao valida gravada" || falha "4 assercao valida RECUSADA"
+ 
++# Pacote 2.5.0 — contrato canonico D/I/V
++
++# T01 D valido nao exige evidencia de verificacao
++printf -- '- [D · Helena · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena" >/dev/null 2>&1
++[ $? -eq 0 ] && ok "2.5.0-T01 D valido aceito" || falha "2.5.0-T01 D valido RECUSADO"
++
++# T02 I sem premissa e recusado
++printf -- '- [I · Celso] inferencia sem premissa\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++[ $? -ne 0 ] && ok "2.5.0-T02 I sem premissa recusado" || falha "2.5.0-T02 I sem premissa ACEITO"
++
++# T03 I com premissa e aceito
++printf -- '- [I · premissa: padrao observado nos documentos · Celso] inferencia rastreavel\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++[ $? -eq 0 ] && ok "2.5.0-T03 I com premissa aceito" || falha "2.5.0-T03 I com premissa RECUSADO"
++
++# T04 V sem evidencia e recusado
++printf -- '- [V · Celso] verificacao sem evidencia\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++[ $? -ne 0 ] && ok "2.5.0-T04 V sem evidencia recusado" || falha "2.5.0-T04 V sem evidencia ACEITO"
++
++# T05 V com evidencia e aceito
++printf -- '- [V · observacao: sessao-2026-09-18 · Celso] verificacao rastreavel\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++[ $? -eq 0 ] && ok "2.5.0-T05 V com evidencia aceito" || falha "2.5.0-T05 V com evidencia RECUSADO"
++
++# T06 valores fora de D/I/V nao sao procedencia
++invalidas_recusadas=1
++for valor in X campo externo; do
++  printf -- '- [%s · Celso] procedencia invalida\n' "$valor" > rascunho/procedencia.md
++  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1; then
++    invalidas_recusadas=0
++  fi
++done
++[ "$invalidas_recusadas" -eq 1 ] \
++  && ok "2.5.0-T06 X/campo/externo recusados como procedencia" \
++  || falha "2.5.0-T06 procedencia fora de D/I/V ACEITA"
++
++# T07 apuracao coexiste em campo distinto da procedencia
++printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso] numero verificado\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++[ $? -eq 0 ] && ok "2.5.0-T07 V coexiste com apuracao separada" || falha "2.5.0-T07 dimensao separada RECUSADA"
++
+ # 5 encerrar etapa presencial sem sessao
+ python3 "$S/avancar.py" --encerrar P3b --autor "Celso" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "5 encerramento sem sessao recusado" || falha "5 encerramento sem sessao ACEITO"
+@@ -180,7 +224,7 @@ echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao de
+ 
+ # 24 documento citado que nao esta em fontes/ e recusado
+ mkdir -p fontes
+-printf -- '- [verificado · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
++printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
+ saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" 2>&1)"
+ [ $? -ne 0 ] && echo "$saida" | grep -q "nao esta em fontes/" \
+   && ok "24 documento citado ausente recusado" \

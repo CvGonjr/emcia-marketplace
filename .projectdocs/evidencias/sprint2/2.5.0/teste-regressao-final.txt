@@ -1,0 +1,57 @@
+PACOTE: 2.5.0
+TESTE: 2.5.0-T01 a 2.5.0-T08 / suite acumulada
+REQUISITOS: D-01, 2.5-BL01, 2.5-BL02
+DATA/HORA: 2026-09-18T15:41:28-03:00
+COMMIT TESTADO: acf35f963bff718cfaa25981c4c84753f661c367
+COMANDO EXECUTADO: bash testes/negativos.sh
+EXIT CODE: 0
+TIPO DE EVIDENCIA: RECONSTRUIDA APOS A EXECUCAO ORIGINAL
+
+OBSERVACAO:
+Este arquivo registra uma reexecucao posterior no commit final do pacote.
+O stdout/stderr bruto da execucao original nao foi preservado.
+
+RESULTADO ESPERADO:
+33 verificacoes aprovadas, incluindo T01-T07 e a regressao T08 dos 26
+cenarios do baseline; nenhuma falha.
+
+RESULTADO OBTIDO:
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 selo por agente recusado
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem
+EXIT_CODE=0
+
+RESULTADO FINAL: PASS NO RETESTE RECONSTRUIDO
