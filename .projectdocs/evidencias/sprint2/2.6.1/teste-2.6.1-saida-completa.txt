@@ -1,0 +1,43 @@
+== testes 2.6.1 -- nucleo generico de protocolos
+  ok    2.6.1-T01 encerrar etapa que NAO e corrente recusado (P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.)
+  ok    2.6.1-T01b recusa de etapa fora de ordem gera evento RecusaMaquina
+  ok    2.6.1-T02 encerrar etapa corrente valida aceito
+  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
+  ok    2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita (A etapa P3d depende de P3b, que nao foi cumprida. Modalidade de P3b: presencial.)
+  ok    2.6.1-T04 dependencia satisfeita permite prosseguir
+  ok    2.6.1-T05 etapa delegavel executada por ator permitido: PASS
+  ok    2.6.1-T06 etapa nao delegavel tentada por agente recusada (EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS
+  ok    2.6.1-T08 camada invalida recusada pelo contrato (etapa P1: camada 'EX5' fora de EX1-EX4)
+  ok    2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada (capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita
+  ok    2.6.1-T10b capacidade nao automatizada nao exige criterio (controle)
+  INTEGRACAO COM HB/AG REAIS DO PLAYBOOK: PENDENTE 2.6.4 -- mecanismo generico testado isoladamente (T09/T10), sem bloco 'capacidades' no playbook oficial. Conforme decisao registrada no pacote.
+  ok    2.6.1-T11 responsavel obrigatorio ausente recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
+  ok    2.6.1-T12 responsavel nominal valido aceito
+  ok    2.6.1-T12b responsavel generico ('equipe') recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
+  ok    2.6.1-T13 cadencia obrigatoria ausente recusada (P10 exige cadencia declarada para registrar recorrencia)
+  ok    2.6.1-T14 cadencia valida aceita
+  ok    2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
+  ok    2.6.1-T16 recorrente com contrato suficiente aceito no carregamento
+  ok    2.6.1-T17 inegociavel sem satisfacao mantem portao fechado (E2 bloqueado pelo item inegociavel 1: Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3))
+  ok    2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado (inegociavel 1 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito
+  ok    2.6.1-T20b evento InegociavelSatisfeito presente
+  ok    2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado
+  ok    2.6.1-T21 escrita direta em registro/ recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional
+  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
+  ok    2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional
+  ok    2.6.1-T25 portao com etapa inexistente recusado (entregavel E1: portao referencia etapa inexistente ['P99'])
+  ok    2.6.1-T26 portao com inegociavel inexistente recusado (entregavel E4: referencia inegociavel inexistente 99)
+  ok    2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)
+  ok    2.6.1-T27b condicao declarativa nao satisfeita bloqueia emissao (E3-E nao emite: condicao declarativa nao satisfeita (Somente quando a classificacao tecnologica de P5 determinar solucao agentica))
+  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
+  ok    2.6.1-T29 recusa de avancar (fora de ordem) gera evento
+  ok    2.6.1-T30 recusa de emissao gera evento
+  ok    2.6.1-T31 protecao de caso/ continua ativa (Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. Toda assercao exige procedencia D, I ou V.)
+  ok    2.6.1-T32 selo git continua funcional apos as mudancas do nucleo
+
+39 verificacoes do pacote 2.6.1, 0 falhas

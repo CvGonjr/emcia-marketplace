@@ -1,9 +1,15 @@
 """Guarda de camada. Hook PreToolUse: exit 2 bloqueia a chamada.
 
-Tres regras, nesta ordem:
+Regras, sem ordem fixa exigida entre si:
   G1  habilidade de camada nao delegavel nao carrega
   G2  escrita direta em caso/ e negada; toda assercao passa pelo validador
+  G2b escrita direta em contexto/ e negada; todo objeto passa pelo curador
   G3  etapa dependente exige o cumprimento declarado no playbook
+  G4  nivel nao apurado apos F0 bloqueia a etapa
+  G5  escrita direta em registro/ e negada; apenas os scripts do nucleo
+      (avancar.py, curar.py, validar.py, selar.py) gravam ali, via
+      estado.gravar()/estado.evento(), nunca por Write/Edit/redirecionamento
+      de shell
 """
 import json, sys, pathlib
 
@@ -91,6 +97,24 @@ def main():
             f"Nivel do caso nao apurado. A camada de {etapa_id} depende dele "
             f"(CAT-01 3.6). Encerre F0 antes de prosseguir.",
             etapa=etapa_id,
+        )
+
+    # G5 — escrita direta em registro/ (playbook, estado, eventos, selos)
+    # so os scripts do nucleo gravam ali; passar por Write/Edit ou
+    # redirecionamento de shell contorna estado, inegociaveis, portoes e
+    # eventos (2.6-BL17, D-08).
+    escrita_registro = ferramenta in ("Write", "Edit") and alvo.startswith("registro/")
+    escrita_registro_bash = ferramenta == "Bash" and " registro/" in comando and any(
+        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
+    )
+    if escrita_registro or escrita_registro_bash:
+        negar(
+            "Escrita direta em registro/ nao e permitida. "
+            "Etapa, estado e eventos so mudam pelos scripts do nucleo: "
+            "avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), "
+            "validar.py (asserção) ou selar.py (selo). Escrita direta contorna "
+            "portoes e trilha de eventos.",
+            etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 
     # G3 — dependencia entre etapas

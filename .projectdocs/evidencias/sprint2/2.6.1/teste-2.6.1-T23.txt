@@ -1,0 +1,24 @@
+PACOTE: 2.6.1
+TESTE: 2.6.1-T23
+REQUISITO: escrita direta em contexto/ continua recusada
+DATA/HORA: 2026-09-18 23:29:33 -0300
+HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
+COMANDO: python3 testes/nucleo_2_6_1.py
+
+PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
+eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
+do playbook oficial gravado apenas em diretorio temporario, nunca no
+arquivo oficial.
+
+ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
+a este ID.
+
+RESULTADO ESPERADO: ver requisito acima.
+
+RESULTADO OBTIDO (linha da suite):
+  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
+
+EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
+do caso temporario (ver T01b, T20b, T29, T30).
+
+RESULTADO FINAL: PASS

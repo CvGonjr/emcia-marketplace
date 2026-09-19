@@ -53,7 +53,17 @@ separadamente:
 python3 testes/playbook_2_6_0.py
 ```
 
-O total acumulado é de 158 verificações.
+As 39 verificações do núcleo genérico de protocolos (pacote 2.6.1: etapa
+corrente, dependências, delegabilidade, camadas, critério de verificação,
+recorrência, cadência, responsável nominal, inegociáveis por caminho
+autorizado, proteção de `registro/`, integridade de portão/condição e
+eventos de recusa) rodam separadamente:
+
+```bash
+python3 testes/nucleo_2_6_1.py
+```
+
+O total acumulado é de 197 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -294,6 +304,46 @@ método) de: ID de etapa duplicado, camada fora de EX1–EX4, `depende_de`
 referenciando etapa inexistente, portão/inegociável referenciando etapa
 ou inegociável inexistente, e etapa recorrente exigindo cadência e
 responsável declarados.
+
+## Núcleo genérico de protocolos — pacote 2.6.1
+
+Fortalece `avancar.py`, `guarda.py` e `playbook.py` para impor o contrato
+declarado em 2.6.0 sem conhecer semântica EMCIA — nenhuma decisão usa
+`if etapa == "P7"` ou equivalente; tudo lê campos genéricos do playbook
+(`delegavel`, `depende_de`, `camada`, `recorrente`, `cadencia_obrigatoria`,
+`responsavel_obrigatorio`, `condicao`) ou do estado.
+
+| ID | Prova |
+|---|---|
+| 2.6.1-T01/T01b | Encerrar etapa que não é a corrente → recusado, com evento `RecusaMaquina` |
+| 2.6.1-T02 | Encerrar a etapa corrente válida → aceito |
+| 2.6.1-T03/T03b | Dependência não satisfeita → recusada por `avancar.py` e por `guarda.py` (G3) |
+| 2.6.1-T04 | Dependência satisfeita → prossegue |
+| 2.6.1-T05 | Etapa delegável executada por ator permitido → aceito |
+| 2.6.1-T06 | Etapa não delegável tentada por agente → recusada (G1) |
+| 2.6.1-T07 | Mesma etapa, humano autorizado, sessão registrada → aceito |
+| 2.6.1-T08 | Camada fora de EX1–EX4 (fixture) → contrato recusado |
+| 2.6.1-T09/T10/T10b | Mecanismo isolado de critério de verificação (`playbook.capacidade_valida()`) — capacidade automatizada sem critério recusada, com critério aceita, não automatizada não exige critério |
+| 2.6.1-T11/T12/T12b | Responsável obrigatório ausente ou genérico ("equipe") recusado; pessoa nomeada aceita |
+| 2.6.1-T13/T14 | Cadência obrigatória ausente recusada; cadência válida aceita |
+| 2.6.1-T15/T16 | Etapa recorrente sem cadência/responsável declarados recusada no carregamento; com o contrato completo aceita |
+| 2.6.1-T17 | Inegociável sem satisfação mantém portão fechado |
+| 2.6.1-T18 | Tentativa de satisfazer inegociável por escrita direta em `registro/estado.json` recusada |
+| 2.6.1-T19/T20/T20b/T20c | Satisfação por caminho autorizado (`--satisfazer-inegociavel`) sem evidência recusada; com evidência aceita, gera evento `InegociavelSatisfeito`, e libera a emissão |
+| 2.6.1-T21/T22 | Escrita direta em `registro/` recusada (G5); invocação autorizada dos scripts do núcleo via `Bash` continua funcional |
+| 2.6.1-T23/T24 | Regressão da Ação 2.5: `contexto/` continua protegido e a curadoria continua funcional |
+| 2.6.1-T25/T26 | Portão com etapa ou inegociável inexistente → contrato inválido |
+| 2.6.1-T27/T27b | Condição declarativa suportada avaliada corretamente (satisfeita e não satisfeita) |
+| 2.6.1-T28 | Condição com operador desconhecido → recusada explicitamente no carregamento, não ignorada |
+| 2.6.1-T29/T30 | Recusa de `avancar`/`emitir` gera evento auditável (`RecusaMaquina`/`RecusaEmissao`) |
+| 2.6.1-T31 | Proteção de `caso/` revalidada, sem regressão |
+| 2.6.1-T32 | Selo Git revalidado, sem regressão |
+
+Reproduz e corrige o defeito do baseline (2.6-BL12): antes deste pacote,
+`avancar.py --encerrar <etapa>` aceitava qualquer etapa declarada no
+playbook, não apenas a etapa corrente do caso — uma etapa em `P1` podia
+"encerrar" `P5` e o estado pulava direto para `P6`. `2.6.1-T01`
+reproduz esse cenário e confirma a recusa.
 
 ## Deslocamento da fronteira por nível
 

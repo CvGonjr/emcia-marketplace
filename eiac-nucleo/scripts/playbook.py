@@ -4,6 +4,11 @@ import json, pathlib, sys
 OBRIGATORIO_ETAPA = {"id", "camada", "modalidade"}
 OBRIGATORIO_ENTREGAVEL = {"id", "portao"}
 
+# Operadores que o motor generico de condicoes declarativas (avancar.py)
+# sabe avaliar. Um portao com operador fora deste conjunto e contrato
+# invalido, nao condicao ignorada silenciosamente (2.6.0 secao 28).
+CONDICAO_OPERADORES = {"contem", "igual", "diferente"}
+
 
 def carregar():
     p = pathlib.Path("registro/playbook.json")
@@ -49,6 +54,20 @@ def carregar():
         orfas = [p for p in d["portao"] if p not in ids_etapa]
         if orfas:
             return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"
+        condicao = d.get("condicao")
+        if condicao is not None:
+            if not isinstance(condicao, dict):
+                return None, f"entregavel {d['id']}: condicao precisa ser um objeto declarativo"
+            faltando_cond = {"campo", "etapa", "operador"} - set(condicao)
+            if faltando_cond:
+                return None, f"entregavel {d['id']}: condicao sem {sorted(faltando_cond)}"
+            if condicao["etapa"] not in ids_etapa:
+                return None, (f"entregavel {d['id']}: condicao referencia etapa "
+                              f"inexistente '{condicao['etapa']}'")
+            if condicao["operador"] not in CONDICAO_OPERADORES:
+                return None, (f"entregavel {d['id']}: condicao usa operador "
+                              f"'{condicao['operador']}' desconhecido pelo motor. "
+                              f"Esperado um de {sorted(CONDICAO_OPERADORES)}.")
 
     if not pb.get("inegociaveis"):
         return None, "playbook sem itens inegociaveis"
@@ -112,6 +131,31 @@ def natureza(pb, etapa_id, nivel):
         return "nao delegavel"
     return "exige verificacao humana" if humana(camada(pb, etapa_id, nivel)) \
         else "preparacao delegavel"
+
+
+def capacidade_valida(capacidade):
+    """Mecanismo generico de criterio de verificacao (ESP-01 G6).
+
+    Recebe um dict {automatizado: bool, criterio_de_verificacao: str|None,
+    ...} e devolve (True, None) ou (False, motivo). Nao sabe o que e HB,
+    AG ou qualquer semantica EMCIA — so aplica a regra "capacidade
+    automatizada sem criterio de verificacao nao e valida para carregamento".
+
+    A integracao com as 18 HB e 4 AG reais, estruturados no playbook
+    oficial, pertence ao pacote 2.6.4. Este pacote (2.6.1) so constroi e
+    testa o mecanismo, isolado de qualquer contrato concreto.
+    """
+    if not isinstance(capacidade, dict):
+        return False, "capacidade precisa ser um objeto com 'automatizado' e 'criterio_de_verificacao'"
+    if not capacidade.get("automatizado"):
+        return True, None
+    criterio = capacidade.get("criterio_de_verificacao")
+    if not (isinstance(criterio, str) and criterio.strip()):
+        return False, (
+            "capacidade automatizada sem criterio_de_verificacao nao e valida "
+            "para carregamento/execucao"
+        )
+    return True, None
 
 
 def proxima_fronteira(pb, etapa_id, nivel):

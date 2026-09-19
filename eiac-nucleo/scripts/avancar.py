@@ -4,13 +4,34 @@ Uso:
   python3 avancar.py --apurar-nivel N2 --autor "Nome" --eixos "DAD 4, GOV 5, CRI 7"
   python3 avancar.py --encerrar P2 --autor "Nome"
   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
+  python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
+  python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
   python3 avancar.py --emitir E2 --autor "Nome"
+
+Toda recusa desta maquina produz evento RecusaMaquina ou RecusaEmissao,
+com a acao tentada, o motivo e o estado relevante no momento da recusa —
+recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
 """
-import argparse, pathlib, sys
+import argparse, datetime, pathlib, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
+
+
+def _ator_valido(nome):
+    """Pessoa nomeada: nao vazio, nao generico, nao agente.
+
+    'equipe', 'area' e afins nao satisfazem responsavel_obrigatorio (ESP-01
+    3.6, CAM-01 anexo D: "responsavel e pessoa, nao area"). O nucleo nao
+    conhece o motivo metodologico; conhece apenas que um nome generico de
+    coletivo nao e uma pessoa nomeada.
+    """
+    nome = (nome or "").strip()
+    if not nome or E.autor_e_agente(nome):
+        return False
+    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+    return nome.lower() not in genericos
 
 
 def apurar_nivel(st, pb, nivel, autor, eixos):
@@ -29,6 +50,15 @@ def encerrar(st, pb, etapa_id, autor):
     et = P.etapa(pb, etapa_id)
     if not et:
         return f"etapa {etapa_id} nao existe no playbook"
+
+    # A etapa so pode ser encerrada se for a etapa corrente do caso — sem
+    # essa checagem, qualquer etapa declarada no playbook podia ser marcada
+    # cumprida fora de ordem (2.6-BL12), inclusive pulando dependencias e
+    # sessoes ainda nao satisfeitas de etapas intermediarias.
+    if etapa_id != st["etapa_atual"]:
+        return (f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
+                f"So a etapa corrente pode ser encerrada.")
+
     if etapa_id == "F0" and not st.get("nivel"):
         return ("F0 nao encerra sem o nivel apurado. A camada das etapas seguintes "
                 "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
@@ -40,6 +70,7 @@ def encerrar(st, pb, etapa_id, autor):
     dep = et.get("depende_de")
     if dep and not st["cumprimentos"].get(dep, {}).get("cumprido"):
         return f"{etapa_id} depende de {dep}, ainda nao cumprida"
+
     st["cumprimentos"].setdefault(etapa_id, {})
     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})
     idx = [e["id"] for e in pb["etapas"]].index(etapa_id)
@@ -62,6 +93,107 @@ def registrar_sessao(st, etapa_id, autor, participantes):
     return None
 
 
+def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+    """Etapa recorrente (playbook 'recorrente': true) nao desaparece apos o
+    primeiro encerramento — cada novo ciclo atualiza 'ultima_verificacao'
+    sem apagar o historico de ciclos anteriores (CAM-01 3.8, anexo D).
+
+    O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
+    estejam presentes quando o playbook marcar a etapa como recorrente e
+    cadencia_obrigatoria/responsavel_obrigatorio.
+    """
+    et = P.etapa(pb, etapa_id)
+    if not et:
+        return f"etapa {etapa_id} nao existe no playbook"
+    if not et.get("recorrente"):
+        return f"{etapa_id} nao e uma etapa recorrente no playbook"
+    if not st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
+        return f"{etapa_id} precisa ser encerrada ao menos uma vez antes de registrar recorrencia"
+
+    if et.get("cadencia_obrigatoria") and not (cadencia or "").strip():
+        return f"{etapa_id} exige cadencia declarada para registrar recorrencia"
+    if et.get("responsavel_obrigatorio") and not _ator_valido(responsavel):
+        return (f"{etapa_id} exige responsavel nominal (pessoa nomeada, nao agente "
+                f"nem area/equipe generica) para registrar recorrencia")
+
+    registro = st["cumprimentos"].setdefault(etapa_id, {})
+    ciclo = registro.setdefault("estado_recorrente", {"ciclo": 0, "historico": []})
+    ciclo["ciclo"] += 1
+    agora = datetime.datetime.now().isoformat(timespec="seconds")
+    if ciclo.get("ultima_verificacao"):
+        ciclo["historico"].append({
+            "ciclo": ciclo["ciclo"] - 1,
+            "verificado_em": ciclo["ultima_verificacao"],
+            "responsavel": ciclo.get("responsavel"),
+        })
+    ciclo["ultima_verificacao"] = agora
+    ciclo["cadencia"] = cadencia
+    ciclo["responsavel"] = responsavel
+    E.evento("RecorrenciaRegistrada", etapa=etapa_id, autor=autor,
+             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel)
+    return None
+
+
+def satisfazer_inegociavel(st, pb, n, autor, evidencia):
+    """Caminho autorizado para satisfazer um item inegociavel.
+
+    O baseline mostrou que uma flag manual (estado['inegociaveis'][n] = true)
+    podia satisfazer o portao sem provar nada (2.6-BL26): nao havia caminho
+    autorizado, so a gravacao direta do estado. Este e o unico caminho: exige
+    evidencia nao vazia e autor pessoa nomeada, e o registro guarda id,
+    evidencia, ator e timestamp — nao apenas um booleano.
+
+    O nucleo nao valida a SEMANTICA da evidencia (se ela de fato prova
+    baseline, termo de autonomia etc.) — isso e decisao humana/metodologica
+    dos pacotes 2.6.2/2.6.3/2.6.5. O nucleo garante apenas que o registro
+    de satisfacao existe, esta associado a um item real do playbook, tem
+    evidencia declarada e autor humano.
+    """
+    item = next((i for i in pb["inegociaveis"] if str(i["n"]) == str(n)), None)
+    if not item:
+        return f"item inegociavel {n} nao existe no playbook"
+    if not (evidencia or "").strip():
+        return f"inegociavel {n} exige evidencia nao vazia para ser satisfeito"
+
+    agora = datetime.datetime.now().isoformat(timespec="seconds")
+    st.setdefault("inegociaveis", {})[str(n)] = {
+        "satisfeito": True, "evidencia": evidencia, "autor": autor, "data": agora,
+    }
+    E.evento("InegociavelSatisfeito", n=n, item=item["item"], autor=autor,
+             evidencia=evidencia)
+    return None
+
+
+def _avaliar_condicao(condicao, st):
+    """Avalia uma condicao declarativa {campo, etapa, operador, valor}.
+
+    O nucleo nao sabe o que 'classificacao_tecnologica' ou 'agente'
+    significam; sabe ler o valor que o cumprimento da etapa registrou sob
+    'campo' e comparar pelo operador declarado. Operador desconhecido e
+    contrato invalido, nao condicao ignorada silenciosamente (2.6.0 28).
+    """
+    campo = condicao.get("campo")
+    etapa_id = condicao.get("etapa")
+    operador = condicao.get("operador")
+    esperado = condicao.get("valor")
+    if not campo or not etapa_id or not operador:
+        return None, f"condicao declarativa incompleta: {condicao}"
+    if operador not in P.CONDICAO_OPERADORES:
+        return None, (f"condicao usa operador '{operador}' desconhecido pelo motor. "
+                      f"Esperado um de {sorted(P.CONDICAO_OPERADORES)}.")
+    valor = st.get("cumprimentos", {}).get(etapa_id, {}).get(campo)
+    if operador == "igual":
+        return valor == esperado, None
+    if operador == "diferente":
+        return valor != esperado, None
+    # contem: valor pode ser string ou lista; ausencia do campo nao satisfaz
+    if valor is None:
+        return False, None
+    if isinstance(valor, (list, tuple, set)):
+        return esperado in valor, None
+    return esperado in str(valor), None
+
+
 def emitir(st, pb, ent_id, autor):
     ent = next((d for d in pb.get("entregaveis", []) if d["id"] == ent_id), None)
     if not ent:
@@ -73,10 +205,25 @@ def emitir(st, pb, ent_id, autor):
                 if not st["cumprimentos"].get(e, {}).get("cumprido")]
     if faltando:
         return f"{ent_id} exige as etapas {faltando} encerradas"
+
+    condicao = ent.get("condicao")
+    if isinstance(condicao, dict):
+        satisfeita, erro = _avaliar_condicao(condicao, st)
+        if erro:
+            return f"{ent_id}: {erro}"
+        if not satisfeita:
+            return (f"{ent_id} nao emite: condicao declarativa nao satisfeita "
+                    f"({condicao.get('descricao', condicao)})")
+
     for n in ent.get("inegociavel", []):
         item = next(i for i in pb["inegociaveis"] if i["n"] == n)
-        if not st.get("inegociaveis", {}).get(str(n)):
+        registro = st.get("inegociaveis", {}).get(str(n))
+        if not registro or not isinstance(registro, dict) or not registro.get("satisfeito"):
             return f"{ent_id} bloqueado pelo item inegociavel {n}: {item['item']}"
+        if not (registro.get("evidencia") or "").strip() or not registro.get("autor"):
+            return (f"{ent_id} bloqueado: registro do inegociavel {n} "
+                    f"nao possui evidencia/autor rastreaveis")
+
     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor)
     return None
 
@@ -85,9 +232,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apurar-nivel")
     ap.add_argument("--encerrar"); ap.add_argument("--registrar-sessao")
+    ap.add_argument("--registrar-recorrencia")
+    ap.add_argument("--satisfazer-inegociavel")
     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
     ap.add_argument("--participantes", default="")
     ap.add_argument("--eixos", default="")
+    ap.add_argument("--cadencia", default="")
+    ap.add_argument("--responsavel", default="")
+    ap.add_argument("--evidencia", default="")
     a = ap.parse_args()
 
     st = E.ler()
@@ -98,17 +250,31 @@ def main():
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
     if a.apurar_nivel:
+        acao, alvo = "apurar_nivel", a.apurar_nivel
         err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
     elif a.registrar_sessao:
+        acao, alvo = "registrar_sessao", a.registrar_sessao
         err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
+    elif a.registrar_recorrencia:
+        acao, alvo = "registrar_recorrencia", a.registrar_recorrencia
+        err = registrar_recorrencia(st, pb, a.registrar_recorrencia, a.autor,
+                                     a.cadencia, a.responsavel)
+    elif a.satisfazer_inegociavel:
+        acao, alvo = "satisfazer_inegociavel", a.satisfazer_inegociavel
+        err = satisfazer_inegociavel(st, pb, a.satisfazer_inegociavel, a.autor, a.evidencia)
     elif a.encerrar:
+        acao, alvo = "encerrar", a.encerrar
         err = encerrar(st, pb, a.encerrar, a.autor)
     elif a.emitir:
+        acao, alvo = "emitir", a.emitir
         err = emitir(st, pb, a.emitir, a.autor)
     else:
         print("nada a fazer", file=sys.stderr); sys.exit(1)
 
     if err:
+        tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
+        E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,
+                 autor=a.autor, etapa_corrente=st.get("etapa_atual"))
         print(err, file=sys.stderr); sys.exit(1)
     E.gravar(st)
     print(f"ok | etapa atual: {st['etapa_atual']} | camada: {st.get('camada_atual')}")
