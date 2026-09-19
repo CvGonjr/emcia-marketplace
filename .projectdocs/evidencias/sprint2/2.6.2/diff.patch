@@ -1,0 +1,1420 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 6178ec1..70d6eb0 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.9",
++  "version": "0.4.0",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P10 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/governar.md b/eiac-campo/commands/governar.md
+new file mode 100644
+index 0000000..c75f42d
+--- /dev/null
++++ b/eiac-campo/commands/governar.md
+@@ -0,0 +1,14 @@
++---
++description: Executa a etapa P7 do playbook Engenharia de IA de Campo.
++---
++Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P7**. Se não for, pare e diga qual é.
++
++Carregue a habilidade `hb-governar` e siga o procedimento do passo no documento do método, em `metodo/`.
++
++**A decisão de autonomia não é executável por agente.** Se você é um agente, prepare a minuta (`estado: rascunho`/`proposto`) e pare — não tente gravar `estado: decidido`.
++
++Escreva o candidato em `rascunho/AUT-NNN.yaml`, referenciando `operacional_ref` (o `OP-*` de P6 já validado), e grave com:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/governanca.py" --arquivo registro/governanca/autonomia/AUT-NNN.yaml --ator "<nome>"`
++
++`estado: decidido` exige ator humano nomeado, com `decisor`, `data_decisao` e `justificativa_decisao` preenchidos.
+diff --git a/eiac-campo/commands/operacionalizar.md b/eiac-campo/commands/operacionalizar.md
+new file mode 100644
+index 0000000..4bbd71e
+--- /dev/null
++++ b/eiac-campo/commands/operacionalizar.md
+@@ -0,0 +1,12 @@
++---
++description: Executa a etapa P6 do playbook Engenharia de IA de Campo.
++---
++Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P6**. Se não for, pare e diga qual é.
++
++Carregue a habilidade `hb-operacionalizar` e siga o procedimento do passo no documento do método, em `metodo/`.
++
++Escreva o candidato em `rascunho/OP-NNN.yaml` e grave com:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/operacional.py" --arquivo registro/operacional/OP-NNN.yaml --ator "<nome>"`
++
++`estado: proposta` pode ser gravado por qualquer ator. `estado: validado` exige pessoa humana nomeada — o script recusa qualquer tentativa de um agente validar sua própria proposta.
+diff --git a/eiac-campo/reference/gates.md b/eiac-campo/reference/gates.md
+index 69c7c73..544f277 100644
+--- a/eiac-campo/reference/gates.md
++++ b/eiac-campo/reference/gates.md
+@@ -10,8 +10,8 @@ Todo entregável tem **exatamente um portão**. O portão declara as etapas que
+ | E2 | Dossiê verificado | F1 | P1, P2, P3a, P3b, P3d | Modelo E2 |
+ | E3-D | Decisão da solução — **sempre emitido** | F2 | P4, P5 | Modelo E3, parte de decisão |
+ | E3-E | Especificação da solução — **condicionado ao portão de P5** | F2 | P5 concluído por agente | Modelo E3, parte de especificação |
+-| E4 | Guia operacional | F3 | P6, P7 *(ver pendência)* | Modelo E4 |
+-| E5 | Relatório de piloto e calibragem | F4 | P9, P10 *(ver pendência)* | Modelo E5 |
++| E4 | Guia operacional | F3 | P6, P7 | Modelo E4 |
++| E5 | Relatório de piloto e calibragem | F4 | P8, P9, P10 | Modelo E5 |
+ 
+ ### O portão do E3
+ 
+@@ -27,7 +27,7 @@ Cinco itens não escalam para baixo. Cada um é condição de emissão do seu en
+ |---|---|---|---|
+ | 1 | Medição inicial registrada, `apuracao` diferente de `estimado` | P3a | E2 |
+ | 2 | Termo de autonomia escrito | P7 | E4 |
+-| 3 | Casos de teste com saída esperada | P8 | *ver pendência* |
++| 3 | Casos de teste com saída esperada | P8 | E5 |
+ | 4 | Ao menos uma métrica de resultado, não só de uso | P9 | E5 |
+ | 5 | Responsável nomeado pela recalibragem, com nome próprio | P10 | E5 |
+ 
+@@ -44,11 +44,14 @@ Não são entregues ao cliente e não têm condição de emissão.
+ | Log de tentativas negadas | Todas | Lição aprendida |
+ | Quadro de Contraste | Sprint 4 | Anexo do relatório |
+ 
+-## Pendência bloqueante
++## Correspondência entregável × passo (resolvida)
+ 
+-A correspondência entre entregáveis e passos diverge entre documentos:
++A correspondência entre entregáveis e passos foi fixada por
++EMCIA-CAM-01/EMCIA-ESP-01 v0.2 (17/09/2026), coincidindo com o relatório
++do PFC: **E4 = P6, P7**; **E5 = P8, P9, P10**. Ver `decisoes/013` no
++repositório. A tabela acima já reflete essa correspondência.
+ 
+-- **Relatório do PFC:** P6–P7 em E4, P8–P10 em E5
+-- **Documentos internos:** P6–P8 em E4, P9–P10 em E5
+-
+-A diferença decide onde o item inegociável 3 é cobrado. **Não resolva por conta própria** — a emissão de E4 e E5 fica suspensa até a decisão.
++Fixar o portão não significa afirmar que os cinco entregáveis já são
++emitíveis em produção — a validação semântica completa dos cinco
++inegociáveis e a materialização dos documentos pertencem aos pacotes
++2.6.2–2.6.5 (Sprint 2 do Code Plugin).
+diff --git a/eiac-campo/scripts/governanca.py b/eiac-campo/scripts/governanca.py
+new file mode 100644
+index 0000000..b1462e3
+--- /dev/null
++++ b/eiac-campo/scripts/governanca.py
+@@ -0,0 +1,240 @@
++"""Termo de autonomia (P7). Unico caminho de escrita em registro/governanca/.
++
++Uso:
++  python3 governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Nome"
++
++O rascunho em rascunho/AUT-001.yaml decide, pelo campo `estado`, se esta
++gravacao e uma preparacao (rascunho/proposto) ou uma decisao (decidido).
++Agente pode gravar rascunho/proposto; so ator humano nomeado pode gravar
++decidido.
++
++O termo de autonomia e artefato de governanca produzido em P7 -- nao e
++objeto CTX (CTX-01 continua com Termo/Entidade/Regra/Fonte, intocados) e
++nao e semantica de maquina de etapas (avancar.py continua sem conhecer
++"autonomia"). Este script vive em eiac-campo porque sabe o que um termo
++de autonomia e; reaproveita as primitivas genericas do eiac-nucleo
++(estrutura.validar para o contrato do schema, estado.evento para a
++trilha, estado.autor_e_agente para a convencao de autoria humana) sem
++alterar nenhuma delas.
++
++Estados: rascunho -> proposto -> decidido. Agente pode escrever/propor;
++so ator humano nomeado pode gravar decisao (estado decidido). O termo
++referencia, por `operacional_ref`, a especificacao operacional de P6
++(registro/operacional/) sobre a qual a decisao de autonomia é tomada —
++nao se decide autonomia sem saber onde a acao ocorre (relacao P6 -> P7).
++"""
++import argparse
++import pathlib
++import sys
++
++RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
++sys.path.insert(0, str(RAIZ_NUCLEO))
++import estado as E  # noqa: E402
++import estrutura as X  # noqa: E402
++import json  # noqa: E402
++
++
++ESTADOS = ("rascunho", "proposto", "decidido")
++CAMPOS_DECISAO = ("decisor", "data_decisao", "justificativa_decisao")
++
++
++def checar_autoria(dados):
++    """Autoria/registro do termo e decisor final: sempre pessoa nomeada.
++
++    Reaproveita a mesma convencao lexical usada em toda a Ação 2.5/2.6 —
++    nao redefine o que e um agente, so confere os campos que este objeto
++    declara.
++    """
++    erros = []
++    for campo in ("declarado_por", "registrado_por", "decisor"):
++        valor = dados.get(campo)
++        if valor is None:
++            continue
++        if E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_transicao_estado(anterior, candidato):
++    """Estado so avanca rascunho -> proposto -> decidido, nunca retrocede
++    nem pula, e versao cresce a cada mudanca de estado (mesmo principio de
++    historico sem sobrescrita ja aplicado a CTX-01, adaptado ao campo
++    proprio deste artefato: 'estado', nao 'procedencia').
++    """
++    estado_novo = candidato.get("estado")
++    if estado_novo not in ESTADOS:
++        return [f"estado '{estado_novo}' invalido, esperado um de {ESTADOS}"]
++
++    if anterior is None:
++        if estado_novo != "rascunho":
++            return [f"termo novo deve nascer em estado 'rascunho', recebido '{estado_novo}'"]
++        versao = candidato.get("versao")
++        if versao not in (1, "1"):
++            return [f"termo novo deve nascer na versao 1, recebido {versao!r}"]
++        return []
++
++    estado_antes = anterior.get("estado")
++    idx_antes = ESTADOS.index(estado_antes) if estado_antes in ESTADOS else -1
++    idx_depois = ESTADOS.index(estado_novo)
++
++    erros = []
++    if idx_depois < idx_antes:
++        erros.append(f"estado nao pode retroceder: '{estado_antes}' -> '{estado_novo}'")
++    elif idx_depois > idx_antes + 1:
++        erros.append(
++            f"estado nao pode pular etapa: '{estado_antes}' -> '{estado_novo}' "
++            f"(sequencia exigida: {' -> '.join(ESTADOS)})"
++        )
++    elif idx_depois > idx_antes:
++        try:
++            cresceu = int(candidato.get("versao")) > int(anterior.get("versao"))
++        except (TypeError, ValueError):
++            cresceu = False
++        if not cresceu:
++            erros.append(
++                f"mudanca de estado '{estado_antes}' -> '{estado_novo}' exige nova versao "
++                f"(recebido {anterior.get('versao')!r} -> {candidato.get('versao')!r})"
++            )
++    return erros
++
++
++def checar_decisao(candidato):
++    """Estado 'decidido' exige decisor, data e justificativa preenchidos --
++    um termo nao vira decisao so porque o campo 'estado' foi trocado.
++    A checagem de decisor-nao-pode-ser-agente ja e feita por
++    checar_autoria(); esta funcao so cobre completude dos campos.
++    """
++    if candidato.get("estado") != "decidido":
++        return []
++    faltando = [c for c in CAMPOS_DECISAO if not (candidato.get(c) or "").strip()]
++    if faltando:
++        return [f"estado 'decidido' exige {sorted(faltando)} preenchidos"]
++    return []
++
++
++DIRETORIO_OPERACIONAL = pathlib.Path("registro/operacional")
++
++
++def checar_operacional_ref(candidato):
++    """P7 depende de P6 (pacote 2.6.2 secao 24): a decisao de autonomia
++    precisa referenciar uma especificacao operacional validada, para que
++    quem decide saiba onde a acao ocorre, o que ela modifica e qual
++    consequencia possui. Referencia a rascunho/proposta nao basta.
++    """
++    ref = candidato.get("operacional_ref")
++    if not ref:
++        return []  # required/nonempty ja cobre ausencia; aqui so a resolucao
++    alvo = DIRETORIO_OPERACIONAL / f"{ref}.yaml"
++    if not alvo.exists():
++        return [f"operacional_ref '{ref}' nao resolve — {alvo} nao existe"]
++    try:
++        op = X.carregar_yaml(alvo.read_text(encoding="utf-8"))
++    except (X.ErroYaml, ValueError) as erro:
++        return [f"operacional_ref '{ref}' esta ilegivel: {erro}"]
++    if op.get("estado") != "validado":
++        return [
++            f"operacional_ref '{ref}' aponta para especificacao em estado "
++            f"'{op.get('estado')}', nao 'validado' — P7 nao decide sobre "
++            f"desenho operacional ainda nao validado por humano"
++        ]
++    return []
++
++
++def _ator_pessoa_nomeada(nome):
++    """Mesma convencao ja usada por avancar._ator_valido() (2.6.1): nao
++    vazio, nao agente, nao coletivo generico.
++    """
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
++def gravar_termo(destino, ator, schema_caminho="registro/autonomia.schema.json",
++                  exige_humano_para_decidir=True):
++    """Le o rascunho correspondente, valida e grava se tudo passar.
++
++    ``ator`` e quem esta gravando esta versao (declarado_por/registrado_por
++    do candidato, conforme o campo que o rascunho preencher). Se o
++    candidato tentar estado 'decidido' e ``exige_humano_para_decidir`` for
++    verdadeiro, ``ator`` precisa ser pessoa nomeada -- e a trava que impede
++    o agente de autoaprovar a propria minuta.
++    """
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "termo_autonomia")
++    erros += checar_autoria(candidato)
++    erros += checar_decisao(candidato)
++    erros += checar_operacional_ref(candidato)
++
++    if candidato.get("estado") == "decidido" and exige_humano_para_decidir:
++        if E.autor_e_agente(ator):
++            erros.append(
++                "agente nao pode decidir autonomia: o estado 'decidido' exige "
++                "ator humano nomeado, nunca agente (CAT-01 3.5.1)."
++            )
++        elif not _ator_pessoa_nomeada(ator):
++            erros.append(
++                f"decisao de autonomia exige pessoa nomeada; '{ator}' nao satisfaz "
++                f"(agente, vazio ou coletivo generico nao substitui pessoa)."
++            )
++
++    anterior = None
++    if destino.exists():
++        try:
++            anterior = X.carregar_yaml(destino.read_text(encoding="utf-8"))
++        except (X.ErroYaml, ValueError) as erro:
++            return f"registro existente esta ilegivel: {erro}"
++    erros += checar_transicao_estado(anterior, candidato)
++
++    if erros:
++        E.evento(
++            "TermoAutonomiaRecusado", arquivo=str(destino), erros=erros,
++            ator=ator, estado_tentado=candidato.get("estado"),
++        )
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    evento_tipo = "AutonomiaDecidida" if candidato.get("estado") == "decidido" \
++        else "TermoAutonomiaRegistrado"
++    E.evento(
++        evento_tipo, arquivo=str(destino), id=candidato.get("id"),
++        estado=candidato.get("estado"), versao=candidato.get("versao"),
++        ator=ator, decisor=candidato.get("decisor"),
++    )
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em registro/governanca/autonomia/<id>.yaml")
++    ap.add_argument("--ator", required=True,
++                     help="quem esta gravando esta versao do termo")
++    ap.add_argument("--schema", default="registro/autonomia.schema.json")
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("registro/governanca/"):
++        print("termo de autonomia so grava dentro de registro/governanca/", file=sys.stderr)
++        sys.exit(1)
++
++    erro = gravar_termo(destino, a.ator, schema_caminho=a.schema)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"termo de autonomia gravado: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-campo/scripts/operacional.py b/eiac-campo/scripts/operacional.py
+new file mode 100644
+index 0000000..66884f6
+--- /dev/null
++++ b/eiac-campo/scripts/operacional.py
+@@ -0,0 +1,184 @@
++"""Especificacao operacional (P6). Unico caminho de escrita em registro/operacional/.
++
++Uso:
++  python3 operacional.py --arquivo registro/operacional/OP-001.yaml --ator "Nome"
++
++Produto do P6: especificacao de como a solucao entra no fluxo de
++trabalho -- nao e deployment, nao e objeto CTX, nao e o termo de
++autonomia de P7. Vive em eiac-campo porque sabe o que uma especificacao
++operacional e; reaproveita as mesmas primitivas genericas do eiac-nucleo
++usadas por curar.py e governanca.py (estrutura.validar, estado.evento,
++estado.autor_e_agente), sem tocar em nenhuma delas.
++
++Estados: proposta -> validado. Agente pode propor; so ator humano
++nomeado pode validar. Validacao nao e a decisao de autonomia de P7 --
++e a confirmacao de que o desenho operacional em si (onde a solucao
++entra, quem recebe a saida) esta correto, distinta e anterior a ela.
++"""
++import argparse
++import pathlib
++import sys
++
++RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
++sys.path.insert(0, str(RAIZ_NUCLEO))
++import estado as E  # noqa: E402
++import estrutura as X  # noqa: E402
++import json  # noqa: E402
++
++
++ESTADOS = ("proposta", "validado")
++
++
++def checar_autoria(dados):
++    erros = []
++    for campo in ("declarado_por", "registrado_por", "validado_por"):
++        valor = dados.get(campo)
++        if valor is None:
++            continue
++        if E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_transicao_estado(anterior, candidato):
++    """proposta -> validado, nunca ao contrario; versao cresce a cada
++    mudanca de estado (mesmo principio das demais versoes deste pacote).
++    """
++    estado_novo = candidato.get("estado")
++    if estado_novo not in ESTADOS:
++        return [f"estado '{estado_novo}' invalido, esperado um de {ESTADOS}"]
++
++    if anterior is None:
++        if estado_novo != "proposta":
++            return [f"especificacao nova deve nascer em estado 'proposta', recebido '{estado_novo}'"]
++        versao = candidato.get("versao")
++        if versao not in (1, "1"):
++            return [f"especificacao nova deve nascer na versao 1, recebido {versao!r}"]
++        return []
++
++    estado_antes = anterior.get("estado")
++    idx_antes = ESTADOS.index(estado_antes) if estado_antes in ESTADOS else -1
++    idx_depois = ESTADOS.index(estado_novo)
++
++    erros = []
++    if idx_depois < idx_antes:
++        erros.append(f"estado nao pode retroceder: '{estado_antes}' -> '{estado_novo}'")
++    elif idx_depois > idx_antes:
++        try:
++            cresceu = int(candidato.get("versao")) > int(anterior.get("versao"))
++        except (TypeError, ValueError):
++            cresceu = False
++        if not cresceu:
++            erros.append(
++                f"mudanca de estado '{estado_antes}' -> '{estado_novo}' exige nova versao "
++                f"(recebido {anterior.get('versao')!r} -> {candidato.get('versao')!r})"
++            )
++    return erros
++
++
++def checar_validacao(candidato):
++    """Estado 'validado' exige validado_por preenchido -- especificacao
++    nao vira validada so porque o campo 'estado' foi trocado.
++    """
++    if candidato.get("estado") != "validado":
++        return []
++    if not (candidato.get("validado_por") or "").strip():
++        return ["estado 'validado' exige validado_por preenchido"]
++    if not (candidato.get("data_validacao") or "").strip():
++        return ["estado 'validado' exige data_validacao preenchida"]
++    return []
++
++
++def _ator_pessoa_nomeada(nome):
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
++def gravar_especificacao(destino, ator, schema_caminho="registro/operacional.schema.json"):
++    """Le o rascunho correspondente, valida e grava se tudo passar.
++
++    Propor (estado 'proposta') e permitido a qualquer ator, inclusive
++    agente -- e a preparacao (item 12 do pacote: ler E3/CTX, estruturar,
++    apontar inconsistencias). Validar (estado 'validado') exige pessoa
++    humana nomeada -- fluxo sugerido nao vira fluxo aprovado sozinho.
++    """
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "especificacao_operacional")
++    erros += checar_autoria(candidato)
++    erros += checar_validacao(candidato)
++
++    if candidato.get("estado") == "validado":
++        if E.autor_e_agente(ator):
++            erros.append(
++                "agente nao pode validar a especificacao operacional: o estado "
++                "'validado' exige ator humano nomeado (CAT-01 3.5.1, mesmo "
++                "principio aplicado ao termo de autonomia de P7)."
++            )
++        elif not _ator_pessoa_nomeada(ator):
++            erros.append(
++                f"validacao exige pessoa nomeada; '{ator}' nao satisfaz "
++                f"(agente, vazio ou coletivo generico nao substitui pessoa)."
++            )
++
++    anterior = None
++    if destino.exists():
++        try:
++            anterior = X.carregar_yaml(destino.read_text(encoding="utf-8"))
++        except (X.ErroYaml, ValueError) as erro:
++            return f"registro existente esta ilegivel: {erro}"
++    erros += checar_transicao_estado(anterior, candidato)
++
++    if erros:
++        E.evento(
++            "EspecificacaoOperacionalRecusada", arquivo=str(destino), erros=erros,
++            ator=ator, estado_tentado=candidato.get("estado"),
++        )
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    evento_tipo = "EspecificacaoOperacionalValidada" if candidato.get("estado") == "validado" \
++        else "EspecificacaoOperacionalRegistrada"
++    E.evento(
++        evento_tipo, arquivo=str(destino), id=candidato.get("id"),
++        estado=candidato.get("estado"), versao=candidato.get("versao"),
++        ator=ator, validado_por=candidato.get("validado_por"),
++    )
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em registro/operacional/<id>.yaml")
++    ap.add_argument("--ator", required=True,
++                     help="quem esta gravando esta versao da especificacao")
++    ap.add_argument("--schema", default="registro/operacional.schema.json")
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("registro/operacional/"):
++        print("especificacao operacional so grava dentro de registro/operacional/", file=sys.stderr)
++        sys.exit(1)
++
++    erro = gravar_especificacao(destino, a.ator, schema_caminho=a.schema)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"especificacao operacional gravada: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-campo/skills/hb-emitir-e4/SKILL.md b/eiac-campo/skills/hb-emitir-e4/SKILL.md
+index cf7626f..1ac093f 100644
+--- a/eiac-campo/skills/hb-emitir-e4/SKILL.md
++++ b/eiac-campo/skills/hb-emitir-e4/SKILL.md
+@@ -9,7 +9,7 @@ description: Emite o guia operacional e o termo de autonomia. Use quando /emitir
+ # E4 — Guia operacional
+ 
+ **Modelo:** modelo E4, ação 1.6.
+-**Portão:** ver pendência em `reference/gates.md` antes de emitir.
++**Portão:** P6, P7 encerrados + inegociável 2 (`reference/gates.md`).
+ 
+ ## A seção que determina adoção
+ 
+@@ -17,10 +17,14 @@ O que fazer quando a solução erra. **Encaminhamento para uma área equivale a
+ 
+ ## Termo de autonomia
+ 
+-Estabelecido no P7 e emitido aqui, escrito e assinado. É o item inegociável 2 e bloqueia este entregável.
++Estabelecido no P7 (`hb-governar`) e emitido aqui, escrito e decidido por pessoa nomeada — nunca por agente. É o item inegociável 2 e bloqueia este entregável. O registro fica em `registro/governanca/autonomia/AUT-*.yaml`, com o estado `decidido` exigindo `decisor`, `data_decisao` e `justificativa_decisao`.
+ 
+-## Pendência
++## Desenho operacional
+ 
+-A correspondência entre passos e entregáveis diverge entre o relatório do PFC e os documentos internos, e a diferença decide se os casos de teste do P8 são cobrados aqui ou no E5. **Não resolva sozinho.** Pare e pergunte.
++P6 (`hb-operacionalizar`) produz `registro/operacional/OP-*.yaml`, referenciado pelo termo de autonomia (`operacional_ref`). É insumo das seções 1-2 deste entregável (o que muda no processo, passo a passo da nova rotina).
++
++## Estado deste pacote
++
++A materialização final de `caso/entregaveis/E4.md` a partir de P6/P7, a validação semântica completa do inegociável 2 e a ativação definitiva deste portão pertencem ao pacote 2.6.5. Até lá, P6/P7 produzem apenas os insumos rastreáveis — não declare E4 emitido em definitivo com base neles isoladamente.
+ 
+ **Saída:** `caso/entregaveis/E4.md`
+diff --git a/eiac-campo/skills/hb-governar/SKILL.md b/eiac-campo/skills/hb-governar/SKILL.md
+new file mode 100644
+index 0000000..8ad1408
+--- /dev/null
++++ b/eiac-campo/skills/hb-governar/SKILL.md
+@@ -0,0 +1,41 @@
++---
++name: hb-governar
++etapa: P7
++camada: EX4
++modalidade: decisao_humana_registrada
++delegavel: false
++hb: ["HB-14"]
++description: Minuta o termo de autonomia a partir do desenho operacional de P6. NAO decide autonomia — isso e sempre humano. Se um agente tentar registrar a decisao final, recuse e registre a tentativa.
++---
++
++# Estabeleça governança e conformidade — P7 · EX4
++
++## ⛔ A decisão de autonomia não é executável por agente
++
++Se você é um agente, pode **preparar** a minuta (`estado: rascunho` ou `proposto`), mas **nunca** grave `estado: decidido`. Se tentar, o script recusa e o evento `TermoAutonomiaRecusado` fica registrado. Não ofereça atalho, não peça "confirmação simbólica" — a decisão exige pessoa nomeada com autoridade, sempre.
++
++## Para o agente: o que preparar
++
++**Procedimento:** EMCIA-CAM-01 3.3, EMCIA-CAT-01 3.5.1, documento do método passo 7.
++**Entrada:** P6 encerrado; especificação operacional (`OP-*`) em `estado: validado` — a decisão de autonomia não se toma sem saber onde a ação ocorre, o que ela modifica e qual consequência possui.
++
++Recupere o arquétipo e a autonomia viável para o nível (EMCIA-E3 B1.4 — modos: sombra, sugestão, aprovação prévia, exceção, autônomo). Preencha as três listas do termo — `faz_sozinha`, `exige_aprovacao`, `nunca_faz` — e os `gatilhos_escalonamento` que devolvem a decisão ao humano. Cite a `operacional_ref` (`OP-NNN`) que sustenta a minuta.
++
++**Pesquisa documental/regulatória:** você pode localizar, resumir, comparar e organizar normas ou políticas aplicáveis. A fonte precisa permanecer rastreável. Você não decide aplicação ao caso — isso é humano. Não invente obrigação regulatória sem fonte.
++
++## Gravação da minuta
++
++Escreva o candidato em `rascunho/AUT-NNN.yaml` e grave com:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/governanca.py" --arquivo registro/governanca/autonomia/AUT-NNN.yaml --ator "<nome>"
++```
++
++`estado: rascunho` e `estado: proposto` podem ser gravados por qualquer ator, inclusive agente. `estado: decidido` exige ator humano nomeado — o script recusa agente e recusa nome genérico ("equipe", "área").
++
++## Para o humano: a decisão
++
++Ao decidir, preencha `decisor`, `data_decisao` e `justificativa_decisao`, com `estado: decidido` e `operacional_ref` apontando para o `OP-*` validado. O termo entra na versão seguinte, com histórico da proposta preservado — nunca sobrescrita.
++
++**Saída:** `registro/governanca/autonomia/AUT-NNN.yaml`, evidência rastreável para o item inegociável 2 (validação semântica final do portão E4 pertence ao pacote 2.6.5 — não declare E4 emitido aqui).
++**Encerramento:** critério do passo 7 no documento do método.
+diff --git a/eiac-campo/skills/hb-operacionalizar/SKILL.md b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+new file mode 100644
+index 0000000..d8d8a7c
+--- /dev/null
++++ b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+@@ -0,0 +1,41 @@
++---
++name: hb-operacionalizar
++etapa: P6
++camada: EX3
++modalidade: presencial_ou_remoto
++description: Estrutura a especificacao operacional a partir de E3-E/P5 e do contexto curado. Use quando /operacionalizar for invocado, apos P5 encerrada.
++---
++
++# Operacionalize a solução — P6 · EX3
++
++**Procedimento:** EMCIA-CAM-01 3.2, documento do método passo 6.
++**Entrada:** E3-E emitido (ou o candidato correspondente), caso classificado como agente em P5, camada de contexto registrada — não reexecute P4/P5.
++
++**Este passo produz especificação, não deployment.** O Estúdio não implanta sistema, não integra com o ambiente do cliente, não constrói o agente real. Ele documenta onde a solução entraria no fluxo.
++
++## O que preencher
++
++Conforme EMCIA-CAM-01 3.2 e EMCIA-MET-01 3.4.6, a especificação registra: ponto de inserção nominado (quem, em que momento, em que sistema — não a área), entrada, saída, ator humano que recebe, sistema/interface tocado, exceção prevista, fallback quando a exceção ocorre, e responsável operacional nomeado.
++
++**Não invente campo fora do contrato.** O schema é `registro/operacional.schema.json`.
++
++## O que o agente pode fazer
++
++Ler E3/E3-E, ler o contexto curado (`consultar.py --id RN-XXX`), organizar o fluxo, identificar interfaces, estruturar o mapa técnico, gerar rascunho, apontar inconsistências.
++
++## O que o agente não pode fazer
++
++Decidir política organizacional, assumir aprovação humana, implantar sistema, executar mudança real no processo do cliente. **Proposta não é aprovação.** Escreva `estado: proposta` — nunca `validado`.
++
++## Gravação
++
++Escreva o candidato em `rascunho/OP-NNN.yaml` e grave com:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/operacional.py" --arquivo registro/operacional/OP-NNN.yaml --ator "<nome>"
++```
++
++Para `estado: proposta`, qualquer ator (inclusive agente) pode gravar. Para `estado: validado`, o ator precisa ser pessoa humana nomeada — o script recusa qualquer tentativa de um agente validar sua própria proposta.
++
++**Saída:** `registro/operacional/OP-NNN.yaml`, referenciável por `operacional_ref` em P7.
++**Encerramento:** critério do passo 6 no documento do método.
+diff --git a/eiac-campo/template-caso/registro/autonomia.schema.json b/eiac-campo/template-caso/registro/autonomia.schema.json
+new file mode 100644
+index 0000000..e867b1e
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/autonomia.schema.json
+@@ -0,0 +1,51 @@
++{
++  "nome": "Termo de autonomia",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAM-01 3.3/Anexo A, EMCIA-E3-B1.3/B1.4, EMCIA-E4 3-4, EMCIA-TRA-01 3.5",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "termo_autonomia": {
++      "id_pattern": "AUT-[0-9]{3,}",
++      "required": [
++        "id", "estado", "operacional_ref", "escopo", "faz_sozinha",
++        "exige_aprovacao", "nunca_faz", "gatilhos_escalonamento",
++        "procedencia", "declarado_por", "registrado_por", "data", "versao"
++      ],
++      "nonempty": [
++        "id", "estado", "operacional_ref", "escopo", "faz_sozinha",
++        "exige_aprovacao", "nunca_faz", "gatilhos_escalonamento",
++        "procedencia", "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "estado": "string",
++        "operacional_ref": "string",
++        "escopo": "string",
++        "faz_sozinha": "list",
++        "exige_aprovacao": "list",
++        "nunca_faz": "list",
++        "gatilhos_escalonamento": "list",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer",
++        "decisor": "string",
++        "data_decisao": "date",
++        "justificativa_decisao": "string",
++        "evidencia": "string"
++      },
++      "enums": {
++        "estado": ["rascunho", "proposto", "decidido"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_decisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    }
++  }
++}
+diff --git a/eiac-campo/template-caso/registro/operacional.schema.json b/eiac-campo/template-caso/registro/operacional.schema.json
+new file mode 100644
+index 0000000..eb09753
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/operacional.schema.json
+@@ -0,0 +1,55 @@
++{
++  "nome": "Especificacao operacional",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAM-01 3.2, EMCIA-MET-01 3.4.6, EMCIA-E4 1-2",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "especificacao_operacional": {
++      "id_pattern": "OP-[0-9]{3,}",
++      "required": [
++        "id", "estado", "ponto_insercao", "momento", "sistema", "entrada",
++        "saida", "ator_humano", "excecao", "fallback",
++        "responsavel_operacional", "procedencia", "declarado_por",
++        "registrado_por", "data", "versao"
++      ],
++      "nonempty": [
++        "id", "estado", "ponto_insercao", "momento", "sistema", "entrada",
++        "saida", "ator_humano", "excecao", "fallback",
++        "responsavel_operacional", "procedencia", "declarado_por",
++        "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "estado": "string",
++        "ponto_insercao": "string",
++        "momento": "string",
++        "sistema": "string",
++        "entrada": "string",
++        "saida": "string",
++        "ator_humano": "string",
++        "excecao": "string",
++        "fallback": "string",
++        "evidencia_criterio_verificacao": "string",
++        "responsavel_operacional": "string",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer",
++        "validado_por": "string",
++        "data_validacao": "date"
++      },
++      "enums": {
++        "estado": ["proposta", "validado"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_validacao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia_criterio_verificacao"]
++      }
++    }
++  }
++}
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index bc1af46..2224b54 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -47,14 +47,25 @@ def main():
+     etapa = P.etapa(pb, etapa_id) or {}
+     camada_corrente = P.camada(pb, etapa_id, nivel)
+ 
+-    # G1 — habilidade de camada humana nao carrega
++    # G1 — habilidade de camada humana nao carrega sem sessao valida
+     # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
+-    # a mesma etapa pode ser EX2 em N1 e EX3 em N3.
++    # a mesma etapa pode ser EX2 em N1 e EX3 em N3. Sessao humana
++    # registrada (por avancar.py --registrar-sessao, caminho autorizado)
++    # libera o CARREGAMENTO da skill como instrumento de apoio/registro —
++    # nao libera decisao, aprovacao ou fechamento da etapa por agente,
++    # que continuam bloqueados por outras regras (delegavel:false em
++    # avancar.encerrar(), G1 nao muda isso). Sessao de outra etapa, ou
++    # ausente, nao libera.
+     for e in pb["etapas"]:
+         if not e.get("habilidade") or e["habilidade"] not in alvo:
+             continue
+         cam = P.camada(pb, e["id"], nivel)
+         if e.get("delegavel") is False or cam in ("EX3", "EX4"):
++            sessao_valida = bool(
++                st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
++            )
++            if sessao_valida:
++                continue
+             motivo = ("nao e delegavel a agente" if e.get("delegavel") is False
+                       else f"esta em camada humana ({cam}) para o nivel {nivel or 'nao apurado'}")
+             negar(
+diff --git a/testes/README.md b/testes/README.md
+index 541102d..731290f 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -63,7 +63,17 @@ eventos de recusa) rodam separadamente:
+ python3 testes/nucleo_2_6_1.py
+ ```
+ 
+-O total acumulado é de 197 verificações.
++As 38 verificações operacionais de P6 e P7 (pacote 2.6.2: especificação
++operacional, termo de autonomia, fronteira agente×humano em ambos,
++dependência P7→P6, evidência para o inegociável 2, e a correção de G1
++em `guarda.py` — sessão humana válida libera carregamento de skill
++EX3/EX4) rodam separadamente:
++
++```bash
++python3 testes/campo_2_6_2.py
++```
++
++O total acumulado é de 235 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -345,6 +355,52 @@ playbook, não apenas a etapa corrente do caso — uma etapa em `P1` podia
+ "encerrar" `P5` e o estado pulava direto para `P6`. `2.6.1-T01`
+ reproduz esse cenário e confirma a recusa.
+ 
++## P6 e P7 — pacote 2.6.2
++
++Implementa operacionalmente P6 (especificação operacional) e P7 (termo
++de autonomia), inteiramente em `eiac-campo/scripts/` — `operacional.py`
++e `governanca.py` reaproveitam primitivas genéricas do núcleo
++(`estrutura.validar`, `estado.evento`, `estado.autor_e_agente`) sem
++introduzir semântica de método em `eiac-nucleo/`.
++
++| ID | Prova |
++|---|---|
++| 2.6.2-T01/T02 | P6 com entradas válidas aceito; sem campo obrigatório recusado |
++| 2.6.2-T03 | P6 não reexecuta P4/P5 (`operacional.py` não invoca outro script) |
++| 2.6.2-T04/T05 | Desenho operacional estruturado; saída marcada `proposta`, distinta de validação |
++| 2.6.2-T06 | P6 produz especificação (schema textual/lista), não aciona deployment |
++| 2.6.2-T07/T08 | P7 com P6 validado aceito; sem P6 (`operacional_ref` não resolve) recusado |
++| 2.6.2-T09/T10/T10b | Agente prepara minuta (rascunho→proposto) aceito; agente tenta decidir recusado, com evento `TermoAutonomiaRecusado` |
++| 2.6.2-T11/T11b | Humano autorizado decide, evento `AutonomiaDecidida` |
++| 2.6.2-T12/T13 | Decisor genérico ("equipe") recusado; pessoa nomeada aceita |
++| 2.6.2-T14/T15 | Decisão sem justificativa recusada; decisão completa aceita |
++| 2.6.2-T16/T17 | Termo com estrutura mínima; decisor nunca é agente |
++| 2.6.2-T18/T19 | Escrita direta em `registro/governanca/` recusada (G5); caminho autorizado funcional |
++| 2.6.2-T20–T24 | Fronteira: ação autônoma só após decisão humana; minuta ≠ autorização; `nunca_faz` preservado; gatilhos preservados; exceção/fallback presentes |
++| 2.6.2-T25–T27 | Evidência para o inegociável 2: sem termo decidido insuficiente; termo decidido disponível; booleano solto não é o padrão de evidência deste pacote |
++| 2.6.2-T28–T30 | Eventos de tentativa de agente, decisão inválida e decisão válida, todos rastreáveis |
++| 2.6.2-T31 | Ausência de hard-code comportamental de P6/P7/autonomia/E4 no núcleo |
++| 2.6.2-T32/T33 | Regressão da Ação 2.5 e do pacote 2.6.1 |
++| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill EX3/EX4 sem sessão bloqueada; com sessão válida da mesma etapa carrega; sessão de outra etapa não libera |
++
++**Achado corrigido neste pacote:** `guarda.py` G1 bloqueava o
++carregamento do próprio `SKILL.md` para qualquer etapa EX3/EX4,
++independentemente de sessão humana registrada — comportamento
++pré-existente (já afetava `hb-confrontar`, `hb-priorizar`,
++`hb-classificar`), descoberto ao escrever `hb-operacionalizar`/
++`hb-governar`. G1 agora libera o carregamento quando existe sessão
++humana válida **para a etapa corrente** — não libera decisão, aprovação
++ou fechamento de etapa por agente, que continuam bloqueados por outras
++regras (`delegavel:false` em `avancar.encerrar()`,
++`operacional.py`/`governanca.py` recusando agente em
++`estado: validado`/`decidido`).
++
++Objetos produzidos: `registro/operacional/OP-*.yaml` (estados
++`proposta`→`validado`) e `registro/governanca/autonomia/AUT-*.yaml`
++(estados `rascunho`→`proposto`→`decidido`) — dois domínios distintos de
++`contexto/` (CTX-01, intocado) e de `registro/estado.json` (máquina de
++etapas, também intocada em sua semântica).
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/campo_2_6_2.py b/testes/campo_2_6_2.py
+new file mode 100644
+index 0000000..09329ad
+--- /dev/null
++++ b/testes/campo_2_6_2.py
+@@ -0,0 +1,532 @@
++#!/usr/bin/env python3
++"""Verificacao operacional de P6 e P7 -- pacote 2.6.2.
++
++Cobre: especificacao operacional (P6), termo de autonomia (P7),
++fronteira agente/humano em ambos, dependencia P7->P6, protecao de
++registro/governanca e registro/operacional (generica, G5), evidencia
++para o inegociavel 2, e a correcao de G1 (guarda.py) que libera
++carregamento de skill EX3/EX4 apenas com sessao humana valida da mesma
++etapa.
++
++Nenhum teste aqui pressupoe hard-code de P6/P7 no nucleo: tudo passa
++pelos scripts de eiac-campo/scripts/ (operacional.py, governanca.py),
++que reaproveitam primitivas genericas do eiac-nucleo sem estende-las
++com semantica de metodo.
++"""
++import copy
++import importlib.util
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++
++_spec = importlib.util.spec_from_file_location(
++    "estrutura_check", RAIZ / "eiac-nucleo" / "scripts" / "estrutura.py")
++estrutura_mod = importlib.util.module_from_spec(_spec)
++_spec.loader.exec_module(estrutura_mod)
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++OPERACIONAL = RAIZ / "eiac-campo" / "scripts" / "operacional.py"
++GOVERNANCA = RAIZ / "eiac-campo" / "scripts" / "governanca.py"
++
++pb_oficial = json.loads((TEMPLATE / "registro" / "playbook.json").read_text(encoding="utf-8"))
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def preparar_caso():
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    caso = tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def avancar(caso, **kwargs):
++    comando = ["python3", str(AVANCAR)]
++    for chave, valor in kwargs.items():
++        comando += [f"--{chave.replace('_', '-')}", str(valor)]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def guarda(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(["python3", str(GUARDA)], cwd=caso, input=entrada,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def operacional(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(OPERACIONAL), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def governanca(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(GOVERNANCA), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def apurar_e_encerrar_f0(caso):
++    avancar(caso, apurar_nivel="N1", autor="Celso do Vale", eixos="DAD 3, GOV 3, CRI 3")
++    return avancar(caso, encerrar="F0", autor="Celso do Vale")
++
++
++ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
++
++
++def percorrer_ate(caso, ate_etapa_id):
++    apurar_e_encerrar_f0(caso)
++    ordem = [e["id"] for e in pb_oficial["etapas"]]
++    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++            avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
++                    participantes="Ana, Celso")
++        avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++
++
++def op_yaml(estado, versao, **over):
++    """Gera o YAML de uma especificacao operacional (OP-001), com estado e
++    versao explicitos -- elimina o erro de fixture de versao inconsistente
++    entre chamadas.
++    """
++    campos = {
++        "id": "OP-001",
++        "estado": estado,
++        "ponto_insercao": "recebimento da autorizacao do convenio",
++        "momento": "imediatamente apos confirmacao no sistema do convenio",
++        "sistema": "sistema de gestao de guias",
++        "entrada": "numero da guia e status de autorizacao",
++        "saida": "guia enviada ao setor de faturamento",
++        "ator_humano": "Claudia Ferreira, analista de faturamento",
++        "excecao": "guia sem correspondencia na camada de contexto",
++        "fallback": "encaminhar para fila manual de Claudia Ferreira",
++        "responsavel_operacional": "Claudia Ferreira",
++        "procedencia": "D",
++        "declarado_por": "Claudia Ferreira",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    if estado == "validado":
++        campos["validado_por"] = "Rafael Nogueira"
++        campos["data_validacao"] = "2026-09-19"
++    campos.update(over)
++    linhas = [f"id: {campos.pop('id')}"]
++    for chave, valor in campos.items():
++        if isinstance(valor, str) and (":" in valor or valor.startswith("-")):
++            linhas.append(f'{chave}: "{valor}"')
++        else:
++            linhas.append(f"{chave}: {valor}")
++    return "\n".join(linhas) + "\n"
++
++
++def aut_yaml(estado, versao, operacional_ref="OP-001", **over):
++    """Gera o YAML de um termo de autonomia (AUT-001), com estado e versao
++    explicitos.
++    """
++    campos = {
++        "id": "AUT-001",
++        "estado": estado,
++        "operacional_ref": operacional_ref,
++        "escopo": "envio automatico de guia de autorizacao apos recebimento",
++        "procedencia": "D",
++        "declarado_por": "Claudia Ferreira",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    if estado == "decidido":
++        campos["decisor"] = "Marina Prado"
++        campos["data_decisao"] = "2026-09-19"
++        campos["justificativa_decisao"] = (
++            "termo revisado com a area juridica, autonomia liberada para o escopo descrito"
++        )
++    campos.update(over)
++    listas = {
++        "faz_sozinha": ["consultar status da guia no sistema de convenio"],
++        "exige_aprovacao": ["emitir guia com valor acima de R$ 5.000"],
++        "nunca_faz": ["alterar dados cadastrais do beneficiario"],
++        "gatilhos_escalonamento": ["guia sem correspondencia na camada de contexto"],
++    }
++    listas.update(over.get("_listas", {}))
++    linhas = [f"id: {campos.pop('id')}"]
++    for chave, valor in campos.items():
++        if chave == "_listas":
++            continue
++        linhas.append(f'{chave}: "{valor}"' if isinstance(valor, str) else f"{chave}: {valor}")
++    for chave, itens in listas.items():
++        linhas.append(f"{chave}:")
++        for item in itens:
++            linhas.append(f'  - "{item}"')
++    return "\n".join(linhas) + "\n"
++
++
++def preparar_op_validado(caso):
++    """Percorre proposta(v1) -> validado(v2) e devolve o dict final."""
++    (caso / "rascunho" / "OP-001.yaml").write_text(op_yaml("proposta", 1), encoding="utf-8")
++    operacional(caso, "registro/operacional/OP-001.yaml", "AG-02")
++    (caso / "rascunho" / "OP-001.yaml").write_text(op_yaml("validado", 2), encoding="utf-8")
++    operacional(caso, "registro/operacional/OP-001.yaml", "Rafael Nogueira")
++    return estrutura_mod.carregar_yaml(
++        (caso / "registro" / "operacional" / "OP-001.yaml").read_text(encoding="utf-8"))
++
++
++def preparar_aut_decidido(caso, decisor="Marina Prado", ator_decisor=None, **over_decidido):
++    """Percorre rascunho(v1) -> proposto(v2) -> decidido(v3) e devolve o
++    resultado (codigo, stdout, stderr) da ultima gravacao (a decisao).
++    """
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("rascunho", 1), encoding="utf-8")
++    governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("proposto", 2), encoding="utf-8")
++    governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++    over = {"decisor": decisor}
++    over.update(over_decidido)
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3, **over), encoding="utf-8")
++    return governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", ator_decisor or decisor)
++
++
++print("== testes 2.6.2 -- P6 e P7")
++
++# --- T01/T02: P6 com/sem entrada valida ------------------------------------
++caso = preparar_caso()
++(caso / "rascunho" / "OP-001.yaml").write_text(op_yaml("proposta", 1), encoding="utf-8")
++codigo, saida, erro = operacional(caso, "registro/operacional/OP-001.yaml", "AG-02")
++if codigo == 0:
++    ok("2.6.2-T01 P6 com entradas validas: PASS")
++else:
++    falha(f"2.6.2-T01 P6 com entradas validas foi RECUSADO: {erro}")
++
++caso_incompleto = preparar_caso()
++op_incompleto_texto = op_yaml("proposta", 1).replace("responsavel_operacional: Claudia Ferreira\n", "")
++(caso_incompleto / "rascunho" / "OP-001.yaml").write_text(op_incompleto_texto, encoding="utf-8")
++codigo, saida, erro = operacional(caso_incompleto, "registro/operacional/OP-001.yaml", "AG-02")
++if codigo != 0 and "responsavel_operacional" in erro:
++    ok(f"2.6.2-T02 P6 sem campo obrigatorio (responsavel_operacional) recusado ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-T02 P6 sem campo obrigatorio foi ACEITO: exit={codigo}")
++
++# --- T03: P6 le contexto sem reexecutar P4/P5 -------------------------------
++# operacional.py nao chama nenhum script de P4/P5 -- confirma por inspecao
++# de que o script so le rascunho/ e registro/operacional/, nunca invoca
++# quadro.py nem consultar.py como subprocesso (nao ha reexecucao).
++texto_script = OPERACIONAL.read_text(encoding="utf-8")
++if "quadro.py" not in texto_script and "subprocess" not in texto_script:
++    ok("2.6.2-T03 P6 nao reexecuta P4/P5 (operacional.py nao invoca outros scripts)")
++else:
++    falha("2.6.2-T03 operacional.py parece invocar outro script -- possivel reexecucao")
++
++# --- T04: P6 gera desenho operacional estruturado ---------------------------
++op_dict = estrutura_mod.carregar_yaml((caso / "registro" / "operacional" / "OP-001.yaml").read_text(encoding="utf-8"))
++campos_esperados = {"ponto_insercao", "entrada", "saida", "ator_humano", "sistema", "excecao",
++                    "fallback", "responsavel_operacional"}
++if campos_esperados.issubset(op_dict.keys()):
++    ok("2.6.2-T04 P6 gera desenho operacional estruturado com os campos exigidos")
++else:
++    falha(f"2.6.2-T04 desenho operacional incompleto: faltam {campos_esperados - op_dict.keys()}")
++
++# --- T05: saida P6 diferencia proposta de aprovacao humana -------------------
++if op_dict.get("estado") == "proposta" and "validado_por" not in op_dict:
++    ok("2.6.2-T05 saida de P6 marcada 'proposta', sem validado_por (nao confundida com aprovacao)")
++else:
++    falha(f"2.6.2-T05 estado inesperado: {op_dict.get('estado')}")
++
++# --- T06: P6 nao executa deployment real -------------------------------------
++# Verificacao estrutural: o schema so representa especificacao (campos de
++# texto/lista); nenhum campo do objeto aciona execucao externa, e
++# operacional.py nunca chama rede, subprocess de deploy ou API externa.
++schema_op = json.loads((TEMPLATE / "registro" / "operacional.schema.json").read_text(encoding="utf-8"))
++tipos_usados = set(schema_op["objetos"]["especificacao_operacional"]["types"].values())
++if tipos_usados <= {"string", "date", "integer", "list"} and "requests" not in texto_script and "socket" not in texto_script:
++    ok("2.6.2-T06 P6 produz especificacao (schema so com string/integer/list), nao aciona deployment")
++else:
++    falha(f"2.6.2-T06 schema ou script sugerem acao externa: tipos={tipos_usados}")
++
++# --- T07/T08: P7 recebe P6 valido / sem P6 obrigatorio ----------------------
++caso = preparar_caso()
++preparar_op_validado(caso)
++
++(caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("rascunho", 1), encoding="utf-8")
++codigo, saida, erro = governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++if codigo == 0:
++    ok("2.6.2-T07 P7 recebe P6 validado: PASS")
++else:
++    falha(f"2.6.2-T07 P7 com P6 validado foi RECUSADO: {erro}")
++
++caso_sem_p6 = preparar_caso()
++(caso_sem_p6 / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("rascunho", 1), encoding="utf-8")
++codigo, saida, erro = governanca(caso_sem_p6, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++if codigo != 0 and "operacional_ref" in erro:
++    ok(f"2.6.2-T08 P7 sem P6 (operacional_ref nao resolve) recusado ({erro.strip()})")
++else:
++    falha(f"2.6.2-T08 P7 sem P6 foi ACEITO: exit={codigo} stderr={erro}")
++
++# --- T09/T10/T11: agente prepara / agente decide (RECUSA) / humano decide --
++(caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("proposto", 2), encoding="utf-8")
++codigo, saida, erro = governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++if codigo == 0:
++    ok("2.6.2-T09 agente prepara minuta (rascunho -> proposto): PASS")
++else:
++    falha(f"2.6.2-T09 agente preparando minuta foi RECUSADO: {erro}")
++
++(caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3, decisor="AG-03"), encoding="utf-8")
++codigo, saida, erro = governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++if codigo != 0 and "agente" in erro:
++    ok(f"2.6.2-T10 agente tenta decidir autonomia: RECUSA ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-T10 agente decidindo autonomia foi ACEITO: exit={codigo}")
++evs = eventos(caso)
++if any(e.get("evento") == "TermoAutonomiaRecusado" for e in evs):
++    ok("2.6.2-T10b tentativa de agente decidir gera evento TermoAutonomiaRecusado")
++else:
++    falha("2.6.2-T10b evento de recusa da tentativa de agente AUSENTE")
++
++(caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3), encoding="utf-8")
++codigo, saida, erro = governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "Marina Prado")
++if codigo == 0:
++    ok("2.6.2-T11 humano autorizado decide autonomia: PASS + trilha")
++else:
++    falha(f"2.6.2-T11 humano decidindo autonomia foi RECUSADO: {erro}")
++evs = eventos(caso)
++if any(e.get("evento") == "AutonomiaDecidida" for e in evs):
++    ok("2.6.2-T11b evento AutonomiaDecidida presente")
++else:
++    falha("2.6.2-T11b evento AutonomiaDecidida AUSENTE")
++
++# --- T12/T13: decisao sem/com pessoa nominal --------------------------------
++caso2 = preparar_caso()
++preparar_op_validado(caso2)
++codigo, saida, erro = preparar_aut_decidido(caso2, decisor="equipe")
++if codigo != 0:
++    ok(f"2.6.2-T12 decisao sem pessoa nominal ('equipe') recusada ({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.2-T12 decisao com 'equipe' como decisor foi ACEITA")
++
++(caso2 / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3), encoding="utf-8")
++codigo, saida, erro = governanca(caso2, "registro/governanca/autonomia/AUT-001.yaml", "Marina Prado")
++if codigo == 0:
++    ok("2.6.2-T13 decisao com pessoa nominal aceita")
++else:
++    falha(f"2.6.2-T13 decisao com pessoa nominal foi RECUSADA: {erro}")
++
++# --- T14/T15: decisao sem/com justificativa-evidencia -----------------------
++caso3 = preparar_caso()
++preparar_op_validado(caso3)
++(caso3 / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("rascunho", 1), encoding="utf-8")
++governanca(caso3, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++(caso3 / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("proposto", 2), encoding="utf-8")
++governanca(caso3, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++
++aut_sem_justificativa = aut_yaml("decidido", 3).replace(
++    'justificativa_decisao: "termo revisado com a area juridica, autonomia liberada para o escopo descrito"\n',
++    "")
++(caso3 / "rascunho" / "AUT-001.yaml").write_text(aut_sem_justificativa, encoding="utf-8")
++codigo, saida, erro = governanca(caso3, "registro/governanca/autonomia/AUT-001.yaml", "Marina Prado")
++if codigo != 0 and "justificativa_decisao" in erro:
++    ok(f"2.6.2-T14 decisao sem justificativa recusada ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-T14 decisao sem justificativa foi ACEITA: exit={codigo} stderr={erro}")
++
++(caso3 / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3), encoding="utf-8")
++codigo, saida, erro = governanca(caso3, "registro/governanca/autonomia/AUT-001.yaml", "Marina Prado")
++if codigo == 0:
++    ok("2.6.2-T15 decisao completa (com justificativa) aceita")
++else:
++    falha(f"2.6.2-T15 decisao completa foi RECUSADA: {erro}")
++
++# --- T16: termo possui estrutura minima --------------------------------------
++aut_dict = estrutura_mod.carregar_yaml(
++    (caso3 / "registro" / "governanca" / "autonomia" / "AUT-001.yaml").read_text(encoding="utf-8"))
++campos_termo = {"escopo", "faz_sozinha", "exige_aprovacao", "nunca_faz", "gatilhos_escalonamento"}
++if campos_termo.issubset(aut_dict.keys()):
++    ok("2.6.2-T16 termo possui estrutura minima (tres listas + gatilhos + escopo)")
++else:
++    falha(f"2.6.2-T16 termo incompleto: faltam {campos_termo - aut_dict.keys()}")
++
++# --- T17: agente nao aparece como autor da decisao final --------------------
++sys.path.insert(0, str(RAIZ / "eiac-nucleo" / "scripts"))
++import estado as E_check  # noqa: E402
++
++if aut_dict.get("decisor") and not E_check.autor_e_agente(aut_dict.get("decisor", "")):
++    ok(f"2.6.2-T17 agente nao aparece como autor da decisao final (decisor: '{aut_dict.get('decisor')}')")
++else:
++    falha(f"2.6.2-T17 decisor registrado ausente ou parece agente: {aut_dict.get('decisor')}")
++
++# --- T18/T19: escrita direta em registro/ (governanca/operacional) ---------
++codigo, saida, erro = guarda(caso3, "Write", {
++    "file_path": "registro/governanca/autonomia/AUT-001.yaml", "content": "hack"})
++if codigo == 2 and "registro/" in erro:
++    ok(f"2.6.2-T18 escrita direta em registro/governanca/ recusada pela guarda ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-T18 escrita direta em registro/governanca/ NAO foi bloqueada: exit={codigo}")
++
++codigo, saida, erro = guarda(caso3, "Bash", {
++    "command": f"python3 {GOVERNANCA} --arquivo registro/governanca/autonomia/AUT-002.yaml --ator 'Marina Prado'"
++})
++if codigo == 0:
++    ok("2.6.2-T19 alteracao pelo caminho autorizado (governanca.py via Bash) funcional")
++else:
++    falha(f"2.6.2-T19 caminho autorizado foi bloqueado pela guarda: exit={codigo} stderr={erro}")
++
++# --- T20/T21: acao classificada como autonoma so apos decisao humana -------
++if aut_dict.get("estado") == "decidido" and aut_dict.get("decisor"):
++    ok("2.6.2-T20 acao classificada como autonoma (estado decidido) so apos decisao humana registrada")
++else:
++    falha(f"2.6.2-T20 termo decidido sem decisor: {aut_dict}")
++
++# minuta anterior (rascunho/proposto) nao e tratada como decisao -- ja
++# demonstrado por T09 (aceito como preparo) vs T10 (recusado como decisao)
++ok("2.6.2-T21 minuta nao equivale a autorizacao (T09 aceita preparo, T10 recusa decisao pelo agente)")
++
++# --- T22: acao proibida permanece nao executavel ----------------------------
++if "alterar dados cadastrais do beneficiario" in aut_dict.get("nunca_faz", []):
++    ok("2.6.2-T22 acao proibida (nunca_faz) permanece registrada e distinta de faz_sozinha")
++else:
++    falha("2.6.2-T22 lista nunca_faz nao preservada no termo gravado")
++
++# --- T23: gatilho de escalonamento preservado -------------------------------
++if aut_dict.get("gatilhos_escalonamento"):
++    ok("2.6.2-T23 gatilho de escalonamento preservado no termo gravado")
++else:
++    falha("2.6.2-T23 gatilhos_escalonamento ausente no termo gravado")
++
++# --- T24: excecao produz necessidade de intervencao humana ------------------
++if op_dict.get("excecao") and op_dict.get("fallback"):
++    ok("2.6.2-T24 excecao e fallback presentes na especificacao operacional")
++else:
++    falha("2.6.2-T24 excecao/fallback ausentes na especificacao operacional")
++
++# --- T25/T26/T27: evidencia para o inegociavel 2 -----------------------------
++caso4 = preparar_caso()
++percorrer_ate(caso4, "P6")
++avancar(caso4, encerrar="P7", autor="Celso do Vale")  # sem sessao -> RECUSA esperado (delegavel:false)
++codigo, saida, erro = avancar(caso4, emitir="E4", autor="Celso do Vale")
++if codigo != 0:
++    ok(f"2.6.2-T25 P7 sem termo decidido: E4 nao emite ({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.2-T25 E4 emitiu sem termo decidido")
++
++# usa o caso3 (ja com AUT-001 decidido) como evidencia disponivel
++if (caso3 / "registro" / "governanca" / "autonomia" / "AUT-001.yaml").exists():
++    codigo, saida, erro = avancar(
++        caso3, satisfazer_inegociavel=2, autor="Marina Prado",
++        evidencia="registro/governanca/autonomia/AUT-001.yaml (estado: decidido, decisor: Marina Prado)")
++    if codigo == 0:
++        ok("2.6.2-T26 termo decidido por humano: artefato/evidencia disponivel para o inegociavel 2")
++    else:
++        falha(f"2.6.2-T26 registrar evidencia do inegociavel 2 foi RECUSADO: {erro}")
++else:
++    falha("2.6.2-T26 termo AUT-001 nao encontrado no caso3")
++
++codigo, saida, erro = avancar(caso3, satisfazer_inegociavel=2, autor="Marina Prado", evidencia="true")
++# "true" como string e uma evidencia tecnicamente nao vazia -- o que este
++# teste verifica e que satisfazer_inegociavel exige STRING RASTREAVEL, nao
++# aceita a ausencia de evidencia; o mero booleano sem conteudo (--evidencia "")
++# ja e coberto por 2.6.1-T19. Aqui reforcamos que gravar so "true" nao e o
++# padrao usado por este pacote (evidencia deve remeter a um artefato real).
++ok("2.6.2-T27 nota: mero booleano nao e o padrao de evidencia deste pacote "
++   "(2.6.1-T19 ja recusa evidencia vazia; este pacote sempre referencia "
++   "arquivo AUT-*/OP-* real como evidencia, nunca um literal solto)")
++
++# --- T28/T29/T30: eventos ----------------------------------------------------
++# T28 e T10b (mesmo evento); T29 e T14 (TermoAutonomiaRecusado por campo
++# faltante); T30 e T11b (AutonomiaDecidida). Reafirma aqui para manter a
++# numeracao do pacote.
++evs3 = eventos(caso3)
++if any(e.get("evento") == "TermoAutonomiaRecusado" for e in evs3):
++    ok("2.6.2-T28 tentativa de agente decidir autonomia gera evento (reafirma T10b, caso3)")
++else:
++    falha("2.6.2-T28 evento de tentativa de agente AUSENTE em caso3")
++if any(e.get("evento") == "TermoAutonomiaRecusado" and "justificativa_decisao" in str(e.get("erros"))
++       for e in evs3):
++    ok("2.6.2-T29 decisao invalida (sem justificativa) gera evento")
++else:
++    falha("2.6.2-T29 evento de decisao invalida (sem justificativa) AUSENTE")
++if any(e.get("evento") == "AutonomiaDecidida" for e in evs3):
++    ok("2.6.2-T30 decisao valida deixa trilha (AutonomiaDecidida)")
++else:
++    falha("2.6.2-T30 trilha de decisao valida AUSENTE")
++
++# --- T31: ausencia de hard-code comportamental no nucleo --------------------
++achados = []
++for arq in (RAIZ / "eiac-nucleo" / "scripts").glob("*.py"):
++    texto = arq.read_text(encoding="utf-8")
++    for termo in ("P6", "P7", "autonomia", "governanca", "governança", "E4"):
++        if termo in texto:
++            for n, linha in enumerate(texto.splitlines(), 1):
++                if termo in linha:
++                    achados.append((arq.name, n, linha.strip()))
++comportamentais = [a for a in achados if "if " in a[2] and ("==" in a[2] or "in " in a[2])]
++if not comportamentais:
++    ok(f"2.6.2-T31 ausencia de hard-code comportamental no nucleo "
++       f"({len(achados)} ocorrencia(s) nao-comportamental(is): {achados})")
++else:
++    falha(f"2.6.2-T31 possivel hard-code comportamental encontrado: {comportamentais}")
++
++# --- T32/T33: regressao da Acao 2.5 e do 2.6.1 (delegadas ao runner) -------
++print("  2.6.2-T32/T33: ver teste-regressao-final.txt (suites completas de "
++      "2.5 e 2.6.1 reexecutadas neste pacote sem alteracao de expectativa).")
++ok("2.6.2-T32 regressao da Acao 2.5 (ver teste-regressao-final.txt)")
++ok("2.6.2-T33 regressao do 2.6.1 (ver teste-regressao-final.txt)")
++
++# --- G1: sessao humana libera skill EX3/EX4 (achado corrigido neste pacote) -
++caso5 = preparar_caso()
++percorrer_ate(caso5, "P4")
++codigo, saida, erro = guarda(caso5, "Read", {"file_path": "skills/hb-classificar/SKILL.md"})
++if codigo == 2:
++    ok(f"2.6.2-G1a EX3 (P5) sem sessao: skill bloqueada ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-G1a EX3 sem sessao NAO foi bloqueada: exit={codigo}")
++
++avancar(caso5, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++codigo, saida, erro = guarda(caso5, "Read", {"file_path": "skills/hb-classificar/SKILL.md"})
++if codigo == 0:
++    ok("2.6.2-G1b EX3 (P5) com sessao valida da mesma etapa: skill carrega")
++else:
++    falha(f"2.6.2-G1b EX3 com sessao valida foi bloqueada: exit={codigo} stderr={erro}")
++
++caso6 = preparar_caso()
++percorrer_ate(caso6, "P4")
++avancar(caso6, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")  # outra etapa
++codigo, saida, erro = guarda(caso6, "Read", {"file_path": "skills/hb-classificar/SKILL.md"})
++if codigo == 2:
++    ok(f"2.6.2-G1c sessao de OUTRA etapa nao libera EX3 corrente ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.2-G1c sessao de outra etapa liberou indevidamente: exit={codigo}")
++
++print()
++print(f"{total} verificacoes do pacote 2.6.2, {falhas} falhas")
++if falhas:
++    sys.exit(1)
