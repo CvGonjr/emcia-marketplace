@@ -1,0 +1,21 @@
+id: MET-001
+estado: apurada
+piloto_ref: CT-001
+metrica: "Tempo de ciclo de triagem"
+tipo: resultado
+linha_base: "45 minutos"
+linha_base_data: 2026-08-01
+linha_base_procedencia: V
+metodo_apuracao: "Media do tempo entre recepcao e classificacao"
+fonte_dado: "Sistema de gestao de guias"
+periodicidade: mensal
+responsavel_apuracao: "Marina Prado"
+resultado_apurado: "31 minutos"
+resultado_apurado_data: 2026-09-20
+resultado_apurado_procedencia: V
+fatores_externos_declarados: "Nenhum identificado; volume de guias estavel no periodo"
+procedencia: D
+declarado_por: "Celso do Vale"
+registrado_por: "Marina Prado"
+data: 2026-09-19
+versao: 2

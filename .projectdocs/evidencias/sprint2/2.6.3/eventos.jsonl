@@ -1,0 +1,45 @@
+{"evento": "NivelApurado", "data": "2026-09-19T14:13:29", "nivel": "N2", "anterior": null, "autor": "Marina Prado", "eixos": "DAD 4, GOV 5, CRI 7"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:29", "etapa": "F0", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:29", "etapa": "P1", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:29", "etapa": "P1", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:29", "etapa": "P2", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:29", "etapa": "P2", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:29", "etapa": "P3a", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:29", "etapa": "P3a", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:29", "etapa": "P3b", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:30", "etapa": "P3b", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:30", "etapa": "P3d", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:30", "etapa": "P3d", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:30", "etapa": "P4", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:30", "etapa": "P4", "autor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:30", "etapa": "P5", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:30", "etapa": "P5", "autor": "Marina Prado"}
+{"evento": "EspecificacaoOperacionalRegistrada", "data": "2026-09-19T14:13:49", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "proposta", "versao": 1, "ator": "Marina Prado", "validado_por": null}
+{"evento": "EspecificacaoOperacionalValidada", "data": "2026-09-19T14:13:49", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "validado", "versao": 2, "ator": "Marina Prado", "validado_por": "Marina Prado"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:49", "etapa": "P6", "autor": "Marina Prado"}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T14:13:49", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "rascunho", "versao": 1, "ator": "Celso do Vale", "decisor": null}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T14:13:49", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "proposto", "versao": 2, "ator": "Celso do Vale", "decisor": null}
+{"evento": "AutonomiaDecidida", "data": "2026-09-19T14:13:49", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "decidido", "versao": 3, "ator": "Marina Prado", "decisor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:13:49", "etapa": "P7", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:13:49", "etapa": "P7", "autor": "Marina Prado"}
+{"evento": "ConjuntoPilotoRegistrado", "data": "2026-09-19T14:14:07", "arquivo": "registro/piloto/CT-001.yaml", "id": "CT-001", "estado": "rascunho", "versao": 1, "ator": "Celso do Vale", "n_casos": 2}
+{"evento": "ConjuntoPilotoRevisado", "data": "2026-09-19T14:14:07", "arquivo": "registro/piloto/CT-001.yaml", "id": "CT-001", "estado": "revisado", "versao": 2, "ator": "Marina Prado", "n_casos": 2}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T14:14:07", "n": "3", "item": "Casos de teste com saida esperada", "autor": "Marina Prado", "evidencia": "registro/piloto/CT-001.yaml (estado: revisado, 2 casos, 1 celula_critica, revisado_por: Marina Prado)"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:14:07", "etapa": "P8", "autor": "Marina Prado"}
+{"evento": "MetricaRegistrada", "data": "2026-09-19T14:14:23", "arquivo": "registro/metricas/MET-001.yaml", "id": "MET-001", "estado": "planejada", "tipo_metrica": "resultado", "versao": 1, "ator": "Celso do Vale"}
+{"evento": "MetricaApurada", "data": "2026-09-19T14:14:23", "arquivo": "registro/metricas/MET-001.yaml", "id": "MET-001", "estado": "apurada", "tipo_metrica": "resultado", "versao": 2, "ator": "Marina Prado"}
+{"evento": "MetricaApurada", "data": "2026-09-19T14:14:23", "arquivo": "registro/metricas/MET-002.yaml", "id": "MET-002", "estado": "apurada", "tipo_metrica": "uso", "versao": 1, "ator": "Marina Prado"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T14:14:23", "n": "4", "item": "Ao menos uma metrica de resultado", "autor": "Marina Prado", "evidencia": "registro/metricas/MET-001.yaml (tipo: resultado, estado: apurada, 45min -> 31min)"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:14:23", "etapa": "P9", "autor": "Marina Prado"}
+{"evento": "RotinaCalibragemRegistrada", "data": "2026-09-19T14:14:37", "arquivo": "registro/calibragem/CAL-001.yaml", "id": "CAL-001", "responsavel": "Marina Prado", "cadencia": "mensal", "versao": 1, "ator": "Marina Prado"}
+{"evento": "RecusaMaquina", "data": "2026-09-19T14:14:37", "acao_tentada": "registrar_recorrencia", "alvo": "P10", "motivo": "P10 precisa ser encerrada ao menos uma vez antes de registrar recorrencia", "autor": "Marina Prado", "etapa_corrente": "P10"}
+{"evento": "CicloCalibragemRegistrado", "data": "2026-09-19T14:14:37", "arquivo": "registro/calibragem/CAL-001-C01.yaml", "id": "CAL-001-C01", "ciclo": 1, "drift_detectado": false, "decisao": null, "ator": "Marina Prado"}
+{"evento": "RecusaMaquina", "data": "2026-09-19T14:14:37", "acao_tentada": "registrar_recorrencia", "alvo": "P10", "motivo": "P10 precisa ser encerrada ao menos uma vez antes de registrar recorrencia", "autor": "Marina Prado", "etapa_corrente": "P10"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T14:14:48", "etapa": "P10", "autor": "Marina Prado", "participantes": "Marina, Celso"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T14:14:48", "n": "5", "item": "Responsavel nomeado pela recalibragem", "autor": "Marina Prado", "evidencia": "registro/calibragem/CAL-001.yaml (responsavel: Marina Prado, cadencia: mensal, ciente: true)"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T14:14:48", "etapa": "P10", "autor": "Marina Prado"}
+{"evento": "RecorrenciaRegistrada", "data": "2026-09-19T14:14:48", "etapa": "P10", "autor": "Marina Prado", "ciclo": 1, "cadencia": "mensal", "responsavel": "Marina Prado"}
+{"evento": "CicloCalibragemRecusado", "data": "2026-09-19T14:15:07", "arquivo": "registro/calibragem/CAL-001-C02.yaml", "erros": ["declarado_por nao pode ser agente: 'AG-04'", "registrado_por nao pode ser agente: 'AG-04'", "agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar exige ator humano nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5).", "'decisor' nao pode ser agente"], "ator": "AG-04"}
+{"evento": "CicloCalibragemRegistrado", "data": "2026-09-19T14:15:07", "arquivo": "registro/calibragem/CAL-001-C02.yaml", "id": "CAL-001-C02", "ciclo": 2, "drift_detectado": true, "decisao": null, "ator": "AG-04"}
+{"evento": "CicloCalibragemRecusado", "data": "2026-09-19T14:15:07", "arquivo": "registro/calibragem/CAL-001-C02.yaml", "erros": ["ciclo CAL-001-C02.yaml ja registrado -- ciclos anteriores nao sao sobrescritos, use um novo identificador de ciclo"], "ator": "Marina Prado"}
+{"evento": "DecisaoRecalibragemRegistrada", "data": "2026-09-19T14:15:22", "arquivo": "registro/calibragem/CAL-001-C02.yaml", "id": "CAL-001-C02", "ciclo": 2, "drift_detectado": true, "decisao": "recalibrar", "ator": "Marina Prado"}

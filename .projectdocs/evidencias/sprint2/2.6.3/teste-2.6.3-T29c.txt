@@ -1,0 +1,31 @@
+PACOTE: 2.6.3
+TESTE: 2.6.3-T29c
+REQUISITO: ver pacote 2.6.3 (P8/P9/P10), secoes 47-52 do prompt
+DATA/HORA: 2026-09-19T14:18:41
+HEAD INICIAL: 3431e6fd6dbcbaa24112e2d99c033fcd4d672ac8
+COMANDO: python3 testes/campo_2_6_3.py
+EXIT CODE: 0
+
+PRECONDICAO: caso preparado via preparar_caso()/percorrer_ate(), conforme testes/campo_2_6_3.py
+
+ATOR:
+  tipo: ver descricao abaixo (agente ou pessoa nomeada, conforme o teste)
+  id: ver descricao abaixo
+
+ENTRADA: ver descricao abaixo
+
+RESULTADO ESPERADO: ver descricao abaixo (par negativo/positivo conforme secao 55 do pacote)
+
+RESULTADO OBTIDO: ciclo ja decidido nao aceita segunda decisao (sobrescrita) (ciclo CAL-001-C01.yaml ja possui decisao registrada -- ciclos decididos nao sao sobrescritos, use um novo identificador de ciclo)
+
+ARTEFATO: eiac-campo/scripts/piloto.py, eiac-campo/scripts/metrica.py, eiac-campo/scripts/calibragem.py (conforme o teste)
+
+REFERENCIAS: EMCIA-CAM-01 3.4/3.5/3.6, Anexos B/C/D; EMCIA-MET-01 3.4.8-3.4.10; EMCIA-CAT-01 3.4.5
+
+EVENTO: ver eventos.jsonl / teste-2.6.3-saida-completa.txt
+
+STDOUT: ok    2.6.3-T29c ciclo ja decidido nao aceita segunda decisao (sobrescrita) (ciclo CAL-001-C01.yaml ja possui decisao registrada -- ciclos decididos nao sao sobrescritos, use um novo identificador de ciclo)
+
+STDERR: (ver teste-2.6.3-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

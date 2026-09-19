@@ -1,0 +1,61 @@
+== testes 2.6.3 -- P8, P9 e P10
+  ok    2.6.3-T02 P8 sem P7 encerrado (sessao ausente) recusado (P7 e decisao_humana_registrada e nao delegavel. Registre a sessao antes de encerrar.)
+  ok    2.6.3-T01 P8 com dependencias validas (P7 encerrado corretamente): PASS
+  ok    2.6.3-T03 caso de teste completo (Anexo B) aceito
+  ok    2.6.3-T04 caso sem saida esperada recusado (caso #0 (CT-001-01) sem campos obrigatorios: ['saida_esperada'])
+  ok    2.6.3-T05a saida obtida antes de esperado_definido_em recusada (caso CT-001-01: 'obtido_em' anterior a 'esperado_definido_em' -- saida esperada nao pode ter sido escrita depois da execucao)
+  ok    2.6.3-T05 saida esperada registrada antes da execucao (esperado_definido_em < obtido_em): PASS
+  ok    2.6.3-T06 comparacao esperado x obtido produz resultado deterministico
+  ok    2.6.3-T07 caso com resultado diferente do esperado: FAIL do caso, saida esperada preservada
+  ok    2.6.3-T08 tentativa de forjar 'resultado' aderente sem saida bater: RECUSA (caso CT-001-02: 'resultado' declarado ('aderente') nao corresponde a comparacao determinística esperado x obtido ('divergente'). O resultado e calculado, nunca escrito por decisao manual.)
+  ok    2.6.3-T09 casos com saida esperada produzem evidencia rastreavel para o inegociavel 3 (sem marcar booleano arbitrario)
+  ok    2.6.3-T10 P9 com P8 revisado e baseline validos: PASS
+  ok    2.6.3-T11 P9 sem linha de base recusado explicitamente (campo obrigatorio ausente: linha_base_data)
+  ok    2.6.3-T12 metrica de uso aceita como metrica (mas nao satisfaz sozinha o inegociavel 4)
+  ok    2.6.3-T13 metrica de resultado valida gravada com tipo='resultado': PASS
+  ok    2.6.3-T14 nota: 'somente metricas de uso' produz evidencia insuficiente para o inegociavel 4 -- verificacao semantica final do portao pertence ao 2.6.5; este pacote garante que o campo 'tipo' e preservado e distinguivel (T12/T13)
+  ok    2.6.3-T15 pelo menos uma metrica de resultado disponivel (MET-001, tipo=resultado, estado=apurada): evidencia disponivel para o inegociavel 4
+  ok    2.6.3-T16 calculo baseline x piloto presente: 45 minutos -> 32 minutos
+  ok    2.6.3-T17 baseline inventada apos o resultado (data posterior): RECUSA (linha_base_data e posterior a resultado_apurado_data -- a linha de base nao pode ter sido criada depois do resultado que ela deveria comparar)
+  ok    2.6.3-T18 resultado observado com fatores externos declarados explicitamente (sem inferencia causal automatica)
+  ok    2.6.3-T18b apuracao sem declaracao de fatores externos recusada (estado 'apurada' exige 'fatores_externos_declarados' preenchido (mesmo que seja 'nenhum identificado') -- separar efeito da solucao de fator externo e julgamento que precisa ficar registrado, nao implicito)
+  ok    2.6.3-T19 P10 sem responsavel nominal ('equipe') recusado ('equipe' nao e responsavel nominal aceitavel (area/equipe generica ou agente nao substitui pessoa nomeada))
+  ok    2.6.3-T20 P10 com responsavel nominal ('Marina Prado'): PASS
+  ok    2.6.3-T21 P10 sem cadencia recusado (campo obrigatorio ausente: cadencia)
+  ok    2.6.3-T22 P10 com cadencia valida ('mensal') aceito (reafirma T20)
+  ok    2.6.3-T23 primeiro ciclo de P10 (sem drift) persistido
+  ok    2.6.3-T24 segundo ciclo (com drift) nao sobrescreve o primeiro
+  ok    2.6.3-T25 historico de ciclos recuperavel (CAL-001-C01 e CAL-001-C02 preservados)
+  ok    2.6.3-T26 P10 permanece recorrente e nao aceita sobrescrever ciclo existente (ciclo CAL-001-C01.yaml ja registrado sem drift -- ciclos anteriores nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T27 ciclo sem drift e caminho positivo legitimo (manter estado atual)
+  ok    2.6.3-T28 agente detecta e descreve drift (ciclo 2)
+  ok    2.6.3-T29 agente registra recomendacao sem decidir (campo 'decisao' ausente)
+  ok    2.6.3-T29b ciclo pendente (drift sem decisao) complementado com a decisao humana no mesmo identificador: PASS
+  ok    2.6.3-T29c ciclo ja decidido nao aceita segunda decisao (sobrescrita) (ciclo CAL-001-C01.yaml ja possui decisao registrada -- ciclos decididos nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T30 agente tenta decidir recalibragem: RECUSA (declarado_por nao pode ser agente: 'AG-04')
+  ok    2.6.3-T30b tentativa de agente decidir gera evento CicloCalibragemRecusado
+  ok    2.6.3-T31 humano decide recalibragem: PASS
+  ok    2.6.3-T31b evento DecisaoRecalibragemRegistrada presente
+  ok    2.6.3-T32 decisao 'manter' fora do enum documental (recalibrar/expandir/descontinuar) e recusada, nao inventada: RECUSA (valor invalido em decisao: esperado um de ['recalibrar', 'expandir', 'descontinuar'])
+  ok    2.6.3-T33 decisao humana possui justificativa, decisor e data (rastreavel)
+  ok    2.6.3-T34 drift sem decisao humana permanece pendente (nao tratado como resolvido)
+  ok    2.6.3-T35 booleano/evidencia vazia nao satisfaz o inegociavel 3 (inegociavel 3 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T36 casos com saida esperada (CT-001.yaml, estado revisado) produzem evidencia real para o inegociavel 3 (reafirma T09)
+  ok    2.6.3-T37 booleano/evidencia vazia nao satisfaz o inegociavel 4 (inegociavel 4 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T38 metrica de resultado apurada produz evidencia real para o inegociavel 4
+  ok    2.6.3-T39 booleano/evidencia vazia nao satisfaz o inegociavel 5 (inegociavel 5 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T40 responsavel nominal + cadencia produzem evidencia real para o inegociavel 5
+  ok    2.6.3-T41 P9 referencia resultados validos de P8 (piloto_ref: CT-001)
+  ok    2.6.3-T42 P10 consegue utilizar indicadores de P9 (metricas_ref: [MET-001])
+  ok    2.6.3-T43 P8/P9/P10 geram insumos rastreaveis para E5 (CT-001, MET-001, CAL-001 presentes)
+  ok    2.6.3-T44 E5 nao emite automaticamente neste pacote (E5 exige as etapas ['P10'] encerradas)
+  ok    2.6.3-G5a escrita direta em registro/piloto/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.3-G5b escrita direta em registro/metricas/ recusada pela guarda
+  ok    2.6.3-G5c escrita direta em registro/calibragem/ recusada pela guarda
+  ok    2.6.3-T45 ausencia de hard-code comportamental no nucleo (3 ocorrencia(s) nao-comportamental(is): [('avancar.py', 7, 'python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"'), ('avancar.py', 140, "O baseline mostrou que uma flag manual (estado['inegociaveis'][n] = true)"), ('avancar.py', 147, 'baseline, termo de autonomia etc.) — isso e decisao humana/metodologica')])
+  2.6.3-T46/T47/T48/T49: ver teste-regressao-final.txt (suites completas da Acao 2.5, do 2.6.1 e de P6/P7 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.3-T46 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.3-T47 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.3-T48 regressao de P6/P7 (ver teste-regressao-final.txt)
+
+57 verificacoes do pacote 2.6.3, 0 falhas

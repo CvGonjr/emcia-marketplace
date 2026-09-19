@@ -1,0 +1,41 @@
+id: CT-001
+estado: revisado
+modo: assistido
+duracao: "4 semanas"
+plano_reversao: "Reverter para triagem manual em caso de falha critica"
+criterio_aprovacao_escala: "95% de acerto nos casos criticos, sem falha impeditiva"
+criterio_aprovacao_escala_definido_em: 2026-09-10
+revisado_por: "Marina Prado"
+data_revisao: 2026-09-18
+procedencia: D
+declarado_por: "Celso do Vale"
+registrado_por: "Marina Prado"
+data: 2026-09-18
+versao: 2
+casos:
+  - identificador: CT-001-01
+    origem: "RN-003"
+    entrada: "Guia com sintoma grave e historico limpo"
+    saida_esperada: "Prioridade alta"
+    saida_obtida: "Prioridade alta"
+    resultado: aderente
+    obtido_em: 2026-09-19
+    criterio_aprovacao: "Classificacao igual a saida esperada"
+    categoria: celula_critica
+    revisor: "Marina Prado"
+    data_revisao: 2026-09-11
+    esperado_definido_em: 2026-09-10
+    esperado_definido_por: "Celso do Vale"
+  - identificador: CT-001-02
+    origem: "RN-005"
+    entrada: "Guia comum, sem sintomas de risco"
+    saida_esperada: "Prioridade normal"
+    saida_obtida: "Prioridade normal"
+    resultado: aderente
+    obtido_em: 2026-09-19
+    criterio_aprovacao: "Classificacao igual a saida esperada"
+    categoria: comum
+    revisor: "Marina Prado"
+    data_revisao: 2026-09-11
+    esperado_definido_em: 2026-09-10
+    esperado_definido_por: "Celso do Vale"

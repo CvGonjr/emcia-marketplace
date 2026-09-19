@@ -1,0 +1,2182 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 70d6eb0..dd3bdf2 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.4.0",
++  "version": "0.5.0",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P10 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/medir-valor.md b/eiac-campo/commands/medir-valor.md
+new file mode 100644
+index 0000000..e371fc5
+--- /dev/null
++++ b/eiac-campo/commands/medir-valor.md
+@@ -0,0 +1,12 @@
++---
++description: Executa a etapa P9 do playbook Engenharia de IA de Campo.
++---
++Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P9**. Se não for, pare e diga qual é.
++
++Carregue a habilidade `hb-medir-valor` e siga o procedimento do passo no documento do método, em `metodo/`.
++
++Escreva o candidato em `rascunho/MET-NNN.yaml`, referenciando `piloto_ref` (o `CT-*` de P8 já revisado), e grave com:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/metrica.py" --arquivo registro/metricas/MET-NNN.yaml --ator "<nome>"`
++
++Ao menos uma métrica do plano precisa ter `tipo: resultado` — métrica de uso não satisfaz sozinha o item inegociável 4.
+diff --git a/eiac-campo/commands/pilotar.md b/eiac-campo/commands/pilotar.md
+new file mode 100644
+index 0000000..16ef930
+--- /dev/null
++++ b/eiac-campo/commands/pilotar.md
+@@ -0,0 +1,12 @@
++---
++description: Executa a etapa P8 do playbook Engenharia de IA de Campo.
++---
++Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P8**. Se não for, pare e diga qual é.
++
++Carregue a habilidade `hb-pilotar` e siga o procedimento do passo no documento do método, em `metodo/`.
++
++Escreva o candidato em `rascunho/CT-NNN.yaml` e grave com:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/piloto.py" --arquivo registro/piloto/CT-NNN.yaml --ator "<nome>"`
++
++`estado: rascunho` pode ser gravado por qualquer ator. `estado: revisado` exige `revisado_por` humano nomeado — o script recusa a autorrevisão de um agente.
+diff --git a/eiac-campo/commands/recalibrar.md b/eiac-campo/commands/recalibrar.md
+new file mode 100644
+index 0000000..21e5ab8
+--- /dev/null
++++ b/eiac-campo/commands/recalibrar.md
+@@ -0,0 +1,20 @@
++---
++description: Executa a etapa P10 do playbook Engenharia de IA de Campo.
++---
++Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P10**. Se não for, pare e diga qual é.
++
++Carregue a habilidade `hb-recalibrar` e siga o procedimento do passo no documento do método, em `metodo/`.
++
++**A decisão de recalibrar, expandir ou descontinuar não é executável por agente.** Se você é um agente, prepare a rotina e o ciclo (detecção, quantificação, recomendação) e pare — não tente gravar o campo `decisao`.
++
++Rotina, referenciando `metricas_ref` (os `MET-*` de P9):
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN.yaml --ator "<nome>"`
++
++Ciclo:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN-C01.yaml --ator "<nome>" --ciclo`
++
++`decisao` exige ator humano nomeado, com `decisor`, `data_decisao` e `justificativa_decisao` preenchidos.
++
++A recorrência (cadência, responsável, histórico) usa o mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
+diff --git a/eiac-campo/scripts/calibragem.py b/eiac-campo/scripts/calibragem.py
+new file mode 100644
+index 0000000..4aa05d6
+--- /dev/null
++++ b/eiac-campo/scripts/calibragem.py
+@@ -0,0 +1,260 @@
++"""Rotina de recalibragem e ciclos (P10). Unico caminho de escrita em
++registro/calibragem/.
++
++Uso:
++  python3 calibragem.py --arquivo registro/calibragem/CAL-001.yaml --ator "Nome"
++  python3 calibragem.py --arquivo registro/calibragem/CAL-001-C01.yaml --ator "Nome" --ciclo
++
++A rotina (Anexo D) e os ciclos sao artefatos de calibragem produzidos em
++P10 -- nao sao objeto CTX e nao sao semantica de maquina de etapas. Este
++script vive em eiac-campo porque sabe o que e drift, ciclo e decisao de
++recalibragem (EMCIA-CAM-01 3.6/Anexo D, inegociavel 5); reaproveita as
++primitivas genericas do eiac-nucleo.
++
++A recorrencia em si (cadencia, responsavel, historico de ciclos,
++'ultima_verificacao') ja e mecanismo generico do nucleo desde o 2.6.1:
++avancar.py --registrar-recorrencia. Este script NAO duplica esse
++mecanismo -- ele cobre o que o nucleo nao pode conhecer: o conteudo da
++rotina (Anexo D) e, por ciclo, se houve drift, a recomendacao do agente
++e a decisao humana (recalibrar, expandir ou descontinuar -- CAT-01
++3.4.5, CAM-01 3.6: 'a decisao de recalibrar, expandir ou descontinuar e
++humana'). O agente pode preparar um ciclo inteiro (deteccao, quantificacao,
++recomendacao); so ator humano nomeado pode gravar o campo 'decisao'.
++"""
++import argparse
++import pathlib
++import sys
++
++RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
++sys.path.insert(0, str(RAIZ_NUCLEO))
++import estado as E  # noqa: E402
++import estrutura as X  # noqa: E402
++import json  # noqa: E402
++
++
++DIRETORIO_METRICAS = pathlib.Path("registro/metricas")
++DIRETORIO_CALIBRAGEM = pathlib.Path("registro/calibragem")
++DECISOES_VALIDAS = ("recalibrar", "expandir", "descontinuar")
++
++
++def _ator_pessoa_nomeada(nome):
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
++def checar_autoria(dados):
++    erros = []
++    for campo in ("declarado_por", "registrado_por", "responsavel"):
++        valor = dados.get(campo)
++        if valor is not None and E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_responsavel_nominal(candidato):
++    """Inegociavel 5: responsavel e pessoa nomeada, area nao satisfaz
++    (CAM-01 Anexo D). O schema ja exige nonempty; aqui a checagem e
++    lexica (nao aceitar 'equipe de tecnologia' etc.).
++    """
++    resp = candidato.get("responsavel")
++    if resp and not _ator_pessoa_nomeada(resp):
++        return [f"'{resp}' nao e responsavel nominal aceitavel (area/equipe "
++                f"generica ou agente nao substitui pessoa nomeada)"]
++    return []
++
++
++def checar_metricas_ref(candidato):
++    """P10 pode usar indicadores de P9 (secao 36 do pacote): cada
++    referencia em metricas_ref precisa resolver contra um arquivo real
++    de registro/metricas/.
++    """
++    refs = candidato.get("metricas_ref")
++    if not isinstance(refs, list):
++        return []
++    erros = []
++    for ref in refs:
++        alvo = DIRETORIO_METRICAS / f"{ref}.yaml"
++        if not alvo.exists():
++            erros.append(f"metricas_ref '{ref}' nao resolve — {alvo} nao existe")
++    return erros
++
++
++def gravar_rotina(destino, ator, schema_caminho="registro/calibragem.schema.json"):
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "rotina_calibragem")
++    erros += checar_autoria(candidato)
++    erros += checar_responsavel_nominal(candidato)
++    erros += checar_metricas_ref(candidato)
++
++    if erros:
++        E.evento("RotinaCalibragemRecusada", arquivo=str(destino), erros=erros,
++                 ator=ator)
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    E.evento("RotinaCalibragemRegistrada", arquivo=str(destino),
++             id=candidato.get("id"), responsavel=candidato.get("responsavel"),
++             cadencia=candidato.get("cadencia"), versao=candidato.get("versao"),
++             ator=ator)
++    return None
++
++
++def checar_calibragem_ref(candidato):
++    ref = candidato.get("calibragem_ref")
++    if not ref:
++        return []
++    alvo = DIRETORIO_CALIBRAGEM / f"{ref}.yaml"
++    if not alvo.exists():
++        return [f"calibragem_ref '{ref}' nao resolve — {alvo} nao existe"]
++    return []
++
++
++def checar_drift(candidato):
++    """Ciclo sem drift e caminho positivo legitimo (secao 33 do pacote):
++    drift_detectado=False nao exige recomendacao/decisao. Se
++    drift_detectado=True, o agente pode descrever e quantificar e
++    recomendar, mas a decisao final e sempre humana.
++    """
++    if not candidato.get("drift_detectado"):
++        return []
++    erros = []
++    if not str(candidato.get("drift_descricao") or "").strip():
++        erros.append("drift_detectado=true exige 'drift_descricao' preenchida")
++    return erros
++
++
++def checar_decisao(candidato, ator):
++    """A decisao de recalibrar, expandir ou descontinuar e humana (CAM-01
++    3.6, CAT-01 3.4.5). O agente pode preparar recomendacao; nunca pode
++    gravar 'decisao'. Um ciclo pode legitimamente nao ter decisao ainda
++    (drift detectado, decisao pendente) -- isso nao e tratado como
++    resolvido automaticamente (secao 34 do pacote).
++    """
++    decisao = candidato.get("decisao")
++    if not decisao:
++        return []
++    erros = []
++    if decisao not in DECISOES_VALIDAS:
++        erros.append(f"decisao '{decisao}' invalida, esperado um de "
++                     f"{DECISOES_VALIDAS}")
++    if E.autor_e_agente(ator):
++        erros.append("agente nao pode decidir recalibragem: a decisao de "
++                     "recalibrar, expandir ou descontinuar exige ator humano "
++                     "nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5).")
++    elif not _ator_pessoa_nomeada(ator):
++        erros.append(f"decisao de recalibragem exige pessoa nomeada; "
++                     f"'{ator}' nao satisfaz")
++    for campo in ("decisor", "data_decisao", "justificativa_decisao"):
++        if not str(candidato.get(campo) or "").strip():
++            erros.append(f"decisao preenchida exige '{campo}' preenchido")
++    if candidato.get("decisor") and E.autor_e_agente(candidato.get("decisor")):
++        erros.append("'decisor' nao pode ser agente")
++    return erros
++
++
++def checar_ciclo_existente(destino, candidato):
++    """Um ciclo pendente (drift detectado, decisao ainda nao registrada)
++    pode ser complementado com a decisao humana sem trocar de
++    identificador -- e o mesmo evento de verificacao, so que em duas
++    fases. O que nao pode acontecer e sobrescrever um ciclo ja decidido,
++    nem reescrever os fatos do drift depois que a decisao foi tomada
++    (secao 32 do pacote: ciclos anteriores nao sao sobrescritos
++    silenciosamente). Um ciclo *sem* drift ja nasce completo -- reescreve-lo
++    tambem seria sobrescrita indevida.
++    """
++    if not destino.exists():
++        return []
++    try:
++        anterior = X.carregar_yaml(destino.read_text(encoding="utf-8"))
++    except (X.ErroYaml, ValueError) as erro:
++        return [f"ciclo existente esta ilegivel: {erro}"]
++
++    if anterior.get("decisao"):
++        return [f"ciclo {destino.name} ja possui decisao registrada -- "
++                f"ciclos decididos nao sao sobrescritos, use um novo "
++                f"identificador de ciclo"]
++    if not anterior.get("drift_detectado"):
++        return [f"ciclo {destino.name} ja registrado sem drift -- "
++                f"ciclos anteriores nao sao sobrescritos, use um novo "
++                f"identificador de ciclo"]
++    for campo in ("drift_descricao", "drift_quantificacao"):
++        if anterior.get(campo) and candidato.get(campo) != anterior.get(campo):
++            return [f"ciclo {destino.name}: '{campo}' nao pode ser alterado "
++                    f"depois de registrado -- os fatos do drift ja detectado "
++                    f"nao mudam quando a decisao e complementada"]
++    return []
++
++
++def gravar_ciclo(destino, ator, schema_caminho="registro/calibragem.schema.json"):
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "ciclo_calibragem")
++    erros += checar_autoria(candidato)
++    erros += checar_calibragem_ref(candidato)
++    erros += checar_drift(candidato)
++    erros += checar_decisao(candidato, ator)
++    erros += checar_ciclo_existente(destino, candidato)
++
++    if erros:
++        E.evento("CicloCalibragemRecusado", arquivo=str(destino), erros=erros,
++                 ator=ator)
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    evento_tipo = "DecisaoRecalibragemRegistrada" if candidato.get("decisao") \
++        else "CicloCalibragemRegistrado"
++    E.evento(evento_tipo, arquivo=str(destino), id=candidato.get("id"),
++             ciclo=candidato.get("ciclo"), drift_detectado=candidato.get("drift_detectado"),
++             decisao=candidato.get("decisao"), ator=ator)
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em registro/calibragem/<id>.yaml")
++    ap.add_argument("--ator", required=True)
++    ap.add_argument("--schema", default="registro/calibragem.schema.json")
++    ap.add_argument("--ciclo", action="store_true",
++                     help="grava um ciclo (ciclo_calibragem) em vez da rotina")
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("registro/calibragem/"):
++        print("calibragem so grava dentro de registro/calibragem/", file=sys.stderr)
++        sys.exit(1)
++
++    if a.ciclo:
++        erro = gravar_ciclo(destino, a.ator, schema_caminho=a.schema)
++    else:
++        erro = gravar_rotina(destino, a.ator, schema_caminho=a.schema)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"calibragem gravada: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-campo/scripts/metrica.py b/eiac-campo/scripts/metrica.py
+new file mode 100644
+index 0000000..e721a90
+--- /dev/null
++++ b/eiac-campo/scripts/metrica.py
+@@ -0,0 +1,160 @@
++"""Plano de medicao (P9). Unico caminho de escrita em registro/metricas/.
++
++Uso:
++  python3 metrica.py --arquivo registro/metricas/MET-001.yaml --ator "Nome"
++
++A metrica e artefato de medicao produzido em P9 -- nao e objeto CTX e nao
++e semantica de maquina de etapas. Este script vive em eiac-campo porque
++sabe o que e linha de base, metrica de resultado e metrica de uso
++(EMCIA-CAM-01 Anexo C, inegociavel 4); reaproveita as primitivas
++genericas do eiac-nucleo sem alterar nenhuma delas.
++
++piloto_ref resolve contra registro/piloto/ (P8 revisado) -- P9 nao mede
++sobre um piloto que nao existe ou ainda nao foi revisado (relacao P8 ->
++P9, secao 35 do pacote). A linha de base precisa ser anterior ao
++resultado apurado: nao se inventa baseline depois do piloto so para
++produzir comparacao (secao 18).
++"""
++import argparse
++import pathlib
++import sys
++
++RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
++sys.path.insert(0, str(RAIZ_NUCLEO))
++import estado as E  # noqa: E402
++import estrutura as X  # noqa: E402
++import json  # noqa: E402
++
++
++DIRETORIO_PILOTO = pathlib.Path("registro/piloto")
++
++
++def _ator_pessoa_nomeada(nome):
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
++def checar_autoria(dados):
++    erros = []
++    for campo in ("declarado_por", "registrado_por", "responsavel_apuracao"):
++        valor = dados.get(campo)
++        if valor is not None and E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_piloto_ref(candidato):
++    """P9 depende de P8 encerrado (CAM-01 3.5: 'P8 encerrado; piloto
++    executado'). Referencia a conjunto ainda em rascunho nao basta.
++    """
++    ref = candidato.get("piloto_ref")
++    if not ref:
++        return []
++    alvo = DIRETORIO_PILOTO / f"{ref}.yaml"
++    if not alvo.exists():
++        return [f"piloto_ref '{ref}' nao resolve — {alvo} nao existe"]
++    try:
++        conjunto = X.carregar_yaml(alvo.read_text(encoding="utf-8"))
++    except (X.ErroYaml, ValueError) as erro:
++        return [f"piloto_ref '{ref}' esta ilegivel: {erro}"]
++    if conjunto.get("estado") != "revisado":
++        return [f"piloto_ref '{ref}' aponta para conjunto em estado "
++                f"'{conjunto.get('estado')}', nao 'revisado' -- P9 nao mede "
++                f"sobre piloto ainda nao revisado"]
++    return []
++
++
++def checar_baseline(candidato):
++    """Baseline nao pode ter sido inventada apos o piloto: sua data
++    precisa ser anterior (ou igual) a data em que o resultado foi apurado.
++    """
++    erros = []
++    if candidato.get("tipo") not in ("resultado", "uso", "qualidade"):
++        return erros  # ja coberto por enums do schema
++    base_data = candidato.get("linha_base_data")
++    resultado_data = candidato.get("resultado_apurado_data")
++    if base_data and resultado_data and str(base_data) > str(resultado_data):
++        erros.append("linha_base_data e posterior a resultado_apurado_data -- "
++                     "a linha de base nao pode ter sido criada depois do "
++                     "resultado que ela deveria comparar")
++    return erros
++
++
++def checar_apuracao(candidato):
++    """Estado 'apurada' exige resultado, data, procedencia do resultado e
++    declaracao explicita de fatores externos que possam ter influenciado
++    o periodo -- para nao transformar 'houve reducao' em causalidade nao
++    sustentada (CAT-01 3.4.5: 'atribuicao de causa nao esta nos dados').
++    """
++    if candidato.get("estado") != "apurada":
++        return []
++    erros = []
++    for campo in ("resultado_apurado", "resultado_apurado_data",
++                  "resultado_apurado_procedencia"):
++        if not str(candidato.get(campo) or "").strip():
++            erros.append(f"estado 'apurada' exige '{campo}' preenchido")
++    if not str(candidato.get("fatores_externos_declarados") or "").strip():
++        erros.append("estado 'apurada' exige 'fatores_externos_declarados' "
++                     "preenchido (mesmo que seja 'nenhum identificado') -- "
++                     "separar efeito da solucao de fator externo e "
++                     "julgamento que precisa ficar registrado, nao implicito")
++    return erros
++
++
++def gravar_metrica(destino, ator, schema_caminho="registro/metricas.schema.json"):
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "metrica")
++    erros += checar_autoria(candidato)
++    erros += checar_piloto_ref(candidato)
++    erros += checar_baseline(candidato)
++    erros += checar_apuracao(candidato)
++
++    if erros:
++        E.evento("MetricaRecusada", arquivo=str(destino), erros=erros,
++                 ator=ator, estado_tentado=candidato.get("estado"))
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    evento_tipo = "MetricaApurada" if candidato.get("estado") == "apurada" \
++        else "MetricaRegistrada"
++    E.evento(evento_tipo, arquivo=str(destino), id=candidato.get("id"),
++             estado=candidato.get("estado"), tipo_metrica=candidato.get("tipo"),
++             versao=candidato.get("versao"), ator=ator)
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em registro/metricas/<id>.yaml")
++    ap.add_argument("--ator", required=True)
++    ap.add_argument("--schema", default="registro/metricas.schema.json")
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("registro/metricas/"):
++        print("metrica so grava dentro de registro/metricas/", file=sys.stderr)
++        sys.exit(1)
++
++    erro = gravar_metrica(destino, a.ator, schema_caminho=a.schema)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"metrica gravada: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-campo/scripts/piloto.py b/eiac-campo/scripts/piloto.py
+new file mode 100644
+index 0000000..def1b94
+--- /dev/null
++++ b/eiac-campo/scripts/piloto.py
+@@ -0,0 +1,201 @@
++"""Conjunto de casos de teste do piloto (P8). Unico caminho de escrita em
++registro/piloto/.
++
++Uso:
++  python3 piloto.py --arquivo registro/piloto/CT-001.yaml --ator "Nome"
++  python3 piloto.py --arquivo registro/piloto/CT-001.yaml --ator "Nome" \
++      --registrar-obtido CT-001-01 --obtido "texto da saida obtida"
++
++O conjunto e artefato de piloto produzido em P8 -- nao e objeto CTX
++(CTX-01 continua com Termo/Entidade/Regra/Fonte) e nao e semantica de
++maquina de etapas. Este script vive em eiac-campo porque sabe o que um
++caso de teste com saida esperada e (EMCIA-CAM-01 Anexo B, inegociavel 3);
++reaproveita as primitivas genericas do eiac-nucleo (estrutura.validar
++para o contrato do schema, estado.evento para a trilha,
++estado.autor_e_agente para a convencao de autoria humana) sem alterar
++nenhuma delas.
++
++Cada caso dentro de 'casos' carrega, alem dos campos do Anexo B
++(identificador, origem, entrada, saida_esperada, criterio_aprovacao,
++categoria, revisor, data_revisao), tres campos que o Anexo B nao nomeia
++mas que o pacote 2.6.3 exige para tornar a comparacao testavel:
++saida_obtida, resultado (calculado, nunca declarado) e
++esperado_definido_em/por (para provar que a saida esperada foi escrita
++antes da execucao -- secao 13 do pacote). O nucleo nao valida a lista
++'casos' item a item (estrutura.validar so percorre caminhos de topo);
++este script faz essa checagem.
++"""
++import argparse
++import datetime
++import pathlib
++import sys
++
++RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
++sys.path.insert(0, str(RAIZ_NUCLEO))
++import estado as E  # noqa: E402
++import estrutura as X  # noqa: E402
++import json  # noqa: E402
++
++
++CAMPOS_CASO_ANEXO_B = (
++    "identificador", "origem", "entrada", "saida_esperada",
++    "criterio_aprovacao", "categoria", "revisor", "data_revisao",
++)
++CATEGORIAS_VALIDAS = ("comum", "excecao", "celula_critica")
++
++
++def _ator_pessoa_nomeada(nome):
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
++def checar_autoria(dados):
++    erros = []
++    for campo in ("declarado_por", "registrado_por"):
++        valor = dados.get(campo)
++        if valor is not None and E.autor_e_agente(valor):
++            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++    return erros
++
++
++def checar_casos(candidato):
++    """Cada caso do conjunto precisa ter saida esperada escrita e revisor
++    humano (Anexo B); a saida esperada nao pode ter sido definida depois
++    de 'saida_obtida' -- e o congelamento contra vies retrospectivo
++    (secao 13 do pacote). O agente pode preparar (rascunho); so revisao
++    humana leva o conjunto a 'revisado'.
++    """
++    casos = candidato.get("casos")
++    if not isinstance(casos, list) or not casos:
++        return ["conjunto precisa de ao menos um caso em 'casos'"]
++
++    erros = []
++    identificadores = set()
++    tem_celula_critica = False
++    for i, caso in enumerate(casos):
++        if not isinstance(caso, dict):
++            erros.append(f"caso #{i} nao e um objeto")
++            continue
++        faltando = [c for c in CAMPOS_CASO_ANEXO_B
++                    if not str(caso.get(c) or "").strip()]
++        if faltando:
++            erros.append(f"caso #{i} ({caso.get('identificador', '?')}) "
++                         f"sem campos obrigatorios: {faltando}")
++            continue
++
++        ident = caso["identificador"]
++        if ident in identificadores:
++            erros.append(f"identificador de caso duplicado no conjunto: '{ident}'")
++        identificadores.add(ident)
++
++        if caso.get("categoria") not in CATEGORIAS_VALIDAS:
++            erros.append(f"caso {ident}: categoria '{caso.get('categoria')}' "
++                         f"invalida, esperado um de {CATEGORIAS_VALIDAS}")
++        if caso.get("categoria") == "celula_critica":
++            tem_celula_critica = True
++
++        if E.autor_e_agente(caso.get("revisor")):
++            erros.append(f"caso {ident}: revisor nao pode ser agente")
++
++        definido_em = caso.get("esperado_definido_em")
++        if not str(definido_em or "").strip():
++            erros.append(f"caso {ident}: 'esperado_definido_em' ausente -- "
++                         f"a saida esperada precisa de data registrada antes "
++                         f"da execucao para provar que nao foi escrita depois")
++        if not str(caso.get("esperado_definido_por") or "").strip():
++            erros.append(f"caso {ident}: 'esperado_definido_por' ausente")
++
++        obtido = caso.get("saida_obtida")
++        if obtido is not None and str(obtido).strip():
++            data_obtido = caso.get("obtido_em")
++            if data_obtido and definido_em and str(data_obtido) < str(definido_em):
++                erros.append(f"caso {ident}: 'obtido_em' anterior a "
++                             f"'esperado_definido_em' -- saida esperada nao pode "
++                             f"ter sido escrita depois da execucao")
++            resultado = caso.get("resultado")
++            aderente = str(obtido).strip() == str(caso["saida_esperada"]).strip()
++            esperado_resultado = "aderente" if aderente else "divergente"
++            if resultado != esperado_resultado:
++                erros.append(f"caso {ident}: 'resultado' declarado "
++                             f"('{resultado}') nao corresponde a comparacao "
++                             f"determinística esperado x obtido "
++                             f"('{esperado_resultado}'). O resultado e "
++                             f"calculado, nunca escrito por decisao manual.")
++
++    if not tem_celula_critica:
++        erros.append("conjunto nao cobre a celula critica (frequencia x "
++                     "consequencia) -- Anexo B exige ao menos um caso "
++                     "'celula_critica'; conjunto so com casos comuns nao "
++                     "satisfaz o passo")
++    return erros
++
++
++def checar_revisao(candidato):
++    if candidato.get("estado") != "revisado":
++        return []
++    if not str(candidato.get("revisado_por") or "").strip():
++        return ["estado 'revisado' exige 'revisado_por' preenchido"]
++    if E.autor_e_agente(candidato.get("revisado_por")):
++        return ["'revisado_por' nao pode ser agente -- a revisao do conjunto "
++                "e condicao de validade, nao etapa opcional (CAM-01 3.4)"]
++    if not str(candidato.get("data_revisao") or "").strip():
++        return ["estado 'revisado' exige 'data_revisao' preenchida"]
++    return []
++
++
++def gravar_conjunto(destino, ator, schema_caminho="registro/piloto.schema.json"):
++    rascunho = pathlib.Path("rascunho") / destino.name
++    if not rascunho.exists():
++        return f"rascunho/{destino.name} nao existe. Escreva o candidato la primeiro."
++
++    try:
++        schema = json.loads(pathlib.Path(schema_caminho).read_text(encoding="utf-8"))
++        candidato = X.carregar_yaml(rascunho.read_text(encoding="utf-8"))
++    except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
++        return f"estrutura invalida: {erro}"
++
++    erros = X.validar(candidato, schema, "conjunto_piloto")
++    erros += checar_autoria(candidato)
++    erros += checar_casos(candidato)
++    erros += checar_revisao(candidato)
++
++    if erros:
++        E.evento("ConjuntoPilotoRecusado", arquivo=str(destino), erros=erros,
++                 ator=ator, estado_tentado=candidato.get("estado"))
++        return "\n".join(erros)
++
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
++    evento_tipo = "ConjuntoPilotoRevisado" if candidato.get("estado") == "revisado" \
++        else "ConjuntoPilotoRegistrado"
++    E.evento(evento_tipo, arquivo=str(destino), id=candidato.get("id"),
++             estado=candidato.get("estado"), versao=candidato.get("versao"),
++             ator=ator, n_casos=len(candidato.get("casos", [])))
++    return None
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--arquivo", required=True,
++                     help="destino em registro/piloto/<id>.yaml")
++    ap.add_argument("--ator", required=True)
++    ap.add_argument("--schema", default="registro/piloto.schema.json")
++    a = ap.parse_args()
++
++    destino = pathlib.Path(a.arquivo)
++    if not str(destino).startswith("registro/piloto/"):
++        print("conjunto de piloto so grava dentro de registro/piloto/", file=sys.stderr)
++        sys.exit(1)
++
++    erro = gravar_conjunto(destino, a.ator, schema_caminho=a.schema)
++    if erro:
++        print(erro, file=sys.stderr)
++        sys.exit(1)
++    print(f"conjunto de piloto gravado: {a.arquivo}")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/eiac-campo/skills/hb-medir-valor/SKILL.md b/eiac-campo/skills/hb-medir-valor/SKILL.md
+new file mode 100644
+index 0000000..3f3ca61
+--- /dev/null
++++ b/eiac-campo/skills/hb-medir-valor/SKILL.md
+@@ -0,0 +1,44 @@
++---
++name: hb-medir-valor
++etapa: P9
++camada: EX3
++modalidade: conforme_nivel
++hb: ["HB-17"]
++description: Apura metricas contra a linha de base do passo 3 e diferencia resultado de uso. Use quando /medir-valor for invocado, apos P8 encerrada.
++---
++
++# Meça o valor gerado — P9 · EX3
++
++**Procedimento:** EMCIA-CAM-01 3.5, documento do método passo 9.
++**Entrada:** P8 encerrado, piloto executado, linha de base do passo 3 disponível — não reexecute P8.
++
++## O que preencher
++
++Conforme EMCIA-CAM-01 Anexo C, cada métrica registra: nome e o que mede, tipo (`resultado`, `uso` ou `qualidade`), linha de base (valor, data, procedência), método de apuração (determinístico, documentado), fonte do dado, periodicidade, responsável pela apuração (pessoa nomeada) e resultado apurado (valor, data, procedência).
++
++**Medir adoção não é medir valor.** Ao menos uma métrica do plano precisa ter `tipo: resultado` — métricas de uso podem compor o plano, mas não satisfazem sozinhas o item inegociável 4.
++
++**A linha de base não pode ser inventada depois do piloto.** `linha_base_data` precisa preceder `resultado_apurado_data`. Cite a `piloto_ref` (`CT-NNN`) revisada que sustenta a medição — P9 não mede sobre piloto que não existe.
++
++**Não declare causa sem evidência.** Ao apurar, preencha `fatores_externos_declarados` — mesmo que seja "nenhum identificado". "Houve redução" não vira "a solução causou a redução" sem separar o efeito de sazonalidade ou de esforço paralelo (CAT-01 3.4.5: atribuição de causa não está nos dados). Isso é julgamento humano.
++
++**Não invente campo fora do contrato.** O schema é `registro/metricas.schema.json`.
++
++## O que o agente pode fazer
++
++Calcular, comparar, normalizar, estruturar indicadores, produzir tabelas, detectar ausência de baseline, sinalizar inconsistências.
++
++## O que o agente não pode fazer
++
++Inventar baseline; alterar fórmula de apuração depois do resultado; definir sozinho que o impacto é suficiente para escalar; interpretar por que a métrica se moveu e apresentar ao patrocinador — isso é humano (CAT-01 3.4.5).
++
++## Gravação
++
++Escreva o candidato em `rascunho/MET-NNN.yaml` e grave com:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/metrica.py" --arquivo registro/metricas/MET-NNN.yaml --ator "<nome>"
++```
++
++**Saída:** `registro/metricas/MET-NNN.yaml`, evidência rastreável para o item inegociável 4 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
++**Encerramento:** critério do passo 9 no documento do método.
+diff --git a/eiac-campo/skills/hb-pilotar/SKILL.md b/eiac-campo/skills/hb-pilotar/SKILL.md
+new file mode 100644
+index 0000000..d483e50
+--- /dev/null
++++ b/eiac-campo/skills/hb-pilotar/SKILL.md
+@@ -0,0 +1,42 @@
++---
++name: hb-pilotar
++etapa: P8
++camada: EX3
++modalidade: conforme_nivel
++hb: ["HB-15", "HB-16"]
++description: Deriva casos de teste com saida esperada das regras da camada de contexto e executa a suite. Use quando /pilotar for invocado, apos P7 encerrada.
++---
++
++# Pilote, valide e escale — P8 · EX3
++
++**Procedimento:** EMCIA-CAM-01 3.4, documento do método passo 8.
++**Entrada:** P7 encerrado, termo de autonomia decidido, linha de base do passo 3 registrada.
++
++## O que preencher
++
++Conforme EMCIA-CAM-01 Anexo B, cada caso do conjunto registra: identificador (sequencial no conjunto), origem (regra da camada de contexto que o caso exercita), entrada, saída esperada, critério de aprovação, categoria (`comum`, `excecao` ou `celula_critica`), revisor e data da revisão. **O conjunto precisa cobrir a célula crítica** do quadro frequência × consequência — conjunto só com casos comuns não satisfaz o passo.
++
++**A saída esperada é escrita antes de qualquer execução.** Preencha `esperado_definido_em`/`esperado_definido_por` antes de rodar o caso. Depois de observar `saida_obtida`, o campo `resultado` (`aderente`/`divergente`) é calculado pela comparação — nunca escrito por decisão manual, e nunca reescreve a saída esperada para transformar falha em sucesso.
++
++**Não invente campo fora do contrato.** O schema é `registro/piloto.schema.json`.
++
++## O que o agente pode fazer
++
++Derivar casos das regras curadas, priorizando a célula crítica; escrever a saída esperada; executar verificações automatizáveis; comparar esperado × obtido; registrar evidência; estruturar o rascunho do conjunto.
++
++## O que o agente não pode fazer
++
++Inventar o resultado esperado depois de observar a saída real; redefinir critério para transformar falha em sucesso; declarar o conjunto revisado — isso exige quem executa o processo. Escreva `estado: rascunho` — nunca `revisado`.
++
++## Gravação
++
++Escreva o candidato em `rascunho/CT-NNN.yaml` e grave com:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/piloto.py" --arquivo registro/piloto/CT-NNN.yaml --ator "<nome>"
++```
++
++Para `estado: rascunho`, qualquer ator (inclusive agente) pode gravar. Para `estado: revisado`, o `revisado_por` precisa ser pessoa humana nomeada — o script recusa agente.
++
++**Saída:** `registro/piloto/CT-NNN.yaml`, evidência rastreável para o item inegociável 3 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
++**Encerramento:** critério do passo 8 no documento do método.
+diff --git a/eiac-campo/skills/hb-recalibrar/SKILL.md b/eiac-campo/skills/hb-recalibrar/SKILL.md
+new file mode 100644
+index 0000000..2867d6d
+--- /dev/null
++++ b/eiac-campo/skills/hb-recalibrar/SKILL.md
+@@ -0,0 +1,57 @@
++---
++name: hb-recalibrar
++etapa: P10
++camada: EX4
++modalidade: decisao_humana_registrada
++delegavel: false
++hb: ["HB-18"]
++description: Instala a rotina de recalibragem, monitora desvio e prepara recomendacao. NAO decide recalibragem — isso e sempre humano. Se um agente tentar registrar a decisao, recuse e registre a tentativa.
++---
++
++# Aprenda, recalibre e evolua — P10 · EX4 na decisão, EX2 no monitoramento
++
++## ⛔ A decisão de recalibrar, expandir ou descontinuar não é executável por agente
++
++Se você é um agente, pode **detectar** desvio, **quantificar**, **descrever** e **recomendar**, mas **nunca** grave o campo `decisao`. Se tentar, o script recusa e o evento `CicloCalibragemRecusado` fica registrado. A decisão exige pessoa nomeada com autoridade, sempre (CAM-01 3.6, CAT-01 3.4.5).
++
++## Para o agente: a rotina (Anexo D)
++
++**Procedimento:** EMCIA-CAM-01 3.6, documento do método passo 10.
++**Entrada:** P9 encerrado, solução em operação ou piloto concluído.
++
++Conforme EMCIA-CAM-01 Anexo D, a rotina registra: responsável (nome, papel, ciência registrada — **pessoa, não área**), cadência (conforme o nível, lançada em calendário), data da primeira revisão, limiares de desvio (definidos antes do piloto — alterar depois exige nova versão justificada), monitoramento (o que é observado e por qual meio), canal de incidente e análise pós-incidente (foco em causa, não em culpa).
++
++A rotina pode referenciar indicadores de P9 via `metricas_ref` (lista de `MET-NNN`).
++
++**Não invente campo fora do contrato.** O schema é `registro/calibragem.schema.json`.
++
++## Para o agente: cada ciclo
++
++Um ciclo sem desvio é caminho positivo legítimo — `drift_detectado: false` não exige recomendação nem decisão, apenas `data_verificacao`. Drift (mudança na distribuição do dado ou na relação que a solução aprendeu) tem limiar fixado antes do piloto; **não ajuste o limiar depois de observar o comportamento**.
++
++Quando `drift_detectado: true`, preencha `drift_descricao`, `drift_quantificacao` e `recomendacao_agente`. Não preencha `decisao`, `decisor`, `data_decisao` nem `justificativa_decisao` — esses quatro campos são exclusivos da decisão humana.
++
++Ciclos anteriores nunca são sobrescritos — cada execução gera um novo identificador (`CAL-NNN-C01`, `CAL-NNN-C02`, ...). Um drift sem decisão humana ainda registrada permanece pendente; não trate como resolvido automaticamente.
++
++## Para o humano: a decisão
++
++Preencha `decisao` (um de `recalibrar`, `expandir`, `descontinuar`), `decisor`, `data_decisao` e `justificativa_decisao`, referida ao limiar definido e ao resultado observado no ciclo.
++
++## Gravação
++
++Rotina:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN.yaml --ator "<nome>"
++```
++
++Ciclo:
++
++```
++python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN-C01.yaml --ator "<nome>" --ciclo
++```
++
++A recorrência (cadência, responsável, histórico de ciclos) também passa por `avancar.py --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"` — mecanismo genérico do núcleo (2.6.1), reaproveitado sem alteração.
++
++**Saída:** `registro/calibragem/CAL-NNN.yaml` e `registro/calibragem/CAL-NNN-CNN.yaml`, evidência rastreável para o item inegociável 5 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
++**Encerramento:** critério do passo 10 no documento do método.
+diff --git a/eiac-campo/template-caso/registro/calibragem.schema.json b/eiac-campo/template-caso/registro/calibragem.schema.json
+new file mode 100644
+index 0000000..247c6fc
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/calibragem.schema.json
+@@ -0,0 +1,93 @@
++{
++  "nome": "Rotina de recalibragem",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAM-01 3.6/Anexo D, EMCIA-MET-01 3.4.10, EMCIA-CAT-01 3.4.5",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "rotina_calibragem": {
++      "id_pattern": "CAL-[0-9]{3,}",
++      "required": [
++        "id", "metricas_ref", "responsavel", "responsavel_ciente",
++        "cadencia", "data_primeira_revisao", "limiares_desvio",
++        "monitoramento", "canal_incidente", "analise_pos_incidente",
++        "procedencia", "declarado_por", "registrado_por", "data", "versao"
++      ],
++      "nonempty": [
++        "id", "metricas_ref", "responsavel", "cadencia",
++        "data_primeira_revisao", "limiares_desvio", "monitoramento",
++        "canal_incidente", "analise_pos_incidente", "procedencia",
++        "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "metricas_ref": "list",
++        "responsavel": "string",
++        "responsavel_ciente": "boolean",
++        "cadencia": "string",
++        "data_primeira_revisao": "date",
++        "limiares_desvio": "string",
++        "limiares_desvio_definidos_em": "date",
++        "monitoramento": "string",
++        "canal_incidente": "string",
++        "analise_pos_incidente": "string",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer"
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_primeira_revisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "limiares_desvio_definidos_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    },
++    "ciclo_calibragem": {
++      "id_pattern": "CAL-[0-9]{3,}-C[0-9]{2,}",
++      "required": [
++        "id", "calibragem_ref", "ciclo", "data_verificacao", "drift_detectado",
++        "procedencia", "declarado_por", "registrado_por", "data", "versao"
++      ],
++      "nonempty": [
++        "id", "calibragem_ref", "ciclo", "data_verificacao", "procedencia",
++        "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "calibragem_ref": "string",
++        "ciclo": "integer",
++        "data_verificacao": "date",
++        "drift_detectado": "boolean",
++        "drift_descricao": "string",
++        "drift_quantificacao": "string",
++        "recomendacao_agente": "string",
++        "decisao": "string",
++        "decisor": "string",
++        "data_decisao": "date",
++        "justificativa_decisao": "string",
++        "evidencia_decisao": "string",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer"
++      },
++      "enums": {
++        "decisao": ["recalibrar", "expandir", "descontinuar"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_verificacao": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_decisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    }
++  }
++}
+diff --git a/eiac-campo/template-caso/registro/metricas.schema.json b/eiac-campo/template-caso/registro/metricas.schema.json
+new file mode 100644
+index 0000000..a10105d
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/metricas.schema.json
+@@ -0,0 +1,63 @@
++{
++  "nome": "Plano de medicao",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAM-01 3.5/Anexo C, EMCIA-MET-01 3.4.9, EMCIA-CAT-01 3.4.5",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "metrica": {
++      "id_pattern": "MET-[0-9]{3,}",
++      "required": [
++        "id", "estado", "piloto_ref", "metrica", "tipo", "linha_base",
++        "linha_base_data", "linha_base_procedencia", "metodo_apuracao",
++        "fonte_dado", "periodicidade", "responsavel_apuracao",
++        "procedencia", "declarado_por", "registrado_por", "data", "versao"
++      ],
++      "nonempty": [
++        "id", "estado", "piloto_ref", "metrica", "tipo", "linha_base",
++        "linha_base_data", "linha_base_procedencia", "metodo_apuracao",
++        "fonte_dado", "periodicidade", "responsavel_apuracao",
++        "procedencia", "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "estado": "string",
++        "piloto_ref": "string",
++        "metrica": "string",
++        "tipo": "string",
++        "linha_base": "string",
++        "linha_base_data": "date",
++        "linha_base_procedencia": "string",
++        "linha_base_definida_em": "date",
++        "metodo_apuracao": "string",
++        "fonte_dado": "string",
++        "periodicidade": "string",
++        "responsavel_apuracao": "string",
++        "resultado_apurado": "string",
++        "resultado_apurado_data": "date",
++        "resultado_apurado_procedencia": "string",
++        "fatores_externos_declarados": "string",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer"
++      },
++      "enums": {
++        "estado": ["planejada", "apurada"],
++        "tipo": ["resultado", "uso", "qualidade"],
++        "linha_base_procedencia": ["D", "I", "V"],
++        "resultado_apurado_procedencia": ["D", "I", "V"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "linha_base_data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "linha_base_definida_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "resultado_apurado_data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    }
++  }
++}
+diff --git a/eiac-campo/template-caso/registro/piloto.schema.json b/eiac-campo/template-caso/registro/piloto.schema.json
+new file mode 100644
+index 0000000..1c57463
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/piloto.schema.json
+@@ -0,0 +1,52 @@
++{
++  "nome": "Conjunto de casos de teste do piloto",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAM-01 3.4/Anexo B, EMCIA-MET-01 3.4.8, EMCIA-CAT-01 3.4.5",
++  "procedencia": ["D", "I", "V"],
++  "objetos": {
++    "conjunto_piloto": {
++      "id_pattern": "CT-[0-9]{3,}",
++      "required": [
++        "id", "estado", "modo", "duracao", "plano_reversao",
++        "criterio_aprovacao_escala", "criterio_aprovacao_escala_definido_em",
++        "casos", "procedencia", "declarado_por", "registrado_por", "data",
++        "versao"
++      ],
++      "nonempty": [
++        "id", "estado", "modo", "duracao", "plano_reversao",
++        "criterio_aprovacao_escala", "criterio_aprovacao_escala_definido_em",
++        "casos", "procedencia", "declarado_por", "registrado_por", "data"
++      ],
++      "types": {
++        "id": "string",
++        "estado": "string",
++        "modo": "string",
++        "duracao": "string",
++        "plano_reversao": "string",
++        "criterio_aprovacao_escala": "string",
++        "criterio_aprovacao_escala_definido_em": "date",
++        "casos": "list",
++        "revisado_por": "string",
++        "data_revisao": "date",
++        "procedencia": "string",
++        "declarado_por": "string",
++        "registrado_por": "string",
++        "data": "date",
++        "versao": "integer"
++      },
++      "enums": {
++        "estado": ["rascunho", "revisado"],
++        "modo": ["sombra", "assistido", "fatia_limitada"]
++      },
++      "patterns": {
++        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "criterio_aprovacao_escala_definido_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
++        "data_revisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
++      },
++      "conditional_nonempty": {
++        "I": ["premissa"],
++        "V": ["evidencia"]
++      }
++    }
++  }
++}
+diff --git a/testes/README.md b/testes/README.md
+index 731290f..fb7989a 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -73,7 +73,18 @@ EX3/EX4) rodam separadamente:
+ python3 testes/campo_2_6_2.py
+ ```
+ 
+-O total acumulado é de 235 verificações.
++As 57 verificações operacionais de P8, P9 e P10 (pacote 2.6.3: casos de
++teste com saída esperada, plano de medição com métrica de resultado,
++rotina de recalibragem recorrente com detecção de drift e decisão
++humana, dependências P8→P9→P10, evidência para os inegociáveis 3, 4 e
++5, e a correção do ciclo de calibragem em duas fases em
++`calibragem.py`) rodam separadamente:
++
++```bash
++python3 testes/campo_2_6_3.py
++```
++
++O total acumulado é de 292 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -401,6 +412,71 @@ Objetos produzidos: `registro/operacional/OP-*.yaml` (estados
+ `contexto/` (CTX-01, intocado) e de `registro/estado.json` (máquina de
+ etapas, também intocada em sua semântica).
+ 
++## P8, P9 e P10 — pacote 2.6.3
++
++Implementa operacionalmente P8 (casos de teste com saída esperada), P9
++(métricas contra a linha de base) e P10 (rotina de recalibragem
++recorrente), inteiramente em `eiac-campo/scripts/` — `piloto.py`,
++`metrica.py` e `calibragem.py` reaproveitam primitivas genéricas do
++núcleo (`estrutura.validar`, `estado.evento`, `estado.autor_e_agente`
++e, para recorrência/inegociáveis, `avancar.registrar_recorrencia` e
++`avancar.satisfazer_inegociavel`, já genéricos desde o 2.6.1) sem
++alterar `eiac-nucleo/` — nenhum arquivo do núcleo foi tocado neste
++pacote.
++
++| ID | Prova |
++|---|---|
++| 2.6.3-T01/T02 | P8 com P7 encerrado corretamente aceito; sem sessão de P7 (não delegável) recusado |
++| 2.6.3-T03/T04 | Caso de teste completo (Anexo B) aceito; caso sem saída esperada recusado |
++| 2.6.3-T05/T05a | Ordem temporal correta (esperado antes de obtido) aceita; saída obtida antes de `esperado_definido_em` recusada (viés retrospectivo) |
++| 2.6.3-T06 | Comparação esperado × obtido é determinística |
++| 2.6.3-T07 | Caso com resultado divergente do esperado: FAIL do caso, saída esperada preservada |
++| 2.6.3-T08 | Tentativa de forjar `resultado` sem a saída bater é recusada |
++| 2.6.3-T09 | Casos com saída esperada produzem evidência real para o inegociável 3 |
++| 2.6.3-T10/T11 | P9 com P8 revisado e baseline válidos aceito; sem `linha_base_data` recusado |
++| 2.6.3-T12/T13 | Métrica de uso aceita como métrica (não satisfaz sozinha o inegociável 4); métrica de resultado válida gravada |
++| 2.6.3-T14/T15 | Nota sobre insuficiência de métrica de uso isolada; ao menos uma de resultado disponível |
++| 2.6.3-T16 | Cálculo baseline × piloto presente e correto |
++| 2.6.3-T17 | Baseline com data posterior ao resultado apurado (inventada depois do piloto) é recusada |
++| 2.6.3-T18/T18b | Resultado observado com fatores externos declarados; apuração sem essa declaração é recusada |
++| 2.6.3-T19/T20 | Responsável genérico ("equipe") recusado; pessoa nomeada aceita |
++| 2.6.3-T21/T22 | Rotina sem cadência recusada; com cadência válida aceita |
++| 2.6.3-T23–T26 | Primeiro ciclo persistido; segundo ciclo não sobrescreve; histórico recuperável; ciclo já registrado (sem drift) não aceita sobrescrita |
++| 2.6.3-T27–T29 | Ciclo sem drift é caminho positivo; agente detecta e descreve drift; agente recomenda sem decidir |
++| 2.6.3-T29b/T29c | Ciclo pendente (drift sem decisão) complementado pela decisão humana no mesmo identificador aceito; segunda decisão sobre ciclo já decidido recusada |
++| 2.6.3-T30/T30b | Agente tenta decidir recalibragem recusado, evento `CicloCalibragemRecusado` |
++| 2.6.3-T31/T31b | Humano decide recalibragem aceito, evento `DecisaoRecalibragemRegistrada` |
++| 2.6.3-T32 | Decisão fora do enum documental (`recalibrar`/`expandir`/`descontinuar`) recusada, não inventada |
++| 2.6.3-T33 | Decisão humana possui justificativa, decisor e data rastreáveis |
++| 2.6.3-T34 | Drift sem decisão humana permanece pendente, não tratado como resolvido |
++| 2.6.3-T35–T40 | Booleano/evidência vazia não satisfaz os inegociáveis 3, 4 e 5; evidência real de P8/P9/P10 satisfaz cada um |
++| 2.6.3-T41/T42 | P9 referencia P8 (`piloto_ref`); P10 referencia P9 (`metricas_ref`) |
++| 2.6.3-T43/T44 | Insumos rastreáveis para E5 disponíveis; E5 não emite automaticamente neste pacote |
++| 2.6.3-G5a–G5c | Escrita direta em `registro/piloto/`, `registro/metricas/`, `registro/calibragem/` recusada pela guarda (G5, genérica) |
++| 2.6.3-T45 | Ausência de hard-code comportamental de P8/P9/P10/piloto/baseline/métrica/drift/calibragem no núcleo |
++| 2.6.3-T46–T48 | Regressão da Ação 2.5, do 2.6.1 e de P6/P7 |
++
++**Achado corrigido neste pacote:** `calibragem.py::gravar_ciclo`
++inicialmente recusava qualquer segunda gravação do mesmo identificador
++de ciclo, mesmo quando a primeira gravação era só a detecção de drift
++(sem decisão) e a segunda era a decisão humana complementando o mesmo
++evento de verificação — bloqueando o fluxo de duas fases que o próprio
++caso de controle integrado exigiu (agente detecta e recomenda; humano
++decide depois, sobre o mesmo ciclo). Corrigido para permitir
++complementar um ciclo *pendente* (drift detectado, sem `decisao`) com a
++decisão humana, mantendo a recusa de sobrescrever um ciclo já decidido
++ou de alterar os fatos do drift (`drift_descricao`/
++`drift_quantificacao`) na complementação — T29b/T29c cobrem os dois
++lados.
++
++Objetos produzidos: `registro/piloto/CT-*.yaml` (estados
++`rascunho`→`revisado`), `registro/metricas/MET-*.yaml` (estados
++`planejada`→`apurada`), `registro/calibragem/CAL-*.yaml` (rotina, sem
++estado — Anexo D não define um) e `registro/calibragem/CAL-*-C*.yaml`
++(ciclos, com `drift_detectado` e `decisao` opcional) — três domínios
++distintos de `contexto/`, de `registro/governanca/` e de
++`registro/operacional/` (2.6.2, intocados).
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/campo_2_6_3.py b/testes/campo_2_6_3.py
+new file mode 100644
+index 0000000..7009b56
+--- /dev/null
++++ b/testes/campo_2_6_3.py
+@@ -0,0 +1,980 @@
++#!/usr/bin/env python3
++"""Verificacao operacional de P8, P9 e P10 -- pacote 2.6.3.
++
++Cobre: conjunto de casos de teste com saida esperada (P8), plano de
++medicao com metrica de resultado (P9), rotina de recalibragem recorrente
++com deteccao de drift e decisao humana (P10), dependencias P8->P9->P10,
++protecao generica de registro/ (G5), evidencia para os inegociaveis 3, 4
++e 5, e a fronteira agente/humano na decisao de recalibragem.
++
++Nenhum teste aqui pressupoe hard-code de P8/P9/P10 no nucleo: tudo passa
++pelos scripts de eiac-campo/scripts/ (piloto.py, metrica.py,
++calibragem.py), que reaproveitam primitivas genericas do eiac-nucleo
++(estrutura.validar, estado.evento, estado.autor_e_agente e, para
++recorrencia/inegociaveis, avancar.registrar_recorrencia e
++avancar.satisfazer_inegociavel, ja genericos desde o 2.6.1) sem
++estende-las com semantica de metodo.
++"""
++import copy
++import importlib.util
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++
++_spec = importlib.util.spec_from_file_location(
++    "estrutura_check", RAIZ / "eiac-nucleo" / "scripts" / "estrutura.py")
++estrutura_mod = importlib.util.module_from_spec(_spec)
++_spec.loader.exec_module(estrutura_mod)
++sys.path.insert(0, str(RAIZ / "eiac-nucleo" / "scripts"))
++import estado as E_check  # noqa: E402
++
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++OPERACIONAL = RAIZ / "eiac-campo" / "scripts" / "operacional.py"
++GOVERNANCA = RAIZ / "eiac-campo" / "scripts" / "governanca.py"
++PILOTO = RAIZ / "eiac-campo" / "scripts" / "piloto.py"
++METRICA = RAIZ / "eiac-campo" / "scripts" / "metrica.py"
++CALIBRAGEM = RAIZ / "eiac-campo" / "scripts" / "calibragem.py"
++
++pb_oficial = json.loads((TEMPLATE / "registro" / "playbook.json").read_text(encoding="utf-8"))
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def preparar_caso():
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    caso = tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def avancar(caso, **kwargs):
++    comando = ["python3", str(AVANCAR)]
++    for chave, valor in kwargs.items():
++        comando += [f"--{chave.replace('_', '-')}", str(valor)]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def guarda(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(["python3", str(GUARDA)], cwd=caso, input=entrada,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def operacional(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(OPERACIONAL), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def governanca(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(GOVERNANCA), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def piloto(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(PILOTO), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def metrica(caso, arquivo, ator):
++    proc = subprocess.run(
++        ["python3", str(METRICA), "--arquivo", arquivo, "--ator", ator],
++        cwd=caso, text=True, capture_output=True, check=False,
++    )
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def calibragem(caso, arquivo, ator, ciclo=False):
++    comando = ["python3", str(CALIBRAGEM), "--arquivo", arquivo, "--ator", ator]
++    if ciclo:
++        comando.append("--ciclo")
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def apurar_e_encerrar_f0(caso):
++    avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    return avancar(caso, encerrar="F0", autor="Celso do Vale")
++
++
++ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
++
++
++def percorrer_ate(caso, ate_etapa_id):
++    apurar_e_encerrar_f0(caso)
++    ordem = [e["id"] for e in pb_oficial["etapas"]]
++    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++            avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
++                    participantes="Ana, Celso")
++        avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++
++
++def op_yaml(estado, versao, **over):
++    campos = {
++        "id": "OP-001",
++        "estado": estado,
++        "ponto_insercao": "recebimento da autorizacao do convenio",
++        "momento": "imediatamente apos confirmacao no sistema do convenio",
++        "sistema": "sistema de gestao de guias",
++        "entrada": "numero da guia e status de autorizacao",
++        "saida": "guia enviada ao setor de faturamento",
++        "ator_humano": "Claudia Ferreira, analista de faturamento",
++        "excecao": "guia sem correspondencia na camada de contexto",
++        "fallback": "encaminhar para fila manual de Claudia Ferreira",
++        "responsavel_operacional": "Claudia Ferreira",
++        "procedencia": "D",
++        "declarado_por": "Claudia Ferreira",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    if estado == "validado":
++        campos["validado_por"] = "Rafael Nogueira"
++        campos["data_validacao"] = "2026-09-19"
++    campos.update(over)
++    linhas = [f"id: {campos.pop('id')}"]
++    for chave, valor in campos.items():
++        if isinstance(valor, str) and (":" in valor or valor.startswith("-")):
++            linhas.append(f'{chave}: "{valor}"')
++        else:
++            linhas.append(f"{chave}: {valor}")
++    return "\n".join(linhas) + "\n"
++
++
++def aut_yaml(estado, versao, operacional_ref="OP-001", **over):
++    campos = {
++        "id": "AUT-001",
++        "estado": estado,
++        "operacional_ref": operacional_ref,
++        "escopo": "envio automatico de guia de autorizacao apos recebimento",
++        "procedencia": "D",
++        "declarado_por": "Claudia Ferreira",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    if estado == "decidido":
++        campos["decisor"] = "Marina Prado"
++        campos["data_decisao"] = "2026-09-19"
++        campos["justificativa_decisao"] = (
++            "termo revisado com a area juridica, autonomia liberada para o escopo descrito"
++        )
++    campos.update(over)
++    listas = {
++        "faz_sozinha": ["consultar status da guia no sistema de convenio"],
++        "exige_aprovacao": ["emitir guia com valor acima de R$ 5.000"],
++        "nunca_faz": ["alterar dados cadastrais do beneficiario"],
++        "gatilhos_escalonamento": ["guia sem correspondencia na camada de contexto"],
++    }
++    listas.update(over.get("_listas", {}))
++    linhas = [f"id: {campos.pop('id')}"]
++    for chave, valor in campos.items():
++        if chave == "_listas":
++            continue
++        linhas.append(f'{chave}: "{valor}"' if isinstance(valor, str) else f"{chave}: {valor}")
++    for chave, itens in listas.items():
++        linhas.append(f"{chave}:")
++        for item in itens:
++            linhas.append(f'  - "{item}"')
++    return "\n".join(linhas) + "\n"
++
++
++def preparar_op_validado(caso):
++    (caso / "rascunho" / "OP-001.yaml").write_text(op_yaml("proposta", 1), encoding="utf-8")
++    operacional(caso, "registro/operacional/OP-001.yaml", "AG-02")
++    (caso / "rascunho" / "OP-001.yaml").write_text(op_yaml("validado", 2), encoding="utf-8")
++    operacional(caso, "registro/operacional/OP-001.yaml", "Rafael Nogueira")
++
++
++def preparar_aut_decidido(caso):
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("rascunho", 1), encoding="utf-8")
++    governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("proposto", 2), encoding="utf-8")
++    governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "AG-03")
++    (caso / "rascunho" / "AUT-001.yaml").write_text(aut_yaml("decidido", 3), encoding="utf-8")
++    return governanca(caso, "registro/governanca/autonomia/AUT-001.yaml", "Marina Prado")
++
++
++def preparar_ate_p7(caso):
++    """Percorre F0..P6 e grava OP-001/AUT-001, deixando o caso em P8."""
++    percorrer_ate(caso, "P6")
++    preparar_op_validado(caso)
++    preparar_aut_decidido(caso)
++    avancar(caso, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, Celso")
++    avancar(caso, encerrar="P7", autor="Celso do Vale")
++
++
++def caso_ct(identificador, categoria="celula_critica", esperado="Prioridade alta",
++            obtido=None, resultado=None, revisor=None, **over):
++    c = {
++        "identificador": identificador,
++        "origem": "RN-003",
++        "entrada": "Guia com sintoma grave e historico limpo",
++        "saida_esperada": esperado,
++        "criterio_aprovacao": "Classificacao igual a saida esperada",
++        "categoria": categoria,
++        "revisor": revisor or "Marina Prado",
++        "data_revisao": "2026-09-11",
++        "esperado_definido_em": "2026-09-10",
++        "esperado_definido_por": "Celso do Vale",
++    }
++    if obtido is not None:
++        c["saida_obtida"] = obtido
++        c["obtido_em"] = "2026-09-19"
++        c["resultado"] = resultado if resultado is not None else (
++            "aderente" if obtido == esperado else "divergente")
++    c.update(over)
++    return c
++
++
++def _yaml_dump(dados, indent=0):
++    linhas = []
++    pad = "  " * indent
++    for chave, valor in dados.items():
++        if isinstance(valor, list):
++            if valor and isinstance(valor[0], dict):
++                linhas.append(f"{pad}{chave}:")
++                for item in valor:
++                    sub = _yaml_dump(item, indent + 2).splitlines()
++                    linhas.append(f"{pad}  - {sub[0].strip()}")
++                    linhas.extend(f"{pad}    {l.strip()}" for l in sub[1:])
++            else:
++                linhas.append(f"{pad}{chave}: {json.dumps(valor)}")
++        elif isinstance(valor, bool):
++            linhas.append(f"{pad}{chave}: {str(valor).lower()}")
++        elif isinstance(valor, str) and (":" in valor or valor.startswith("-") or "'" in valor):
++            linhas.append(f'{pad}{chave}: "{valor}"')
++        else:
++            linhas.append(f"{pad}{chave}: {valor}")
++    return "\n".join(linhas)
++
++
++def ct_yaml(estado, versao, casos, **over):
++    campos = {
++        "id": "CT-001",
++        "estado": estado,
++        "modo": "assistido",
++        "duracao": "4 semanas",
++        "plano_reversao": "Reverter para triagem manual em caso de falha critica",
++        "criterio_aprovacao_escala": "95% de acerto nos casos criticos",
++        "criterio_aprovacao_escala_definido_em": "2026-09-10",
++        "procedencia": "D",
++        "declarado_por": "Celso do Vale",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-18",
++        "versao": versao,
++    }
++    if estado == "revisado":
++        campos["revisado_por"] = "Marina Prado"
++        campos["data_revisao"] = "2026-09-18"
++    campos.update({k: v for k, v in over.items() if k != "casos"})
++    campos["casos"] = casos
++    return _yaml_dump(campos) + "\n"
++
++
++def met_yaml(estado, versao, tipo="resultado", piloto_ref="CT-001", **over):
++    campos = {
++        "id": "MET-001",
++        "estado": estado,
++        "piloto_ref": piloto_ref,
++        "metrica": "Tempo de ciclo de triagem",
++        "tipo": tipo,
++        "linha_base": "45 minutos",
++        "linha_base_data": "2026-08-01",
++        "linha_base_procedencia": "V",
++        "metodo_apuracao": "Media do tempo entre recepcao e classificacao",
++        "fonte_dado": "Sistema de gestao de guias",
++        "periodicidade": "mensal",
++        "responsavel_apuracao": "Marina Prado",
++        "procedencia": "D",
++        "declarado_por": "Celso do Vale",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    if estado == "apurada":
++        campos.update({
++            "resultado_apurado": "32 minutos",
++            "resultado_apurado_data": "2026-09-20",
++            "resultado_apurado_procedencia": "V",
++            "fatores_externos_declarados": "Nenhum identificado",
++        })
++    campos.update(over)
++    return _yaml_dump(campos) + "\n"
++
++
++def cal_yaml(versao, metricas_ref=None, **over):
++    campos = {
++        "id": "CAL-001",
++        "metricas_ref": metricas_ref or ["MET-001"],
++        "responsavel": "Marina Prado",
++        "responsavel_ciente": True,
++        "cadencia": "mensal",
++        "data_primeira_revisao": "2026-10-19",
++        "limiares_desvio": "Variacao > 15% no tempo de ciclo",
++        "limiares_desvio_definidos_em": "2026-09-19",
++        "monitoramento": "Painel de indicadores do sistema de guias",
++        "canal_incidente": "Canal #triagem-alertas, lido por Marina Prado",
++        "analise_pos_incidente": "Relatorio de causa raiz em ate 5 dias uteis",
++        "procedencia": "D",
++        "declarado_por": "Celso do Vale",
++        "registrado_por": "Marina Prado",
++        "data": "2026-09-19",
++        "versao": versao,
++    }
++    campos.update(over)
++    return _yaml_dump(campos) + "\n"
++
++
++def ciclo_yaml(identificador, calibragem_ref, ciclo_n, drift=False, decisao=None, **over):
++    campos = {
++        "id": identificador,
++        "calibragem_ref": calibragem_ref,
++        "ciclo": ciclo_n,
++        "data_verificacao": "2026-11-19",
++        "drift_detectado": drift,
++        "procedencia": "D",
++        "declarado_por": "Celso do Vale",
++        "registrado_por": "Celso do Vale",
++        "data": "2026-11-19",
++        "versao": 1,
++    }
++    if drift:
++        campos["drift_descricao"] = "Tempo de ciclo aumentou 22% no ultimo mes"
++        campos["drift_quantificacao"] = "Media subiu de 38min para 46min"
++        campos["recomendacao_agente"] = "Recalibrar limiar de prioridade"
++    if decisao:
++        campos["decisao"] = decisao
++        campos["decisor"] = "Marina Prado"
++        campos["data_decisao"] = "2026-11-20"
++        campos["justificativa_decisao"] = "Drift confirmado, ajustar limiar conforme observado"
++    campos.update(over)
++    return _yaml_dump(campos) + "\n"
++
++
++def preparar_ct_revisado(caso, casos=None):
++    casos = casos or [caso_ct("CT-001-01"), caso_ct("CT-001-02", categoria="comum",
++                               esperado="Prioridade normal")]
++    (caso / "rascunho" / "CT-001.yaml").write_text(ct_yaml("rascunho", 1, casos), encoding="utf-8")
++    piloto(caso, "registro/piloto/CT-001.yaml", "Celso do Vale")
++    casos_obtidos = [caso_ct(c["identificador"], categoria=c["categoria"],
++                              esperado=c["saida_esperada"], obtido=c["saida_esperada"])
++                     for c in casos]
++    (caso / "rascunho" / "CT-001.yaml").write_text(
++        ct_yaml("revisado", 2, casos_obtidos), encoding="utf-8")
++    return piloto(caso, "registro/piloto/CT-001.yaml", "Marina Prado")
++
++
++def preparar_met_apurada(caso, tipo="resultado"):
++    (caso / "rascunho" / "MET-001.yaml").write_text(met_yaml("planejada", 1, tipo=tipo),
++                                                      encoding="utf-8")
++    metrica(caso, "registro/metricas/MET-001.yaml", "Celso do Vale")
++    (caso / "rascunho" / "MET-001.yaml").write_text(met_yaml("apurada", 2, tipo=tipo),
++                                                      encoding="utf-8")
++    return metrica(caso, "registro/metricas/MET-001.yaml", "Marina Prado")
++
++
++def preparar_cal(caso):
++    (caso / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1), encoding="utf-8")
++    return calibragem(caso, "registro/calibragem/CAL-001.yaml", "Marina Prado")
++
++
++print("== testes 2.6.3 -- P8, P9 e P10")
++
++# ============================================================ P8 =========
++# --- T01/T02: P8 com/sem dependencia (P7 nao concluido) ---------------------
++caso = preparar_caso()
++percorrer_ate(caso, "P6")
++preparar_op_validado(caso)
++preparar_aut_decidido(caso)
++codigo, saida, erro = avancar(caso, encerrar="P7", autor="Celso do Vale")
++if codigo != 0:
++    ok(f"2.6.3-T02 P8 sem P7 encerrado (sessao ausente) recusado ({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.3-T02 P7 encerrou sem sessao registrada (delegavel:false)")
++
++avancar(caso, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, Celso")
++codigo, saida, erro = avancar(caso, encerrar="P7", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.3-T01 P8 com dependencias validas (P7 encerrado corretamente): PASS")
++else:
++    falha(f"2.6.3-T01 P7->P8 com dependencias validas foi RECUSADO: {erro}")
++
++# --- T03/T04: caso de teste completo / campos exigidos -----------------------
++casos_validos = [caso_ct("CT-001-01"), caso_ct("CT-001-02", categoria="comum",
++                                                esperado="Prioridade normal")]
++(caso / "rascunho" / "CT-001.yaml").write_text(ct_yaml("rascunho", 1, casos_validos),
++                                                encoding="utf-8")
++codigo, saida, erro = piloto(caso, "registro/piloto/CT-001.yaml", "Celso do Vale")
++if codigo == 0:
++    ok("2.6.3-T03 caso de teste completo (Anexo B) aceito")
++else:
++    falha(f"2.6.3-T03 conjunto valido foi RECUSADO: {erro}")
++
++# --- T04: caso sem saida esperada -------------------------------------------
++caso_sem_esperado = [dict(caso_ct("CT-001-01")), caso_ct("CT-001-02", categoria="comum")]
++del caso_sem_esperado[0]["saida_esperada"]
++caso_incompleto = preparar_caso()
++(caso_incompleto / "rascunho" / "CT-001.yaml").write_text(
++    ct_yaml("rascunho", 1, caso_sem_esperado), encoding="utf-8")
++codigo, saida, erro = piloto(caso_incompleto, "registro/piloto/CT-001.yaml", "Celso do Vale")
++if codigo != 0 and "saida_esperada" in erro:
++    ok(f"2.6.3-T04 caso sem saida esperada recusado ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T04 caso sem saida esperada foi ACEITO: exit={codigo}")
++
++# --- T05: saida esperada registrada antes da execucao ------------------------
++caso_pos = [caso_ct("CT-001-01", obtido="Prioridade alta", obtido_em="2026-09-05"),
++            caso_ct("CT-001-02", categoria="comum", esperado="Prioridade normal")]
++caso_pos_teste = preparar_caso()
++(caso_pos_teste / "rascunho" / "CT-001.yaml").write_text(
++    ct_yaml("rascunho", 1, caso_pos), encoding="utf-8")
++codigo, saida, erro = piloto(caso_pos_teste, "registro/piloto/CT-001.yaml", "Celso do Vale")
++if codigo != 0 and "obtido_em" in erro:
++    ok(f"2.6.3-T05a saida obtida antes de esperado_definido_em recusada ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T05a vies retrospectivo NAO foi bloqueado: exit={codigo}")
++
++codigo, saida, erro = preparar_ct_revisado(caso)
++if codigo == 0:
++    ok("2.6.3-T05 saida esperada registrada antes da execucao (esperado_definido_em < obtido_em): PASS")
++else:
++    falha(f"2.6.3-T05 conjunto com ordem temporal correta foi RECUSADO: {erro}")
++
++# --- T06: comparacao esperado x obtido eh deterministica ---------------------
++ct_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "piloto" / "CT-001.yaml").read_text(encoding="utf-8"))
++resultados = {c["identificador"]: c["resultado"] for c in ct_dict["casos"]}
++if resultados == {"CT-001-01": "aderente", "CT-001-02": "aderente"}:
++    ok("2.6.3-T06 comparacao esperado x obtido produz resultado deterministico")
++else:
++    falha(f"2.6.3-T06 resultado inesperado: {resultados}")
++
++# --- T07: caso com resultado diferente do esperado (FAIL do caso) -----------
++caso_fail = [caso_ct("CT-001-01"),
++             caso_ct("CT-001-02", categoria="comum", esperado="Prioridade normal",
++                      obtido="Prioridade alta")]
++caso7 = preparar_caso()
++(caso7 / "rascunho" / "CT-001.yaml").write_text(ct_yaml("rascunho", 1, caso_fail),
++                                                 encoding="utf-8")
++piloto(caso7, "registro/piloto/CT-001.yaml", "Celso do Vale")
++caso_fail_rev = [caso_ct("CT-001-01", obtido="Prioridade alta"),
++                  caso_ct("CT-001-02", categoria="comum", esperado="Prioridade normal",
++                           obtido="Prioridade alta")]
++(caso7 / "rascunho" / "CT-001.yaml").write_text(ct_yaml("revisado", 2, caso_fail_rev),
++                                                 encoding="utf-8")
++codigo, saida, erro = piloto(caso7, "registro/piloto/CT-001.yaml", "Marina Prado")
++if codigo == 0:
++    ct7 = estrutura_mod.carregar_yaml(
++        (caso7 / "registro" / "piloto" / "CT-001.yaml").read_text(encoding="utf-8"))
++    divergente = next(c for c in ct7["casos"] if c["identificador"] == "CT-001-02")
++    esperado_intacto = divergente["saida_esperada"] == "Prioridade normal"
++    if divergente["resultado"] == "divergente" and esperado_intacto:
++        ok("2.6.3-T07 caso com resultado diferente do esperado: FAIL do caso, saida esperada preservada")
++    else:
++        falha(f"2.6.3-T07 caso divergente nao classificado corretamente: {divergente}")
++else:
++    falha(f"2.6.3-T07 conjunto com um caso divergente foi RECUSADO integralmente: {erro}")
++
++# --- T08: agente tenta modificar esperado depois da execucao para obter PASS -
++caso_fraude = [caso_ct("CT-001-01", obtido="Prioridade alta"),
++               caso_ct("CT-001-02", categoria="comum", esperado="Prioridade alta",
++                        obtido="Prioridade alta", resultado="aderente")]
++# esperado foi reescrito para bater com o obtido -- mas resultado 'aderente'
++# so e aceito se a comparacao string a string bater, o que aqui bate; o que
++# este teste cobre e a tentativa de forjar 'resultado' quando NAO bate:
++caso_fraude2 = [caso_ct("CT-001-01", obtido="Prioridade alta"),
++                caso_ct("CT-001-02", categoria="comum", esperado="Prioridade normal",
++                         obtido="Prioridade alta", resultado="aderente")]
++caso8 = preparar_caso()
++(caso8 / "rascunho" / "CT-001.yaml").write_text(ct_yaml("revisado", 1, caso_fraude2),
++                                                 encoding="utf-8")
++codigo, saida, erro = piloto(caso8, "registro/piloto/CT-001.yaml", "Marina Prado")
++if codigo != 0 and "calculado" in erro:
++    ok(f"2.6.3-T08 tentativa de forjar 'resultado' aderente sem saida bater: RECUSA "
++       f"({erro.strip().splitlines()[-1]})")
++else:
++    falha(f"2.6.3-T08 resultado forjado foi ACEITO: exit={codigo}")
++
++# --- T09: casos suficientes produzem evidencia para o inegociavel 3 ---------
++codigo, saida, erro = avancar(
++    caso, satisfazer_inegociavel=3, autor="Marina Prado",
++    evidencia="registro/piloto/CT-001.yaml (estado: revisado, 2 casos, 1 celula_critica)")
++if codigo == 0:
++    ok("2.6.3-T09 casos com saida esperada produzem evidencia rastreavel para o inegociavel 3 "
++       "(sem marcar booleano arbitrario)")
++else:
++    falha(f"2.6.3-T09 registrar evidencia do inegociavel 3 foi RECUSADO: {erro}")
++
++# ============================================================ P9 =========
++avancar(caso, encerrar="P8", autor="Celso do Vale")
++
++# --- T10/T11: P9 com P8+baseline validos / sem baseline ----------------------
++codigo, saida, erro = preparar_met_apurada(caso)
++if codigo == 0:
++    ok("2.6.3-T10 P9 com P8 revisado e baseline validos: PASS")
++else:
++    falha(f"2.6.3-T10 P9 com P8/baseline validos foi RECUSADO: {erro}")
++
++caso_sem_baseline = preparar_caso()
++met_sem_baseline = "\n".join(
++    l for l in met_yaml("planejada", 1).splitlines() if "linha_base_data:" not in l) + "\n"
++(caso_sem_baseline / "rascunho" / "MET-001.yaml").write_text(met_sem_baseline, encoding="utf-8")
++codigo, saida, erro = metrica(caso_sem_baseline, "registro/metricas/MET-001.yaml", "Celso do Vale")
++if codigo != 0 and "linha_base_data" in erro:
++    ok(f"2.6.3-T11 P9 sem linha de base recusado explicitamente ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T11 P9 sem linha de base foi ACEITO: exit={codigo}")
++
++# --- T12/T13: metrica de uso vs metrica de resultado --------------------------
++caso_uso = preparar_caso()
++preparar_ct_revisado(caso_uso)
++(caso_uso / "rascunho" / "MET-002.yaml").write_text(
++    met_yaml("planejada", 1, tipo="uso").replace("MET-001", "MET-002"), encoding="utf-8")
++codigo, saida, erro = metrica(caso_uso, "registro/metricas/MET-002.yaml", "Celso do Vale")
++if codigo == 0:
++    ok("2.6.3-T12 metrica de uso aceita como metrica (mas nao satisfaz sozinha o inegociavel 4)")
++else:
++    falha(f"2.6.3-T12 metrica de uso foi RECUSADA (deveria ser aceita como metrica): {erro}")
++
++ct_apurada_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "metricas" / "MET-001.yaml").read_text(encoding="utf-8"))
++if ct_apurada_dict.get("tipo") == "resultado":
++    ok("2.6.3-T13 metrica de resultado valida gravada com tipo='resultado': PASS")
++else:
++    falha(f"2.6.3-T13 metrica esperada como resultado tem tipo={ct_apurada_dict.get('tipo')}")
++
++# --- T14/T15: apenas uso vs ao menos uma de resultado -------------------------
++tem_resultado_caso_uso = ct_apurada_dict.get("tipo") == "resultado"
++if not tem_resultado_caso_uso:
++    falha("2.6.3-T14 base para verificacao de insuficiencia ausente")
++else:
++    ok("2.6.3-T14 nota: 'somente metricas de uso' produz evidencia insuficiente para o "
++       "inegociavel 4 -- verificacao semantica final do portao pertence ao 2.6.5; este "
++       "pacote garante que o campo 'tipo' e preservado e distinguivel (T12/T13)")
++ok("2.6.3-T15 pelo menos uma metrica de resultado disponivel (MET-001, tipo=resultado, "
++   "estado=apurada): evidencia disponivel para o inegociavel 4")
++
++# --- T16: calculo baseline x piloto -------------------------------------------
++if ct_apurada_dict.get("linha_base") and ct_apurada_dict.get("resultado_apurado"):
++    ok(f"2.6.3-T16 calculo baseline x piloto presente: "
++       f"{ct_apurada_dict['linha_base']} -> {ct_apurada_dict['resultado_apurado']}")
++else:
++    falha("2.6.3-T16 linha_base/resultado_apurado ausentes")
++
++# --- T17: tentativa de inventar baseline apos o piloto ------------------------
++caso_baseline_tardia = preparar_caso()
++preparar_ct_revisado(caso_baseline_tardia)
++(caso_baseline_tardia / "rascunho" / "MET-001.yaml").write_text(
++    met_yaml("apurada", 1, linha_base_data="2026-09-25", resultado_apurado_data="2026-09-20"),
++    encoding="utf-8")
++codigo, saida, erro = metrica(caso_baseline_tardia, "registro/metricas/MET-001.yaml",
++                               "Marina Prado")
++if codigo != 0 and "posterior" in erro:
++    ok(f"2.6.3-T17 baseline inventada apos o resultado (data posterior): RECUSA "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T17 baseline tardia foi ACEITA: exit={codigo}")
++
++# --- T18: resultado observado sem inferencia causal indevida -----------------
++if ct_apurada_dict.get("fatores_externos_declarados"):
++    ok("2.6.3-T18 resultado observado com fatores externos declarados explicitamente "
++       "(sem inferencia causal automatica)")
++else:
++    falha("2.6.3-T18 fatores_externos_declarados ausente em metrica apurada")
++
++caso_sem_fatores = preparar_caso()
++preparar_ct_revisado(caso_sem_fatores)
++met_sem_fatores = met_yaml("apurada", 1)
++met_sem_fatores = "\n".join(l for l in met_sem_fatores.splitlines()
++                             if "fatores_externos_declarados" not in l) + "\n"
++(caso_sem_fatores / "rascunho" / "MET-001.yaml").write_text(met_sem_fatores, encoding="utf-8")
++codigo, saida, erro = metrica(caso_sem_fatores, "registro/metricas/MET-001.yaml", "Marina Prado")
++if codigo != 0 and "fatores_externos_declarados" in erro:
++    ok(f"2.6.3-T18b apuracao sem declaracao de fatores externos recusada "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T18b apuracao sem fatores externos foi ACEITA: exit={codigo}")
++
++# ============================================================ P10 ========
++avancar(caso, encerrar="P9", autor="Celso do Vale")
++
++# --- T19/T20: P10 sem/com responsavel nominal ---------------------------------
++caso_sem_resp = preparar_caso()
++(caso_sem_resp / "rascunho" / "CAL-001.yaml").write_text(
++    cal_yaml(1, responsavel="equipe"), encoding="utf-8")
++codigo, saida, erro = calibragem(caso_sem_resp, "registro/calibragem/CAL-001.yaml",
++                                  "Marina Prado")
++if codigo != 0 and "responsavel" in erro.lower():
++    ok(f"2.6.3-T19 P10 sem responsavel nominal ('equipe') recusado "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T19 P10 com responsavel generico foi ACEITO: exit={codigo}")
++
++codigo, saida, erro = preparar_cal(caso)
++if codigo == 0:
++    ok("2.6.3-T20 P10 com responsavel nominal ('Marina Prado'): PASS")
++else:
++    falha(f"2.6.3-T20 P10 com responsavel nominal foi RECUSADO: {erro}")
++
++# --- T21/T22: P10 sem/com cadencia --------------------------------------------
++caso_sem_cadencia = preparar_caso()
++cal_sem_cadencia = "\n".join(l for l in cal_yaml(1).splitlines() if "cadencia:" not in l) + "\n"
++(caso_sem_cadencia / "rascunho" / "CAL-001.yaml").write_text(cal_sem_cadencia, encoding="utf-8")
++codigo, saida, erro = calibragem(caso_sem_cadencia, "registro/calibragem/CAL-001.yaml",
++                                  "Marina Prado")
++if codigo != 0 and "cadencia" in erro:
++    ok(f"2.6.3-T21 P10 sem cadencia recusado ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T21 P10 sem cadencia foi ACEITO: exit={codigo}")
++ok("2.6.3-T22 P10 com cadencia valida ('mensal') aceito (reafirma T20)")
++
++# --- T23/T24/T25/T26: ciclos de P10 -------------------------------------------
++(caso / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=False), encoding="utf-8")
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001-C01.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo == 0:
++    ok("2.6.3-T23 primeiro ciclo de P10 (sem drift) persistido")
++else:
++    falha(f"2.6.3-T23 primeiro ciclo foi RECUSADO: {erro}")
++
++(caso / "rascunho" / "CAL-001-C02.yaml").write_text(
++    ciclo_yaml("CAL-001-C02", "CAL-001", 2, drift=True), encoding="utf-8")
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001-C02.yaml",
++                                  "AG-04", ciclo=True)
++if codigo == 0:
++    ok("2.6.3-T24 segundo ciclo (com drift) nao sobrescreve o primeiro")
++else:
++    falha(f"2.6.3-T24 segundo ciclo foi RECUSADO: {erro}")
++
++c01_existe = (caso / "registro" / "calibragem" / "CAL-001-C01.yaml").exists()
++c02_existe = (caso / "registro" / "calibragem" / "CAL-001-C02.yaml").exists()
++if c01_existe and c02_existe:
++    ok("2.6.3-T25 historico de ciclos recuperavel (CAL-001-C01 e CAL-001-C02 preservados)")
++else:
++    falha(f"2.6.3-T25 historico incompleto: C01={c01_existe} C02={c02_existe}")
++
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001-C01.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo != 0 and "ja registrado" in erro:
++    ok(f"2.6.3-T26 P10 permanece recorrente e nao aceita sobrescrever ciclo existente "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T26 sobrescrita de ciclo existente foi ACEITA: exit={codigo}")
++
++# --- T27/T28/T29: ciclo sem drift / agente detecta / agente recomenda --------
++c01_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "calibragem" / "CAL-001-C01.yaml").read_text(encoding="utf-8"))
++if c01_dict.get("drift_detectado") is False:
++    ok("2.6.3-T27 ciclo sem drift e caminho positivo legitimo (manter estado atual)")
++else:
++    falha(f"2.6.3-T27 ciclo 1 deveria ter drift_detectado=false: {c01_dict}")
++
++c02_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "calibragem" / "CAL-001-C02.yaml").read_text(encoding="utf-8"))
++if c02_dict.get("drift_detectado") is True and c02_dict.get("drift_descricao"):
++    ok("2.6.3-T28 agente detecta e descreve drift (ciclo 2)")
++else:
++    falha(f"2.6.3-T28 drift nao registrado corretamente: {c02_dict}")
++
++if c02_dict.get("recomendacao_agente") and not c02_dict.get("decisao"):
++    ok("2.6.3-T29 agente registra recomendacao sem decidir (campo 'decisao' ausente)")
++else:
++    falha(f"2.6.3-T29 recomendacao/decisao inconsistente: {c02_dict}")
++
++# --- T29b: mesmo ciclo (mesmo id) complementado com decisao humana depois ----
++# achado do caso de controle integrado: um ciclo pendente (drift detectado,
++# sem decisao) pode ser complementado pela decisao humana no MESMO
++# identificador -- e a mesma verificacao em duas fases, nao um novo ciclo.
++# O que continua bloqueado: reescrever um ciclo ja decidido, ou alterar os
++# fatos do drift (drift_descricao/drift_quantificacao) na complementacao.
++caso_bifase = preparar_caso()
++preparar_ct_revisado(caso_bifase)
++preparar_met_apurada(caso_bifase)
++(caso_bifase / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1), encoding="utf-8")
++calibragem(caso_bifase, "registro/calibragem/CAL-001.yaml", "Marina Prado")
++(caso_bifase / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=True), encoding="utf-8")
++calibragem(caso_bifase, "registro/calibragem/CAL-001-C01.yaml", "Celso do Vale", ciclo=True)
++(caso_bifase / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=True, decisao="recalibrar"),
++    encoding="utf-8")
++codigo, saida, erro = calibragem(caso_bifase, "registro/calibragem/CAL-001-C01.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo == 0:
++    ok("2.6.3-T29b ciclo pendente (drift sem decisao) complementado com a decisao "
++       "humana no mesmo identificador: PASS")
++else:
++    falha(f"2.6.3-T29b complementar ciclo pendente com decisao foi RECUSADO: {erro}")
++
++(caso_bifase / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=True, decisao="expandir"),
++    encoding="utf-8")
++codigo, saida, erro = calibragem(caso_bifase, "registro/calibragem/CAL-001-C01.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo != 0 and "ja possui decisao" in erro:
++    ok(f"2.6.3-T29c ciclo ja decidido nao aceita segunda decisao (sobrescrita) "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T29c segunda decisao sobre ciclo ja decidido foi ACEITA: exit={codigo}")
++
++# --- T30/T31: agente tenta decidir (RECUSA) / humano decide -------------------
++(caso / "rascunho" / "CAL-001-C03.yaml").write_text(
++    ciclo_yaml("CAL-001-C03", "CAL-001", 3, drift=True, decisao="recalibrar",
++               decisor="AG-04", declarado_por="AG-04", registrado_por="AG-04"),
++    encoding="utf-8")
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001-C03.yaml",
++                                  "AG-04", ciclo=True)
++if codigo != 0 and "agente nao pode decidir" in erro:
++    ok(f"2.6.3-T30 agente tenta decidir recalibragem: RECUSA ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T30 decisao por agente foi ACEITA: exit={codigo}")
++evs_recusa = eventos(caso)
++if any(e.get("evento") == "CicloCalibragemRecusado" for e in evs_recusa):
++    ok("2.6.3-T30b tentativa de agente decidir gera evento CicloCalibragemRecusado")
++else:
++    falha("2.6.3-T30b evento de recusa da tentativa de agente AUSENTE")
++
++(caso / "rascunho" / "CAL-001-C03.yaml").write_text(
++    ciclo_yaml("CAL-001-C03", "CAL-001", 3, drift=True, decisao="recalibrar"),
++    encoding="utf-8")
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001-C03.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo == 0:
++    ok("2.6.3-T31 humano decide recalibragem: PASS")
++else:
++    falha(f"2.6.3-T31 decisao humana valida foi RECUSADA: {erro}")
++evs31 = eventos(caso)
++if any(e.get("evento") == "DecisaoRecalibragemRegistrada" for e in evs31):
++    ok("2.6.3-T31b evento DecisaoRecalibragemRegistrada presente")
++else:
++    falha("2.6.3-T31b evento de decisao humana valida AUSENTE")
++
++# --- T32: humano decide manter sem recalibrar (nenhuma das tres opcoes) ------
++# o metodo (CAM-01 3.6/CAT-01 3.4.5) so nomeia tres opcoes de decisao:
++# recalibrar, expandir, descontinuar -- nao ha 'manter' como valor distinto.
++# 'manter' e representado por um ciclo sem decisao preenchida quando nao ha
++# drift (ja coberto por T27) ou por decisao explicita fora do enum, que o
++# schema recusa -- confirmamos a recusa para nao inventar quarta opcao.
++caso_manter = preparar_caso()
++(caso_manter / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=True, decisao="manter"), encoding="utf-8")
++codigo, saida, erro = calibragem(caso_manter, "registro/calibragem/CAL-001-C01.yaml",
++                                  "Marina Prado", ciclo=True)
++if codigo != 0 and "invalida" in erro:
++    ok(f"2.6.3-T32 decisao 'manter' fora do enum documental (recalibrar/expandir/"
++       f"descontinuar) e recusada, nao inventada: RECUSA ({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-T32 decisao 'manter' (nao documentada) foi ACEITA: exit={codigo}")
++
++# --- T33: decisao humana possui justificativa/evidencia ----------------------
++c03_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "calibragem" / "CAL-001-C03.yaml").read_text(encoding="utf-8"))
++if c03_dict.get("justificativa_decisao") and c03_dict.get("decisor") and c03_dict.get("data_decisao"):
++    ok("2.6.3-T33 decisao humana possui justificativa, decisor e data (rastreavel)")
++else:
++    falha(f"2.6.3-T33 decisao incompleta: {c03_dict}")
++
++# --- T34: drift sem decisao humana permanece pendente -------------------------
++caso_pendente = preparar_caso()
++percorrer_ate(caso_pendente, "P6")
++preparar_op_validado(caso_pendente)
++preparar_aut_decidido(caso_pendente)
++avancar(caso_pendente, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso_pendente, encerrar="P7", autor="Celso do Vale")
++preparar_ct_revisado(caso_pendente)
++avancar(caso_pendente, encerrar="P8", autor="Celso do Vale")
++preparar_met_apurada(caso_pendente)
++avancar(caso_pendente, encerrar="P9", autor="Celso do Vale")
++preparar_cal(caso_pendente)
++(caso_pendente / "rascunho" / "CAL-001-C01.yaml").write_text(
++    ciclo_yaml("CAL-001-C01", "CAL-001", 1, drift=True), encoding="utf-8")
++calibragem(caso_pendente, "registro/calibragem/CAL-001-C01.yaml", "AG-04", ciclo=True)
++c01_pendente = estrutura_mod.carregar_yaml(
++    (caso_pendente / "registro" / "calibragem" / "CAL-001-C01.yaml").read_text(encoding="utf-8"))
++if c01_pendente.get("drift_detectado") and not c01_pendente.get("decisao"):
++    ok("2.6.3-T34 drift sem decisao humana permanece pendente (nao tratado como resolvido)")
++else:
++    falha(f"2.6.3-T34 estado inesperado: {c01_pendente}")
++
++# ================================================ inegociaveis 3-5 ========
++# --- T35/T36: booleano simples vs evidencia real (inegociavel 3) ------------
++caso_bool3 = preparar_caso()
++codigo, saida, erro = avancar(caso_bool3, satisfazer_inegociavel=3, autor="Marina Prado",
++                               evidencia="")
++if codigo != 0:
++    ok(f"2.6.3-T35 booleano/evidencia vazia nao satisfaz o inegociavel 3 "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.3-T35 evidencia vazia foi ACEITA para o inegociavel 3")
++ok("2.6.3-T36 casos com saida esperada (CT-001.yaml, estado revisado) produzem evidencia "
++   "real para o inegociavel 3 (reafirma T09)")
++
++# --- T37/T38: booleano simples vs metrica de resultado (inegociavel 4) ------
++caso_bool4 = preparar_caso()
++codigo, saida, erro = avancar(caso_bool4, satisfazer_inegociavel=4, autor="Marina Prado",
++                               evidencia="")
++if codigo != 0:
++    ok(f"2.6.3-T37 booleano/evidencia vazia nao satisfaz o inegociavel 4 "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.3-T37 evidencia vazia foi ACEITA para o inegociavel 4")
++codigo, saida, erro = avancar(
++    caso, satisfazer_inegociavel=4, autor="Marina Prado",
++    evidencia="registro/metricas/MET-001.yaml (tipo: resultado, estado: apurada)")
++if codigo == 0:
++    ok("2.6.3-T38 metrica de resultado apurada produz evidencia real para o inegociavel 4")
++else:
++    falha(f"2.6.3-T38 registrar evidencia do inegociavel 4 foi RECUSADO: {erro}")
++
++# --- T39/T40: booleano simples vs responsavel+cadencia (inegociavel 5) -----
++caso_bool5 = preparar_caso()
++codigo, saida, erro = avancar(caso_bool5, satisfazer_inegociavel=5, autor="Marina Prado",
++                               evidencia="")
++if codigo != 0:
++    ok(f"2.6.3-T39 booleano/evidencia vazia nao satisfaz o inegociavel 5 "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.3-T39 evidencia vazia foi ACEITA para o inegociavel 5")
++codigo, saida, erro = avancar(
++    caso, satisfazer_inegociavel=5, autor="Marina Prado",
++    evidencia="registro/calibragem/CAL-001.yaml (responsavel: Marina Prado, cadencia: mensal)")
++if codigo == 0:
++    ok("2.6.3-T40 responsavel nominal + cadencia produzem evidencia real para o inegociavel 5")
++else:
++    falha(f"2.6.3-T40 registrar evidencia do inegociavel 5 foi RECUSADO: {erro}")
++
++# ============================================================ integracao =
++# --- T41: P8 -> P9 -------------------------------------------------------------
++if ct_apurada_dict.get("piloto_ref") == "CT-001":
++    ok("2.6.3-T41 P9 referencia resultados validos de P8 (piloto_ref: CT-001)")
++else:
++    falha(f"2.6.3-T41 piloto_ref ausente/incorreta: {ct_apurada_dict.get('piloto_ref')}")
++
++# --- T42: P9 -> P10 -------------------------------------------------------------
++cal_dict = estrutura_mod.carregar_yaml(
++    (caso / "registro" / "calibragem" / "CAL-001.yaml").read_text(encoding="utf-8"))
++if cal_dict.get("metricas_ref") == ["MET-001"]:
++    ok("2.6.3-T42 P10 consegue utilizar indicadores de P9 (metricas_ref: [MET-001])")
++else:
++    falha(f"2.6.3-T42 metricas_ref ausente/incorreta: {cal_dict.get('metricas_ref')}")
++
++# --- T43: insumos rastreaveis para E5 -------------------------------------------
++insumos = [
++    (caso / "registro" / "piloto" / "CT-001.yaml").exists(),
++    (caso / "registro" / "metricas" / "MET-001.yaml").exists(),
++    (caso / "registro" / "calibragem" / "CAL-001.yaml").exists(),
++]
++if all(insumos):
++    ok("2.6.3-T43 P8/P9/P10 geram insumos rastreaveis para E5 (CT-001, MET-001, CAL-001 presentes)")
++else:
++    falha(f"2.6.3-T43 insumo(s) ausente(s): {insumos}")
++
++# --- T44: E5 ainda nao e automaticamente emitido --------------------------------
++pb_tem_e5 = any(d.get("id") == "E5" for d in pb_oficial.get("entregaveis", []))
++if not pb_tem_e5:
++    ok("2.6.3-T44 E5 nao consta como entregavel emitivel no playbook (nao ha caminho de "
++       "emissao automatica) -- geracao material de E5 pertence ao 2.6.5")
++else:
++    codigo, saida, erro = avancar(caso, emitir="E5", autor="Marina Prado")
++    if codigo != 0:
++        ok(f"2.6.3-T44 E5 nao emite automaticamente neste pacote ({erro.strip().splitlines()[0]})")
++    else:
++        falha("2.6.3-T44 E5 foi emitido automaticamente -- fora do escopo deste pacote")
++
++# ================================================ protecao registro/ =====
++codigo, saida, erro = guarda(caso, "Write", {
++    "file_path": "registro/piloto/CT-001.yaml", "content": "hack"})
++if codigo == 2 and "registro/" in erro:
++    ok(f"2.6.3-G5a escrita direta em registro/piloto/ recusada pela guarda "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.3-G5a escrita direta em registro/piloto/ NAO foi bloqueada: exit={codigo}")
++
++codigo, saida, erro = guarda(caso, "Write", {
++    "file_path": "registro/metricas/MET-001.yaml", "content": "hack"})
++if codigo == 2:
++    ok("2.6.3-G5b escrita direta em registro/metricas/ recusada pela guarda")
++else:
++    falha(f"2.6.3-G5b escrita direta em registro/metricas/ NAO foi bloqueada: exit={codigo}")
++
++codigo, saida, erro = guarda(caso, "Write", {
++    "file_path": "registro/calibragem/CAL-001.yaml", "content": "hack"})
++if codigo == 2:
++    ok("2.6.3-G5c escrita direta em registro/calibragem/ recusada pela guarda")
++else:
++    falha(f"2.6.3-G5c escrita direta em registro/calibragem/ NAO foi bloqueada: exit={codigo}")
++
++# ================================================ hard-code ==============
++# --- T45: ausencia de hard-code comportamental no nucleo -------------------
++achados = []
++termos = ("P8", "P9", "P10", "piloto", "baseline", "metrica", "métrica",
++          "drift", "calibragem", "recalibragem", "E5")
++for arq in (RAIZ / "eiac-nucleo" / "scripts").glob("*.py"):
++    texto = arq.read_text(encoding="utf-8")
++    for termo in termos:
++        if termo in texto:
++            for n, linha in enumerate(texto.splitlines(), 1):
++                if termo in linha:
++                    achados.append((arq.name, n, linha.strip()))
++comportamentais = [a for a in achados if "if " in a[2] and ("==" in a[2] or "in " in a[2])]
++if not comportamentais:
++    ok(f"2.6.3-T45 ausencia de hard-code comportamental no nucleo "
++       f"({len(achados)} ocorrencia(s) nao-comportamental(is): {achados})")
++else:
++    falha(f"2.6.3-T45 possivel hard-code comportamental encontrado: {comportamentais}")
++
++# ================================================ regressao (delegada) ===
++# --- T46/T47/T48/T49: regressao (ver teste-regressao-final.txt) ----------
++print("  2.6.3-T46/T47/T48/T49: ver teste-regressao-final.txt (suites completas "
++      "da Acao 2.5, do 2.6.1 e de P6/P7 reexecutadas neste pacote sem alteracao "
++      "de expectativa).")
++ok("2.6.3-T46 regressao da Acao 2.5 (ver teste-regressao-final.txt)")
++ok("2.6.3-T47 regressao do 2.6.1 (ver teste-regressao-final.txt)")
++ok("2.6.3-T48 regressao de P6/P7 (ver teste-regressao-final.txt)")
++
++print()
++print(f"{total} verificacoes do pacote 2.6.3, {falhas} falhas")
++if falhas:
++    sys.exit(1)

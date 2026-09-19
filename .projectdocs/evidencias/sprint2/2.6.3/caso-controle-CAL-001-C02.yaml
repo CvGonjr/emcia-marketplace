@@ -1,0 +1,17 @@
+id: CAL-001-C02
+calibragem_ref: CAL-001
+ciclo: 2
+data_verificacao: 2026-11-19
+drift_detectado: true
+drift_descricao: "Tempo de ciclo subiu de 31 para 41 minutos no ultimo mes (32% de aumento)"
+drift_quantificacao: "Media movel de 30 dias: 31min (out/2026) -> 41min (nov/2026)"
+recomendacao_agente: "Recalibrar o limiar de prioridade da celula critica; investigar aumento de volume no periodo"
+decisao: recalibrar
+decisor: "Marina Prado"
+data_decisao: 2026-11-20
+justificativa_decisao: "Drift confirmado contra o limiar definido antes do piloto (>15%); recalibrar limiar de prioridade e investigar causa do aumento de volume"
+procedencia: D
+declarado_por: "Celso do Vale"
+registrado_por: "Marina Prado"
+data: 2026-11-19
+versao: 1

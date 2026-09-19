@@ -1,0 +1,126 @@
+{
+  "caso": "caso-controle-2-6-3",
+  "nivel": "N2",
+  "etapa_atual": "P10",
+  "camada_atual": "EX4",
+  "modalidade_atual": "conforme_nivel",
+  "cumprimentos": {
+    "F0": {
+      "eixos": "DAD 4, GOV 5, CRI 7",
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P1": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P2": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P3a": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P3b": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P3d": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P4": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P5": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P6": {
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P7": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P8": {
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P9": {
+      "cumprido": true,
+      "autor": "Marina Prado"
+    },
+    "P10": {
+      "sessao": {
+        "autor": "Marina Prado",
+        "participantes": "Marina, Celso"
+      },
+      "cumprido": true,
+      "autor": "Marina Prado",
+      "estado_recorrente": {
+        "ciclo": 1,
+        "historico": [],
+        "ultima_verificacao": "2026-09-19T14:14:48",
+        "cadencia": "mensal",
+        "responsavel": "Marina Prado"
+      }
+    }
+  },
+  "inegociaveis": {
+    "3": {
+      "satisfeito": true,
+      "evidencia": "registro/piloto/CT-001.yaml (estado: revisado, 2 casos, 1 celula_critica, revisado_por: Marina Prado)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T14:14:07"
+    },
+    "4": {
+      "satisfeito": true,
+      "evidencia": "registro/metricas/MET-001.yaml (tipo: resultado, estado: apurada, 45min -> 31min)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T14:14:23"
+    },
+    "5": {
+      "satisfeito": true,
+      "evidencia": "registro/calibragem/CAL-001.yaml (responsavel: Marina Prado, cadencia: mensal, ciente: true)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T14:14:48"
+    }
+  },
+  "selo": null
+}
