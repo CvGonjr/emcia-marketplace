@@ -94,7 +94,17 @@ físicas, fronteira EX3/EX4 preservada) rodam separadamente:
 python3 testes/campo_2_6_4.py
 ```
 
-O total acumulado é de 342 verificações.
+As 62 verificações da ativação dos seis portões, dos cinco inegociáveis
+verificados semanticamente e da materialização de E1–E5 (pacote 2.6.5:
+`inegociaveis.py`, `entregaveis.py`, novo domínio `registro/baseline/`,
+`avancar.emitir` com NAO_APLICAVEL e `--materializar`) rodam
+separadamente:
+
+```bash
+python3 testes/campo_2_6_5.py
+```
+
+O total acumulado é de 404 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -528,6 +538,38 @@ sustentam (a correspondência entregável×passo continua pendência aberta
 por decisão, `decisoes/002`). A relação HB→etapa neste catálogo vem
 exclusivamente de `playbook.json`, nunca de inferência entre CAT-01 e
 MET-01/CAM-01.
+
+## Portões e inegociáveis — pacote 2.6.5
+
+Torna semanticamente verificáveis os cinco inegociáveis (I1–I5, a
+partir de artefato real, nunca de flag solta), operacionaliza os seis
+portões de emissão (E1, E2, E3-D, E3-E, E4, E5) e materializa os cinco
+entregáveis ao cliente em `caso/entregaveis/*.md`.
+
+| ID | Prova |
+|---|---|
+| 2.6.5-T01/T02/T02b | I1 sem baseline recusado; com baseline válida aceito; apuração `estimado` fora de N1 recusada (MET-01 3.4.3) |
+| 2.6.5-T03/T04 | I2 com termo apenas proposto recusado; termo decidido por humano aceito |
+| 2.6.5-T05/T06 | I3 sem saída esperada recusado; casos válidos revisados aceito |
+| 2.6.5-T07/T08 | I4 só com métrica de uso recusado; métrica de resultado aceito |
+| 2.6.5-T09/T09b/T10 | I5 com `responsavel: equipe` recusado em `calibragem.py`; `equipe de TI` (frase composta) recusado no verificador semântico; pessoa nominal aceito |
+| 2.6.5-T11/T12 | Flags manuais sem artefato real nunca produzem satisfação; evidência real produz registro rastreável ao verificador |
+| 2.6.5-T13–T19 | Portão E1 (par negativo/positivo + materialização) |
+| 2.6.5-T20–T27 | Portões E3-D (par) e E3-E (não aplicável / autorizado / negado, materialização consolidada em um único E3) |
+| 2.6.5-T28–T31 | Portão E4 (par negativo/positivo + materialização) |
+| 2.6.5-T32–T37 | Portão E5 (quatro negativos, um por requisito faltando, + positivo + materialização) |
+| 2.6.5-T38–T42 | Emissão sempre aponta para arquivo real; arquivo inexistente recusado; reemissão versiona sem sobrescrever |
+| 2.6.5-T43–T47 | E1–E5 materializados contêm as seções obrigatórias do modelo oficial |
+| 2.6.5-T48/T49 | Campo obrigatório sem evidência não inventa valor; dado presente é reproduzido literalmente da fonte |
+| 2.6.5-T50–T53 | Portão negado gera evento; portão autorizado gera trilha; emissão material referencia arquivo+versão; E3-E não aplicável fica registrado |
+| 2.6.5-T54 | Ausência de hard-code de portão/inegociável no núcleo |
+| 2.6.5-T55–T60 | Regressão da Ação 2.5, do 2.6.1, de P6/P7, de P8/P9/P10, do catálogo HB/AG e suíte completa |
+
+Objeto novo: `registro/baseline/BL-*.yaml` (linha de base, inegociável
+1) — sem schema/ID dedicado em nenhuma fonte oficial (MET-01 3.4.3 só
+exige "registrada e datada"; o formato concreto é a tabela de EMCIA-E2
+Parte A.3). `BL-nnn` é convenção técnica do Estúdio para
+rastreabilidade, não terminologia do método.
 
 ## Deslocamento da fronteira por nível
 

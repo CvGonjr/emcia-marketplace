@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T33
+REQUISITO: E5 sem I3 satisfeito
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: E5
+INEGOCIAVEL: I3
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T33
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: E5 sem I3 (nao satisfeito no nucleo): NEGADO
+
+ARTEFATO MATERIAL: n/a
+
+EVENTO: RecusaEmissao
+
+STDOUT: ok    2.6.5-T33 E5 sem I3 (nao satisfeito no nucleo): NEGADO
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

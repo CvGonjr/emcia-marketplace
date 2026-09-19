@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T11
+REQUISITO: flags manuais I1-I5 sem evidencia
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: n/a
+INEGOCIAVEL: I1-I5
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T11
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: flags manuais sem artefato real: nenhum verificador de inegociaveis.py foi chamado -- a satisfacao nao deriva de evidencia real
+
+ARTEFATO MATERIAL: n/a
+
+EVENTO: n/a (nenhum verificador chamado)
+
+STDOUT: ok    2.6.5-T11 flags manuais sem artefato real: nenhum verificador de inegociaveis.py foi chamado -- a satisfacao nao deriva de evidencia real
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

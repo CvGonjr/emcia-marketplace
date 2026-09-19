@@ -1,0 +1,65 @@
+== testes 2.6.5 -- inegociaveis, portoes e entregaveis
+  ok    2.6.5-T01 I1 sem baseline: RECUSA
+  ok    2.6.5-T02 I1 com baseline valido: PASS
+  ok    2.6.5-T02b baseline N2 com apuracao estimado recusada por baseline.py (nivel N2 exige apuracao calculada ou medida; 'estimado' so e admitido em N1 (MET-01 3.4.3))
+  ok    2.6.5-T03 I2 com termo apenas proposto: RECUSA (I2 | satisfeito=False | termo em estado 'proposto', nao 'decidido' -- minuta ou proposta nao satisfaz o inegociavel 2)
+  ok    2.6.5-T04 I2 com termo decidido por humano: PASS
+  ok    2.6.5-T05 I3 sem saida esperada (conjunto so em rascunho): RECUSA
+  ok    2.6.5-T06 I3 com casos validos e conjunto revisado: PASS
+  ok    2.6.5-T07 I4 so com metrica de uso: RECUSA
+  ok    2.6.5-T08 I4 com metrica de resultado: PASS
+  ok    2.6.5-T09 I5 sem pessoa nominal ('equipe'): RECUSA em calibragem.py
+  ok    2.6.5-T09b I5 com 'equipe de TI' gravado (frase composta, escapou da checagem lexica de calibragem.py): RECUSA no verificador semantico
+  ok    2.6.5-T10 I5 com pessoa nominal e demais requisitos: PASS
+  ok    2.6.5-T11 flags manuais sem artefato real: nenhum verificador de inegociaveis.py foi chamado -- a satisfacao nao deriva de evidencia real
+  ok    2.6.5-T12 evidencia real permite satisfacao, gravada com referencia ao verificador (nao booleano solto)
+== portoes E1-E5
+  ok    2.6.5-T13 E1 antes de F0 completo: NEGADO
+  ok    2.6.5-T14 E1 apos F0: AUTORIZADO
+  ok    2.6.5-T15 materializacao de E1: arquivo real existente (/tmp/tmprvyoiwq7/caso/caso/entregaveis/E1.md)
+  ok    2.6.5-T16 E2 com etapa requerida incompleta (P3a/P3b/P3d ausentes): NEGADO
+  ok    2.6.5-T17 E2 com etapas completas mas I1 nao satisfeito no nucleo: NEGADO
+  ok    2.6.5-T18 E2 com requisitos completos (etapas + I1 verificado): AUTORIZADO
+  ok    2.6.5-T19 materializacao de E2: arquivo real existente (/tmp/tmpq8tvhwpi/caso/caso/entregaveis/E2.md)
+  ok    2.6.5-T20 E3-D sem P5: NEGADO
+  ok    2.6.5-T21 E3-D com P4/P5 validos: AUTORIZADO
+  ok    2.6.5-T22 E3-E sobre caso nao agentico: NAO_APLICAVEL (nao e falha)
+  ok    2.6.5-T23 solucao agentica sem P5 encerrada (insumo insuficiente): materializacao NEGADA
+  ok    2.6.5-T24 solucao agentica com P5 completo: E3-E AUTORIZADO
+  ok    2.6.5-T25 condicao declarativa {campo,etapa,operador,valor} avaliada sem hard-code de 'E3-E' no nucleo (mesmo mecanismo generico do 2.6.1)
+  ok    2.6.5-T26 materializacao E3 nao agentico: E3 valido sem exigir E3-E
+  ok    2.6.5-T27 materializacao E3 agentico: E3 consolida E3-D + E3-E (Parte B presente no mesmo arquivo)
+  ok    2.6.5-T28 E4 sem P7: NEGADO
+  ok    2.6.5-T29 E4 com P6/P7 mas termo apenas PROPOSTO (I2 nao verificavel/nao satisfeito): NEGADO
+  ok    2.6.5-T30 E4 com P6/P7 e termo DECIDIDO valido: AUTORIZADO
+  ok    2.6.5-T31 materializacao de E4: Guia Operacional real e rastreavel (/tmp/tmpctxwrgva/caso/caso/entregaveis/E4.md)
+  ok    2.6.5-T32 E5 sem P8: NEGADO
+  ok    2.6.5-T33 E5 sem I3 (nao satisfeito no nucleo): NEGADO
+  ok    2.6.5-T34 E5 com I3 mas sem I4: NEGADO
+  ok    2.6.5-T35 E5 com I3/I4 mas sem I5: NEGADO
+  ok    2.6.5-T36 E5 com P8/P9/P10 + I3/I4/I5: AUTORIZADO
+  ok    2.6.5-T37 materializacao de E5: Relatorio de Piloto real e rastreavel (/tmp/tmpsd88ffwh/caso/caso/entregaveis/E5.md)
+  ok    2.6.5-T38 emissao gera arquivo: evento EntregavelEmitido presente na trilha
+  ok    2.6.5-T39 evento aponta para arquivo real (caso/entregaveis/E5.md)
+  ok    2.6.5-T40 arquivo inexistente nao conta como emissao: RECUSA/INCONSISTENCIA
+  ok    2.6.5-T41 entregavel possui versao/ID rastreavel: {'arquivo': 'caso/entregaveis/E5.md', 'versao': 1, 'autor': 'Celso do Vale'}
+  ok    2.6.5-T42 reemissao nao sobrescreve silenciosamente: versao incrementada para 2
+  ok    2.6.5-T43 E1 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T44 E2 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T45 E3 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T46 E4 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T47 E5 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T48 campo obrigatorio sem evidencia: nao inventa valor, recusa materializacao
+  ok    2.6.5-T49 dados presentes sao reproduzidos das fontes do caso (valor_atual/apuracao da baseline aparecem literalmente em E2)
+  ok    2.6.5-T50 portao negado gera evento (RecusaEmissao)
+  ok    2.6.5-T51 portao autorizado gera trilha (3 eventos EntregavelEmitido)
+  ok    2.6.5-T52 emissao material gera evento com referencia (arquivo + versao)
+  ok    2.6.5-T53 E3-E nao aplicavel fica explicitamente registrado (evento EntregavelNaoAplicavel)
+  ok    2.6.5-T54 ausencia de hard-code de portao especifico no nucleo (4 ocorrencias, todas em docstring/comentario)
+  ok    2.6.5-T55 regressao Acao 2.5: PASS (ver teste-regressao-final.txt)
+  ok    2.6.5-T56 regressao 2.6.1: PASS
+  ok    2.6.5-T57 regressao P6/P7: PASS
+  ok    2.6.5-T58 regressao P8/P9/P10: PASS
+  ok    2.6.5-T59 regressao HB/AG: PASS
+  ok    2.6.5-T60 suite completa: sem regressoes inexplicadas
+62 verificacoes do pacote 2.6.5, 0 falhas

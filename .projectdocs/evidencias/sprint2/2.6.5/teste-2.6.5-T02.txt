@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T02
+REQUISITO: I1 com linha de base valida
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: n/a
+INEGOCIAVEL: I1
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T02
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: I1 com baseline valido: PASS
+
+ARTEFATO MATERIAL: registro/baseline/BL-001.yaml
+
+EVENTO: LinhaDeBaseRegistrada
+
+STDOUT: ok    2.6.5-T02 I1 com baseline valido: PASS
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

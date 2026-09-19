@@ -1,0 +1,45 @@
+{"evento": "NivelApurado", "data": "2026-09-19T18:44:10", "nivel": "N2", "anterior": null, "autor": "Celso do Vale", "eixos": "DAD 4, GOV 5, CRI 7"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:10", "etapa": "F0", "autor": "Celso do Vale"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:10", "entregavel": "E1", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E1.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P1", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P2", "autor": "Celso do Vale"}
+{"evento": "LinhaDeBaseRegistrada", "data": "2026-09-19T18:44:11", "arquivo": "registro/baseline/BL-001.yaml", "id": "BL-001", "indicador": "tempo de ciclo de triagem", "apuracao": "medido", "nivel": "N2", "ator": "Marina Prado", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P3a", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T18:44:11", "n": "1", "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i1 :: linha de base 'BL-001' registrada em 2026-08-01 (apuracao medido, nivel N2) (ref: registro/baseline/BL-001.yaml)"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T18:44:11", "etapa": "P3b", "autor": "Celso do Vale", "participantes": "Ana, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P3b", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P3d", "autor": "Celso do Vale"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E2", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E2", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E2.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P4", "autor": "Celso do Vale"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E3-D", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E3-E", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E3-D", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E3.md", "versao": 1}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:11", "entregavel": "E3-E", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E3.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:11", "etapa": "P6", "autor": "Celso do Vale"}
+{"evento": "EspecificacaoOperacionalRegistrada", "data": "2026-09-19T18:44:11", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "proposta", "versao": 1, "ator": "AG-02", "validado_por": null}
+{"evento": "EspecificacaoOperacionalValidada", "data": "2026-09-19T18:44:11", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "validado", "versao": 2, "ator": "Rafael Nogueira", "validado_por": "Rafael Nogueira"}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T18:44:11", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "rascunho", "versao": 1, "ator": "AG-03", "decisor": null}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T18:44:12", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "proposto", "versao": 2, "ator": "AG-03", "decisor": null}
+{"evento": "AutonomiaDecidida", "data": "2026-09-19T18:44:12", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "decidido", "versao": 3, "ator": "Marina Prado", "decisor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T18:44:12", "etapa": "P7", "autor": "Celso do Vale", "participantes": "Ana, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:12", "etapa": "P7", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T18:44:12", "n": "2", "item": "Termo de autonomia escrito", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i2 :: termo 'AUT-001' decidido por 'Marina Prado' em 2026-09-19 (ref: registro/governanca/autonomia/AUT-001.yaml)"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:12", "entregavel": "E4", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:12", "entregavel": "E4", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E4.md", "versao": 1}
+{"evento": "ConjuntoPilotoRegistrado", "data": "2026-09-19T18:44:12", "arquivo": "registro/piloto/CT-001.yaml", "id": "CT-001", "estado": "rascunho", "versao": 1, "ator": "Celso do Vale", "n_casos": 2}
+{"evento": "ConjuntoPilotoRevisado", "data": "2026-09-19T18:44:12", "arquivo": "registro/piloto/CT-001.yaml", "id": "CT-001", "estado": "revisado", "versao": 2, "ator": "Marina Prado", "n_casos": 2}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:12", "etapa": "P8", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T18:44:12", "n": "3", "item": "Casos de teste com saida esperada", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i3 :: conjunto 'CT-001' revisado com 2 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-001.yaml)"}
+{"evento": "MetricaRegistrada", "data": "2026-09-19T18:44:12", "arquivo": "registro/metricas/MET-001.yaml", "id": "MET-001", "estado": "planejada", "tipo_metrica": "resultado", "versao": 1, "ator": "Celso do Vale"}
+{"evento": "MetricaApurada", "data": "2026-09-19T18:44:12", "arquivo": "registro/metricas/MET-001.yaml", "id": "MET-001", "estado": "apurada", "tipo_metrica": "resultado", "versao": 2, "ator": "Marina Prado"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:12", "etapa": "P9", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T18:44:12", "n": "4", "item": "Ao menos uma metrica de resultado", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i4 :: metrica de resultado 'MET-001' apurada: 32 minutos (ref: registro/metricas/MET-001.yaml)"}
+{"evento": "RotinaCalibragemRegistrada", "data": "2026-09-19T18:44:12", "arquivo": "registro/calibragem/CAL-001.yaml", "id": "CAL-001", "responsavel": "Marina Prado", "cadencia": "mensal", "versao": 1, "ator": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T18:44:12", "etapa": "P10", "autor": "Celso do Vale", "participantes": "Ana, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T18:44:12", "etapa": "P10", "autor": "Celso do Vale"}
+{"evento": "RecorrenciaRegistrada", "data": "2026-09-19T18:44:13", "etapa": "P10", "autor": "Celso do Vale", "ciclo": 1, "cadencia": "mensal", "responsavel": "Marina Prado"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T18:44:13", "n": "5", "item": "Responsavel nomeado pela recalibragem", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-001.yaml)"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:13", "entregavel": "E5", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T18:44:13", "entregavel": "E5", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E5.md", "versao": 1}
+{"evento": "TermoAutonomiaRecusado", "data": "2026-09-19T18:44:13", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "erros": ["agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1)."], "ator": "AG-03", "estado_tentado": "decidido"}

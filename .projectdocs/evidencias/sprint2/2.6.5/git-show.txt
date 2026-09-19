@@ -1,0 +1,61 @@
+commit 639a8d6ad6243c3a1ec96612003cb8193e8fdf57
+Author: valejr <CvGonjr@github.com>
+Date:   Sat Sep 19 18:50:47 2026 -0300
+
+    feat(field+nucleo): enforce deliverable gates and materialize E1-E5
+    
+    Torna semanticamente verificaveis os cinco inegociaveis (I1-I5), a partir
+    de artefato real do caso (registro/baseline, registro/governanca,
+    registro/piloto, registro/metricas, registro/calibragem), nunca de flag
+    solta. Novo eiac-campo/scripts/inegociaveis.py le cada artefato e so
+    chama avancar.py --satisfazer-inegociavel apos verificar semanticamente
+    o requisito, gravando o nome do verificador na evidencia.
+    
+    Novo dominio registro/baseline/ (linha de base, inegociavel 1), sem
+    schema/ID dedicado em nenhuma fonte oficial (MET-01 3.4.3 so exige
+    "registrada e datada"; formato concreto vem de E2 Parte A.3) -- "BL-nnn"
+    e convencao tecnica do Estudio, nao terminologia do metodo. metrica.py
+    ganha baseline_ref opcional para P9 referenciar a mesma linha de base de
+    I1, sem duplicar o valor.
+    
+    eiac-nucleo/scripts/avancar.py::emitir() passa a distinguir NAO_APLICAVEL
+    de NEGADO quando a condicao declarativa de um entregavel nao se aplica
+    (E3-E sobre caso nao agentico) -- resultado legitimo do metodo, nao
+    falha, exit 0. Ganha --materializar <arquivo>: so registra
+    EntregavelEmitido se o arquivo indicado existir e nao estiver vazio,
+    gravando arquivo/versao no evento e em
+    estado.entregaveis_emitidos[ID] (corrige D-12: evento sem documento
+    material nao contava como emissao conforme).
+    
+    Novo eiac-campo/scripts/entregaveis.py renderiza caso/entregaveis/<ID>.md
+    a partir dos artefatos reais do caso -- recusa materializar (nunca
+    inventa) quando falta evidencia rastreavel para um campo obrigatorio do
+    modelo oficial (EMCIA-E1..E5). E3 permanece um unico entregavel ao
+    cliente: consolida E3-D (sempre) e E3-E (condicional a P5 classificar
+    como agente) no mesmo arquivo material.
+    
+    Nucleo permanece agnostico de metodo: zero hard-code comportamental de
+    E1-E5/inegociaveis (verificado por busca e por teste). Regressao
+    acumulada 342->404, 0 falhas.
+    
+    Corrige teste 2.6.1-T27b, cujo contrato antigo (condicao nao satisfeita
+    = recusa) foi superado pela distincao NAO_APLICAVEL formalizada aqui.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ eiac-campo/.claude-plugin/plugin.json              |   2 +-
+ eiac-campo/commands/emitir.md                      |  16 +
+ eiac-campo/commands/medir.md                       |   6 +-
+ eiac-campo/reference/gates.md                      |  20 +
+ eiac-campo/scripts/baseline.py                     | 119 +++
+ eiac-campo/scripts/entregaveis.py                  | 313 +++++++
+ eiac-campo/scripts/inegociaveis.py                 | 243 +++++
+ eiac-campo/scripts/metrica.py                      |  32 +
+ eiac-campo/skills/hb-medir/SKILL.md                |   6 +-
+ .../template-caso/registro/baseline.schema.json    |  43 +
+ .../template-caso/registro/metricas.schema.json    |   1 +
+ eiac-nucleo/.claude-plugin/plugin.json             |   2 +-
+ eiac-nucleo/scripts/avancar.py                     |  73 +-
+ testes/campo_2_6_5.py                              | 989 +++++++++++++++++++++
+ testes/nucleo_2_6_1.py                             |  12 +-
+ 15 files changed, 1855 insertions(+), 22 deletions(-)

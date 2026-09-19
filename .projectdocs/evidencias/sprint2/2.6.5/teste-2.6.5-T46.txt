@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T46
+REQUISITO: E4 contem secoes obrigatorias do modelo oficial
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: E4
+INEGOCIAVEL: n/a
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T46
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: E4 contem secoes obrigatorias do modelo oficial
+
+ARTEFATO MATERIAL: caso/entregaveis/E4.md
+
+EVENTO: n/a
+
+STDOUT: ok    2.6.5-T46 E4 contem secoes obrigatorias do modelo oficial
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

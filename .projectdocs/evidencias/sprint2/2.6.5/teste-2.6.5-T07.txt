@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T07
+REQUISITO: I4 so com metrica de uso
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: n/a
+INEGOCIAVEL: I4
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T07
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: I4 so com metrica de uso: RECUSA
+
+ARTEFATO MATERIAL: n/a
+
+EVENTO: n/a (recusa)
+
+STDOUT: ok    2.6.5-T07 I4 so com metrica de uso: RECUSA
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

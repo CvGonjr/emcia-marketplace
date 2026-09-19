@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T38
+REQUISITO: emissao gera arquivo
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: E5
+INEGOCIAVEL: n/a
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T38
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: emissao gera arquivo: evento EntregavelEmitido presente na trilha
+
+ARTEFATO MATERIAL: caso/entregaveis/E5.md
+
+EVENTO: EntregavelEmitido
+
+STDOUT: ok    2.6.5-T38 emissao gera arquivo: evento EntregavelEmitido presente na trilha
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,147 @@
+{
+  "caso": "ALTERE-ME",
+  "nivel": "N2",
+  "etapa_atual": "P10",
+  "camada_atual": "EX4",
+  "modalidade_atual": "conforme_nivel",
+  "cumprimentos": {
+    "F0": {
+      "eixos": "DAD 4, GOV 5, CRI 7",
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P1": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P2": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3a": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3b": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Ana, Celso"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3d": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P4": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P5": {
+      "cumprido": true,
+      "autor": "Celso do Vale",
+      "classificacao_tecnologica": "agente"
+    },
+    "P6": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P7": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Ana, Celso"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P8": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P9": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P10": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Ana, Celso"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale",
+      "estado_recorrente": {
+        "ciclo": 1,
+        "historico": [],
+        "ultima_verificacao": "2026-09-19T18:44:13",
+        "cadencia": "mensal",
+        "responsavel": "Marina Prado"
+      }
+    }
+  },
+  "inegociaveis": {
+    "1": {
+      "satisfeito": true,
+      "evidencia": "inegociaveis.verificar_i1 :: linha de base 'BL-001' registrada em 2026-08-01 (apuracao medido, nivel N2) (ref: registro/baseline/BL-001.yaml)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T18:44:11"
+    },
+    "2": {
+      "satisfeito": true,
+      "evidencia": "inegociaveis.verificar_i2 :: termo 'AUT-001' decidido por 'Marina Prado' em 2026-09-19 (ref: registro/governanca/autonomia/AUT-001.yaml)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T18:44:12"
+    },
+    "3": {
+      "satisfeito": true,
+      "evidencia": "inegociaveis.verificar_i3 :: conjunto 'CT-001' revisado com 2 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-001.yaml)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T18:44:12"
+    },
+    "4": {
+      "satisfeito": true,
+      "evidencia": "inegociaveis.verificar_i4 :: metrica de resultado 'MET-001' apurada: 32 minutos (ref: registro/metricas/MET-001.yaml)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T18:44:12"
+    },
+    "5": {
+      "satisfeito": true,
+      "evidencia": "inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-001.yaml)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T18:44:13"
+    }
+  },
+  "selo": null,
+  "entregaveis_emitidos": {
+    "E1": {
+      "arquivo": "caso/entregaveis/E1.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    },
+    "E2": {
+      "arquivo": "caso/entregaveis/E2.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    },
+    "E3-D": {
+      "arquivo": "caso/entregaveis/E3.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    },
+    "E3-E": {
+      "arquivo": "caso/entregaveis/E3.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    },
+    "E4": {
+      "arquivo": "caso/entregaveis/E4.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    },
+    "E5": {
+      "arquivo": "caso/entregaveis/E5.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    }
+  }
+}

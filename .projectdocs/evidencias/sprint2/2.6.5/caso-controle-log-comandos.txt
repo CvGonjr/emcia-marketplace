@@ -1,0 +1,190 @@
+F0: apurar nivel N2 e encerrar
+  exit=0
+  stdout=ok | etapa atual: P1 | camada: EX2
+  stderr=
+
+E1: renderizar e emitir
+  exit=0
+  stdout=E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+  stderr=
+
+P1: encerrar
+  exit=0
+  stdout=ok | etapa atual: P2 | camada: EX2
+  stderr=
+
+P2: encerrar
+  exit=0
+  stdout=ok | etapa atual: P3a | camada: EX3
+  stderr=
+
+P3a: gravar baseline BL-001
+  exit=0
+  stdout=linha de base gravada: registro/baseline/BL-001.yaml
+  stderr=
+
+P3a: encerrar
+  exit=0
+  stdout=ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+I1: verificar baseline e satisfazer
+  exit=0
+  stdout=I1 | satisfeito=True | linha de base 'BL-001' registrada em 2026-08-01 (apuracao medido, nivel N2)
+ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+P3b: registrar sessao
+  exit=0
+  stdout=ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+P3b: encerrar
+  exit=0
+  stdout=ok | etapa atual: P3d | camada: EX3
+  stderr=
+
+P3d: encerrar
+  exit=0
+  stdout=ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+E2 (portao): emitir
+  exit=0
+  stdout=ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+E2: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E2 renderizado: caso/entregaveis/E2.md
+E2: ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+P4: encerrar
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3-D (portao): emitir
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3-E (portao, caso agentico): emitir
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3: renderizar e emitir (consolida E3-D+E3-E)
+  exit=0
+  stdout=E3 renderizado: caso/entregaveis/E3.md
+E3-D: ok | etapa atual: P5 | camada: EX3
+E3-E: ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+P6: encerrar (etapa_atual ajustada apos P5 gravado fora da maquina)
+  exit=0
+  stdout=ok | etapa atual: P7 | camada: EX4
+  stderr=
+
+P7: registrar sessao
+  exit=0
+  stdout=ok | etapa atual: P7 | camada: EX4
+  stderr=
+
+P7: encerrar
+  exit=0
+  stdout=ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+I2: verificar termo de autonomia e satisfazer
+  exit=0
+  stdout=I2 | satisfeito=True | termo 'AUT-001' decidido por 'Marina Prado' em 2026-09-19
+ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+E4 (portao): emitir
+  exit=0
+  stdout=ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+E4: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E4 renderizado: caso/entregaveis/E4.md
+E4: ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+P8: gravar CT-001 rascunho -> revisado
+  exit=0
+  stdout=conjunto de piloto gravado: registro/piloto/CT-001.yaml
+  stderr=
+
+P8: encerrar
+  exit=0
+  stdout=ok | etapa atual: P9 | camada: EX3
+  stderr=
+
+I3: verificar casos de teste e satisfazer
+  exit=0
+  stdout=I3 | satisfeito=True | conjunto 'CT-001' revisado com 2 caso(s), todos com saida esperada definida antes da execucao
+ok | etapa atual: P9 | camada: EX3
+  stderr=
+
+P9: gravar MET-001 planejada -> apurada (tipo=resultado)
+  exit=0
+  stdout=metrica gravada: registro/metricas/MET-001.yaml
+  stderr=
+
+P9: encerrar
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+I4: verificar metrica de resultado e satisfazer
+  exit=0
+  stdout=I4 | satisfeito=True | metrica de resultado 'MET-001' apurada: 32 minutos
+ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: gravar CAL-001 (rotina, responsavel Marina Prado)
+  exit=0
+  stdout=calibragem gravada: registro/calibragem/CAL-001.yaml
+  stderr=
+
+P10: registrar sessao
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: encerrar
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: registrar recorrencia (ciclo 1)
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+I5: verificar responsavel de recalibragem e satisfazer
+  exit=0
+  stdout=I5 | satisfeito=True | responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal'
+ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+E5 (portao): emitir
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+E5: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E5 renderizado: caso/entregaveis/E5.md
+E5: ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+Negativo: AG-03 tenta regravar termo decidido (fronteira agente/humano)
+  exit=1
+  stdout=
+  stderr=agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).

@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T54
+REQUISITO: ausencia de hard-code de portao no nucleo
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: n/a
+INEGOCIAVEL: n/a
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T54
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: ausencia de hard-code de portao especifico no nucleo (4 ocorrencias, todas em docstring/comentario)
+
+ARTEFATO MATERIAL: n/a
+
+EVENTO: n/a
+
+STDOUT: ok    2.6.5-T54 ausencia de hard-code de portao especifico no nucleo (4 ocorrencias, todas em docstring/comentario)
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

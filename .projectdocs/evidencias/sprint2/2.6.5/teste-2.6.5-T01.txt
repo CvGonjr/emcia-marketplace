@@ -1,0 +1,28 @@
+PACOTE: 2.6.5
+TESTE: 2.6.5-T01
+REQUISITO: I1 sem evidencia real
+DATA/HORA: 2026-09-19T18:46:57
+HEAD INICIAL: 57700a0d2c421f891de2d48a0ab0f090c45eda63
+COMANDO: python3 testes/campo_2_6_5.py
+EXIT CODE: 0
+
+CASO: caso temporario isolado (preparar_caso(), template-caso copiado)
+
+PORTAO: n/a
+INEGOCIAVEL: I1
+
+EVIDENCIAS: ver testes/campo_2_6_5.py, funcao correspondente ao teste T01
+
+RESULTADO ESPERADO: ver descricao acima (par negativo/positivo conforme secao 60 do pacote)
+
+RESULTADO OBTIDO: I1 sem baseline: RECUSA
+
+ARTEFATO MATERIAL: n/a
+
+EVENTO: n/a (recusa)
+
+STDOUT: ok    2.6.5-T01 I1 sem baseline: RECUSA
+
+STDERR: (ver teste-2.6.5-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS
