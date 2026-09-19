@@ -1,0 +1,93 @@
+{
+  "nome": "Rotina de recalibragem",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAM-01 3.6/Anexo D, EMCIA-MET-01 3.4.10, EMCIA-CAT-01 3.4.5",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "rotina_calibragem": {
+      "id_pattern": "CAL-[0-9]{3,}",
+      "required": [
+        "id", "metricas_ref", "responsavel", "responsavel_ciente",
+        "cadencia", "data_primeira_revisao", "limiares_desvio",
+        "monitoramento", "canal_incidente", "analise_pos_incidente",
+        "procedencia", "declarado_por", "registrado_por", "data", "versao"
+      ],
+      "nonempty": [
+        "id", "metricas_ref", "responsavel", "cadencia",
+        "data_primeira_revisao", "limiares_desvio", "monitoramento",
+        "canal_incidente", "analise_pos_incidente", "procedencia",
+        "declarado_por", "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "metricas_ref": "list",
+        "responsavel": "string",
+        "responsavel_ciente": "boolean",
+        "cadencia": "string",
+        "data_primeira_revisao": "date",
+        "limiares_desvio": "string",
+        "limiares_desvio_definidos_em": "date",
+        "monitoramento": "string",
+        "canal_incidente": "string",
+        "analise_pos_incidente": "string",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer"
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_primeira_revisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "limiares_desvio_definidos_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    },
+    "ciclo_calibragem": {
+      "id_pattern": "CAL-[0-9]{3,}-C[0-9]{2,}",
+      "required": [
+        "id", "calibragem_ref", "ciclo", "data_verificacao", "drift_detectado",
+        "procedencia", "declarado_por", "registrado_por", "data", "versao"
+      ],
+      "nonempty": [
+        "id", "calibragem_ref", "ciclo", "data_verificacao", "procedencia",
+        "declarado_por", "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "calibragem_ref": "string",
+        "ciclo": "integer",
+        "data_verificacao": "date",
+        "drift_detectado": "boolean",
+        "drift_descricao": "string",
+        "drift_quantificacao": "string",
+        "recomendacao_agente": "string",
+        "decisao": "string",
+        "decisor": "string",
+        "data_decisao": "date",
+        "justificativa_decisao": "string",
+        "evidencia_decisao": "string",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer"
+      },
+      "enums": {
+        "decisao": ["recalibrar", "expandir", "descontinuar"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_verificacao": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_decisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    }
+  }
+}

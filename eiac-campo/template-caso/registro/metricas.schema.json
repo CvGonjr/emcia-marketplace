@@ -1,0 +1,63 @@
+{
+  "nome": "Plano de medicao",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAM-01 3.5/Anexo C, EMCIA-MET-01 3.4.9, EMCIA-CAT-01 3.4.5",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "metrica": {
+      "id_pattern": "MET-[0-9]{3,}",
+      "required": [
+        "id", "estado", "piloto_ref", "metrica", "tipo", "linha_base",
+        "linha_base_data", "linha_base_procedencia", "metodo_apuracao",
+        "fonte_dado", "periodicidade", "responsavel_apuracao",
+        "procedencia", "declarado_por", "registrado_por", "data", "versao"
+      ],
+      "nonempty": [
+        "id", "estado", "piloto_ref", "metrica", "tipo", "linha_base",
+        "linha_base_data", "linha_base_procedencia", "metodo_apuracao",
+        "fonte_dado", "periodicidade", "responsavel_apuracao",
+        "procedencia", "declarado_por", "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "estado": "string",
+        "piloto_ref": "string",
+        "metrica": "string",
+        "tipo": "string",
+        "linha_base": "string",
+        "linha_base_data": "date",
+        "linha_base_procedencia": "string",
+        "linha_base_definida_em": "date",
+        "metodo_apuracao": "string",
+        "fonte_dado": "string",
+        "periodicidade": "string",
+        "responsavel_apuracao": "string",
+        "resultado_apurado": "string",
+        "resultado_apurado_data": "date",
+        "resultado_apurado_procedencia": "string",
+        "fatores_externos_declarados": "string",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer"
+      },
+      "enums": {
+        "estado": ["planejada", "apurada"],
+        "tipo": ["resultado", "uso", "qualidade"],
+        "linha_base_procedencia": ["D", "I", "V"],
+        "resultado_apurado_procedencia": ["D", "I", "V"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "linha_base_data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "linha_base_definida_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "resultado_apurado_data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    }
+  }
+}

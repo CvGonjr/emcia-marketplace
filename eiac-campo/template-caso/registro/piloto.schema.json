@@ -1,0 +1,52 @@
+{
+  "nome": "Conjunto de casos de teste do piloto",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAM-01 3.4/Anexo B, EMCIA-MET-01 3.4.8, EMCIA-CAT-01 3.4.5",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "conjunto_piloto": {
+      "id_pattern": "CT-[0-9]{3,}",
+      "required": [
+        "id", "estado", "modo", "duracao", "plano_reversao",
+        "criterio_aprovacao_escala", "criterio_aprovacao_escala_definido_em",
+        "casos", "procedencia", "declarado_por", "registrado_por", "data",
+        "versao"
+      ],
+      "nonempty": [
+        "id", "estado", "modo", "duracao", "plano_reversao",
+        "criterio_aprovacao_escala", "criterio_aprovacao_escala_definido_em",
+        "casos", "procedencia", "declarado_por", "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "estado": "string",
+        "modo": "string",
+        "duracao": "string",
+        "plano_reversao": "string",
+        "criterio_aprovacao_escala": "string",
+        "criterio_aprovacao_escala_definido_em": "date",
+        "casos": "list",
+        "revisado_por": "string",
+        "data_revisao": "date",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer"
+      },
+      "enums": {
+        "estado": ["rascunho", "revisado"],
+        "modo": ["sombra", "assistido", "fatia_limitada"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "criterio_aprovacao_escala_definido_em": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_revisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    }
+  }
+}

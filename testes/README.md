@@ -73,7 +73,18 @@ EX3/EX4) rodam separadamente:
 python3 testes/campo_2_6_2.py
 ```
 
-O total acumulado é de 235 verificações.
+As 57 verificações operacionais de P8, P9 e P10 (pacote 2.6.3: casos de
+teste com saída esperada, plano de medição com métrica de resultado,
+rotina de recalibragem recorrente com detecção de drift e decisão
+humana, dependências P8→P9→P10, evidência para os inegociáveis 3, 4 e
+5, e a correção do ciclo de calibragem em duas fases em
+`calibragem.py`) rodam separadamente:
+
+```bash
+python3 testes/campo_2_6_3.py
+```
+
+O total acumulado é de 292 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -400,6 +411,71 @@ Objetos produzidos: `registro/operacional/OP-*.yaml` (estados
 (estados `rascunho`→`proposto`→`decidido`) — dois domínios distintos de
 `contexto/` (CTX-01, intocado) e de `registro/estado.json` (máquina de
 etapas, também intocada em sua semântica).
+
+## P8, P9 e P10 — pacote 2.6.3
+
+Implementa operacionalmente P8 (casos de teste com saída esperada), P9
+(métricas contra a linha de base) e P10 (rotina de recalibragem
+recorrente), inteiramente em `eiac-campo/scripts/` — `piloto.py`,
+`metrica.py` e `calibragem.py` reaproveitam primitivas genéricas do
+núcleo (`estrutura.validar`, `estado.evento`, `estado.autor_e_agente`
+e, para recorrência/inegociáveis, `avancar.registrar_recorrencia` e
+`avancar.satisfazer_inegociavel`, já genéricos desde o 2.6.1) sem
+alterar `eiac-nucleo/` — nenhum arquivo do núcleo foi tocado neste
+pacote.
+
+| ID | Prova |
+|---|---|
+| 2.6.3-T01/T02 | P8 com P7 encerrado corretamente aceito; sem sessão de P7 (não delegável) recusado |
+| 2.6.3-T03/T04 | Caso de teste completo (Anexo B) aceito; caso sem saída esperada recusado |
+| 2.6.3-T05/T05a | Ordem temporal correta (esperado antes de obtido) aceita; saída obtida antes de `esperado_definido_em` recusada (viés retrospectivo) |
+| 2.6.3-T06 | Comparação esperado × obtido é determinística |
+| 2.6.3-T07 | Caso com resultado divergente do esperado: FAIL do caso, saída esperada preservada |
+| 2.6.3-T08 | Tentativa de forjar `resultado` sem a saída bater é recusada |
+| 2.6.3-T09 | Casos com saída esperada produzem evidência real para o inegociável 3 |
+| 2.6.3-T10/T11 | P9 com P8 revisado e baseline válidos aceito; sem `linha_base_data` recusado |
+| 2.6.3-T12/T13 | Métrica de uso aceita como métrica (não satisfaz sozinha o inegociável 4); métrica de resultado válida gravada |
+| 2.6.3-T14/T15 | Nota sobre insuficiência de métrica de uso isolada; ao menos uma de resultado disponível |
+| 2.6.3-T16 | Cálculo baseline × piloto presente e correto |
+| 2.6.3-T17 | Baseline com data posterior ao resultado apurado (inventada depois do piloto) é recusada |
+| 2.6.3-T18/T18b | Resultado observado com fatores externos declarados; apuração sem essa declaração é recusada |
+| 2.6.3-T19/T20 | Responsável genérico ("equipe") recusado; pessoa nomeada aceita |
+| 2.6.3-T21/T22 | Rotina sem cadência recusada; com cadência válida aceita |
+| 2.6.3-T23–T26 | Primeiro ciclo persistido; segundo ciclo não sobrescreve; histórico recuperável; ciclo já registrado (sem drift) não aceita sobrescrita |
+| 2.6.3-T27–T29 | Ciclo sem drift é caminho positivo; agente detecta e descreve drift; agente recomenda sem decidir |
+| 2.6.3-T29b/T29c | Ciclo pendente (drift sem decisão) complementado pela decisão humana no mesmo identificador aceito; segunda decisão sobre ciclo já decidido recusada |
+| 2.6.3-T30/T30b | Agente tenta decidir recalibragem recusado, evento `CicloCalibragemRecusado` |
+| 2.6.3-T31/T31b | Humano decide recalibragem aceito, evento `DecisaoRecalibragemRegistrada` |
+| 2.6.3-T32 | Decisão fora do enum documental (`recalibrar`/`expandir`/`descontinuar`) recusada, não inventada |
+| 2.6.3-T33 | Decisão humana possui justificativa, decisor e data rastreáveis |
+| 2.6.3-T34 | Drift sem decisão humana permanece pendente, não tratado como resolvido |
+| 2.6.3-T35–T40 | Booleano/evidência vazia não satisfaz os inegociáveis 3, 4 e 5; evidência real de P8/P9/P10 satisfaz cada um |
+| 2.6.3-T41/T42 | P9 referencia P8 (`piloto_ref`); P10 referencia P9 (`metricas_ref`) |
+| 2.6.3-T43/T44 | Insumos rastreáveis para E5 disponíveis; E5 não emite automaticamente neste pacote |
+| 2.6.3-G5a–G5c | Escrita direta em `registro/piloto/`, `registro/metricas/`, `registro/calibragem/` recusada pela guarda (G5, genérica) |
+| 2.6.3-T45 | Ausência de hard-code comportamental de P8/P9/P10/piloto/baseline/métrica/drift/calibragem no núcleo |
+| 2.6.3-T46–T48 | Regressão da Ação 2.5, do 2.6.1 e de P6/P7 |
+
+**Achado corrigido neste pacote:** `calibragem.py::gravar_ciclo`
+inicialmente recusava qualquer segunda gravação do mesmo identificador
+de ciclo, mesmo quando a primeira gravação era só a detecção de drift
+(sem decisão) e a segunda era a decisão humana complementando o mesmo
+evento de verificação — bloqueando o fluxo de duas fases que o próprio
+caso de controle integrado exigiu (agente detecta e recomenda; humano
+decide depois, sobre o mesmo ciclo). Corrigido para permitir
+complementar um ciclo *pendente* (drift detectado, sem `decisao`) com a
+decisão humana, mantendo a recusa de sobrescrever um ciclo já decidido
+ou de alterar os fatos do drift (`drift_descricao`/
+`drift_quantificacao`) na complementação — T29b/T29c cobrem os dois
+lados.
+
+Objetos produzidos: `registro/piloto/CT-*.yaml` (estados
+`rascunho`→`revisado`), `registro/metricas/MET-*.yaml` (estados
+`planejada`→`apurada`), `registro/calibragem/CAL-*.yaml` (rotina, sem
+estado — Anexo D não define um) e `registro/calibragem/CAL-*-C*.yaml`
+(ciclos, com `drift_detectado` e `decisao` opcional) — três domínios
+distintos de `contexto/`, de `registro/governanca/` e de
+`registro/operacional/` (2.6.2, intocados).
 
 ## Deslocamento da fronteira por nível
 
