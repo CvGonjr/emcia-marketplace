@@ -3,6 +3,7 @@ name: hb-classificar
 etapa: P5
 camada: EX2
 modalidade: video
+hb: ["HB-11", "HB-12"]
 description: Aplica a matriz problema-tecnologia na passada de especificacao e decide qual tecnologia atende cada caso priorizado. Use quando /classificar for invocado.
 ---
 

@@ -3,6 +3,7 @@ name: hb-priorizar
 etapa: P4
 camada: EX2
 modalidade: video
+hb: ["HB-10"]
 description: Prioriza os casos levantados e define a zona de contencao. Use quando /priorizar for invocado, apos o dossie verificado.
 ---
 

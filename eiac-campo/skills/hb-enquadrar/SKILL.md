@@ -3,6 +3,7 @@ name: hb-enquadrar
 etapa: F0
 camada: EX1
 modalidade: assincrono
+hb: ["HB-01", "HB-02", "HB-03"]
 description: Estrutura a dor declarada e calcula o nivel de complexidade da organizacao. Use quando /enquadrar for invocado ou quando um caso novo nao tiver ficha.
 ---
 

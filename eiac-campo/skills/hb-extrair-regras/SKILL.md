@@ -3,6 +3,7 @@ name: hb-extrair-regras
 etapa: P2
 camada: EX2
 modalidade: assincrono
+hb: ["HB-07"]
 description: Extrai regras candidatas dos documentos entregues e lista o que eles nao respondem. Use quando /mapear-fontes for invocado ou quando houver documento do caso nao varrido.
 ---
 

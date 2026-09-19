@@ -3,6 +3,7 @@ name: hb-mapear-contexto
 etapa: P1
 camada: EX2
 modalidade: video
+hb: ["HB-08", "HB-09"]
 description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use quando /mapear-contexto for invocado, apos o enquadramento.
 ---
 

@@ -84,7 +84,17 @@ humana, dependências P8→P9→P10, evidência para os inegociáveis 3, 4 e
 python3 testes/campo_2_6_3.py
 ```
 
-O total acumulado é de 292 verificações.
+As 50 verificações do catálogo formal de HB/AG (pacote 2.6.4: 18
+habilidades e 4 agentes lógicos, resolução genérica papel↔capacidade
+via `eiac-nucleo/scripts/catalogo.py`, mapa canônico AG→HB de CAT-01
+Anexo A, resolução playbook→HB, identidade rastreável nas skills
+físicas, fronteira EX3/EX4 preservada) rodam separadamente:
+
+```bash
+python3 testes/campo_2_6_4.py
+```
+
+O total acumulado é de 342 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -476,6 +486,48 @@ estado — Anexo D não define um) e `registro/calibragem/CAL-*-C*.yaml`
 (ciclos, com `drift_detectado` e `decisao` opcional) — três domínios
 distintos de `contexto/`, de `registro/governanca/` e de
 `registro/operacional/` (2.6.2, intocados).
+
+## Catálogo HB/AG — pacote 2.6.4
+
+Formaliza as 18 habilidades (HB) e os 4 agentes lógicos (AG) do
+método, materializados como catálogo declarativo em
+`eiac-campo/reference/habilidades.json` e `agentes.json`. A resolução
+genérica (capacidade↔papel, sem conhecer HB/AG/EMCIA) fica em
+`eiac-nucleo/scripts/catalogo.py`, reaproveitando
+`playbook.capacidade_valida()` (ESP-01 G6, já genérico desde o 2.6.1).
+
+| ID | Prova |
+|---|---|
+| 2.6.4-T01–T06 | Catálogo de HB estruturalmente válido; exatamente 18 IDs; conjunto HB-01–18 completo; IDs únicos; nomes presentes; camada válida em todas |
+| 2.6.4-T07/T08 | `skill_ref` resolve para as 14 HB com implementação; skill inexistente (fixture) confirmaria recusa |
+| 2.6.4-T09/T10 | HB automatizada sem critério recusada; com critério aceita |
+| 2.6.4-T11/T12 | Critérios não vagos (extraídos literalmente de CAT-01 Anexo A); toda HB declara `estado_relacao_etapa` |
+| 2.6.4-T13–T15 | Exatamente 4 AG; conjunto AG-01–04 completo; IDs únicos |
+| 2.6.4-T16/T17 | Todo AG referencia só HB existentes; toda HB automatizada tem ao menos um AG autorizado |
+| 2.6.4-T18/T19 | AG tenta HB não autorizada (AG-01×HB-17) recusado; AG executa HB autorizada (AG-04×HB-17) aceito |
+| 2.6.4-T20 | Nenhum AG do catálogo recebe camada EX3/EX4 |
+| 2.6.4-T21–T24 | Cada AG (01–04) resolve exatamente o conjunto de HB do mapa canônico de CAT-01 Anexo A |
+| 2.6.4-T25/T26 | Todas as referências HB do playbook oficial resolvem; referência a HB inexistente recusada |
+| 2.6.4-T27/T28 | Catálogo com HB automatizada sem critério bloqueia antes do playbook; cadeia etapa→HB→skill→AG íntegra (P9→HB-17→hb-medir-valor→AG-04) |
+| 2.6.4-T29/T30 | Skills com HB no catálogo declaram `hb:` no frontmatter; skills sem HB estão classificadas como infraestrutura (emissão de entregável, etapa humana não delegável) — nenhuma sem classificação |
+| 2.6.4-T31 | Skills que materializam mais de uma HB preservam critério individual por HB |
+| 2.6.4-T32–T35 | Mecanismo genérico do 2.6.1 recebe HB real sem/com critério; critério recuperável em runtime; não duplicado na etapa do playbook |
+| 2.6.4-T36–T38 | Nenhum AG tem autoridade sobre a decisão humana de P7 (HB-14) nem de recalibragem em P10 (HB-18); nenhum AG substitui a sessão de P3b |
+| 2.6.4-T39/T40 | Regressão G1: skill EX3/EX4 sem sessão bloqueada; com sessão válida carrega |
+| 2.6.4-T41–T43 | Os 4 AG lógicos resolvem sem exigir 4 arquivos físicos; agentes físicos existentes preservam identidade 1:1; implementação física resolve para arquivo real |
+| 2.6.4-T44/T45 | `catalogo.py` não expõe caminho de auto-ampliação em runtime; catálogo só muda por edição de arquivo versionado |
+| 2.6.4-T46 | Ausência de hard-code HB/AG no núcleo |
+| 2.6.4-T47–T50 | Regressão da Ação 2.5, do 2.6.1, de P6/P7 e de P8/P9/P10 |
+
+**Achado registrado, não defeito:** 4 das 18 HB (HB-04, HB-05, HB-06,
+HB-13) existem no catálogo formal (CAT-01) mas não são referenciadas
+por nenhuma etapa do playbook — o campo `estado_relacao_etapa:
+"nao_referenciada_no_playbook"` documenta isso explicitamente, sem
+forçar uma associação textual entre HB e etapa que os documentos não
+sustentam (a correspondência entregável×passo continua pendência aberta
+por decisão, `decisoes/002`). A relação HB→etapa neste catálogo vem
+exclusivamente de `playbook.json`, nunca de inferência entre CAT-01 e
+MET-01/CAM-01.
 
 ## Deslocamento da fronteira por nível
 
