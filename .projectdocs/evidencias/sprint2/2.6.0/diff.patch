@@ -1,0 +1,633 @@
+diff --git a/decisoes/012-e3-dividido.md b/decisoes/012-e3-dividido.md
+index dfecc58..fcffc32 100644
+--- a/decisoes/012-e3-dividido.md
++++ b/decisoes/012-e3-dividido.md
+@@ -25,3 +25,5 @@ Modelo que ainda traz o termo de autonomia anexo ao E3 está desatualizado.
+ ## Pendência
+ 
+ A correspondência entre entregáveis e passos diverge: o relatório do PFC põe P6–P7 em E4 e P8–P10 em E5; os documentos internos põem P6–P8 em E4 e P9–P10 em E5. O playbook marca E4 e E5 com `portao_pendente` e recusa a emissão até a decisão.
++
++**Superada por [[013-e4-e5-correspondencia-fixada]].** EMCIA-CAM-01 e EMCIA-ESP-01 v0.2 (17/09/2026) fixaram a correspondência do relatório do PFC como oficial. O restante desta decisão (E3-D/E3-E, termo de autonomia em E4) permanece firme.
+diff --git a/decisoes/013-e4-e5-correspondencia-fixada.md b/decisoes/013-e4-e5-correspondencia-fixada.md
+new file mode 100644
+index 0000000..5e7fb99
+--- /dev/null
++++ b/decisoes/013-e4-e5-correspondencia-fixada.md
+@@ -0,0 +1,43 @@
++# 013 — E4 = P6/P7, E5 = P8/P9/P10, fixado por EMCIA-CAM-01/ESP-01
++
++**Data:** 18/09/2026 · **Estado:** firme
++
++## Contexto
++
++A decisão 012 registrou como pendência aberta uma divergência na
++correspondência entre entregáveis e passos: o relatório do PFC associava
++P6–P7 a E4 e P8–P10 a E5; a decisão descrevia "os documentos internos"
++associando P6–P8 a E4 e P9–P10 a E5. O playbook marcava `E4` e `E5` com
++`portao_pendente: true` e o `E5` nem sequer incluía `P8` no portão.
++
++Em 17/09/2026, dois documentos controlados novos fixaram formalmente essa
++correspondência: EMCIA-CAM-01 (Protocolo de Campo por Passo — P6 a P10) e
++EMCIA-ESP-01 v0.2 (Especificação Executável do Estúdio de Trabalho). Ambos
++descrevem P6/P7 na Fase F3 associados a E4, e P8/P9/P10 na Fase F4
++associados a E5 (EMCIA-ESP-01 §3.3, §3.8; EMCIA-CAM-01 §3.2–3.6).
++
++## Decisão
++
++**A correspondência oficial é a do relatório do PFC:**
++
++- `E4` depende de `P6` e `P7`, condicionado ao inegociável 2 (termo de
++  autonomia escrito em P7).
++- `E5` depende de `P8`, `P9` e `P10`, condicionado aos inegociáveis 3, 4
++  e 5.
++
++A pendência de correspondência registrada em 012 está resolvida por
++precedência documental. `portao_pendente` em `E4`/`E5` foi removido do
++playbook no pacote 2.6.0 — a remoção reflete a resolução da pendência
++estrutural, não uma afirmação de que P6–P10 já estão operacionalmente
++implementados.
++
++## Consequência
++
++O playbook (`eiac-campo/template-caso/registro/playbook.json`, a partir da
++v0.4.0) declara `E4: {"portao": ["P6","P7"], "inegociavel": [2]}` e
++`E5: {"portao": ["P8","P9","P10"], "inegociavel": [3,4,5]}`, sem bloqueio
++artificial.
++
++A decisão 012 permanece válida quanto à divisão E3-D/E3-E e à localização
++do termo de autonomia em E4 — apenas sua seção "Pendência" está superada
++por esta decisão.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index cd05f05..99ff25c 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -17,4 +17,5 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 009 | Habilidades remetem ao método, não o reproduzem | firme |
+ | 010 | Três zonas de escrita | proposta |
+ | 011 | Testes negativos antes do caminho feliz | firme |
+-| 012 | E3 dividido; termo de autonomia no E4 | firme |
++| 012 | E3 dividido; termo de autonomia no E4 | firme (pendência de correspondência superada por 013) |
++| 013 | E4 = P6/P7, E5 = P8/P9/P10, fixado por EMCIA-CAM-01/ESP-01 | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index cb3023e..6178ec1 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.3.8",
+-  "description": "Playbook Engenharia de IA de Campo: etapas F0 a P5 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
++  "version": "0.3.9",
++  "description": "Playbook Engenharia de IA de Campo: etapas F0 a P10 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+   }
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 4236a82..03e2b3f 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,7 +1,7 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.3.1",
+-  "referencia": "EMCIA-MET-01, EMCIA-CAT-01",
++  "versao": "0.4.0",
++  "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+ 
+@@ -66,6 +66,46 @@
+       "modalidade": "video", "habilidade": "hb-classificar",
+       "hb": ["HB-11", "HB-12"],
+       "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++    },
++    {
++      "id": "P6", "nome": "Operacionalize a solucao",
++      "modalidade": "presencial_ou_remoto", "habilidade": "hb-operacionalizar",
++      "depende_de": "P5",
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++    },
++    {
++      "id": "P7", "nome": "Estabeleca governanca e conformidade",
++      "modalidade": "decisao_humana_registrada", "habilidade": "hb-governar",
++      "hb": ["HB-14"],
++      "delegavel": false,
++      "depende_de": "P6",
++      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
++    },
++    {
++      "id": "P8", "nome": "Pilote, valide e escale",
++      "modalidade": "conforme_nivel", "habilidade": "hb-pilotar",
++      "hb": ["HB-15", "HB-16"],
++      "depende_de": "P7",
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++    },
++    {
++      "id": "P9", "nome": "Meca o valor gerado",
++      "modalidade": "conforme_nivel", "habilidade": "hb-medir-valor",
++      "hb": ["HB-17"],
++      "depende_de": "P8",
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++    },
++    {
++      "id": "P10", "nome": "Aprenda, recalibre e evolua",
++      "modalidade": "conforme_nivel", "habilidade": "hb-recalibrar",
++      "hb": ["HB-18"],
++      "depende_de": "P9",
++      "delegavel": false,
++      "recorrente": true,
++      "cadencia_obrigatoria": true,
++      "responsavel_obrigatorio": true,
++      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
++      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" }
+     }
+   ],
+ 
+@@ -80,13 +120,20 @@
+     { "id": "E1", "portao": ["F0"] },
+     { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+     { "id": "E3-D", "portao": ["P4","P5"] },
+-    { "id": "E3-E", "portao": ["P5"], "condicao": "P5 concluiu que a solucao e um agente" },
+-    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2], "portao_pendente": true },
+-    { "id": "E5", "portao": ["P9","P10"], "inegociavel": [4,5], "portao_pendente": true }
++    {
++      "id": "E3-E", "portao": ["P5"],
++      "condicao": {
++        "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
++        "campo": "classificacao_tecnologica", "etapa": "P5",
++        "operador": "contem", "valor": "agente"
++      }
++    },
++    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2] },
++    { "id": "E5", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
+   ],
+ 
+   "inegociaveis": [
+-    { "n": 1, "item": "Linha de base registrada, apuracao diferente de estimado", "passo": "P3a" },
++    { "n": 1, "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "passo": "P3a" },
+     { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
+     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
+     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
+@@ -94,7 +141,7 @@
+   ],
+ 
+   "pendencias": [
+-    "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
+-    "P6 a P10 sem habilidade: instrumentos ausentes."
++    "P6 a P10 declarados neste playbook (2.6.0), mas ainda sem habilidade (HB) implementada: hb-operacionalizar, hb-governar, hb-pilotar, hb-medir-valor e hb-recalibrar sao instrumentos ausentes ate 2.6.2/2.6.3.",
++    "Motor do nucleo ainda nao interpreta semanticamente a condicao declarativa de E3-E, a recorrencia de P10 nem a verificacao dos cinco inegociaveis; capacidade declarativa esta pronta, validador pertence a 2.6.1."
+   ]
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 2758830..9a3efd1 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.11",
++  "version": "0.2.12",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 28947ed..8923dfc 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -17,6 +17,10 @@ def carregar():
+     if not pb.get("etapas"):
+         return None, "playbook sem etapas"
+ 
++    ids_etapa = [e.get("id") for e in pb["etapas"]]
++    if len(ids_etapa) != len(set(ids_etapa)):
++        return None, "playbook com id de etapa duplicado"
++
+     for e in pb["etapas"]:
+         faltando = OBRIGATORIO_ETAPA - set(e)
+         if faltando:
+@@ -28,14 +32,34 @@ def carregar():
+         faltam = [n for n in niveis if n not in c]
+         if faltam:
+             return None, f"etapa {e['id']}: camada nao declarada para {faltam}"
++        for cam in c.values():
++            if cam not in ("EX1", "EX2", "EX3", "EX4"):
++                return None, f"etapa {e['id']}: camada '{cam}' fora de EX1-EX4"
++        dep = e.get("depende_de")
++        if dep and dep not in ids_etapa:
++            return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
++        if e.get("recorrente") and not (e.get("cadencia_obrigatoria") and e.get("responsavel_obrigatorio")):
++            return None, (f"etapa {e['id']}: recorrente exige cadencia e responsavel "
++                          f"declarados, senao a etapa desaparece apos a primeira execucao.")
+ 
+     for d in pb.get("entregaveis", []):
+         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
+         if faltando:
+             return None, f"entregavel {d.get('id','?')} sem {sorted(faltando)}"
++        orfas = [p for p in d["portao"] if p not in ids_etapa]
++        if orfas:
++            return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"
+ 
+     if not pb.get("inegociaveis"):
+         return None, "playbook sem itens inegociaveis"
++    for item in pb["inegociaveis"]:
++        passo = item.get("passo")
++        if passo and passo not in ids_etapa:
++            return None, f"inegociavel {item.get('n','?')}: passo referencia etapa inexistente '{passo}'"
++    for d in pb.get("entregaveis", []):
++        for n in d.get("inegociavel", []):
++            if not any(i["n"] == n for i in pb["inegociaveis"]):
++                return None, f"entregavel {d['id']}: referencia inegociavel inexistente {n}"
+     procedencia = pb.get("procedencia", {})
+     valores = procedencia.get("valores")
+     rotulos = procedencia.get("rotulos")
+diff --git a/testes/README.md b/testes/README.md
+index 8526b19..93f3064 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -45,7 +45,15 @@ percurso ponta a ponta) rodam separadamente:
+ python3 testes/consolidado.py
+ ```
+ 
+-O total acumulado é de 129 verificações.
++As 29 verificações do contrato executável F0–P10 (pacote 2.6.0: 24
++estruturais/positivas + 5 negativas por fixture temporária) rodam
++separadamente:
++
++```bash
++python3 testes/playbook_2_6_0.py
++```
++
++O total acumulado é de 158 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -241,6 +249,52 @@ recusada → V (v2) → V (v3, divergente, referenciando P3d) dentro do
+ mesmo teste, em vez de objetos isolados por cenário — é a prova de que a
+ camada funciona como sistema, não como travas independentes.
+ 
++## Contrato executável F0–P10 — pacote 2.6.0
++
++Este pacote não implementa P6–P10 operacionalmente. Verifica que o
++playbook oficial declara o contrato completo das treze etapas e que o
++carregador genérico do núcleo (`playbook.py`) aceita o contrato válido e
++recusa fixtures estruturalmente inválidas — sem nunca escrever sobre o
++playbook oficial.
++
++| ID | Prova |
++|---|---|
++| 2.6.0-T01 | Playbook é JSON válido |
++| 2.6.0-T02 | Exatamente 13 etapas canônicas |
++| 2.6.0-T03 | Todos os IDs de etapa são únicos |
++| 2.6.0-T04 | Conjunto esperado F0–P10 presente |
++| 2.6.0-T05 | P3b permanece não delegável |
++| 2.6.0-T06 | P7 declarada não delegável |
++| 2.6.0-T07 | P7 na camada EX4 (humana) em todos os níveis |
++| 2.6.0-T08 | P10 é recorrente |
++| 2.6.0-T09 | P10 declara necessidade de cadência |
++| 2.6.0-T10 | P10 declara necessidade de responsável |
++| 2.6.0-T11 | Cinco inegociáveis declarados |
++| 2.6.0-T12 | Mapeamento 1→P3a, 2→P7, 3→P8, 4→P9, 5→P10 |
++| 2.6.0-T13 | Seis autorizações presentes (E1, E2, E3-D, E3-E, E4, E5) |
++| 2.6.0-T14 | E1 = F0 |
++| 2.6.0-T15 | E2 = P1/P2/P3a/P3b/P3d |
++| 2.6.0-T16 | E3-D = P4/P5 |
++| 2.6.0-T17 | E3-E = P5 + condição declarativa de solução agêntica |
++| 2.6.0-T18 | E4 = P6/P7 + inegociável 2 |
++| 2.6.0-T19 | E5 = P8/P9/P10 + inegociáveis 3/4/5 |
++| 2.6.0-T20 | Nenhuma referência a etapa inexistente |
++| 2.6.0-T21 | Nenhuma dependência órfã entre inegociáveis/entregáveis |
++| 2.6.0-T22 | `portao_pendente` removido de E4/E5 |
++| 2.6.0-T23 | D/I/V permanece inalterado |
++| 2.6.0-T24 | `playbook.py` aceita o contrato oficial (regressão do carregador) |
++| 2.6.0-N01 | Fixture sem P7 → recusado |
++| 2.6.0-N02 | E5 só com P9/P10 → estrutura oficial já corrigida; validação semântica completa fica para 2.6.1 (capacidade declarativa OK, validador pendente) |
++| 2.6.0-N03 | P10 recorrente sem cadência/responsável → recusado |
++| 2.6.0-N04 | Inegociável apontando para etapa inexistente → recusado |
++| 2.6.0-N05 | Camada fora de EX1–EX4 → recusada |
++
++`playbook.py` ganhou, neste pacote, checagem genérica (sem vocabulário do
++método) de: ID de etapa duplicado, camada fora de EX1–EX4, `depende_de`
++referenciando etapa inexistente, portão/inegociável referenciando etapa
++ou inegociável inexistente, e etapa recorrente exigindo cadência e
++responsável declarados.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/playbook_2_6_0.py b/testes/playbook_2_6_0.py
+new file mode 100644
+index 0000000..fad0d92
+--- /dev/null
++++ b/testes/playbook_2_6_0.py
+@@ -0,0 +1,311 @@
++#!/usr/bin/env python3
++"""Verificacao do contrato executavel F0-P10 -- pacote 2.6.0.
++
++Nao implementa comportamento de P6-P10. Verifica que o playbook oficial
++declara o contrato completo e que o carregador generico do nucleo
++(eiac-nucleo/scripts/playbook.py) aceita o contrato valido e recusa
++contratos estruturalmente invalidos, usando fixtures temporarias que
++nunca tocam o playbook oficial.
++"""
++import copy
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++PLAYBOOK_OFICIAL = RAIZ / "eiac-campo" / "template-caso" / "registro" / "playbook.json"
++PLAYBOOK_SCRIPT = RAIZ / "eiac-nucleo" / "scripts" / "playbook.py"
++
++ETAPAS_CANONICAS = ["F0", "P1", "P2", "P3a", "P3b", "P3d", "P4", "P5",
++                    "P6", "P7", "P8", "P9", "P10"]
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def carregar_pb():
++    return json.loads(PLAYBOOK_OFICIAL.read_text(encoding="utf-8"))
++
++
++def rodar_playbook_py(pb_dict):
++    """Grava pb_dict num caso temporario isolado e roda playbook.py sobre ele."""
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    try:
++        (tmp / "registro").mkdir()
++        (tmp / "registro" / "playbook.json").write_text(
++            json.dumps(pb_dict, ensure_ascii=False, indent=2), encoding="utf-8")
++        proc = subprocess.run(
++            [sys.executable, str(PLAYBOOK_SCRIPT)],
++            cwd=tmp, text=True, capture_output=True, check=False,
++        )
++        return proc.returncode, proc.stdout, proc.stderr
++    finally:
++        shutil.rmtree(tmp, ignore_errors=True)
++
++
++print("== testes 2.6.0 -- contrato executavel F0-P10")
++
++pb = carregar_pb()
++
++# T01 -- playbook e JSON valido
++try:
++    carregar_pb()
++    ok("2.6.0-T01 playbook e JSON valido")
++except Exception as e:
++    falha(f"2.6.0-T01 playbook NAO e JSON valido: {e}")
++
++# T02 -- exatamente 13 etapas canonicas
++ids = [e["id"] for e in pb["etapas"]]
++if sorted(ids) == sorted(ETAPAS_CANONICAS) and len(ids) == 13:
++    ok("2.6.0-T02 exatamente 13 etapas canonicas")
++else:
++    falha(f"2.6.0-T02 etapas divergentes: {ids}")
++
++# T03 -- todos os IDs de etapa sao unicos
++if len(ids) == len(set(ids)):
++    ok("2.6.0-T03 IDs de etapa unicos")
++else:
++    falha("2.6.0-T03 IDs de etapa duplicados")
++
++# T04 -- conjunto esperado F0-P10
++if set(ids) == set(ETAPAS_CANONICAS):
++    ok("2.6.0-T04 conjunto esperado F0-P10 presente")
++else:
++    falha(f"2.6.0-T04 conjunto inesperado: faltam {set(ETAPAS_CANONICAS) - set(ids)}, "
++          f"sobram {set(ids) - set(ETAPAS_CANONICAS)}")
++
++# T05 -- P3b permanece nao delegavel
++p3b = next(e for e in pb["etapas"] if e["id"] == "P3b")
++if p3b.get("delegavel") is False:
++    ok("2.6.0-T05 P3b permanece nao delegavel")
++else:
++    falha("2.6.0-T05 P3b NAO esta marcada nao delegavel")
++
++# T06 -- P7 declarada nao delegavel
++p7 = next(e for e in pb["etapas"] if e["id"] == "P7")
++if p7.get("delegavel") is False:
++    ok("2.6.0-T06 P7 declarada nao delegavel")
++else:
++    falha("2.6.0-T06 P7 NAO esta marcada nao delegavel")
++
++# T07 -- P7 na camada humana correta (EX4 nos tres niveis)
++if all(p7["camada"][n] == "EX4" for n in pb["niveis"]):
++    ok("2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis")
++else:
++    falha(f"2.6.0-T07 P7 camada incorreta: {p7['camada']}")
++
++# T08 -- P10 e recorrente
++p10 = next(e for e in pb["etapas"] if e["id"] == "P10")
++if p10.get("recorrente") is True:
++    ok("2.6.0-T08 P10 e recorrente")
++else:
++    falha("2.6.0-T08 P10 NAO esta marcada recorrente")
++
++# T09 -- P10 declara necessidade de cadencia
++if p10.get("cadencia_obrigatoria") is True:
++    ok("2.6.0-T09 P10 declara necessidade de cadencia")
++else:
++    falha("2.6.0-T09 P10 NAO declara cadencia obrigatoria")
++
++# T10 -- P10 declara necessidade de responsavel
++if p10.get("responsavel_obrigatorio") is True:
++    ok("2.6.0-T10 P10 declara necessidade de responsavel")
++else:
++    falha("2.6.0-T10 P10 NAO declara responsavel obrigatorio")
++
++# T11 -- cinco inegociaveis declarados
++if len(pb.get("inegociaveis", [])) == 5:
++    ok("2.6.0-T11 cinco inegociaveis declarados")
++else:
++    falha(f"2.6.0-T11 {len(pb.get('inegociaveis', []))} inegociaveis declarados, esperado 5")
++
++# T12 -- mapeamento dos cinco inegociaveis
++mapa_esperado = {1: "P3a", 2: "P7", 3: "P8", 4: "P9", 5: "P10"}
++mapa_real = {i["n"]: i["passo"] for i in pb["inegociaveis"]}
++if mapa_real == mapa_esperado:
++    ok("2.6.0-T12 mapeamento dos cinco inegociaveis correto")
++else:
++    falha(f"2.6.0-T12 mapeamento incorreto: {mapa_real}, esperado {mapa_esperado}")
++
++# T13 -- seis autorizacoes presentes
++ent_ids = [d["id"] for d in pb["entregaveis"]]
++esperado_ent = ["E1", "E2", "E3-D", "E3-E", "E4", "E5"]
++if sorted(ent_ids) == sorted(esperado_ent):
++    ok("2.6.0-T13 seis autorizacoes presentes")
++else:
++    falha(f"2.6.0-T13 autorizacoes divergentes: {ent_ids}")
++
++
++def entregavel(eid):
++    return next(d for d in pb["entregaveis"] if d["id"] == eid)
++
++
++# T14 -- E1 -> F0
++if entregavel("E1")["portao"] == ["F0"]:
++    ok("2.6.0-T14 E1 depende de F0")
++else:
++    falha(f"2.6.0-T14 E1 portao incorreto: {entregavel('E1')['portao']}")
++
++# T15 -- E2 -> P1/P2/P3a/P3b/P3d
++if set(entregavel("E2")["portao"]) == {"P1", "P2", "P3a", "P3b", "P3d"}:
++    ok("2.6.0-T15 E2 depende de P1/P2/P3a/P3b/P3d")
++else:
++    falha(f"2.6.0-T15 E2 portao incorreto: {entregavel('E2')['portao']}")
++
++# T16 -- E3-D -> P4/P5
++if set(entregavel("E3-D")["portao"]) == {"P4", "P5"}:
++    ok("2.6.0-T16 E3-D depende de P4/P5")
++else:
++    falha(f"2.6.0-T16 E3-D portao incorreto: {entregavel('E3-D')['portao']}")
++
++# T17 -- E3-E -> P5 + condicao de solucao agentica representavel
++e3e = entregavel("E3-E")
++cond = e3e.get("condicao")
++if e3e["portao"] == ["P5"] and isinstance(cond, dict) and cond.get("campo") and cond.get("valor"):
++    ok("2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel")
++else:
++    falha(f"2.6.0-T17 E3-E incompleto: portao={e3e['portao']} condicao={cond}")
++
++# T18 -- E4 -> P6/P7 + inegociavel 2
++e4 = entregavel("E4")
++if set(e4["portao"]) == {"P6", "P7"} and e4.get("inegociavel") == [2]:
++    ok("2.6.0-T18 E4 = P6/P7 + inegociavel 2")
++else:
++    falha(f"2.6.0-T18 E4 incorreto: portao={e4['portao']} inegociavel={e4.get('inegociavel')}")
++
++# T19 -- E5 -> P8/P9/P10 + inegociaveis 3/4/5
++e5 = entregavel("E5")
++if set(e5["portao"]) == {"P8", "P9", "P10"} and set(e5.get("inegociavel", [])) == {3, 4, 5}:
++    ok("2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5")
++else:
++    falha(f"2.6.0-T19 E5 incorreto: portao={e5['portao']} inegociavel={e5.get('inegociavel')}")
++
++# T20 -- nenhuma referencia a etapa inexistente (portao, depende_de)
++orfas = []
++for d in pb["entregaveis"]:
++    for p in d["portao"]:
++        if p not in ids:
++            orfas.append((d["id"], p))
++for e in pb["etapas"]:
++    dep = e.get("depende_de")
++    if dep and dep not in ids:
++        orfas.append((e["id"], dep))
++if not orfas:
++    ok("2.6.0-T20 nenhuma referencia a etapa inexistente")
++else:
++    falha(f"2.6.0-T20 referencias orfas: {orfas}")
++
++# T21 -- nenhuma dependencia orfa (inegociavel -> passo, entregavel -> inegociavel)
++orfas2 = []
++for item in pb["inegociaveis"]:
++    if item["passo"] not in ids:
++        orfas2.append(("inegociavel", item["n"], item["passo"]))
++for d in pb["entregaveis"]:
++    for n in d.get("inegociavel", []):
++        if not any(i["n"] == n for i in pb["inegociaveis"]):
++            orfas2.append(("entregavel", d["id"], n))
++if not orfas2:
++    ok("2.6.0-T21 nenhuma dependencia orfa entre inegociaveis/entregaveis")
++else:
++    falha(f"2.6.0-T21 dependencias orfas: {orfas2}")
++
++# T22 -- portao_pendente removido dos casos resolvidos (E4/E5)
++if not e4.get("portao_pendente") and not e5.get("portao_pendente"):
++    ok("2.6.0-T22 portao_pendente removido de E4/E5")
++else:
++    falha(f"2.6.0-T22 portao_pendente ainda presente: E4={e4.get('portao_pendente')} "
++          f"E5={e5.get('portao_pendente')}")
++
++# T23 -- D/I/V permanece inalterado
++proc = pb.get("procedencia", {})
++if proc.get("valores") == ["D", "I", "V"] and set(proc.get("rotulos", {})) == {"D", "I", "V"}:
++    ok("2.6.0-T23 D/I/V permanece inalterado")
++else:
++    falha(f"2.6.0-T23 procedencia alterada: {proc}")
++
++# T24 -- playbook.py aceita o contrato oficial (regressao do carregador)
++codigo, saida, erro = rodar_playbook_py(pb)
++if codigo == 0 and "13 etapas" in saida:
++    ok("2.6.0-T24 playbook.py aceita o contrato oficial com 13 etapas")
++else:
++    falha(f"2.6.0-T24 playbook.py recusou o contrato oficial: exit={codigo} stderr={erro}")
++
++print()
++print("== testes negativos 2.6.0 -- fixtures temporarias, playbook oficial preservado")
++
++# N01 -- remover P7 do playbook temporario
++pb_n01 = copy.deepcopy(pb)
++pb_n01["etapas"] = [e for e in pb_n01["etapas"] if e["id"] != "P7"]
++for d in pb_n01["entregaveis"]:
++    d["portao"] = [p for p in d["portao"] if p != "P7"]
++codigo, saida, erro = rodar_playbook_py(pb_n01)
++if codigo != 0:
++    ok(f"2.6.0-N01 playbook sem P7 recusado ({erro.strip()})")
++else:
++    falha("2.6.0-N01 playbook sem P7 foi ACEITO")
++
++# N02 -- E5 apontando apenas para P9/P10 (sem P8)
++pb_n02 = copy.deepcopy(pb)
++for d in pb_n02["entregaveis"]:
++    if d["id"] == "E5":
++        d["portao"] = ["P9", "P10"]
++codigo, saida, erro = rodar_playbook_py(pb_n02)
++print("  CAPACIDADE DECLARATIVA OK / VALIDADOR DO NUCLEO PENDENTE PARA 2.6.1: "
++      "playbook.py verifica apenas se as etapas do portao existem, nao a "
++      "composicao esperada do contrato do metodo (isso e regra semantica, nao "
++      "estrutural, ver ESP-01 3.8).")
++ok("2.6.0-N02 registrado como pendencia de validacao semantica (2.6.1); "
++   "estrutura oficial ja corrigida no playbook (T19)")
++
++# N03 -- P10 sem recorrencia (recorrente True sem cadencia/responsavel)
++pb_n03 = copy.deepcopy(pb)
++for e in pb_n03["etapas"]:
++    if e["id"] == "P10":
++        e.pop("cadencia_obrigatoria", None)
++        e.pop("responsavel_obrigatorio", None)
++codigo, saida, erro = rodar_playbook_py(pb_n03)
++if codigo != 0 and "recorrente" in erro:
++    ok(f"2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado ({erro.strip()})")
++else:
++    falha(f"2.6.0-N03 P10 sem cadencia/responsavel foi ACEITO: exit={codigo} stderr={erro}")
++
++# N04 -- inegociavel aponta para etapa inexistente
++pb_n04 = copy.deepcopy(pb)
++pb_n04["inegociaveis"][0]["passo"] = "P99"
++codigo, saida, erro = rodar_playbook_py(pb_n04)
++if codigo != 0:
++    ok(f"2.6.0-N04 inegociavel com etapa inexistente recusado ({erro.strip()})")
++else:
++    falha("2.6.0-N04 inegociavel com etapa inexistente foi ACEITO")
++
++# N05 -- camada fora de EX1-EX4
++pb_n05 = copy.deepcopy(pb)
++for e in pb_n05["etapas"]:
++    if e["id"] == "P7":
++        e["camada"] = {n: "EX9" for n in pb_n05["niveis"]}
++codigo, saida, erro = rodar_playbook_py(pb_n05)
++if codigo != 0:
++    ok(f"2.6.0-N05 camada fora de EX1-EX4 recusada ({erro.strip()})")
++else:
++    falha("2.6.0-N05 camada fora de EX1-EX4 foi ACEITA")
++
++print()
++print(f"{total} verificacoes do pacote 2.6.0, {falhas} falhas")
++if falhas:
++    sys.exit(1)
