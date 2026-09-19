@@ -1,0 +1,30 @@
+PACOTE: 2.5.5
+TESTE: T02
+REQUISITO: candidato sem curadoria nao e consumido
+DATA/HORA: 2026-09-18T18:16:16-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id T-001
+EXIT CODE:
+[1] 1
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+consultar.py recusa: objeto nao curado
+
+STDOUT:
+--- comando 1 ---
+
+STDERR:
+--- comando 1 ---
+contexto/termos/T-001.yaml nao existe — objeto nao curado
+
+EVENTOS:
+(nenhum aplicavel)
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,30 @@
+PACOTE: 2.5.5
+TESTE: T03
+REQUISITO: candidato de P2 curado entra no CTX
+DATA/HORA: 2026-09-18T18:16:16-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-001.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+T-001 curado com sucesso
+
+STDOUT:
+--- comando 1 ---
+termo curado: contexto/termos/T-001.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T18:16:16", "tipo_objeto": "termo", "arquivo": "contexto/termos/T-001.yaml", "id": "T-001", "procedencia": "I", "versao": null, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

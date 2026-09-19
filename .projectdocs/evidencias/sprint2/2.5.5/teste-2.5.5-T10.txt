@@ -1,0 +1,35 @@
+PACOTE: 2.5.5
+TESTE: T10
+REQUISITO: P5 com Regra incompleta
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-002.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id RN-002
+EXIT CODE:
+[1] 1
+[2] 1
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+Regra sem estabilidade nunca cura; consulta a RN-002 tambem recusa (objeto nao existe em contexto/)
+
+STDOUT:
+--- comando 1 ---
+--- comando 2 ---
+
+STDERR:
+--- comando 1 ---
+campo obrigatorio ausente: estabilidade
+--- comando 2 ---
+contexto/regras/RN-002.yaml nao existe — objeto nao curado
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-002.yaml", "erros": ["campo obrigatorio ausente: estabilidade"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

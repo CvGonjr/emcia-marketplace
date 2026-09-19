@@ -1,0 +1,38 @@
+PACOTE: 2.5.5
+TESTE: T07
+REQUISITO: P4 com contexto/regras vazio (nenhuma regra curada)
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/quadro.py
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS c/ alerta
+
+RESULTADO OBTIDO:
+quadro roda com 0 regras, sinaliza celula critica vazia
+
+STDOUT:
+--- comando 1 ---
+
+0 regras
+
+                 baixa     media      alta
+rotineira            0         0         0
+ocasional            0         0         0
+rara                 0         0       [0]
+
+celula critica (rara x alta): 0
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-001.yaml", "id": "RN-001", "procedencia": "V", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

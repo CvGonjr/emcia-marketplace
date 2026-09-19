@@ -1,0 +1,35 @@
+PACOTE: 2.5.5
+TESTE: T13
+REQUISITO: CTX invalido (CTX-V05) nao e consumido
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-004.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id RN-004
+EXIT CODE:
+[1] 1
+[2] 1
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+RECUSA
+
+RESULTADO OBTIDO:
+RN-004 nunca cura (referencia T-999 nao resolve); consulta tambem recusa
+
+STDOUT:
+--- comando 1 ---
+--- comando 2 ---
+
+STDERR:
+--- comando 1 ---
+CTX-V05: referencia 'T-999' em 'entradas' nao resolve — contexto/termos/T-999.yaml nao existe
+--- comando 2 ---
+contexto/regras/RN-004.yaml nao existe — objeto nao curado
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-004.yaml", "erros": ["CTX-V05: referencia 'T-999' em 'entradas' nao resolve — contexto/termos/T-999.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

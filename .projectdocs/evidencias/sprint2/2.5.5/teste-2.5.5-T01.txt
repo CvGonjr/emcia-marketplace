@@ -1,0 +1,29 @@
+PACOTE: 2.5.5
+TESTE: T01
+REQUISITO: P2 produz candidato CTX em rascunho/
+DATA/HORA: 2026-09-18T18:16:16-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+(nenhum comando)
+EXIT CODE:
+(n/a)
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+candidato existe em rascunho/, contexto/ ainda nao tem o objeto
+
+STDOUT:
+(vazio)
+
+STDERR:
+(vazio)
+
+EVENTOS:
+(nenhum aplicavel)
+
+RESULTADO FINAL: PASS

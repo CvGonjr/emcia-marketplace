@@ -1,0 +1,41 @@
+PACOTE: 2.5.5
+TESTE: T15
+REQUISITO: fluxo minimo P2 -> CTX -> P4
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/quadro.py
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+T-001 (P2) curado; RN-001 (P3b/P3d) curada referenciando T-001; quadro.py (P4) consome contexto/regras/ com exit 0
+
+STDOUT:
+--- comando 1 ---
+
+2 regras
+
+                 baixa     media      alta
+rotineira            0         0         2
+ocasional            0         0         0
+rara                 0         0       [0]
+
+celula critica (rara x alta): 0
+ATENCAO: celula critica vazia. Ou a organizacao e excepcionalmente
+regular, ou o levantamento do P3b nao aconteceu. Confronte as duas
+hipoteses antes de encerrar o passo.
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-005.yaml", "erros": ["CTX-V05: referencia 'T-998' em 'entradas' nao resolve — contexto/termos/T-998.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

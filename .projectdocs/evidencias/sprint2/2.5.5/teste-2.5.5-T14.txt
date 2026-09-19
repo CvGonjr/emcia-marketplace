@@ -1,0 +1,29 @@
+PACOTE: 2.5.5
+TESTE: T14
+REQUISITO: evento de falha de consumo/curadoria
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+(nenhum comando)
+EXIT CODE:
+(n/a)
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+RECUSA + evento
+
+RESULTADO OBTIDO:
+CuradoriaRecusada registrado em eventos.jsonl
+
+STDOUT:
+(vazio)
+
+STDERR:
+(vazio)
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-005.yaml", "erros": ["CTX-V05: referencia 'T-998' em 'entradas' nao resolve — contexto/termos/T-998.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

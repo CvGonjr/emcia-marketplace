@@ -1,0 +1,67 @@
+PACOTE: 2.5.5
+TESTE: T16
+REQUISITO: fluxo minimo P3 -> CTX -> P5
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id RN-001
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+RN-001 (P3b/P3d, V, divergente com referencia_p3d DIV-001) consultada com sucesso por consultar.py (P5)
+
+STDOUT:
+--- comando 1 ---
+{
+  "id": "RN-001",
+  "enunciado": "quando a autorizacao chega, a guia e enviada no mesmo dia",
+  "gatilho": "recebimento_da_autorizacao",
+  "procedencia": "V",
+  "autoria_conteudo": "Claudia Ferreira",
+  "registrado_por": "Rafael Nogueira",
+  "data": "2026-09-18",
+  "origem_do_conhecimento": "experiencia_propria",
+  "premissa": "",
+  "evidencia": {
+    "tipo": "observacao",
+    "referencia": "sessao-P3b-001"
+  },
+  "classificacao_confronto": {
+    "classe": "divergente",
+    "referencia_p3d": "DIV-001"
+  },
+  "documento_de_origem": null,
+  "determinismo": "admite_julgamento",
+  "frequencia": "rotineira",
+  "consequencia_do_erro": "alta",
+  "decisor_quando_nao_cobre": "Claudia Ferreira",
+  "entradas": [
+    "T-001"
+  ],
+  "excecoes_conhecidas": [],
+  "estabilidade": "muda quando o convenio revisa o contrato",
+  "versao": 2,
+  "historico": [
+    {
+      "versao": 1,
+      "data": "2026-09-12",
+      "procedencia": "I",
+      "registrado_por": "Rafael Nogueira"
+    }
+  ]
+}
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-005.yaml", "erros": ["CTX-V05: referencia 'T-998' em 'entradas' nao resolve — contexto/termos/T-998.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

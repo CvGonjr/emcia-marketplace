@@ -1,0 +1,60 @@
+PACOTE: 2.5.5
+TESTE: T11
+REQUISITO: P5 distingue I de V (I visivel, nao mascarada)
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-003.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id RN-003
+EXIT CODE:
+[1] 0
+[2] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+consultar.py expõe procedencia: I explicitamente; skill instrui nao tratar como V para decisao que exige verificacao
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-003.yaml
+--- comando 2 ---
+{
+  "id": "RN-003",
+  "enunciado": "quando a autorizacao chega, a guia e enviada no mesmo dia",
+  "gatilho": "recebimento_da_autorizacao",
+  "procedencia": "I",
+  "autoria_conteudo": "Claudia Ferreira",
+  "registrado_por": "Rafael Nogueira",
+  "data": "2026-09-18",
+  "origem_do_conhecimento": "experiencia_propria",
+  "premissa": "padrao demonstrado pela amostra",
+  "evidencia": "",
+  "classificacao_confronto": {
+    "classe": "",
+    "referencia_p3d": ""
+  },
+  "documento_de_origem": null,
+  "determinismo": "admite_julgamento",
+  "frequencia": "rotineira",
+  "consequencia_do_erro": "alta",
+  "decisor_quando_nao_cobre": "Claudia Ferreira",
+  "entradas": [],
+  "excecoes_conhecidas": [],
+  "estabilidade": "muda quando o convenio revisa o contrato",
+  "versao": 1,
+  "historico": []
+}
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-003.yaml", "id": "RN-003", "procedencia": "I", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

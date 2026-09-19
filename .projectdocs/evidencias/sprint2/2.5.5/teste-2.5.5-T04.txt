@@ -1,0 +1,30 @@
+PACOTE: 2.5.5
+TESTE: T04
+REQUISITO: P3b gera Regra candidata rastreavel
+DATA/HORA: 2026-09-18T18:16:16-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+RN-001 (I) curada, referenciando T-001
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-001.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T18:16:16", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-001.yaml", "id": "RN-001", "procedencia": "I", "versao": 1, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

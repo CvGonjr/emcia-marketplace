@@ -1,0 +1,41 @@
+PACOTE: 2.5.5
+TESTE: T06
+REQUISITO: P4 consome contexto valido via quadro.py
+DATA/HORA: 2026-09-18T18:16:17-03:00
+HEAD INICIAL: 2216feef1bece5cee01e3409631945ab1dd1fb93
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/quadro.py
+EXIT CODE:
+[1] 0
+
+OBJETOS CTX UTILIZADOS:
+(nenhum)
+
+RESULTADO ESPERADO:
+PASS
+
+RESULTADO OBTIDO:
+quadro roda sobre RN-001 curada, exit 0
+
+STDOUT:
+--- comando 1 ---
+
+1 regras
+
+                 baixa     media      alta
+rotineira            0         0         1
+ocasional            0         0         0
+rara                 0         0       [0]
+
+celula critica (rara x alta): 0
+ATENCAO: celula critica vazia. Ou a organizacao e excepcionalmente
+regular, ou o levantamento do P3b nao aconteceu. Confronte as duas
+hipoteses antes de encerrar o passo.
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T18:16:17", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-001.yaml", "id": "RN-001", "procedencia": "V", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

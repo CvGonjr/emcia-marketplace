@@ -1,0 +1,64 @@
+--- /tmp/claude-1000/-home-netiv-ai-Projetos-AI-PLUGINS-emcia-marketplace/fe141b79-971a-42ab-a29f-19c18bcc9d14/scratchpad/rte01-before-2.5.5.md	2026-09-18 21:53:59.577373920 -0300
++++ "/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md"	2026-09-18 21:54:56.491833360 -0300
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0, 2.5.1, 2.5.2, 2.5.3 e 2.5.4, com evidências contemporâneas no 2.5.1 ao 2.5.4.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0 a 2.5.5, com evidências contemporâneas no 2.5.1 ao 2.5.5.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.6 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.7 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -247,7 +247,7 @@
+ | **2.5.2** | Contexto e Dados | Curadoria, autoria, versionamento I→V e proteção de `contexto/`. | Concluído |
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Concluído |
+ | **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Concluído |
+-| **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Não iniciado |
++| **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Concluído |
+ | **2.5.6** | Contexto e Dados | Verificação consolidada da camada. | Não iniciado |
+ | **2.6.0** | Agentes e Protocolos | Congelar contrato executável F0–P10. | Não iniciado |
+ | **2.6.1** | Agentes e Protocolos | Fortalecer núcleo, máquina de estados, guardas e eventos. | Não iniciado |
+@@ -381,6 +381,33 @@
+ (2.5.5), a verificação consolidada da camada (2.5.6), nem qualquer item da
+ ação 2.6.
+ 
++#### 3.10.6 Pacote 2.5.5 — execução efetiva
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.5` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Objetivo** | Integrar a produção de informação de P2/P3 à camada CTX e fazer P4/P5 consumirem o contexto validado. |
++| **Requisitos / baseline** | `D-06`, `2.5-BL20`, `2.5-BL21`, `2.5-BL22` (parte de fluxo) |
++| **Estado inicial** | `HEAD_INICIAL_2.5.5 = 2216feef1bece5cee01e3409631945ab1dd1fb93`, working tree limpa. Confirmado por inspeção direta (busca textual em todas as skills/comandos/agentes): nenhuma etapa P2–P5 referenciava `curar.py` ou `contexto/`; todas liam/escreviam só `caso/*.md`. `quadro.py` já existia e já lia CTX estruturado, mas nenhuma skill de P4 instruía usá-lo; `classificador-tecnologico` (P5) só tinha `Read, Grep`, sem consulta estruturada. |
++| **Implementação** | P2 ganhou caminho real de propor Termo/Entidade/Regra/Fonte candidata em `rascunho/`, curada só por decisão humana. P3a manteve-se fora dos quatro objetos CTX (decisão de método: CTX-01 não define objeto de medição), com vínculo rastreável via `evidencia.referencia` quando aplicável. P3b/P3d tiveram o caminho já existente (2.5.2/2.5.3) formalizado nas skills. P4 passou a rodar `quadro.py` (já estrutural) antes de priorizar. P5 ganhou `eiac-nucleo/scripts/consultar.py`, leitura genérica e somente-leitura por id, reaproveitando `catalogo_referencias`; a skill/agente de P5 preservam D/I/V sem exigir V globalmente. |
++| **Testes** | `2.5.5-T01` a `2.5.5-T16` (mínimo obrigatório) + `2.5.5-T05b` (controle positivo adicional) + `2.5.5-T17` como regressão acumulada. |
++| **Defeitos** | Defeito real e pré-existente encontrado em `quadro.py`: `entradas: []`/`excecoes_conhecidas: []` eram tratados como "campo ausente" mesmo sendo válidos pelo schema (`required` sem `nonempty`), inconsistente com o tratamento que `decisor_quando_nao_cobre` já recebia no mesmo script. Descoberto ao montar o fluxo mínimo P2→CTX→P4. |
++| **Correções** | `quadro.py`: checagem de ausência migrada de `r.get(c) in (None, "", [])` para `c not in r`, exceto para os três campos que o CTX-01 3.6 não exige terem conteúdo não-trivial. |
++| **Reteste** | 113/113 verificações aprovadas, 0 falhas, 0 skips: 96 da suíte anterior (sem regressão) + 17 novas de `integracao.py`. |
++| **Eventos** | `ObjetoContextoCurado`/`CuradoriaRecusada` de `curar.py` cobrem também os candidatos originados em P2 e as Regras de P3b/P3d — mesmo mecanismo, sem formato paralelo. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.5/resultado.md`; matriz em `.projectdocs/evidencias/sprint2/2.5.5/matriz-integracao.md` |
++| **Commit** | `8420451` — `feat(context): integrate CTX with P2-P5 workflow` |
++| **Estado final** | **CONFORME** |
++
++**Indicadores da camada:** P2/P3 → CTX: **IMPLEMENTADO**. CTX → P4:
++**IMPLEMENTADO**. CTX → P5: **IMPLEMENTADO**. Recusas de contexto
++auditáveis: **SIM**.
++
++Este pacote não implementou a verificação consolidada da camada (2.5.6),
++nem qualquer item da ação 2.6 (contrato F0–P10, P6–P10, 18 HB, 4 AG,
++portões E4/E5, geração de entregáveis).
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -453,3 +480,4 @@
+ | 0.4 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.2: curadoria de `contexto/`, autoria dupla, versionamento I→V sem sobrescrita, correção do achado do baseline em `validar.py --autor` e de um defeito adicional na convenção lexical de autor-agente, cobertura T01–T17, regressão acumulada 44→61. | — |
+ | 0.5 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.3: taxonomia oficial de confronto (EMCIA-ROT-01 3.9), registro estruturado `contexto/divergencias/` para P3d, resolução mínima de `referencia_p3d` (CTX-V11 mínimo), versionamento estendido a mudança de `classificacao_confronto`, cobertura T01–T13, regressão acumulada 61→73. | — |
+ | 0.6 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.4: formalização das onze CTX-V01–CTX-V11 (oito já implementadas, três novas — resolução de referência a Termo/Entidade/Fonte), indicador CTX-V 0/11→11/11, cobertura de 23 verificações, regressão acumulada 73→96. | — |
++| 0.7 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.5: P2/P3 alimentando contexto real (não só prosa), P4 instruído a consumir `quadro.py`, novo `consultar.py` para P5 com distinção D/I/V preservada, correção de defeito real em `quadro.py` (campos legitimamente vazios tratados como ausentes), indicadores P2/P3→CTX e CTX→P4/P5 todos IMPLEMENTADO, cobertura de 17 verificações, regressão acumulada 96→113. | — |
