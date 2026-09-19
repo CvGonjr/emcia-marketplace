@@ -17,4 +17,5 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 009 | Habilidades remetem ao método, não o reproduzem | firme |
 | 010 | Três zonas de escrita | proposta |
 | 011 | Testes negativos antes do caminho feliz | firme |
-| 012 | E3 dividido; termo de autonomia no E4 | firme |
+| 012 | E3 dividido; termo de autonomia no E4 | firme (pendência de correspondência superada por 013) |
+| 013 | E4 = P6/P7, E5 = P8/P9/P10, fixado por EMCIA-CAM-01/ESP-01 | firme |

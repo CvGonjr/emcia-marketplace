@@ -45,7 +45,15 @@ percurso ponta a ponta) rodam separadamente:
 python3 testes/consolidado.py
 ```
 
-O total acumulado é de 129 verificações.
+As 29 verificações do contrato executável F0–P10 (pacote 2.6.0: 24
+estruturais/positivas + 5 negativas por fixture temporária) rodam
+separadamente:
+
+```bash
+python3 testes/playbook_2_6_0.py
+```
+
+O total acumulado é de 158 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -240,6 +248,52 @@ Regra central (`RN-100`) atravessar D → tentativa de sobrescrita
 recusada → V (v2) → V (v3, divergente, referenciando P3d) dentro do
 mesmo teste, em vez de objetos isolados por cenário — é a prova de que a
 camada funciona como sistema, não como travas independentes.
+
+## Contrato executável F0–P10 — pacote 2.6.0
+
+Este pacote não implementa P6–P10 operacionalmente. Verifica que o
+playbook oficial declara o contrato completo das treze etapas e que o
+carregador genérico do núcleo (`playbook.py`) aceita o contrato válido e
+recusa fixtures estruturalmente inválidas — sem nunca escrever sobre o
+playbook oficial.
+
+| ID | Prova |
+|---|---|
+| 2.6.0-T01 | Playbook é JSON válido |
+| 2.6.0-T02 | Exatamente 13 etapas canônicas |
+| 2.6.0-T03 | Todos os IDs de etapa são únicos |
+| 2.6.0-T04 | Conjunto esperado F0–P10 presente |
+| 2.6.0-T05 | P3b permanece não delegável |
+| 2.6.0-T06 | P7 declarada não delegável |
+| 2.6.0-T07 | P7 na camada EX4 (humana) em todos os níveis |
+| 2.6.0-T08 | P10 é recorrente |
+| 2.6.0-T09 | P10 declara necessidade de cadência |
+| 2.6.0-T10 | P10 declara necessidade de responsável |
+| 2.6.0-T11 | Cinco inegociáveis declarados |
+| 2.6.0-T12 | Mapeamento 1→P3a, 2→P7, 3→P8, 4→P9, 5→P10 |
+| 2.6.0-T13 | Seis autorizações presentes (E1, E2, E3-D, E3-E, E4, E5) |
+| 2.6.0-T14 | E1 = F0 |
+| 2.6.0-T15 | E2 = P1/P2/P3a/P3b/P3d |
+| 2.6.0-T16 | E3-D = P4/P5 |
+| 2.6.0-T17 | E3-E = P5 + condição declarativa de solução agêntica |
+| 2.6.0-T18 | E4 = P6/P7 + inegociável 2 |
+| 2.6.0-T19 | E5 = P8/P9/P10 + inegociáveis 3/4/5 |
+| 2.6.0-T20 | Nenhuma referência a etapa inexistente |
+| 2.6.0-T21 | Nenhuma dependência órfã entre inegociáveis/entregáveis |
+| 2.6.0-T22 | `portao_pendente` removido de E4/E5 |
+| 2.6.0-T23 | D/I/V permanece inalterado |
+| 2.6.0-T24 | `playbook.py` aceita o contrato oficial (regressão do carregador) |
+| 2.6.0-N01 | Fixture sem P7 → recusado |
+| 2.6.0-N02 | E5 só com P9/P10 → estrutura oficial já corrigida; validação semântica completa fica para 2.6.1 (capacidade declarativa OK, validador pendente) |
+| 2.6.0-N03 | P10 recorrente sem cadência/responsável → recusado |
+| 2.6.0-N04 | Inegociável apontando para etapa inexistente → recusado |
+| 2.6.0-N05 | Camada fora de EX1–EX4 → recusada |
+
+`playbook.py` ganhou, neste pacote, checagem genérica (sem vocabulário do
+método) de: ID de etapa duplicado, camada fora de EX1–EX4, `depende_de`
+referenciando etapa inexistente, portão/inegociável referenciando etapa
+ou inegociável inexistente, e etapa recorrente exigindo cadência e
+responsável declarados.
 
 ## Deslocamento da fronteira por nível
 

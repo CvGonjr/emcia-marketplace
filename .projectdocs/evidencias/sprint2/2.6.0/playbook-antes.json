@@ -1,7 +1,7 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.0",
-  "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+  "versao": "0.3.1",
+  "referencia": "EMCIA-MET-01, EMCIA-CAT-01",
 
   "niveis": ["N1", "N2", "N3"],
 
@@ -66,46 +66,6 @@
       "modalidade": "video", "habilidade": "hb-classificar",
       "hb": ["HB-11", "HB-12"],
       "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
-    },
-    {
-      "id": "P6", "nome": "Operacionalize a solucao",
-      "modalidade": "presencial_ou_remoto", "habilidade": "hb-operacionalizar",
-      "depende_de": "P5",
-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
-    },
-    {
-      "id": "P7", "nome": "Estabeleca governanca e conformidade",
-      "modalidade": "decisao_humana_registrada", "habilidade": "hb-governar",
-      "hb": ["HB-14"],
-      "delegavel": false,
-      "depende_de": "P6",
-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
-    },
-    {
-      "id": "P8", "nome": "Pilote, valide e escale",
-      "modalidade": "conforme_nivel", "habilidade": "hb-pilotar",
-      "hb": ["HB-15", "HB-16"],
-      "depende_de": "P7",
-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
-    },
-    {
-      "id": "P9", "nome": "Meca o valor gerado",
-      "modalidade": "conforme_nivel", "habilidade": "hb-medir-valor",
-      "hb": ["HB-17"],
-      "depende_de": "P8",
-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
-    },
-    {
-      "id": "P10", "nome": "Aprenda, recalibre e evolua",
-      "modalidade": "conforme_nivel", "habilidade": "hb-recalibrar",
-      "hb": ["HB-18"],
-      "depende_de": "P9",
-      "delegavel": false,
-      "recorrente": true,
-      "cadencia_obrigatoria": true,
-      "responsavel_obrigatorio": true,
-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
-      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" }
     }
   ],
 
@@ -120,20 +80,13 @@
     { "id": "E1", "portao": ["F0"] },
     { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
     { "id": "E3-D", "portao": ["P4","P5"] },
-    {
-      "id": "E3-E", "portao": ["P5"],
-      "condicao": {
-        "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
-        "campo": "classificacao_tecnologica", "etapa": "P5",
-        "operador": "contem", "valor": "agente"
-      }
-    },
-    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2] },
-    { "id": "E5", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
+    { "id": "E3-E", "portao": ["P5"], "condicao": "P5 concluiu que a solucao e um agente" },
+    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2], "portao_pendente": true },
+    { "id": "E5", "portao": ["P9","P10"], "inegociavel": [4,5], "portao_pendente": true }
   ],
 
   "inegociaveis": [
-    { "n": 1, "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "passo": "P3a" },
+    { "n": 1, "item": "Linha de base registrada, apuracao diferente de estimado", "passo": "P3a" },
     { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
@@ -141,7 +94,7 @@
   ],
 
   "pendencias": [
-    "P6 a P10 declarados neste playbook (2.6.0), mas ainda sem habilidade (HB) implementada: hb-operacionalizar, hb-governar, hb-pilotar, hb-medir-valor e hb-recalibrar sao instrumentos ausentes ate 2.6.2/2.6.3.",
-    "Motor do nucleo ainda nao interpreta semanticamente a condicao declarativa de E3-E, a recorrencia de P10 nem a verificacao dos cinco inegociaveis; capacidade declarativa esta pronta, validador pertence a 2.6.1."
+    "Correspondencia entregavel x passos diverge entre o relatorio do PFC e os documentos internos. Bloqueia E4 e E5.",
+    "P6 a P10 sem habilidade: instrumentos ausentes."
   ]
 }

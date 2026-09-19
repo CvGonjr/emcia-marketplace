@@ -17,6 +17,10 @@ def carregar():
     if not pb.get("etapas"):
         return None, "playbook sem etapas"
 
+    ids_etapa = [e.get("id") for e in pb["etapas"]]
+    if len(ids_etapa) != len(set(ids_etapa)):
+        return None, "playbook com id de etapa duplicado"
+
     for e in pb["etapas"]:
         faltando = OBRIGATORIO_ETAPA - set(e)
         if faltando:
@@ -28,14 +32,34 @@ def carregar():
         faltam = [n for n in niveis if n not in c]
         if faltam:
             return None, f"etapa {e['id']}: camada nao declarada para {faltam}"
+        for cam in c.values():
+            if cam not in ("EX1", "EX2", "EX3", "EX4"):
+                return None, f"etapa {e['id']}: camada '{cam}' fora de EX1-EX4"
+        dep = e.get("depende_de")
+        if dep and dep not in ids_etapa:
+            return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
+        if e.get("recorrente") and not (e.get("cadencia_obrigatoria") and e.get("responsavel_obrigatorio")):
+            return None, (f"etapa {e['id']}: recorrente exige cadencia e responsavel "
+                          f"declarados, senao a etapa desaparece apos a primeira execucao.")
 
     for d in pb.get("entregaveis", []):
         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
         if faltando:
             return None, f"entregavel {d.get('id','?')} sem {sorted(faltando)}"
+        orfas = [p for p in d["portao"] if p not in ids_etapa]
+        if orfas:
+            return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"
 
     if not pb.get("inegociaveis"):
         return None, "playbook sem itens inegociaveis"
+    for item in pb["inegociaveis"]:
+        passo = item.get("passo")
+        if passo and passo not in ids_etapa:
+            return None, f"inegociavel {item.get('n','?')}: passo referencia etapa inexistente '{passo}'"
+    for d in pb.get("entregaveis", []):
+        for n in d.get("inegociavel", []):
+            if not any(i["n"] == n for i in pb["inegociaveis"]):
+                return None, f"entregavel {d['id']}: referencia inegociavel inexistente {n}"
     procedencia = pb.get("procedencia", {})
     valores = procedencia.get("valores")
     rotulos = procedencia.get("rotulos")

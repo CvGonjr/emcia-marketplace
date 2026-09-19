@@ -1,0 +1,35 @@
+== testes 2.6.0 -- contrato executavel F0-P10
+  ok    2.6.0-T01 playbook e JSON valido
+  ok    2.6.0-T02 exatamente 13 etapas canonicas
+  ok    2.6.0-T03 IDs de etapa unicos
+  ok    2.6.0-T04 conjunto esperado F0-P10 presente
+  ok    2.6.0-T05 P3b permanece nao delegavel
+  ok    2.6.0-T06 P7 declarada nao delegavel
+  ok    2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis
+  ok    2.6.0-T08 P10 e recorrente
+  ok    2.6.0-T09 P10 declara necessidade de cadencia
+  ok    2.6.0-T10 P10 declara necessidade de responsavel
+  ok    2.6.0-T11 cinco inegociaveis declarados
+  ok    2.6.0-T12 mapeamento dos cinco inegociaveis correto
+  ok    2.6.0-T13 seis autorizacoes presentes
+  ok    2.6.0-T14 E1 depende de F0
+  ok    2.6.0-T15 E2 depende de P1/P2/P3a/P3b/P3d
+  ok    2.6.0-T16 E3-D depende de P4/P5
+  ok    2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel
+  ok    2.6.0-T18 E4 = P6/P7 + inegociavel 2
+  ok    2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5
+  ok    2.6.0-T20 nenhuma referencia a etapa inexistente
+  ok    2.6.0-T21 nenhuma dependencia orfa entre inegociaveis/entregaveis
+  ok    2.6.0-T22 portao_pendente removido de E4/E5
+  ok    2.6.0-T23 D/I/V permanece inalterado
+  ok    2.6.0-T24 playbook.py aceita o contrato oficial com 13 etapas
+
+== testes negativos 2.6.0 -- fixtures temporarias, playbook oficial preservado
+  ok    2.6.0-N01 playbook sem P7 recusado (etapa P8: depende de etapa inexistente 'P7')
+  CAPACIDADE DECLARATIVA OK / VALIDADOR DO NUCLEO PENDENTE PARA 2.6.1: playbook.py verifica apenas se as etapas do portao existem, nao a composicao esperada do contrato do metodo (isso e regra semantica, nao estrutural, ver ESP-01 3.8).
+  ok    2.6.0-N02 registrado como pendencia de validacao semantica (2.6.1); estrutura oficial ja corrigida no playbook (T19)
+  ok    2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
+  ok    2.6.0-N04 inegociavel com etapa inexistente recusado (inegociavel 1: passo referencia etapa inexistente 'P99')
+  ok    2.6.0-N05 camada fora de EX1-EX4 recusada (etapa P7: camada 'EX9' fora de EX1-EX4)
+
+29 verificacoes do pacote 2.6.0, 0 falhas

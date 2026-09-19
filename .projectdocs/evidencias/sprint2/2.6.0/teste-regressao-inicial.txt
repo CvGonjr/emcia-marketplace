@@ -1,0 +1,156 @@
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 selo por agente recusado
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem
+== testes/contexto.py ==
+== objetos CTX — pacote 2.5.1
+  ok    2.5.1-T01 Termo válido
+  ok    2.5.1-T02 Entidade válida
+  ok    2.5.1-T03 Regra válida
+  ok    2.5.1-T04 Fonte válida
+  ok    2.5.1-T05 Termo sem significado
+  ok    2.5.1-T06 Entidade sem nome
+  ok    2.5.1-T07 Regra sem estabilidade
+  ok    2.5.1-T08 Fonte sem contrato.significado
+  ok    2.5.1-T09 D/I/V nos quatro objetos
+  ok    2.5.1-T10 Taxonomias obsoletas
+  ok    2.5.1-T11 Sete campos centrais da Regra
+
+11 testes estruturais aprovados
+== testes/curadoria.py ==
+== curadoria, autoria e versionamento I->V — pacote 2.5.2
+  ok    2.5.2-T01 D com autoria humana valida
+  ok    2.5.2-T02 I sem premissa
+  ok    2.5.2-T03 I com premissa
+  ok    2.5.2-T04 V sem evidencia
+  ok    2.5.2-T05 V com evidencia
+  ok    2.5.2-T06 agente como autoria_conteudo
+  ok    2.5.2-T07 pessoa como autoria_conteudo
+  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
+  ok    2.5.2-T09 sobrescrever I por V sem nova versao
+  ok    2.5.2-T10 I -> V com nova versao
+  ok    2.5.2-T11 historico preservado
+  ok    2.5.2-T12 escrita direta em contexto/
+  ok    2.5.2-T13 escrita autorizada em contexto/
+  ok    2.5.2-T14 rascunho nao e contexto curado
+  ok    2.5.2-T15 recusa gera evento
+  ok    2.5.2-T16 operacao valida gera trilha
+  ok    2.5.2-T-baseline registrado-por AG-01 (achado do baseline)
+
+17 testes de curadoria aprovados
+== testes/p3d.py ==
+== integracao CTX <-> P3d — pacote 2.5.3
+  ok    2.5.3-T01 classificacao oficial valida (alinhada)
+  ok    2.5.3-T02 classificacao fora da taxonomia oficial
+  ok    2.5.3-T03 divergencia sem referencia_p3d
+  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
+  ok    2.5.3-T05 divergencia com referencia_p3d valida
+  ok    2.5.3-T06 referencia resolve para o registro correto
+  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
+  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
+  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
+  ok    2.5.3-T10 atualizacao do confronto preserva historico
+  ok    2.5.3-T11 agente nao confirma confronto humano
+  ok    2.5.3-T12 controle humano valido
+
+12 testes de integracao CTX<->P3d aprovados
+== testes/ctx_v.py ==
+== bateria CTX-V01-V11 — pacote 2.5.4
+  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
+  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
+  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
+  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
+  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
+  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
+  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
+  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
+  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
+  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
+  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
+
+23 verificacoes CTX-V01-V11 aprovadas
+== testes/integracao.py ==
+== integracao P2/P3 -> CTX -> P4/P5 — pacote 2.5.5
+  ok    2.5.5-T01 P2 produz candidato CTX em rascunho/
+  ok    2.5.5-T02 candidato sem curadoria nao e consumido
+  ok    2.5.5-T03 candidato de P2 curado entra no CTX
+  ok    2.5.5-T04 P3b gera Regra candidata rastreavel
+  ok    2.5.5-T05 P3d atualiza vinculo de confronto (preserva versionamento)
+  ok    2.5.5-T05b P3d com historico correto entra (controle positivo)
+  ok    2.5.5-T06 P4 consome contexto valido via quadro.py
+  ok    2.5.5-T07 P4 com contexto/regras vazio (nenhuma regra curada)
+  ok    2.5.5-T08 P4 nao reinfere frequencia/consequencia (le do YAML)
+  ok    2.5.5-T09 P5 consome os sete campos centrais
+  ok    2.5.5-T10 P5 com Regra incompleta
+  ok    2.5.5-T11 P5 distingue I de V (I visivel, nao mascarada)
+  ok    2.5.5-T12 P5 com V valida
+  ok    2.5.5-T13 CTX invalido (CTX-V05) nao e consumido
+  ok    2.5.5-T14 evento de falha de consumo/curadoria
+  ok    2.5.5-T15 fluxo minimo P2 -> CTX -> P4
+  ok    2.5.5-T16 fluxo minimo P3 -> CTX -> P5
+
+17 testes de integracao aprovados
+== testes/consolidado.py ==
+== verificacao consolidada da Acao 2.5 — caso CTX-TEST-2.5.6-001
+  ok    2.5.6-C01 D/I/V integrados
+  ok    2.5.6-C02 quatro objetos CTX
+  ok    2.5.6-C03 autoria_conteudo != registrado_por, agente recusado como autor
+  ok    2.5.6-C04 curadoria rascunho -> contexto
+  ok    2.5.6-C05 bloqueio de escrita direta em contexto/
+  ok    2.5.6-C06 I -> V com historico (aqui, D -> V, mesma regra de versionamento)
+  ok    2.5.6-C07 integracao P3d
+  ok    2.5.6-C08 CTX-V01-CTX-V11 (reexecucao)
+  ok    2.5.6-C09 referencias Termo/Entidade/Fonte
+  ok    2.5.6-C10 P2 -> CTX
+  ok    2.5.6-C11 P3 -> CTX (P3b e P3d)
+  ok    2.5.6-C12 CTX -> P4
+  ok    2.5.6-C13 CTX -> P5
+  ok    2.5.6-C14 nao reinterpretacao
+  ok    2.5.6-C15 eventos
+  ok    2.5.6-C16 percurso integrado da camada
+
+16 verificacoes consolidadas aprovadas

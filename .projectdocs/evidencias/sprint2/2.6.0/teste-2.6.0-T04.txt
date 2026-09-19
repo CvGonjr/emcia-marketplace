@@ -1,0 +1,21 @@
+PACOTE: 2.6.0
+TESTE: 2.6.0-T04
+REQUISITO: conjunto esperado F0-P10
+DATA/HORA: 2026-09-18 22:58:42 -0300
+HEAD INICIAL: 667c0212e81721b67b3dcf866b3eb3333a7d60d4
+COMANDO: python3 testes/playbook_2_6_0.py
+
+PRECONDICAO: playbook oficial (v0.4.0, 13 etapas) carregado; para os
+testes N01-N05, fixture temporaria derivada por copy.deepcopy do
+playbook oficial, gravada apenas em diretorio temporario isolado
+(tempfile.mkdtemp), nunca sobrescrevendo o arquivo oficial.
+
+RESULTADO ESPERADO: ver requisito acima.
+
+RESULTADO OBTIDO (linha da suite):
+  ok    2.6.0-T04 conjunto esperado F0-P10 presente
+
+STDOUT: ver _full-2.6.0-output.txt (execucao completa da suite) nesta mesma pasta.
+STDERR: capturado dentro da mensagem de recusa quando aplicavel (ver linha acima).
+
+RESULTADO FINAL: PASS

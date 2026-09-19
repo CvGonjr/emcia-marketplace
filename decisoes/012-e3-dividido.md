@@ -25,3 +25,5 @@ Modelo que ainda traz o termo de autonomia anexo ao E3 está desatualizado.
 ## Pendência
 
 A correspondência entre entregáveis e passos diverge: o relatório do PFC põe P6–P7 em E4 e P8–P10 em E5; os documentos internos põem P6–P8 em E4 e P9–P10 em E5. O playbook marca E4 e E5 com `portao_pendente` e recusa a emissão até a decisão.
+
+**Superada por [[013-e4-e5-correspondencia-fixada]].** EMCIA-CAM-01 e EMCIA-ESP-01 v0.2 (17/09/2026) fixaram a correspondência do relatório do PFC como oficial. O restante desta decisão (E3-D/E3-E, termo de autonomia em E4) permanece firme.
