@@ -47,14 +47,25 @@ def main():
     etapa = P.etapa(pb, etapa_id) or {}
     camada_corrente = P.camada(pb, etapa_id, nivel)
 
-    # G1 — habilidade de camada humana nao carrega
+    # G1 — habilidade de camada humana nao carrega sem sessao valida
     # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
-    # a mesma etapa pode ser EX2 em N1 e EX3 em N3.
+    # a mesma etapa pode ser EX2 em N1 e EX3 em N3. Sessao humana
+    # registrada (por avancar.py --registrar-sessao, caminho autorizado)
+    # libera o CARREGAMENTO da skill como instrumento de apoio/registro —
+    # nao libera decisao, aprovacao ou fechamento da etapa por agente,
+    # que continuam bloqueados por outras regras (delegavel:false em
+    # avancar.encerrar(), G1 nao muda isso). Sessao de outra etapa, ou
+    # ausente, nao libera.
     for e in pb["etapas"]:
         if not e.get("habilidade") or e["habilidade"] not in alvo:
             continue
         cam = P.camada(pb, e["id"], nivel)
         if e.get("delegavel") is False or cam in ("EX3", "EX4"):
+            sessao_valida = bool(
+                st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
+            )
+            if sessao_valida:
+                continue
             motivo = ("nao e delegavel a agente" if e.get("delegavel") is False
                       else f"esta em camada humana ({cam}) para o nivel {nivel or 'nao apurado'}")
             negar(
