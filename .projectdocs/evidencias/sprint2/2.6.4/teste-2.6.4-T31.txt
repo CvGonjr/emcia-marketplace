@@ -1,0 +1,30 @@
+PACOTE: 2.6.4
+TESTE: 2.6.4-T31
+REQUISITO: ver pacote 2.6.4 (catalogo HB/AG), secoes 40-46 do prompt
+DATA/HORA: 2026-09-19T15:20:36
+HEAD INICIAL: 418a91635b96742a443e36ad4976146c4b04894a
+COMANDO: python3 testes/campo_2_6_4.py
+EXIT CODE: 0
+
+PRECONDICAO: catalogo eiac-campo/reference/habilidades.json e agentes.json carregados; resolvedor eiac-nucleo/scripts/catalogo.py
+
+HB: ver descricao abaixo
+AG: ver descricao abaixo
+SKILL: ver descricao abaixo
+ETAPA: ver descricao abaixo
+
+CRITERIO_DE_VERIFICACAO: ver eiac-campo/reference/habilidades.json (campo criterio_de_verificacao por HB)
+
+ENTRADA: ver testes/campo_2_6_4.py
+
+RESULTADO ESPERADO: ver descricao abaixo (par negativo/positivo conforme secao 51 do pacote)
+
+RESULTADO OBTIDO: skills que materializam mais de uma HB preservam identidade individual (criterio proprio por HB): {'eiac-campo/skills/hb-enquadrar/SKILL.md': ['HB-01', 'HB-02', 'HB-03'], 'eiac-campo/skills/hb-mapear-contexto/SKILL.md': ['HB-08', 'HB-09'], 'eiac-campo/skills/hb-classificar/SKILL.md': ['HB-11', 'HB-12'], 'eiac-campo/skills/hb-pilotar/SKILL.md': ['HB-15', 'HB-16']}
+
+EVENTO: n/a (resolucao de catalogo, fora de caso de campo -- ver caso-controle.md secao 11)
+
+STDOUT: ok    2.6.4-T31 skills que materializam mais de uma HB preservam identidade individual (criterio proprio por HB): {'eiac-campo/skills/hb-enquadrar/SKILL.md': ['HB-01', 'HB-02', 'HB-03'], 'eiac-campo/skills/hb-mapear-contexto/SKILL.md': ['HB-08', 'HB-09'], 'eiac-campo/skills/hb-classificar/SKILL.md': ['HB-11', 'HB-12'], 'eiac-campo/skills/hb-pilotar/SKILL.md': ['HB-15', 'HB-16']}
+
+STDERR: (ver teste-2.6.4-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS

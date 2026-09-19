@@ -1,0 +1,20 @@
+=== 1. HB-10 resolve no catalogo ===
+ok | catalogo valido: 18 capacidades
+
+=== 2. AG-02 autorizado para HB-10 ===
+ok | AG-02 autorizado para HB-10
+
+=== 3. AG-01 NAO autorizado para HB-10 (RECUSA esperada) ===
+papel 'AG-01' nao esta autorizado a executar 'HB-10'
+
+=== 4. HB-17 resolve no catalogo ===
+ok | catalogo valido: 18 capacidades
+
+=== 5. AG-04 autorizado para HB-17 ===
+ok | AG-04 autorizado para HB-17
+
+=== 6. AG-03 NAO autorizado para HB-17 (RECUSA esperada) ===
+papel 'AG-03' nao esta autorizado a executar 'HB-17'
+
+=== 7. playbook resolve todas as referencias HB ===
+ok | todas as referencias 'hb' do playbook resolvem

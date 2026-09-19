@@ -1,0 +1,39 @@
+{
+  "nome": "Catalogo de agentes logicos",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAT-01 Anexo A (agentes agrupam habilidades por camada; nenhum agente reune habilidades de camadas distintas; nenhum agente opera em EX3 ou EX4)",
+  "agentes": [
+    {
+      "id": "AG-01",
+      "nome": "Agente de enquadramento",
+      "camada": "EX1",
+      "hb_autorizadas": ["HB-01", "HB-02", "HB-03", "HB-04", "HB-05"],
+      "implementacao_fisica": null,
+      "nota_implementacao": "Nenhum runtime fisico dedicado neste pacote. As HB-01/02/03 ja sao carregadas por eiac-campo/skills/hb-enquadrar/SKILL.md (etapa F0); HB-04/05 nao possuem skill fisica correspondente ainda."
+    },
+    {
+      "id": "AG-02",
+      "nome": "Agente de analise documental",
+      "camada": "EX2",
+      "hb_autorizadas": ["HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"],
+      "implementacao_fisica": "eiac-campo/agents/extrator-documental.md",
+      "nota_implementacao": "extrator-documental.md materializa HB-07 (P2). HB-08/09/10 sao carregadas por skills proprias (hb-mapear-contexto, hb-priorizar) sem subagent dedicado. HB-06/13 nao possuem implementacao fisica ainda."
+    },
+    {
+      "id": "AG-03",
+      "nome": "Agente de especificacao",
+      "camada": "EX2",
+      "hb_autorizadas": ["HB-11", "HB-12", "HB-14"],
+      "implementacao_fisica": "eiac-campo/agents/classificador-tecnologico.md",
+      "nota_implementacao": "classificador-tecnologico.md materializa HB-11 (P5). HB-12 e carregada dentro da mesma skill hb-classificar, sem subagent proprio. HB-14 e carregada por eiac-campo/skills/hb-governar/SKILL.md (P7, hibrida — minuta apenas, decisao humana)."
+    },
+    {
+      "id": "AG-04",
+      "nome": "Agente de avaliacao",
+      "camada": "EX2",
+      "hb_autorizadas": ["HB-15", "HB-16", "HB-17", "HB-18"],
+      "implementacao_fisica": null,
+      "nota_implementacao": "HB-15/16 carregadas por hb-pilotar/SKILL.md (P8); HB-17 por hb-medir-valor/SKILL.md (P9); HB-18 por hb-recalibrar/SKILL.md (P10, hibrida — deteccao/recomendacao apenas, decisao humana). Nenhum runtime fisico dedicado."
+    }
+  ]
+}

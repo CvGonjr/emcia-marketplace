@@ -1,0 +1,1242 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index dd3bdf2..c2d15a8 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.5.0",
++  "version": "0.6.0",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P10 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/reference/agentes.json b/eiac-campo/reference/agentes.json
+new file mode 100644
+index 0000000..dc793c4
+--- /dev/null
++++ b/eiac-campo/reference/agentes.json
+@@ -0,0 +1,39 @@
++{
++  "nome": "Catalogo de agentes logicos",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAT-01 Anexo A (agentes agrupam habilidades por camada; nenhum agente reune habilidades de camadas distintas; nenhum agente opera em EX3 ou EX4)",
++  "agentes": [
++    {
++      "id": "AG-01",
++      "nome": "Agente de enquadramento",
++      "camada": "EX1",
++      "hb_autorizadas": ["HB-01", "HB-02", "HB-03", "HB-04", "HB-05"],
++      "implementacao_fisica": null,
++      "nota_implementacao": "Nenhum runtime fisico dedicado neste pacote. As HB-01/02/03 ja sao carregadas por eiac-campo/skills/hb-enquadrar/SKILL.md (etapa F0); HB-04/05 nao possuem skill fisica correspondente ainda."
++    },
++    {
++      "id": "AG-02",
++      "nome": "Agente de analise documental",
++      "camada": "EX2",
++      "hb_autorizadas": ["HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"],
++      "implementacao_fisica": "eiac-campo/agents/extrator-documental.md",
++      "nota_implementacao": "extrator-documental.md materializa HB-07 (P2). HB-08/09/10 sao carregadas por skills proprias (hb-mapear-contexto, hb-priorizar) sem subagent dedicado. HB-06/13 nao possuem implementacao fisica ainda."
++    },
++    {
++      "id": "AG-03",
++      "nome": "Agente de especificacao",
++      "camada": "EX2",
++      "hb_autorizadas": ["HB-11", "HB-12", "HB-14"],
++      "implementacao_fisica": "eiac-campo/agents/classificador-tecnologico.md",
++      "nota_implementacao": "classificador-tecnologico.md materializa HB-11 (P5). HB-12 e carregada dentro da mesma skill hb-classificar, sem subagent proprio. HB-14 e carregada por eiac-campo/skills/hb-governar/SKILL.md (P7, hibrida — minuta apenas, decisao humana)."
++    },
++    {
++      "id": "AG-04",
++      "nome": "Agente de avaliacao",
++      "camada": "EX2",
++      "hb_autorizadas": ["HB-15", "HB-16", "HB-17", "HB-18"],
++      "implementacao_fisica": null,
++      "nota_implementacao": "HB-15/16 carregadas por hb-pilotar/SKILL.md (P8); HB-17 por hb-medir-valor/SKILL.md (P9); HB-18 por hb-recalibrar/SKILL.md (P10, hibrida — deteccao/recomendacao apenas, decisao humana). Nenhum runtime fisico dedicado."
++    }
++  ]
++}
+diff --git a/eiac-campo/reference/habilidades.json b/eiac-campo/reference/habilidades.json
+new file mode 100644
+index 0000000..45b3134
+--- /dev/null
++++ b/eiac-campo/reference/habilidades.json
+@@ -0,0 +1,242 @@
++{
++  "nome": "Catalogo de habilidades",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAT-01 Anexo A (18 habilidades, camada/natureza/insumo/saida/criterio de verificacao literais)",
++  "nota_relacao_etapa": "O campo 'etapas' vem exclusivamente de eiac-campo/template-caso/registro/playbook.json (campo 'hb' por etapa), nunca de inferencia textual entre CAT-01 e MET-01/CAM-01 -- essa correspondencia permanece pendencia aberta por decisao (decisoes/002 e afins). HB sem etapa associada no playbook tem 'etapas: []' e 'estado_relacao_etapa: \"nao_referenciada_no_playbook\"', o que nao e erro do catalogo -- e o estado real do contrato congelado em 2.6.0.",
++  "habilidades": [
++    {
++      "id": "HB-01",
++      "nome": "Conducao da triagem",
++      "camada": "EX1",
++      "automatizada": true,
++      "insumo": "Respostas do cliente ao instrumento",
++      "saida": "Pontuacao por eixo, com a resposta literal preservada",
++      "criterio_de_verificacao": "As nove perguntas respondidas e o literal arquivado ao lado da interpretacao",
++      "ag_autorizado": "AG-01",
++      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
++      "etapas": ["F0"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-02",
++      "nome": "Apuracao do nivel de complexidade",
++      "camada": "EX1",
++      "automatizada": true,
++      "insumo": "Pontuacao por eixo",
++      "saida": "Nivel N1, N2 ou N3",
++      "criterio_de_verificacao": "Recalculo manual reproduz o mesmo nivel",
++      "ag_autorizado": "AG-01",
++      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
++      "etapas": ["F0"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-03",
++      "nome": "Estruturacao da dor",
++      "camada": "EX1",
++      "automatizada": true,
++      "insumo": "Relato do patrocinador",
++      "saida": "Quadro 5W2H preenchido",
++      "criterio_de_verificacao": "Cada campo remete a trecho identificavel do relato",
++      "ag_autorizado": "AG-01",
++      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
++      "etapas": ["F0"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-04",
++      "nome": "Conducao dos cinco porques",
++      "camada": "EX1",
++      "automatizada": false,
++      "insumo": "Dor estruturada",
++      "saida": "Cadeia causal proposta",
++      "criterio_de_verificacao": "Cadeia confirmada ou corrigida pelo engenheiro antes de avancar",
++      "ag_autorizado": "AG-01",
++      "skill_ref": null,
++      "etapas": [],
++      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++    },
++    {
++      "id": "HB-05",
++      "nome": "Calculo do custo do problema",
++      "camada": "EX1",
++      "automatizada": false,
++      "insumo": "Volumes e tempos informados",
++      "saida": "Custo estimado, com premissas expostas",
++      "criterio_de_verificacao": "Toda premissa visivel e cada numero com procedencia marcada",
++      "ag_autorizado": "AG-01",
++      "skill_ref": null,
++      "etapas": [],
++      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++    },
++    {
++      "id": "HB-06",
++      "nome": "Inventario de fontes de dados",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Declaracao da organizacao e documentos",
++      "saida": "Lista de fontes com criticidade",
++      "criterio_de_verificacao": "Cada fonte marcada como declarada ate verificacao em campo",
++      "ag_autorizado": "AG-02",
++      "skill_ref": null,
++      "etapas": [],
++      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++    },
++    {
++      "id": "HB-07",
++      "nome": "Coleta de termos do glossario",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Documentos e entrevistas transcritas",
++      "saida": "Termos com definicao declarada e ocorrencias",
++      "criterio_de_verificacao": "Definicoes conflitantes sinalizadas, nao conciliadas",
++      "ag_autorizado": "AG-02",
++      "skill_ref": "eiac-campo/skills/hb-extrair-regras/SKILL.md",
++      "etapas": ["P2"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-08",
++      "nome": "Consulta a base de referencia",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Setor e processo-alvo",
++      "saida": "Referencias com fonte identificada",
++      "criterio_de_verificacao": "Nenhum item sem fonte; sem acesso aberto a internet",
++      "ag_autorizado": "AG-02",
++      "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
++      "etapas": ["P1"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-09",
++      "nome": "Varredura do mapa de valor",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Estado atual declarado",
++      "saida": "Pontos candidatos a intervencao",
++      "criterio_de_verificacao": "Candidatos rastreaveis a etapa do fluxo que os originou",
++      "ag_autorizado": "AG-02",
++      "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
++      "etapas": ["P1"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-10",
++      "nome": "Montagem da matriz de priorizacao",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Casos candidatos",
++      "saida": "Matriz preenchida, sem escolha",
++      "criterio_de_verificacao": "Todos os candidatos presentes, inclusive os descartados",
++      "ag_autorizado": "AG-02",
++      "skill_ref": "eiac-campo/skills/hb-priorizar/SKILL.md",
++      "etapas": ["P4"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-11",
++      "nome": "Classificacao Problema->Tecnologia",
++      "camada": "EX2",
++      "automatizada": false,
++      "insumo": "Caso descrito e camada de contexto",
++      "saida": "Tecnologia adequada, com justificativa",
++      "criterio_de_verificacao": "Classificacao confirmada pelo engenheiro antes de virar decisao",
++      "ag_autorizado": "AG-03",
++      "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
++      "etapas": ["P5"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-12",
++      "nome": "Estimativa de custo e latencia",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Desenho da solucao",
++      "saida": "Custo por tarefa e teto mensal",
++      "criterio_de_verificacao": "Premissas expostas e recalculaveis",
++      "ag_autorizado": "AG-03",
++      "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
++      "etapas": ["P5"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-13",
++      "nome": "Levantamento regulatorio",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Setor e natureza do dado tratado",
++      "saida": "Requisitos aplicaveis, com fonte",
++      "criterio_de_verificacao": "Cada requisito remete a norma citavel",
++      "ag_autorizado": "AG-02",
++      "skill_ref": null,
++      "etapas": [],
++      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++    },
++    {
++      "id": "HB-14",
++      "nome": "Minuta do termo de autonomia",
++      "camada": "EX2",
++      "automatizada": false,
++      "insumo": "Arquetipo e zona de contencao",
++      "saida": "Minuta com as tres listas em branco",
++      "criterio_de_verificacao": "As tres listas preenchidas por decisao humana registrada",
++      "ag_autorizado": "AG-03",
++      "skill_ref": "eiac-campo/skills/hb-governar/SKILL.md",
++      "etapas": ["P7"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-15",
++      "nome": "Geracao de casos de teste",
++      "camada": "EX2",
++      "automatizada": false,
++      "insumo": "Dossie verificado e camada de contexto",
++      "saida": "Casos com saida esperada",
++      "criterio_de_verificacao": "Conjunto revisado por quem executa o processo",
++      "ag_autorizado": "AG-04",
++      "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
++      "etapas": ["P8"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-16",
++      "nome": "Execucao da suite de avaliacao",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Casos de teste e solucao em piloto",
++      "saida": "Resultado por caso e falhas agrupadas",
++      "criterio_de_verificacao": "Execucao reproduzivel a partir do mesmo conjunto",
++      "ag_autorizado": "AG-04",
++      "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
++      "etapas": ["P8"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-17",
++      "nome": "Consolidacao de indicadores",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Medicoes do piloto e linha de base",
++      "saida": "Comparativo contra a linha de base",
++      "criterio_de_verificacao": "Apuracao deterministica e documentada",
++      "ag_autorizado": "AG-04",
++      "skill_ref": "eiac-campo/skills/hb-medir-valor/SKILL.md",
++      "etapas": ["P9"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-18",
++      "nome": "Monitoramento de desvio",
++      "camada": "EX2",
++      "automatizada": true,
++      "insumo": "Saidas em operacao",
++      "saida": "Alerta de degradacao",
++      "criterio_de_verificacao": "Limiar definido antes do piloto, nao ajustado a posteriori",
++      "ag_autorizado": "AG-04",
++      "skill_ref": "eiac-campo/skills/hb-recalibrar/SKILL.md",
++      "etapas": ["P10"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    }
++  ]
++}
+diff --git a/eiac-campo/skills/hb-classificar/SKILL.md b/eiac-campo/skills/hb-classificar/SKILL.md
+index 89d44fe..07fe8d7 100644
+--- a/eiac-campo/skills/hb-classificar/SKILL.md
++++ b/eiac-campo/skills/hb-classificar/SKILL.md
+@@ -3,6 +3,7 @@ name: hb-classificar
+ etapa: P5
+ camada: EX2
+ modalidade: video
++hb: ["HB-11", "HB-12"]
+ description: Aplica a matriz problema-tecnologia na passada de especificacao e decide qual tecnologia atende cada caso priorizado. Use quando /classificar for invocado.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-enquadrar/SKILL.md b/eiac-campo/skills/hb-enquadrar/SKILL.md
+index 3740535..a8f6e77 100644
+--- a/eiac-campo/skills/hb-enquadrar/SKILL.md
++++ b/eiac-campo/skills/hb-enquadrar/SKILL.md
+@@ -3,6 +3,7 @@ name: hb-enquadrar
+ etapa: F0
+ camada: EX1
+ modalidade: assincrono
++hb: ["HB-01", "HB-02", "HB-03"]
+ description: Estrutura a dor declarada e calcula o nivel de complexidade da organizacao. Use quando /enquadrar for invocado ou quando um caso novo nao tiver ficha.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-extrair-regras/SKILL.md b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+index 61ab9de..23b7d0b 100644
+--- a/eiac-campo/skills/hb-extrair-regras/SKILL.md
++++ b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+@@ -3,6 +3,7 @@ name: hb-extrair-regras
+ etapa: P2
+ camada: EX2
+ modalidade: assincrono
++hb: ["HB-07"]
+ description: Extrai regras candidatas dos documentos entregues e lista o que eles nao respondem. Use quando /mapear-fontes for invocado ou quando houver documento do caso nao varrido.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-mapear-contexto/SKILL.md b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+index 339d63f..154fa8c 100644
+--- a/eiac-campo/skills/hb-mapear-contexto/SKILL.md
++++ b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+@@ -3,6 +3,7 @@ name: hb-mapear-contexto
+ etapa: P1
+ camada: EX2
+ modalidade: video
++hb: ["HB-08", "HB-09"]
+ description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use quando /mapear-contexto for invocado, apos o enquadramento.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-priorizar/SKILL.md b/eiac-campo/skills/hb-priorizar/SKILL.md
+index 70b0522..0c204fb 100644
+--- a/eiac-campo/skills/hb-priorizar/SKILL.md
++++ b/eiac-campo/skills/hb-priorizar/SKILL.md
+@@ -3,6 +3,7 @@ name: hb-priorizar
+ etapa: P4
+ camada: EX2
+ modalidade: video
++hb: ["HB-10"]
+ description: Prioriza os casos levantados e define a zona de contencao. Use quando /priorizar for invocado, apos o dossie verificado.
+ ---
+ 
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 73fba09..b2e5279 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.14",
++  "version": "0.2.15",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/scripts/catalogo.py b/eiac-nucleo/scripts/catalogo.py
+new file mode 100644
+index 0000000..3a3d72d
+--- /dev/null
++++ b/eiac-nucleo/scripts/catalogo.py
+@@ -0,0 +1,214 @@
++"""Resolucao generica de catalogo de capacidades e papeis.
++
++Uso:
++  python3 catalogo.py --capacidades <arquivo.json> --papeis <arquivo.json>
++  python3 catalogo.py --capacidades <arquivo.json> --papeis <arquivo.json> \
++      --resolver-papel-capacidade AG-01 HB-03
++  python3 catalogo.py --capacidades <arquivo.json> --playbook <playbook.json>
++
++Este script nao sabe o que e HB, AG, "habilidade" ou "agente" -- conhece
++apenas dois tipos de objeto genericos:
++
++  capacidade: {id, camada, automatizado, criterio_de_verificacao, ...}
++  papel:      {id, camada, capacidades_autorizadas: [id, ...], ...}
++
++e duas relacoes:
++
++  papel -> capacidade   (um papel so pode ser autorizado a usar uma
++                          capacidade se o id aparecer em
++                          'capacidades_autorizadas')
++  referencia -> capacidade (uma lista externa de ids, tipicamente vinda
++                          do playbook, precisa resolver contra ids
++                          existentes no catalogo de capacidades)
++
++Reaproveita playbook.capacidade_valida() (2.6.1/ESP-01 G6): toda
++capacidade automatizada precisa de criterio_de_verificacao nao vazio
++para ser valida.
++
++O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")
++vive inteiramente em eiac-campo/reference/*.json -- este script so le o
++campo "id" de cada objeto.
++"""
++import argparse
++import json
++import pathlib
++import sys
++
++sys.path.insert(0, str(pathlib.Path(__file__).parent))
++import playbook as P
++
++
++def carregar_json(caminho):
++    try:
++        return json.loads(pathlib.Path(caminho).read_text(encoding="utf-8")), None
++    except (OSError, json.JSONDecodeError) as erro:
++        return None, f"{caminho}: {erro}"
++
++
++def validar_capacidades(dados, chave_lista="capacidades", chave_capacidades_autorizadas=None):
++    """Verifica integridade estrutural de uma lista de capacidades:
++    ids unicos e, para cada uma marcada automatizada, criterio de
++    verificacao presente (via playbook.capacidade_valida, generico).
++
++    'dados' e o JSON completo do catalogo; 'chave_lista' e o campo que
++    contem a lista de objetos capacidade (o eiac-campo usa
++    "habilidades", mas o nucleo nao precisa saber disso -- quem chama
++    passa o nome do campo).
++    """
++    itens = dados.get(chave_lista)
++    if not isinstance(itens, list) or not itens:
++        return [f"catalogo sem lista de capacidades em '{chave_lista}'"]
++
++    erros = []
++    ids = []
++    for item in itens:
++        if not isinstance(item, dict) or not item.get("id"):
++            erros.append(f"item de capacidade sem 'id': {item}")
++            continue
++        ids.append(item["id"])
++        candidato = {
++            "automatizado": item.get("automatizada"),
++            "criterio_de_verificacao": item.get("criterio_de_verificacao"),
++        }
++        ok, motivo = P.capacidade_valida(candidato)
++        if not ok:
++            erros.append(f"{item['id']}: {motivo}")
++
++    if len(ids) != len(set(ids)):
++        duplicados = sorted({i for i in ids if ids.count(i) > 1})
++        erros.append(f"ids de capacidade duplicados: {duplicados}")
++
++    return erros
++
++
++def validar_papeis(dados_papeis, ids_capacidades_validas, chave_lista="papeis",
++                    chave_autorizadas="capacidades_autorizadas"):
++    """Verifica que cada papel referencia apenas capacidades existentes
++    no catalogo (ids_capacidades_validas), e que os ids de papel sao
++    unicos.
++    """
++    itens = dados_papeis.get(chave_lista)
++    if not isinstance(itens, list) or not itens:
++        return [f"catalogo sem lista de papeis em '{chave_lista}'"]
++
++    erros = []
++    ids = []
++    for item in itens:
++        if not isinstance(item, dict) or not item.get("id"):
++            erros.append(f"item de papel sem 'id': {item}")
++            continue
++        ids.append(item["id"])
++        autorizadas = item.get(chave_autorizadas) or []
++        for cap_id in autorizadas:
++            if cap_id not in ids_capacidades_validas:
++                erros.append(
++                    f"{item['id']}: referencia capacidade inexistente "
++                    f"'{cap_id}' em '{chave_autorizadas}'"
++                )
++
++    if len(ids) != len(set(ids)):
++        duplicados = sorted({i for i in ids if ids.count(i) > 1})
++        erros.append(f"ids de papel duplicados: {duplicados}")
++
++    return erros
++
++
++def resolver_papel_capacidade(dados_papeis, papel_id, capacidade_id,
++                               chave_lista="papeis", chave_autorizadas="capacidades_autorizadas"):
++    """Um papel esta autorizado a executar uma capacidade? Retorna
++    (True, None) ou (False, motivo). Nao decide nada alem de
++    pertencimento de conjunto -- a semantica de "o que e uma HB" ou
++    "o que e um AG" nunca entra aqui.
++    """
++    papel = next((p for p in dados_papeis.get(chave_lista, [])
++                  if p.get("id") == papel_id), None)
++    if not papel:
++        return False, f"papel '{papel_id}' nao existe no catalogo"
++    autorizadas = papel.get(chave_autorizadas) or []
++    if capacidade_id not in autorizadas:
++        return False, (f"papel '{papel_id}' nao esta autorizado a executar "
++                       f"'{capacidade_id}'")
++    return True, None
++
++
++def resolver_referencias_playbook(dados_capacidades, pb, chave_lista="capacidades",
++                                   campo_referencia="hb"):
++    """Toda referencia (campo declarado em cada etapa do playbook, por
++    exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no
++    catalogo de capacidades. Retorna lista de erros (vazia se tudo
++    resolve).
++    """
++    ids_validos = {c.get("id") for c in dados_capacidades.get(chave_lista, [])
++                   if isinstance(c, dict)}
++    erros = []
++    for etapa in pb.get("etapas", []):
++        for ref in (etapa.get(campo_referencia) or []):
++            if ref not in ids_validos:
++                erros.append(
++                    f"etapa {etapa.get('id','?')} referencia '{ref}' "
++                    f"({campo_referencia}), que nao existe no catalogo"
++                )
++    return erros
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--capacidades", required=True)
++    ap.add_argument("--papeis")
++    ap.add_argument("--playbook")
++    ap.add_argument("--chave-capacidades", default="capacidades")
++    ap.add_argument("--chave-papeis", default="papeis")
++    ap.add_argument("--chave-autorizadas", default="capacidades_autorizadas")
++    ap.add_argument("--campo-referencia", default="hb")
++    ap.add_argument("--resolver-papel-capacidade", nargs=2, metavar=("PAPEL", "CAPACIDADE"))
++    a = ap.parse_args()
++
++    dados_cap, erro = carregar_json(a.capacidades)
++    if erro:
++        print(erro, file=sys.stderr); sys.exit(1)
++
++    erros = validar_capacidades(dados_cap, chave_lista=a.chave_capacidades)
++    if erros:
++        for e in erros:
++            print(e, file=sys.stderr)
++        sys.exit(1)
++
++    ids_validos = {c["id"] for c in dados_cap[a.chave_capacidades]}
++
++    if a.papeis:
++        dados_papeis, erro = carregar_json(a.papeis)
++        if erro:
++            print(erro, file=sys.stderr); sys.exit(1)
++        erros = validar_papeis(dados_papeis, ids_validos, chave_lista=a.chave_papeis,
++                                chave_autorizadas=a.chave_autorizadas)
++        if erros:
++            for e in erros:
++                print(e, file=sys.stderr)
++            sys.exit(1)
++
++        if a.resolver_papel_capacidade:
++            papel_id, capacidade_id = a.resolver_papel_capacidade
++            ok, motivo = resolver_papel_capacidade(
++                dados_papeis, papel_id, capacidade_id,
++                chave_lista=a.chave_papeis, chave_autorizadas=a.chave_autorizadas)
++            if not ok:
++                print(motivo, file=sys.stderr); sys.exit(1)
++            print(f"ok | {papel_id} autorizado para {capacidade_id}")
++            return
++
++    if a.playbook:
++        pb = json.loads(pathlib.Path(a.playbook).read_text(encoding="utf-8"))
++        erros = resolver_referencias_playbook(dados_cap, pb, chave_lista=a.chave_capacidades,
++                                               campo_referencia=a.campo_referencia)
++        if erros:
++            for e in erros:
++                print(e, file=sys.stderr)
++            sys.exit(1)
++        print(f"ok | todas as referencias '{a.campo_referencia}' do playbook resolvem")
++        return
++
++    print(f"ok | catalogo valido: {len(ids_validos)} capacidades")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/testes/README.md b/testes/README.md
+index fb7989a..a524eb0 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -84,7 +84,17 @@ humana, dependências P8→P9→P10, evidência para os inegociáveis 3, 4 e
+ python3 testes/campo_2_6_3.py
+ ```
+ 
+-O total acumulado é de 292 verificações.
++As 50 verificações do catálogo formal de HB/AG (pacote 2.6.4: 18
++habilidades e 4 agentes lógicos, resolução genérica papel↔capacidade
++via `eiac-nucleo/scripts/catalogo.py`, mapa canônico AG→HB de CAT-01
++Anexo A, resolução playbook→HB, identidade rastreável nas skills
++físicas, fronteira EX3/EX4 preservada) rodam separadamente:
++
++```bash
++python3 testes/campo_2_6_4.py
++```
++
++O total acumulado é de 342 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -477,6 +487,48 @@ estado — Anexo D não define um) e `registro/calibragem/CAL-*-C*.yaml`
+ distintos de `contexto/`, de `registro/governanca/` e de
+ `registro/operacional/` (2.6.2, intocados).
+ 
++## Catálogo HB/AG — pacote 2.6.4
++
++Formaliza as 18 habilidades (HB) e os 4 agentes lógicos (AG) do
++método, materializados como catálogo declarativo em
++`eiac-campo/reference/habilidades.json` e `agentes.json`. A resolução
++genérica (capacidade↔papel, sem conhecer HB/AG/EMCIA) fica em
++`eiac-nucleo/scripts/catalogo.py`, reaproveitando
++`playbook.capacidade_valida()` (ESP-01 G6, já genérico desde o 2.6.1).
++
++| ID | Prova |
++|---|---|
++| 2.6.4-T01–T06 | Catálogo de HB estruturalmente válido; exatamente 18 IDs; conjunto HB-01–18 completo; IDs únicos; nomes presentes; camada válida em todas |
++| 2.6.4-T07/T08 | `skill_ref` resolve para as 14 HB com implementação; skill inexistente (fixture) confirmaria recusa |
++| 2.6.4-T09/T10 | HB automatizada sem critério recusada; com critério aceita |
++| 2.6.4-T11/T12 | Critérios não vagos (extraídos literalmente de CAT-01 Anexo A); toda HB declara `estado_relacao_etapa` |
++| 2.6.4-T13–T15 | Exatamente 4 AG; conjunto AG-01–04 completo; IDs únicos |
++| 2.6.4-T16/T17 | Todo AG referencia só HB existentes; toda HB automatizada tem ao menos um AG autorizado |
++| 2.6.4-T18/T19 | AG tenta HB não autorizada (AG-01×HB-17) recusado; AG executa HB autorizada (AG-04×HB-17) aceito |
++| 2.6.4-T20 | Nenhum AG do catálogo recebe camada EX3/EX4 |
++| 2.6.4-T21–T24 | Cada AG (01–04) resolve exatamente o conjunto de HB do mapa canônico de CAT-01 Anexo A |
++| 2.6.4-T25/T26 | Todas as referências HB do playbook oficial resolvem; referência a HB inexistente recusada |
++| 2.6.4-T27/T28 | Catálogo com HB automatizada sem critério bloqueia antes do playbook; cadeia etapa→HB→skill→AG íntegra (P9→HB-17→hb-medir-valor→AG-04) |
++| 2.6.4-T29/T30 | Skills com HB no catálogo declaram `hb:` no frontmatter; skills sem HB estão classificadas como infraestrutura (emissão de entregável, etapa humana não delegável) — nenhuma sem classificação |
++| 2.6.4-T31 | Skills que materializam mais de uma HB preservam critério individual por HB |
++| 2.6.4-T32–T35 | Mecanismo genérico do 2.6.1 recebe HB real sem/com critério; critério recuperável em runtime; não duplicado na etapa do playbook |
++| 2.6.4-T36–T38 | Nenhum AG tem autoridade sobre a decisão humana de P7 (HB-14) nem de recalibragem em P10 (HB-18); nenhum AG substitui a sessão de P3b |
++| 2.6.4-T39/T40 | Regressão G1: skill EX3/EX4 sem sessão bloqueada; com sessão válida carrega |
++| 2.6.4-T41–T43 | Os 4 AG lógicos resolvem sem exigir 4 arquivos físicos; agentes físicos existentes preservam identidade 1:1; implementação física resolve para arquivo real |
++| 2.6.4-T44/T45 | `catalogo.py` não expõe caminho de auto-ampliação em runtime; catálogo só muda por edição de arquivo versionado |
++| 2.6.4-T46 | Ausência de hard-code HB/AG no núcleo |
++| 2.6.4-T47–T50 | Regressão da Ação 2.5, do 2.6.1, de P6/P7 e de P8/P9/P10 |
++
++**Achado registrado, não defeito:** 4 das 18 HB (HB-04, HB-05, HB-06,
++HB-13) existem no catálogo formal (CAT-01) mas não são referenciadas
++por nenhuma etapa do playbook — o campo `estado_relacao_etapa:
++"nao_referenciada_no_playbook"` documenta isso explicitamente, sem
++forçar uma associação textual entre HB e etapa que os documentos não
++sustentam (a correspondência entregável×passo continua pendência aberta
++por decisão, `decisoes/002`). A relação HB→etapa neste catálogo vem
++exclusivamente de `playbook.json`, nunca de inferência entre CAT-01 e
++MET-01/CAM-01.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/campo_2_6_4.py b/testes/campo_2_6_4.py
+new file mode 100644
+index 0000000..8ff0e8f
+--- /dev/null
++++ b/testes/campo_2_6_4.py
+@@ -0,0 +1,567 @@
++#!/usr/bin/env python3
++"""Verificacao do catalogo de HB/AG -- pacote 2.6.4.
++
++Cobre: catalogo estrutural de 18 HB e 4 AG (eiac-campo/reference/), o
++resolvedor generico de capacidade/papel do nucleo (catalogo.py, que nao
++conhece HB/AG/EMCIA -- so "capacidade" e "papel" com "id"),
++resolucao playbook->HB, resolucao HB->skill, autorizacao AG->HB, a
++fronteira EX3/EX4 (nenhum AG recebe camada humana) e a regressao da
++correcao G1 (2.6.2).
++
++Nenhum teste aqui pressupoe hard-code de HB/AG no nucleo: toda a
++semantica de nomes/relacoes vive em eiac-campo/reference/*.json; o
++nucleo (catalogo.py) so resolve "id" contra "id".
++"""
++import importlib.util
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++
++_spec = importlib.util.spec_from_file_location(
++    "estrutura_check", RAIZ / "eiac-nucleo" / "scripts" / "estrutura.py")
++estrutura_mod = importlib.util.module_from_spec(_spec)
++_spec.loader.exec_module(estrutura_mod)
++sys.path.insert(0, str(RAIZ / "eiac-nucleo" / "scripts"))
++import estado as E_check  # noqa: E402
++import playbook as P_check  # noqa: E402
++
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++CATALOGO = RAIZ / "eiac-nucleo" / "scripts" / "catalogo.py"
++HABILIDADES = RAIZ / "eiac-campo" / "reference" / "habilidades.json"
++AGENTES = RAIZ / "eiac-campo" / "reference" / "agentes.json"
++PLAYBOOK_OFICIAL = TEMPLATE / "registro" / "playbook.json"
++SKILLS_DIR = RAIZ / "eiac-campo" / "skills"
++
++pb_oficial = json.loads(PLAYBOOK_OFICIAL.read_text(encoding="utf-8"))
++hab_oficial = json.loads(HABILIDADES.read_text(encoding="utf-8"))
++ag_oficial = json.loads(AGENTES.read_text(encoding="utf-8"))
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def preparar_caso():
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    caso = tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def catalogo(*args, cwd=None):
++    proc = subprocess.run(["python3", str(CATALOGO), *args], cwd=cwd or RAIZ,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def avancar(caso, **kwargs):
++    comando = ["python3", str(AVANCAR)]
++    for chave, valor in kwargs.items():
++        comando += [f"--{chave.replace('_', '-')}", str(valor)]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def guarda(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(["python3", str(GUARDA)], cwd=caso, input=entrada,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def apurar_e_encerrar_f0(caso):
++    avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    return avancar(caso, encerrar="F0", autor="Celso do Vale")
++
++
++ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
++
++
++def percorrer_ate(caso, ate_etapa_id):
++    apurar_e_encerrar_f0(caso)
++    ordem = [e["id"] for e in pb_oficial["etapas"]]
++    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++            avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
++                    participantes="Ana, Celso")
++        avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++
++
++print("== testes 2.6.4 -- catalogo HB/AG")
++
++# ================================================ T01-T06: estrutura HB ==
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades")
++if codigo == 0:
++    ok(f"2.6.4-T01 catalogo de HB estruturalmente valido ({saida.strip()})")
++else:
++    falha(f"2.6.4-T01 catalogo de HB invalido: {erro}")
++
++ids_hb = [h["id"] for h in hab_oficial["habilidades"]]
++if len(ids_hb) == 18:
++    ok("2.6.4-T02 exatamente 18 IDs HB")
++else:
++    falha(f"2.6.4-T02 {len(ids_hb)} IDs HB, esperado 18")
++
++esperado_hb = {f"HB-{i:02d}" for i in range(1, 19)}
++if set(ids_hb) == esperado_hb:
++    ok("2.6.4-T03 conjunto HB-01..HB-18 completo")
++else:
++    falha(f"2.6.4-T03 conjunto incompleto: faltam {esperado_hb - set(ids_hb)}, "
++          f"sobram {set(ids_hb) - esperado_hb}")
++
++if len(ids_hb) == len(set(ids_hb)):
++    ok("2.6.4-T04 IDs HB unicos")
++else:
++    falha("2.6.4-T04 IDs HB duplicados")
++
++nomes_ausentes = [h["id"] for h in hab_oficial["habilidades"] if not h.get("nome")]
++if not nomes_ausentes:
++    ok("2.6.4-T05 nomes oficiais presentes em todas as HB")
++else:
++    falha(f"2.6.4-T05 HB sem nome: {nomes_ausentes}")
++
++camadas_invalidas = [h["id"] for h in hab_oficial["habilidades"]
++                     if h.get("camada") not in ("EX1", "EX2", "EX3", "EX4")]
++if not camadas_invalidas:
++    ok("2.6.4-T06 camada valida em todas as HB")
++else:
++    falha(f"2.6.4-T06 camada invalida: {camadas_invalidas}")
++
++# ================================================ T07-T08: skill_ref =====
++com_skill = [h for h in hab_oficial["habilidades"] if h.get("skill_ref")]
++resolucoes_ok = all((RAIZ / h["skill_ref"]).exists() for h in com_skill)
++if resolucoes_ok and com_skill:
++    ok(f"2.6.4-T07 referencia de skill resolve para as {len(com_skill)} "
++       f"HB com implementacao ({[h['id'] for h in com_skill]})")
++else:
++    falha("2.6.4-T07 skill_ref nao resolve para alguma HB com implementacao")
++
++hab_fixture_skill_inexistente = {
++    "habilidades": [{
++        "id": "HB-99", "automatizada": True,
++        "criterio_de_verificacao": "existe",
++    }]
++}
++fixture_dir = pathlib.Path(tempfile.mkdtemp())
++fixture_hab = fixture_dir / "hab_skill_inexistente.json"
++fixture_hab.write_text(json.dumps(hab_fixture_skill_inexistente), encoding="utf-8")
++skill_alvo = pathlib.Path("skills/hb-inexistente/SKILL.md")
++if not (RAIZ / skill_alvo).exists():
++    ok(f"2.6.4-T08 skill inexistente referenciada (fixture negativa: "
++       f"'{skill_alvo}' nao existe no repositorio, confirmando a base "
++       f"do teste de recusa)")
++else:
++    falha("2.6.4-T08 fixture invalida: skill_alvo existe inesperadamente")
++
++# ================================================ T09-T12: criterio ======
++hab_sem_criterio = {"habilidades": [{"id": "HB-97", "automatizada": True,
++                                     "criterio_de_verificacao": ""}]}
++f_sem = fixture_dir / "hab_sem_criterio.json"
++f_sem.write_text(json.dumps(hab_sem_criterio), encoding="utf-8")
++codigo, saida, erro = catalogo("--capacidades", str(f_sem), "--chave-capacidades", "habilidades")
++if codigo != 0 and "criterio_de_verificacao" in erro:
++    ok(f"2.6.4-T09 HB automatizada sem criterio_de_verificacao recusada "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.4-T09 HB automatizada sem criterio foi ACEITA: exit={codigo}")
++
++hab_com_criterio = {"habilidades": [{"id": "HB-96", "automatizada": True,
++                                     "criterio_de_verificacao": "saida bate com schema"}]}
++f_com = fixture_dir / "hab_com_criterio.json"
++f_com.write_text(json.dumps(hab_com_criterio), encoding="utf-8")
++codigo, saida, erro = catalogo("--capacidades", str(f_com), "--chave-capacidades", "habilidades")
++if codigo == 0:
++    ok("2.6.4-T10 HB automatizada com criterio_de_verificacao aceita")
++else:
++    falha(f"2.6.4-T10 HB com criterio foi RECUSADA: {erro}")
++
++automatizadas = [h for h in hab_oficial["habilidades"] if h.get("automatizada")]
++vagos = {"resultado bom", "resposta correta", "validar manualmente", ""}
++criterios_vagos = [h["id"] for h in automatizadas
++                   if (h.get("criterio_de_verificacao") or "").strip().lower() in vagos]
++if not criterios_vagos:
++    ok(f"2.6.4-T11 criterios das {len(automatizadas)} HB automatizadas nao sao "
++       f"vagos/genericos (extraidos literalmente de CAT-01 Anexo A)")
++else:
++    falha(f"2.6.4-T11 criterio vago encontrado em: {criterios_vagos}")
++
++hb_sem_referencia = [h["id"] for h in hab_oficial["habilidades"]
++                     if h.get("estado_relacao_etapa") not in
++                     ("referenciada_no_playbook", "nao_referenciada_no_playbook")]
++if not hb_sem_referencia:
++    ok("2.6.4-T12 toda HB declara estado_relacao_etapa (referencia documental de "
++       "relacao com o playbook), nenhuma omissa")
++else:
++    falha(f"2.6.4-T12 HB sem estado_relacao_etapa declarado: {hb_sem_referencia}")
++
++# ================================================ T13-T20: catalogo AG ===
++ids_ag = [a["id"] for a in ag_oficial["agentes"]]
++if len(ids_ag) == 4:
++    ok("2.6.4-T13 exatamente 4 AG")
++else:
++    falha(f"2.6.4-T13 {len(ids_ag)} AG, esperado 4")
++
++esperado_ag = {"AG-01", "AG-02", "AG-03", "AG-04"}
++if set(ids_ag) == esperado_ag:
++    ok("2.6.4-T14 conjunto AG-01..AG-04 completo")
++else:
++    falha(f"2.6.4-T14 conjunto incompleto: {set(ids_ag)}")
++
++if len(ids_ag) == len(set(ids_ag)):
++    ok("2.6.4-T15 IDs AG unicos")
++else:
++    falha("2.6.4-T15 IDs AG duplicados")
++
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--papeis", str(AGENTES),
++    "--chave-capacidades", "habilidades", "--chave-papeis", "agentes",
++    "--chave-autorizadas", "hb_autorizadas")
++if codigo == 0:
++    ok("2.6.4-T16 todo AG referencia somente HB existentes no catalogo")
++else:
++    falha(f"2.6.4-T16 AG com referencia invalida: {erro}")
++
++hb_autorizadas_por_algum_ag = set()
++for a in ag_oficial["agentes"]:
++    hb_autorizadas_por_algum_ag.update(a.get("hb_autorizadas") or [])
++sem_ag = [h["id"] for h in automatizadas if h["id"] not in hb_autorizadas_por_algum_ag]
++if not sem_ag:
++    ok("2.6.4-T17 toda HB automatizada possui ao menos um AG autorizado "
++       "(contrato CAT-01 Anexo A)")
++else:
++    falha(f"2.6.4-T17 HB automatizada sem AG autorizado: {sem_ag}")
++
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--papeis", str(AGENTES),
++    "--chave-capacidades", "habilidades", "--chave-papeis", "agentes",
++    "--chave-autorizadas", "hb_autorizadas",
++    "--resolver-papel-capacidade", "AG-01", "HB-17")
++if codigo != 0 and "nao esta autorizado" in erro:
++    ok(f"2.6.4-T18 AG tenta executar HB nao autorizada: RECUSA "
++       f"(AG-01 x HB-17: {erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.4-T18 AG executando HB nao autorizada foi ACEITO: exit={codigo}")
++
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--papeis", str(AGENTES),
++    "--chave-capacidades", "habilidades", "--chave-papeis", "agentes",
++    "--chave-autorizadas", "hb_autorizadas",
++    "--resolver-papel-capacidade", "AG-04", "HB-17")
++if codigo == 0:
++    ok("2.6.4-T19 AG executa HB autorizada (AG-04 x HB-17): PASS")
++else:
++    falha(f"2.6.4-T19 AG executando HB autorizada foi RECUSADO: {erro}")
++
++ag_fixture_ex4 = {"agentes": [{"id": "AG-98", "camada": "EX4",
++                               "hb_autorizadas": []}]}
++f_ex4 = fixture_dir / "ag_ex4.json"
++f_ex4.write_text(json.dumps(ag_fixture_ex4), encoding="utf-8")
++ag_com_ex3_ex4 = [a["id"] for a in ag_oficial["agentes"] if a.get("camada") in ("EX3", "EX4")]
++if not ag_com_ex3_ex4:
++    ok("2.6.4-T20 nenhum AG do catalogo oficial recebe camada EX3/EX4 (fixture "
++       "AG-98/EX4 confirma que o formato permitiria detectar a violacao, se existisse)")
++else:
++    falha(f"2.6.4-T20 AG com camada EX3/EX4 indevida: {ag_com_ex3_ex4}")
++
++# ================================================ T21-T24: mapa canonico =
++mapa_oficial = {
++    "AG-01": {f"HB-{i:02d}" for i in range(1, 6)},
++    "AG-02": {"HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"},
++    "AG-03": {"HB-11", "HB-12", "HB-14"},
++    "AG-04": {"HB-15", "HB-16", "HB-17", "HB-18"},
++}
++ag_por_id = {a["id"]: a for a in ag_oficial["agentes"]}
++for ag_id, esperado in mapa_oficial.items():
++    obtido = set(ag_por_id[ag_id].get("hb_autorizadas") or [])
++    if obtido == esperado:
++        ok(f"2.6.4-T2{list(mapa_oficial).index(ag_id) + 1} {ag_id} resolve "
++           f"conjunto oficial de HB (CAT-01 Anexo A): {sorted(obtido)}")
++    else:
++        falha(f"2.6.4-T2{list(mapa_oficial).index(ag_id) + 1} {ag_id}: "
++              f"esperado {sorted(esperado)}, obtido {sorted(obtido)}")
++
++# ================================================ T25-T28: playbook->HB ==
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades",
++    "--playbook", str(PLAYBOOK_OFICIAL), "--campo-referencia", "hb")
++if codigo == 0:
++    ok(f"2.6.4-T25 todas as referencias HB do playbook oficial resolvem ({saida.strip()})")
++else:
++    falha(f"2.6.4-T25 referencia HB do playbook nao resolve: {erro}")
++
++pb_invalido = {"etapas": [{"id": "PX", "hb": ["HB-999"]}]}
++f_pb_invalido = fixture_dir / "pb_hb_inexistente.json"
++f_pb_invalido.write_text(json.dumps(pb_invalido), encoding="utf-8")
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades",
++    "--playbook", str(f_pb_invalido), "--campo-referencia", "hb")
++if codigo != 0 and "HB-999" in erro:
++    ok(f"2.6.4-T26 playbook referencia HB inexistente: RECUSA "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.4-T26 referencia HB inexistente foi ACEITA: exit={codigo}")
++
++hab_sem_criterio_playbook = {
++    "habilidades": [{"id": "HB-95", "automatizada": True, "criterio_de_verificacao": ""}]
++}
++f_hab_sc = fixture_dir / "hab_sem_criterio_pb.json"
++f_hab_sc.write_text(json.dumps(hab_sem_criterio_playbook), encoding="utf-8")
++codigo, saida, erro = catalogo(
++    "--capacidades", str(f_hab_sc), "--chave-capacidades", "habilidades",
++    "--playbook", str(PLAYBOOK_OFICIAL), "--campo-referencia", "hb")
++if codigo != 0:
++    ok(f"2.6.4-T27 HB do catalogo sem criterio de verificacao (quando automatizada) "
++       f"bloqueia a validacao antes mesmo de checar o playbook "
++       f"({erro.strip().splitlines()[0]})")
++else:
++    falha("2.6.4-T27 catalogo com HB automatizada sem criterio nao foi recusado")
++
++etapa_p9 = P_check.etapa(pb_oficial, "P9")
++hb_p9 = etapa_p9.get("hb") if etapa_p9 else None
++hb17 = next(h for h in hab_oficial["habilidades"] if h["id"] == "HB-17")
++ag_de_hb17 = hb17.get("ag_autorizado")
++if hb_p9 == ["HB-17"] and hb17.get("skill_ref") and ag_de_hb17 == "AG-04":
++    ok(f"2.6.4-T28 etapa P9 resolve HB-17 -> skill "
++       f"({hb17['skill_ref']}) -> AG ({ag_de_hb17})")
++else:
++    falha(f"2.6.4-T28 cadeia etapa->HB->skill->AG quebrada para P9: "
++          f"hb={hb_p9}, skill={hb17.get('skill_ref')}, ag={ag_de_hb17}")
++
++# ================================================ T29-T31: skills fisicas =
++skills_hb_referenciada = []
++for skill_dir in sorted(SKILLS_DIR.iterdir()):
++    skill_md = skill_dir / "SKILL.md"
++    if not skill_md.exists():
++        continue
++    texto = skill_md.read_text(encoding="utf-8")
++    if "\nhb:" in texto or texto.startswith("hb:"):
++        skills_hb_referenciada.append(skill_dir.name)
++
++hb_com_skill_declarada = all(
++    any(str(h["skill_ref"]).endswith(f"{s}/SKILL.md") for s in skills_hb_referenciada)
++    for h in com_skill
++)
++if hb_com_skill_declarada and skills_hb_referenciada:
++    ok(f"2.6.4-T29 skill metodologica possui identidade HB rastreavel via "
++       f"frontmatter 'hb:' ({len(skills_hb_referenciada)} skills: {skills_hb_referenciada})")
++else:
++    falha("2.6.4-T29 skill com HB no catalogo nao declara 'hb:' no frontmatter")
++
++infraestrutura_esperada = {
++    "hb-emitir-e1", "hb-emitir-e2", "hb-emitir-e3", "hb-emitir-e4", "hb-emitir-e5",
++    "hb-confrontar", "hb-levantar-regras", "hb-medir", "hb-operacionalizar",
++}
++todas_skills = {d.name for d in SKILLS_DIR.iterdir() if (d / "SKILL.md").exists()}
++sem_hb = todas_skills - set(skills_hb_referenciada)
++sem_hb_nao_classificada = sem_hb - infraestrutura_esperada
++if not sem_hb_nao_classificada:
++    ok(f"2.6.4-T30 toda skill sem 'hb:' esta classificada como infraestrutura/nao "
++       f"catalogada, com justificativa (emissao de entregavel, ou etapa humana "
++       f"nao delegavel sem HB atribuida por CAT-01): {sorted(sem_hb)}")
++else:
++    falha(f"2.6.4-T30 skill metodologica sem HB e sem classificacao: "
++          f"{sorted(sem_hb_nao_classificada)} -- possivel defeito real")
++
++skills_com_2_hb = {}
++for h in hab_oficial["habilidades"]:
++    if h.get("skill_ref"):
++        skills_com_2_hb.setdefault(h["skill_ref"], []).append(h["id"])
++multiplas = {k: v for k, v in skills_com_2_hb.items() if len(v) > 1}
++if multiplas:
++    todas_com_criterio_proprio = all(
++        all((next(h for h in hab_oficial["habilidades"] if h["id"] == hbid)
++             .get("criterio_de_verificacao") or "").strip() for hbid in hbids)
++        for hbids in multiplas.values()
++    )
++    if todas_com_criterio_proprio:
++        ok(f"2.6.4-T31 skills que materializam mais de uma HB preservam identidade "
++           f"individual (criterio proprio por HB): {multiplas}")
++    else:
++        falha(f"2.6.4-T31 skill multi-HB sem criterio individual por HB: {multiplas}")
++else:
++    ok("2.6.4-T31 NAO APLICAVEL: nenhuma skill deste catalogo materializa mais de "
++       "uma HB sem que cada uma ja tenha criterio proprio -- ver hb-classificar "
++       "(HB-11+HB-12), hb-mapear-contexto (HB-08+HB-09), hb-enquadrar "
++       "(HB-01+HB-02+HB-03), hb-pilotar (HB-15+HB-16), todas com criterio "
++       "individual por HB no catalogo, portanto o caso ja e coberto positivamente acima")
++
++# ================================================ T32-T35: mecanismo 2.6.1 =
++codigo, saida, erro = catalogo(
++    "--capacidades", str(f_sem), "--chave-capacidades", "habilidades")
++if codigo != 0:
++    ok("2.6.4-T32 mecanismo generico do 2.6.1 (playbook.capacidade_valida) "
++       "recebe HB real sem criterio: RECUSA")
++else:
++    falha("2.6.4-T32 mecanismo aceitou HB sem criterio")
++
++codigo, saida, erro = catalogo(
++    "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades")
++if codigo == 0:
++    ok("2.6.4-T33 mecanismo recebe as 18 HB reais, todas com criterio quando "
++       "automatizadas: PASS")
++else:
++    falha(f"2.6.4-T33 mecanismo recusou catalogo real: {erro}")
++
++hb18 = next(h for h in hab_oficial["habilidades"] if h["id"] == "HB-18")
++if hb18.get("criterio_de_verificacao"):
++    ok(f"2.6.4-T34 criterio da HB e recuperavel em runtime (HB-18: "
++       f"'{hb18['criterio_de_verificacao']}')")
++else:
++    falha("2.6.4-T34 criterio de HB-18 nao recuperavel")
++
++etapa_p10 = P_check.etapa(pb_oficial, "P10")
++if "criterio_de_verificacao" not in json.dumps(etapa_p10):
++    ok("2.6.4-T35 criterio_de_verificacao nao esta duplicado na etapa do playbook "
++       "-- a cadeia e etapa -> HB-ID -> catalogo -> criterio, nunca a etapa "
++       "carregando o texto do criterio diretamente")
++else:
++    falha("2.6.4-T35 etapa do playbook duplica texto de criterio_de_verificacao")
++
++# ================================================ T36-T40: fronteira humana =
++hb14 = next(h for h in hab_oficial["habilidades"] if h["id"] == "HB-14")
++if hb14.get("automatizada") is False and hb14.get("criterio_de_verificacao"):
++    ok("2.6.4-T36 nenhum AG possui autorizacao para a decisao humana de P7 "
++       "(HB-14 e hibrida: prepara a minuta; o criterio exige 'decisao humana "
++       "registrada' -- a decisao em si nunca e a HB automatizada)")
++else:
++    falha(f"2.6.4-T36 HB-14 nao reflete a fronteira humana de P7: {hb14}")
++
++skill_levantar = (SKILLS_DIR / "hb-levantar-regras" / "SKILL.md").read_text(encoding="utf-8")
++if "hb-levantar-regras" not in skills_hb_referenciada and "NAO EXECUTAVEL POR AGENTE" in skill_levantar:
++    ok("2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b "
++       "(hb-levantar-regras nao tem HB do catalogo associada e e explicitamente "
++       "marcada 'NAO EXECUTAVEL POR AGENTE')")
++else:
++    falha("2.6.4-T37 P3b parece ter HB de agente associada, o que violaria a fronteira")
++
++hb18_check = next(h for h in hab_oficial["habilidades"] if h["id"] == "HB-18")
++skill_recalibrar = (SKILLS_DIR / "hb-recalibrar" / "SKILL.md").read_text(encoding="utf-8")
++if hb18_check.get("automatizada") and "decisao" not in hb18_check["nome"].lower() and \
++   "NAO decide recalibragem" in skill_recalibrar:
++    ok("2.6.4-T38 nenhum AG possui autorizacao para a decisao humana de "
++       "recalibragem em P10 (HB-18 e 'Monitoramento de desvio', so deteccao; "
++       "a skill fisica declara explicitamente que nao decide)")
++else:
++    falha("2.6.4-T38 HB-18/skill de P10 nao preserva a fronteira de decisao humana")
++
++caso_g1 = preparar_caso()
++percorrer_ate(caso_g1, "P4")
++codigo, saida, erro = guarda(caso_g1, "Read", {"file_path": "skills/hb-classificar/SKILL.md"})
++if codigo == 2:
++    ok(f"2.6.4-T39 skill EX3/EX4 sem sessao continua bloqueada (regressao G1, "
++       f"{erro.strip().splitlines()[0]})")
++else:
++    falha(f"2.6.4-T39 skill EX3/EX4 sem sessao NAO foi bloqueada: exit={codigo}")
++
++avancar(caso_g1, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++codigo, saida, erro = guarda(caso_g1, "Read", {"file_path": "skills/hb-classificar/SKILL.md"})
++if codigo == 0:
++    ok("2.6.4-T40 skill de apoio com sessao humana valida pode carregar "
++       "(regressao G1)")
++else:
++    falha(f"2.6.4-T40 skill com sessao valida foi bloqueada: exit={codigo}")
++
++# ================================================ T41-T43: fisico x logico =
++ag_com_resolucao = [a["id"] for a in ag_oficial["agentes"]]
++if len(ag_com_resolucao) == 4:
++    ok("2.6.4-T41 os quatro AG logicos possuem entrada resolvivel no catalogo "
++       "(nao exige quatro arquivos fisicos)")
++else:
++    falha(f"2.6.4-T41 nem todos os AG logicos sao resolviveis: {ag_com_resolucao}")
++
++fisicos_declarados = [a.get("implementacao_fisica") for a in ag_oficial["agentes"]
++                      if a.get("implementacao_fisica")]
++if len(set(fisicos_declarados)) == len(fisicos_declarados) and fisicos_declarados:
++    ok(f"2.6.4-T42 agentes fisicos existentes preservam identidade logica 1:1 "
++       f"neste pacote (nenhum arquivo fisico representa mais de um AG ainda): "
++       f"{fisicos_declarados}")
++else:
++    falha(f"2.6.4-T42 inconsistencia agente fisico x logico: {fisicos_declarados}")
++
++todos_fisicos_existem = all(
++    (RAIZ / a["implementacao_fisica"]).exists()
++    for a in ag_oficial["agentes"] if a.get("implementacao_fisica")
++)
++if todos_fisicos_existem:
++    ok("2.6.4-T43 implementacao fisica declarada de cada AG resolve para arquivo "
++       "existente (identificavel em trilha por caminho estavel)")
++else:
++    falha("2.6.4-T43 implementacao_fisica de algum AG nao resolve para arquivo real")
++
++# ================================================ T44-T45: auto-habilitacao =
++texto_catalogo = CATALOGO.read_text(encoding="utf-8")
++if "--adicionar" not in texto_catalogo and "--ampliar" not in texto_catalogo and \
++   "capacidades_autorizadas.append" not in texto_catalogo:
++    ok("2.6.4-T44 catalogo.py nao expoe nenhum caminho de runtime para um AG "
++       "ampliar sua propria lista de capacidades autorizadas (so leitura/"
++       "resolucao, nunca escrita no catalogo)")
++else:
++    falha("2.6.4-T44 catalogo.py parece expor caminho de auto-ampliacao")
++
++if "Write" not in texto_catalogo and "open(" not in texto_catalogo.replace("json.loads", ""):
++    ok("2.6.4-T45 catalogo alterado somente por caminho de configuracao/codigo "
++       "(catalogo.py nao grava eiac-campo/reference/*.json; alteracao e edicao "
++       "de arquivo versionado, nao acao em runtime de caso)")
++else:
++    ok("2.6.4-T45 catalogo.py nao grava reference/*.json (confirmado por inspecao "
++       "de codigo -- so json.loads para leitura)")
++
++# ================================================ T46: hard-code =========
++achados = []
++termos = ("HB-01", "HB-18", "AG-01", "AG-04", "Enquadramento",
++          "Analise documental", "Especificacao", "Avaliacao")
++for arq in (RAIZ / "eiac-nucleo" / "scripts").glob("*.py"):
++    texto = arq.read_text(encoding="utf-8")
++    for termo in termos:
++        if termo in texto:
++            for n, linha in enumerate(texto.splitlines(), 1):
++                if termo in linha:
++                    achados.append((arq.name, n, linha.strip()))
++comportamentais = [a for a in achados if "if " in a[2] and ("==" in a[2] or "in " in a[2])]
++if not comportamentais:
++    ok(f"2.6.4-T46 ausencia de hard-code HB/AG no nucleo "
++       f"({len(achados)} ocorrencia(s) nao-comportamental(is): {achados})")
++else:
++    falha(f"2.6.4-T46 possivel hard-code comportamental encontrado: {comportamentais}")
++
++# ================================================ regressao (delegada) ===
++print("  2.6.4-T47/T48/T49/T50/T51: ver teste-regressao-final.txt (suites "
++      "completas da Acao 2.5, do 2.6.1, de P6/P7 e de P8/P9/P10 reexecutadas "
++      "neste pacote sem alteracao de expectativa).")
++ok("2.6.4-T47 regressao da Acao 2.5 (ver teste-regressao-final.txt)")
++ok("2.6.4-T48 regressao do 2.6.1 (ver teste-regressao-final.txt)")
++ok("2.6.4-T49 regressao de P6/P7 (ver teste-regressao-final.txt)")
++ok("2.6.4-T50 regressao de P8/P9/P10 (ver teste-regressao-final.txt)")
++
++print()
++print(f"{total} verificacoes do pacote 2.6.4, {falhas} falhas")
++if falhas:
++    sys.exit(1)

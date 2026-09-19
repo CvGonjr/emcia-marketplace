@@ -1,0 +1,54 @@
+== testes 2.6.4 -- catalogo HB/AG
+  ok    2.6.4-T01 catalogo de HB estruturalmente valido (ok | catalogo valido: 18 capacidades)
+  ok    2.6.4-T02 exatamente 18 IDs HB
+  ok    2.6.4-T03 conjunto HB-01..HB-18 completo
+  ok    2.6.4-T04 IDs HB unicos
+  ok    2.6.4-T05 nomes oficiais presentes em todas as HB
+  ok    2.6.4-T06 camada valida em todas as HB
+  ok    2.6.4-T07 referencia de skill resolve para as 14 HB com implementacao (['HB-01', 'HB-02', 'HB-03', 'HB-07', 'HB-08', 'HB-09', 'HB-10', 'HB-11', 'HB-12', 'HB-14', 'HB-15', 'HB-16', 'HB-17', 'HB-18'])
+  ok    2.6.4-T08 skill inexistente referenciada (fixture negativa: 'skills/hb-inexistente/SKILL.md' nao existe no repositorio, confirmando a base do teste de recusa)
+  ok    2.6.4-T09 HB automatizada sem criterio_de_verificacao recusada (HB-97: capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.4-T10 HB automatizada com criterio_de_verificacao aceita
+  ok    2.6.4-T11 criterios das 13 HB automatizadas nao sao vagos/genericos (extraidos literalmente de CAT-01 Anexo A)
+  ok    2.6.4-T12 toda HB declara estado_relacao_etapa (referencia documental de relacao com o playbook), nenhuma omissa
+  ok    2.6.4-T13 exatamente 4 AG
+  ok    2.6.4-T14 conjunto AG-01..AG-04 completo
+  ok    2.6.4-T15 IDs AG unicos
+  ok    2.6.4-T16 todo AG referencia somente HB existentes no catalogo
+  ok    2.6.4-T17 toda HB automatizada possui ao menos um AG autorizado (contrato CAT-01 Anexo A)
+  ok    2.6.4-T18 AG tenta executar HB nao autorizada: RECUSA (AG-01 x HB-17: papel 'AG-01' nao esta autorizado a executar 'HB-17')
+  ok    2.6.4-T19 AG executa HB autorizada (AG-04 x HB-17): PASS
+  ok    2.6.4-T20 nenhum AG do catalogo oficial recebe camada EX3/EX4 (fixture AG-98/EX4 confirma que o formato permitiria detectar a violacao, se existisse)
+  ok    2.6.4-T21 AG-01 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-01', 'HB-02', 'HB-03', 'HB-04', 'HB-05']
+  ok    2.6.4-T22 AG-02 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-06', 'HB-07', 'HB-08', 'HB-09', 'HB-10', 'HB-13']
+  ok    2.6.4-T23 AG-03 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-11', 'HB-12', 'HB-14']
+  ok    2.6.4-T24 AG-04 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-15', 'HB-16', 'HB-17', 'HB-18']
+  ok    2.6.4-T25 todas as referencias HB do playbook oficial resolvem (ok | todas as referencias 'hb' do playbook resolvem)
+  ok    2.6.4-T26 playbook referencia HB inexistente: RECUSA (etapa PX referencia 'HB-999' (hb), que nao existe no catalogo)
+  ok    2.6.4-T27 HB do catalogo sem criterio de verificacao (quando automatizada) bloqueia a validacao antes mesmo de checar o playbook (HB-95: capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.4-T28 etapa P9 resolve HB-17 -> skill (eiac-campo/skills/hb-medir-valor/SKILL.md) -> AG (AG-04)
+  ok    2.6.4-T29 skill metodologica possui identidade HB rastreavel via frontmatter 'hb:' (9 skills: ['hb-classificar', 'hb-enquadrar', 'hb-extrair-regras', 'hb-governar', 'hb-mapear-contexto', 'hb-medir-valor', 'hb-pilotar', 'hb-priorizar', 'hb-recalibrar'])
+  ok    2.6.4-T30 toda skill sem 'hb:' esta classificada como infraestrutura/nao catalogada, com justificativa (emissao de entregavel, ou etapa humana nao delegavel sem HB atribuida por CAT-01): ['hb-confrontar', 'hb-emitir-e1', 'hb-emitir-e2', 'hb-emitir-e3', 'hb-emitir-e4', 'hb-emitir-e5', 'hb-levantar-regras', 'hb-medir', 'hb-operacionalizar']
+  ok    2.6.4-T31 skills que materializam mais de uma HB preservam identidade individual (criterio proprio por HB): {'eiac-campo/skills/hb-enquadrar/SKILL.md': ['HB-01', 'HB-02', 'HB-03'], 'eiac-campo/skills/hb-mapear-contexto/SKILL.md': ['HB-08', 'HB-09'], 'eiac-campo/skills/hb-classificar/SKILL.md': ['HB-11', 'HB-12'], 'eiac-campo/skills/hb-pilotar/SKILL.md': ['HB-15', 'HB-16']}
+  ok    2.6.4-T32 mecanismo generico do 2.6.1 (playbook.capacidade_valida) recebe HB real sem criterio: RECUSA
+  ok    2.6.4-T33 mecanismo recebe as 18 HB reais, todas com criterio quando automatizadas: PASS
+  ok    2.6.4-T34 criterio da HB e recuperavel em runtime (HB-18: 'Limiar definido antes do piloto, nao ajustado a posteriori')
+  ok    2.6.4-T35 criterio_de_verificacao nao esta duplicado na etapa do playbook -- a cadeia e etapa -> HB-ID -> catalogo -> criterio, nunca a etapa carregando o texto do criterio diretamente
+  ok    2.6.4-T36 nenhum AG possui autorizacao para a decisao humana de P7 (HB-14 e hibrida: prepara a minuta; o criterio exige 'decisao humana registrada' -- a decisao em si nunca e a HB automatizada)
+  ok    2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b (hb-levantar-regras nao tem HB do catalogo associada e e explicitamente marcada 'NAO EXECUTAVEL POR AGENTE')
+  ok    2.6.4-T38 nenhum AG possui autorizacao para a decisao humana de recalibragem em P10 (HB-18 e 'Monitoramento de desvio', so deteccao; a skill fisica declara explicitamente que nao decide)
+  ok    2.6.4-T39 skill EX3/EX4 sem sessao continua bloqueada (regressao G1, EX3: a etapa P5 esta em camada humana (EX3) para o nivel N2. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.4-T40 skill de apoio com sessao humana valida pode carregar (regressao G1)
+  ok    2.6.4-T41 os quatro AG logicos possuem entrada resolvivel no catalogo (nao exige quatro arquivos fisicos)
+  ok    2.6.4-T42 agentes fisicos existentes preservam identidade logica 1:1 neste pacote (nenhum arquivo fisico representa mais de um AG ainda): ['eiac-campo/agents/extrator-documental.md', 'eiac-campo/agents/classificador-tecnologico.md']
+  ok    2.6.4-T43 implementacao fisica declarada de cada AG resolve para arquivo existente (identificavel em trilha por caminho estavel)
+  ok    2.6.4-T44 catalogo.py nao expoe nenhum caminho de runtime para um AG ampliar sua propria lista de capacidades autorizadas (so leitura/resolucao, nunca escrita no catalogo)
+  ok    2.6.4-T45 catalogo alterado somente por caminho de configuracao/codigo (catalogo.py nao grava eiac-campo/reference/*.json; alteracao e edicao de arquivo versionado, nao acao em runtime de caso)
+  ok    2.6.4-T46 ausencia de hard-code HB/AG no nucleo (7 ocorrencia(s) nao-comportamental(is): [('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 137, 'exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 6, '--resolver-papel-capacidade AG-01 HB-03'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('estado.py', 33, 'e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".')])
+  2.6.4-T47/T48/T49/T50/T51: ver teste-regressao-final.txt (suites completas da Acao 2.5, do 2.6.1, de P6/P7 e de P8/P9/P10 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.4-T47 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.4-T48 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.4-T49 regressao de P6/P7 (ver teste-regressao-final.txt)
+  ok    2.6.4-T50 regressao de P8/P9/P10 (ver teste-regressao-final.txt)
+
+50 verificacoes do pacote 2.6.4, 0 falhas

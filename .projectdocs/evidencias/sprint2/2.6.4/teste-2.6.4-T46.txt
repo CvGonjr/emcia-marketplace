@@ -1,0 +1,30 @@
+PACOTE: 2.6.4
+TESTE: 2.6.4-T46
+REQUISITO: ver pacote 2.6.4 (catalogo HB/AG), secoes 40-46 do prompt
+DATA/HORA: 2026-09-19T15:20:36
+HEAD INICIAL: 418a91635b96742a443e36ad4976146c4b04894a
+COMANDO: python3 testes/campo_2_6_4.py
+EXIT CODE: 0
+
+PRECONDICAO: catalogo eiac-campo/reference/habilidades.json e agentes.json carregados; resolvedor eiac-nucleo/scripts/catalogo.py
+
+HB: ver descricao abaixo
+AG: ver descricao abaixo
+SKILL: ver descricao abaixo
+ETAPA: ver descricao abaixo
+
+CRITERIO_DE_VERIFICACAO: ver eiac-campo/reference/habilidades.json (campo criterio_de_verificacao por HB)
+
+ENTRADA: ver testes/campo_2_6_4.py
+
+RESULTADO ESPERADO: ver descricao abaixo (par negativo/positivo conforme secao 51 do pacote)
+
+RESULTADO OBTIDO: ausencia de hard-code HB/AG no nucleo (7 ocorrencia(s) nao-comportamental(is): [('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 137, 'exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 6, '--resolver-papel-capacidade AG-01 HB-03'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('estado.py', 33, 'e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".')])
+
+EVENTO: n/a (resolucao de catalogo, fora de caso de campo -- ver caso-controle.md secao 11)
+
+STDOUT: ok    2.6.4-T46 ausencia de hard-code HB/AG no nucleo (7 ocorrencia(s) nao-comportamental(is): [('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 137, 'exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 6, '--resolver-papel-capacidade AG-01 HB-03'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('estado.py', 33, 'e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".')])
+
+STDERR: (ver teste-2.6.4-saida-completa.txt para o detalhe completo desta execucao)
+
+RESULTADO FINAL: PASS
