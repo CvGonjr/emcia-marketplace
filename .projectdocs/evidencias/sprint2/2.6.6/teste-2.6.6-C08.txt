@@ -1,0 +1,1 @@
+ok    2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel

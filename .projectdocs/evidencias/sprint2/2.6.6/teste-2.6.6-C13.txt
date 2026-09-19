@@ -1,0 +1,1 @@
+ok    2.6.6-C13 P8 produz casos de teste com saida esperada

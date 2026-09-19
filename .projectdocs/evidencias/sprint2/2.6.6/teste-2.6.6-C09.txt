@@ -1,0 +1,1 @@
+ok    2.6.6-C09 validacao de P6 exige humano (agente recusado, humano aceito)

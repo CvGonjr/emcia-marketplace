@@ -1,0 +1,21 @@
+id: MET-102
+estado: apurada
+piloto_ref: CT-101
+metrica: Volume de pedidos classificados automaticamente
+tipo: uso
+linha_base: 0 pedidos/mes
+linha_base_data: 2026-09-01
+linha_base_procedencia: D
+metodo_apuracao: Contagem de classificacoes automatizadas no periodo
+fonte_dado: Sistema de gestao de reembolsos
+periodicidade: mensal
+responsavel_apuracao: Marina Prado
+procedencia: D
+declarado_por: Celso do Vale
+registrado_por: Celso do Vale
+data: 2026-09-19
+versao: 1
+resultado_apurado: 128 pedidos/mes
+resultado_apurado_data: 2026-09-20
+resultado_apurado_procedencia: V
+fatores_externos_declarados: Nenhum identificado

@@ -1,0 +1,1 @@
+ok    2.6.6-C05 P3b permanece nao delegavel a agente (autor precisa ser pessoa nomeada)

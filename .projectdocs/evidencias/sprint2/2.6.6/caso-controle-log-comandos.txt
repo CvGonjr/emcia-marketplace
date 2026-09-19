@@ -1,0 +1,320 @@
+F0: apurar nivel N2 e encerrar
+  exit=0
+  stdout=ok | etapa atual: P1 | camada: EX2
+  stderr=
+
+NEGATIVO: encerrar P3a fora de ordem (etapa corrente e P1)
+  exit=1
+  stdout=
+  stderr=P3a nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.
+
+E1: renderizar e emitir (autorizado + materializado)
+  exit=0
+  stdout=E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+  stderr=
+
+P1: encerrar
+  exit=0
+  stdout=ok | etapa atual: P2 | camada: EX2
+  stderr=
+
+NEGATIVO: escrita direta em contexto/regras/ (G2b)
+  exit=2
+  stdout=
+  stderr=Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).
+
+P2: curar RN-101 via curar.py (caminho autorizado)
+  exit=0
+  stdout=regra curado: contexto/regras/RN-101.yaml
+  stderr=
+
+P2: encerrar
+  exit=0
+  stdout=ok | etapa atual: P3a | camada: EX3
+  stderr=
+
+P3a: gravar baseline BL-101 (medido, N2)
+  exit=0
+  stdout=linha de base gravada: registro/baseline/BL-101.yaml
+  stderr=
+
+P3a: encerrar
+  exit=0
+  stdout=ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+I1: verificar baseline e satisfazer
+  exit=0
+  stdout=I1 | satisfeito=True | linha de base 'BL-101' registrada em 2026-09-01 (apuracao medido, nivel N2)
+ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+NEGATIVO: skill de P3b sem sessao humana registrada (G1)
+  exit=2
+  stdout=
+  stderr=EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.
+
+NEGATIVO: AG-01 tenta encerrar P3b sem sessao (nao delegavel)
+  exit=1
+  stdout=
+  stderr=autor precisa ser pessoa nomeada
+
+P3b: registrar sessao humana
+  exit=0
+  stdout=ok | etapa atual: P3b | camada: EX4
+  stderr=
+
+P3b: skill carrega com sessao valida registrada
+  exit=0
+  stdout=
+  stderr=
+
+P3b: encerrar (humano, com sessao)
+  exit=0
+  stdout=ok | etapa atual: P3d | camada: EX3
+  stderr=
+
+P3d: encerrar
+  exit=0
+  stdout=ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+E2 (portao): emitir (I1 satisfeito)
+  exit=0
+  stdout=ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+E2: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E2 renderizado: caso/entregaveis/E2.md
+E2: ok | etapa atual: P4 | camada: EX3
+  stderr=
+
+P4: consultar RN-101 curada (consumo de CTX, nao reinferencia)
+  exit=0
+  stdout={
+  "id": "RN-101",
+  "enunciado": "quando o pedido de reembolso chega completo, a analise inicial e feita em ate 1 dia util",
+  "gatilho": "recebimento_do_pedido_completo",
+  "procedencia": "D",
+  "autoria_conteudo": "Fernanda Lima",
+  "registrado_por": "Celso do Vale",
+  "data": "2026-09-19",
+  "origem_do_conhecimento": "experiencia_propria",
+  "premissa": "",
+  "evidencia": "",
+  "classificacao_confronto": {
+    "classe": "",
+    "referencia_p3d": ""
+  },
+  "documento_de_origem": null,
+  "determinismo": "admite_julgamento",
+  "frequencia": "rotineira",
+  "consequencia_do_erro": "media",
+  "decisor_quando_nao_cobre": "Fernanda Lima",
+  "entradas": [],
+  "excecoes_conhecidas": [],
+  "estabilidade": "muda quando a politica de reembolso e revisada",
+  "versao": 1,
+  "historico": []
+}
+  stderr=
+
+P4: encerrar
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3-D (portao): emitir
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3-E (portao, caso agentico): emitir -> AUTORIZADO
+  exit=0
+  stdout=ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+E3: renderizar e emitir (consolida E3-D + E3-E, um unico arquivo)
+  exit=0
+  stdout=E3 renderizado: caso/entregaveis/E3.md
+E3-D: ok | etapa atual: P5 | camada: EX3
+E3-E: ok | etapa atual: P5 | camada: EX3
+  stderr=
+
+P6: encerrar (etapa_atual ajustada apos P5 gravado fora da maquina)
+  exit=0
+  stdout=ok | etapa atual: P7 | camada: EX4
+  stderr=
+
+P6 proposta: AG-02 propoe (papel legitimo de agente)
+  exit=0
+  stdout=especificacao operacional gravada: registro/operacional/OP-101.yaml
+  stderr=
+
+NEGATIVO: AG-02 tenta validar o proprio fluxo operacional
+  exit=1
+  stdout=
+  stderr=agente nao pode validar a especificacao operacional: o estado 'validado' exige ator humano nomeado (CAT-01 3.5.1, mesmo principio aplicado ao termo de autonomia de P7).
+
+P6: validacao humana (Rafael Nogueira)
+  exit=0
+  stdout=especificacao operacional gravada: registro/operacional/OP-101.yaml
+  stderr=
+
+P7: registrar sessao humana
+  exit=0
+  stdout=ok | etapa atual: P7 | camada: EX4
+  stderr=
+
+P7: encerrar
+  exit=0
+  stdout=ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+P7: AG-03 prepara minuta (rascunho, papel legitimo)
+  exit=0
+  stdout=termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+  stderr=
+
+P7: AG-03 propoe (papel legitimo)
+  exit=0
+  stdout=termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+  stderr=
+
+NEGATIVO: AG-03 tenta decidir autonomia (decisao e humana)
+  exit=1
+  stdout=
+  stderr=agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).
+
+P7: Marina Prado (humano nominal) decide
+  exit=0
+  stdout=termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+  stderr=
+
+I2: verificar termo de autonomia e satisfazer
+  exit=0
+  stdout=I2 | satisfeito=True | termo 'AUT-101' decidido por 'Marina Prado' em 2026-09-19
+ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+E4 (portao): emitir (P6+P7+I2)
+  exit=0
+  stdout=ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+E4: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E4 renderizado: caso/entregaveis/E4.md
+E4: ok | etapa atual: P8 | camada: EX3
+  stderr=
+
+P8: gravar CT-101 rascunho -> revisado (2 casos, 1 diverge funcionalmente)
+  exit=0
+  stdout=conjunto de piloto gravado: registro/piloto/CT-101.yaml
+  stderr=
+
+P8: encerrar
+  exit=0
+  stdout=ok | etapa atual: P9 | camada: EX3
+  stderr=
+
+I3: verificar casos com saida esperada e satisfazer
+  exit=0
+  stdout=I3 | satisfeito=True | conjunto 'CT-101' revisado com 2 caso(s), todos com saida esperada definida antes da execucao
+ok | etapa atual: P9 | camada: EX3
+  stderr=
+
+P9: gravar MET-102 (metrica de uso)
+  exit=0
+  stdout=metrica gravada: registro/metricas/MET-102.yaml
+  stderr=
+
+P9: gravar MET-101 (metrica de resultado, baseline_ref=BL-101)
+  exit=0
+  stdout=metrica gravada: registro/metricas/MET-101.yaml
+  stderr=
+
+P9: encerrar
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+I4: verificar metrica de resultado e satisfazer
+  exit=0
+  stdout=I4 | satisfeito=True | metrica de resultado 'MET-101' apurada: 1 dia util
+ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: gravar CAL-101 (rotina, responsavel Marina Prado, metricas_ref=[MET-101,MET-102])
+  exit=0
+  stdout=calibragem gravada: registro/calibragem/CAL-101.yaml
+  stderr=
+
+P10: registrar sessao
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: encerrar (primeira vez)
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: registrar recorrencia (mecanismo generico do nucleo)
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+I5: verificar responsavel de recalibragem e satisfazer
+  exit=0
+  stdout=I5 | satisfeito=True | responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal'
+ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10 ciclo 1: AG-04 registra ciclo sem drift
+  exit=0
+  stdout=calibragem gravada: registro/calibragem/CAL-101-C01.yaml
+  stderr=
+
+P10 ciclo 2: AG-04 detecta e quantifica drift, recomenda
+  exit=0
+  stdout=calibragem gravada: registro/calibragem/CAL-101-C02.yaml
+  stderr=
+
+NEGATIVO: AG-04 tenta gravar a decisao de recalibragem
+  exit=1
+  stdout=
+  stderr=agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar exige ator humano nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5).
+
+P10 ciclo 2: Marina Prado (humano nominal) decide recalibrar
+  exit=0
+  stdout=calibragem gravada: registro/calibragem/CAL-101-C02.yaml
+  stderr=
+
+E5 (portao): emitir (P8+P9+P10, I3+I4+I5)
+  exit=0
+  stdout=ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+E5: renderizar e emitir (materializacao)
+  exit=0
+  stdout=E5 renderizado: caso/entregaveis/E5.md
+E5: ok | etapa atual: P10 | camada: EX4
+  stderr=
+
+P10: skill de HB-18 carrega com sessao ja registrada nesta etapa
+  exit=0
+  stdout=
+  stderr=
+
+NEGATIVO: AG-01 nao esta autorizado a HB-17 (fronteira formal AG x HB)
+  exit=1
+  stdout=
+  stderr=papel 'AG-01' nao esta autorizado a executar 'HB-17'
+
+NEGATIVO: escrita direta em registro/estado.json (G5)
+  exit=2
+  stdout=
+  stderr=Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.

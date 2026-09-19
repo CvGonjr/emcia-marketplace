@@ -1,0 +1,16 @@
+id: CAL-101
+metricas_ref: ["MET-101", "MET-102"]
+responsavel: Marina Prado
+responsavel_ciente: true
+cadencia: mensal
+data_primeira_revisao: 2026-10-19
+limiares_desvio: Variacao > 15% no tempo de analise
+limiares_desvio_definidos_em: 2026-09-19
+monitoramento: Painel de indicadores do sistema de reembolsos
+canal_incidente: Canal #reembolsos-alertas, lido por Marina Prado
+analise_pos_incidente: Relatorio de causa raiz em ate 5 dias uteis
+procedencia: D
+declarado_por: Celso do Vale
+registrado_por: Marina Prado
+data: 2026-09-19
+versao: 1

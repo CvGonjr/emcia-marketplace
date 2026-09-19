@@ -1,0 +1,1 @@
+ok    2.6.6-C17 agente (AG-04) detecta e registra drift no ciclo 2

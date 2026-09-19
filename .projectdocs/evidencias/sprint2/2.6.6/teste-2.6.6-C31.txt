@@ -1,0 +1,1 @@
+ok    2.6.6-C31 E3-E corretamente avaliado como AUTORIZADO (caso agentico)

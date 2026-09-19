@@ -1,0 +1,1 @@
+ok    2.6.6-C14 P9 produz metrica de resultado apurada

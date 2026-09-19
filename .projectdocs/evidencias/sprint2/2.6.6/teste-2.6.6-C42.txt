@@ -1,0 +1,1 @@
+ok    2.6.6-C42 rastreabilidade ponta a ponta: RN-101(P2)->P4->P5(agente)->E3->P6/P7->P8/P9(MET-101.baseline_ref=BL-101)->P10->E5, IDs preservados sem reinvencao

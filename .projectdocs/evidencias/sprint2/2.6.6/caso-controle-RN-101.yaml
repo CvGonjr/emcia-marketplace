@@ -1,0 +1,23 @@
+id: RN-101
+enunciado: quando o pedido de reembolso chega completo, a analise inicial e feita em ate 1 dia util
+gatilho: recebimento_do_pedido_completo
+procedencia: D
+autoria_conteudo: Fernanda Lima
+registrado_por: Celso do Vale
+data: "2026-09-19"
+origem_do_conhecimento: experiencia_propria
+premissa: ""
+evidencia: ""
+classificacao_confronto:
+  classe: ""
+  referencia_p3d: ""
+documento_de_origem: null
+determinismo: admite_julgamento
+frequencia: rotineira
+consequencia_do_erro: media
+decisor_quando_nao_cobre: Fernanda Lima
+entradas: []
+excecoes_conhecidas: []
+estabilidade: muda quando a politica de reembolso e revisada
+versao: 1
+historico: []

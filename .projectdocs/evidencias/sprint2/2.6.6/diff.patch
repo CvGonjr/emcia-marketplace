@@ -1,0 +1,54 @@
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 35adf4b..4af5fd3 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.7.0",
++  "version": "0.7.1",
+   "description": "Playbook Engenharia de IA de Campo: etapas F0 a P10 com camada declarada, habilidades de emissao E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/scripts/calibragem.py b/eiac-campo/scripts/calibragem.py
+index 4aa05d6..5d8b2ef 100644
+--- a/eiac-campo/scripts/calibragem.py
++++ b/eiac-campo/scripts/calibragem.py
+@@ -46,6 +46,11 @@ def _ator_pessoa_nomeada(nome):
+ 
+ 
+ def checar_autoria(dados):
++    """Autoria da rotina (rotina_calibragem): declarado_por, registrado_por
++    e responsavel sao sempre humanos -- a rotina em si (cadencia, canal de
++    incidente, responsavel pela recalibragem) e decisao de governanca, nao
++    preparacao agentica.
++    """
+     erros = []
+     for campo in ("declarado_por", "registrado_por", "responsavel"):
+         valor = dados.get(campo)
+@@ -54,6 +59,16 @@ def checar_autoria(dados):
+     return erros
+ 
+ 
++def checar_autoria_ciclo(dados):
++    """Autoria do ciclo (ciclo_calibragem): declarado_por/registrado_por
++    podem ser agente -- o agente pode preparar um ciclo inteiro (deteccao,
++    quantificacao, recomendacao), como o modulo ja documenta no cabecalho.
++    So o campo 'decisao' e vedado a agente, e isso ja e responsabilidade
++    de checar_decisao(), nao desta funcao.
++    """
++    return []
++
++
+ def checar_responsavel_nominal(candidato):
+     """Inegociavel 5: responsavel e pessoa nomeada, area nao satisfaz
+     (CAM-01 Anexo D). O schema ja exige nonempty; aqui a checagem e
+@@ -210,7 +225,7 @@ def gravar_ciclo(destino, ator, schema_caminho="registro/calibragem.schema.json"
+         return f"estrutura invalida: {erro}"
+ 
+     erros = X.validar(candidato, schema, "ciclo_calibragem")
+-    erros += checar_autoria(candidato)
++    erros += checar_autoria_ciclo(candidato)
+     erros += checar_calibragem_ref(candidato)
+     erros += checar_drift(candidato)
+     erros += checar_decisao(candidato, ator)

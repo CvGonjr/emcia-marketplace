@@ -1,0 +1,195 @@
+== testes 2.6.6 -- verificacao integral F0-P10
+  ok    2.6.6-C01 contrato declara 13 etapas F0-P10
+  ok    2.6.6-C02 caso novo inicia em F0
+  ok    2.6.6-C03 F0 encerrada e etapa avanca para P1
+  ok    2.6.6-C04 percurso P1-P5 (via P2/P3a/P3b/P3d/P4) executa sem falha, etapa em P5
+  ok    2.6.6-C05 P3b permanece nao delegavel a agente (autor precisa ser pessoa nomeada)
+  ok    2.6.6-C06 escrita direta em contexto/ continua recusada (G2b)
+  ok    2.6.6-C07 escrita direta em registro/ continua recusada (G5)
+  ok    2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel
+  ok    2.6.6-C09 validacao de P6 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel
+  ok    2.6.6-C11 agente nao decide autonomia (agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).)
+  ok    2.6.6-C12 humano nominal decide autonomia
+  ok    2.6.6-C13 P8 produz casos de teste com saida esperada
+  ok    2.6.6-C14 P9 produz metrica de resultado apurada
+  ok    2.6.6-C15 P10 e etapa recorrente e registra recorrencia
+  ok    2.6.6-C16 dois ciclos de P10 preservados (nenhum sobrescrito)
+  ok    2.6.6-C17 agente (AG-04) detecta e registra drift no ciclo 2
+  ok    2.6.6-C18 decisao de recalibragem em P10 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis
+  ok    2.6.6-C20 4/4 AG declarados e estruturalmente resolviveis
+  ok    2.6.6-C21 AG-01 recusado para HB-17 (nao autorizada); AG-04 autorizado (par negativo/positivo)
+  ok    2.6.6-C22 13/13 HB automatizadas possuem criterio_de_verificacao
+  ok    2.6.6-C23 I1 baseline: satisfeito
+  ok    2.6.6-C24 I2 termo de autonomia: satisfeito
+  ok    2.6.6-C25 I3 casos com saida esperada: satisfeito
+  ok    2.6.6-C26 I4 metrica de resultado: satisfeito
+  ok    2.6.6-C27 I5 responsavel de calibragem: satisfeito
+  ok    2.6.6-C28 E1 autorizado e materializado (Ficha de Enquadramento)
+  ok    2.6.6-C29 E2 autorizado e materializado (Diagnostico e Oportunidade)
+  ok    2.6.6-C30 E3-D autorizado
+  ok    2.6.6-C31 E3-E corretamente avaliado como AUTORIZADO (caso agentico)
+  ok    2.6.6-C32 E3 materializado como arquivo unico (Parte A + Parte B consolidadas)
+  ok    2.6.6-C33 E4 autorizado e materializado (Guia Operacional)
+  ok    2.6.6-C34 E5 autorizado e materializado (Relatorio de Piloto)
+  ok    2.6.6-C35 cinco entregaveis materiais confirmados (E1-E5, entre os dois casos isolados)
+  ok    2.6.6-C36 recusa de etapa incorreta gera evento RecusaMaquina
+  ok    2.6.6-C37 recusa de escrita direta em registro/ gera evento TentativaNegada
+  ok    2.6.6-C38 AG-03 opera em camada EX2, nunca EX3/EX4 (decisao humana protegida)
+  ok    2.6.6-C39 trilha integral recuperavel (categorias minimas de evento presentes)
+  FALHA 2.6.6-C40 log do caso de controle ausente para auditoria
+  ok    2.6.6-C41 materializacao sem evidencia (portao fechado) recusada, nao inventa conteudo (E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1)
+  ok    2.6.6-C42 rastreabilidade ponta a ponta: RN-101(P2)->P4->P5(agente)->E3->P6/P7->P8/P9(MET-101.baseline_ref=BL-101)->P10->E5, IDs preservados sem reinvencao
+  ok    2.6.6-C43 regressao completa: ver teste-regressao-final.txt (executada separadamente apos este modulo, mesmo padrao dos pacotes anteriores)
+43 verificacoes do pacote 2.6.6, 1 falhas
+caso de controle em: /tmp/tmp13w4yi1m/caso
+======================================================================
+F0 -- triagem
+======================================================================
+OK F0: apurar nivel N2 e encerrar: exit=0 ok | etapa atual: P1 | camada: EX2
+OK(neg) NEGATIVO: encerrar P3a fora de ordem (etapa corrente e P1): exit=1 P3a nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.
+OK E1: renderizar e emitir (autorizado + materializado): exit=0 E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+======================================================================
+P1 -- levantamento inicial
+======================================================================
+OK P1: encerrar: exit=0 ok | etapa atual: P2 | camada: EX2
+======================================================================
+P2 -- levantamento e curadoria de contexto
+======================================================================
+OK(neg) NEGATIVO: escrita direta em contexto/regras/ (G2b): exit=2 Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py 
+OK P2: curar RN-101 via curar.py (caminho autorizado): exit=0 regra curado: contexto/regras/RN-101.yaml
+OK P2: encerrar: exit=0 ok | etapa atual: P3a | camada: EX3
+======================================================================
+P3a -- linha de base (antes do piloto)
+======================================================================
+OK P3a: gravar baseline BL-101 (medido, N2): exit=0 linha de base gravada: registro/baseline/BL-101.yaml
+OK P3a: encerrar: exit=0 ok | etapa atual: P3b | camada: EX4
+OK I1: verificar baseline e satisfazer: exit=0 I1 | satisfeito=True | linha de base 'BL-101' registrada em 2026-09-01 (apuracao medido, n
+======================================================================
+P3b -- sessao humana, nao delegavel
+======================================================================
+OK(neg) NEGATIVO: skill de P3b sem sessao humana registrada (G1): exit=2 EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sess
+OK(neg) NEGATIVO: AG-01 tenta encerrar P3b sem sessao (nao delegavel): exit=1 autor precisa ser pessoa nomeada
+OK P3b: registrar sessao humana: exit=0 ok | etapa atual: P3b | camada: EX4
+OK P3b: skill carrega com sessao valida registrada: exit=0 
+OK P3b: encerrar (humano, com sessao): exit=0 ok | etapa atual: P3d | camada: EX3
+======================================================================
+P3d -- confronto e classificacao
+======================================================================
+OK P3d: encerrar: exit=0 ok | etapa atual: P4 | camada: EX3
+======================================================================
+E2 -- Diagnostico e Oportunidade
+======================================================================
+OK E2 (portao): emitir (I1 satisfeito): exit=0 ok | etapa atual: P4 | camada: EX3
+OK E2: renderizar e emitir (materializacao): exit=0 E2 renderizado: caso/entregaveis/E2.md
+E2: ok | etapa atual: P4 | camada: EX3
+======================================================================
+P4 -- consumo de CTX estruturado
+======================================================================
+OK P4: consultar RN-101 curada (consumo de CTX, nao reinferencia): exit=0 {
+  "id": "RN-101",
+  "enunciado": "quando o pedido de reembolso chega completo, a analise
+OK P4: encerrar: exit=0 ok | etapa atual: P5 | camada: EX3
+======================================================================
+P5 -- classificacao tecnologica (cenario agentico)
+======================================================================
+OK  P5: classificacao_tecnologica=agente (ver nota em campo_2_6_6.gravar_p5_agentico)
+======================================================================
+E3-D / E3-E -- Blueprint da Solucao
+======================================================================
+OK E3-D (portao): emitir: exit=0 ok | etapa atual: P5 | camada: EX3
+OK E3-E (portao, caso agentico): emitir -> AUTORIZADO: exit=0 ok | etapa atual: P5 | camada: EX3
+OK E3: renderizar e emitir (consolida E3-D + E3-E, um unico arquivo): exit=0 E3 renderizado: caso/entregaveis/E3.md
+E3-D: ok | etapa atual: P5 | camada: EX3
+E3-E: ok |
+======================================================================
+P6 -- especificacao operacional
+======================================================================
+OK P6: encerrar (etapa_atual ajustada apos P5 gravado fora da maquina): exit=0 ok | etapa atual: P7 | camada: EX4
+OK P6 proposta: AG-02 propoe (papel legitimo de agente): exit=0 especificacao operacional gravada: registro/operacional/OP-101.yaml
+OK(neg) NEGATIVO: AG-02 tenta validar o proprio fluxo operacional: exit=1 agente nao pode validar a especificacao operacional: o estado 'validado' exige ator humano
+OK P6: validacao humana (Rafael Nogueira): exit=0 especificacao operacional gravada: registro/operacional/OP-101.yaml
+======================================================================
+P7 -- minuta de autonomia e decisao humana
+======================================================================
+OK P7: registrar sessao humana: exit=0 ok | etapa atual: P7 | camada: EX4
+OK P7: encerrar: exit=0 ok | etapa atual: P8 | camada: EX3
+OK P7: AG-03 prepara minuta (rascunho, papel legitimo): exit=0 termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+OK P7: AG-03 propoe (papel legitimo): exit=0 termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+OK(neg) NEGATIVO: AG-03 tenta decidir autonomia (decisao e humana): exit=1 agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca ag
+OK P7: Marina Prado (humano nominal) decide: exit=0 termo de autonomia gravado: registro/governanca/autonomia/AUT-101.yaml
+OK I2: verificar termo de autonomia e satisfazer: exit=0 I2 | satisfeito=True | termo 'AUT-101' decidido por 'Marina Prado' em 2026-09-19
+ok | etap
+======================================================================
+E4 -- Guia Operacional
+======================================================================
+OK E4 (portao): emitir (P6+P7+I2): exit=0 ok | etapa atual: P8 | camada: EX3
+OK E4: renderizar e emitir (materializacao): exit=0 E4 renderizado: caso/entregaveis/E4.md
+E4: ok | etapa atual: P8 | camada: EX3
+======================================================================
+P8 -- casos de teste com saida esperada
+======================================================================
+OK P8: gravar CT-101 rascunho -> revisado (2 casos, 1 diverge funcionalmente): exit=0 conjunto de piloto gravado: registro/piloto/CT-101.yaml
+OK P8: encerrar: exit=0 ok | etapa atual: P9 | camada: EX3
+OK I3: verificar casos com saida esperada e satisfazer: exit=0 I3 | satisfeito=True | conjunto 'CT-101' revisado com 2 caso(s), todos com saida esperada 
+======================================================================
+P9 -- baseline, metrica de uso, metrica de resultado
+======================================================================
+OK P9: gravar MET-102 (metrica de uso): exit=0 metrica gravada: registro/metricas/MET-102.yaml
+OK P9: gravar MET-101 (metrica de resultado, baseline_ref=BL-101): exit=0 metrica gravada: registro/metricas/MET-101.yaml
+OK P9: encerrar: exit=0 ok | etapa atual: P10 | camada: EX4
+OK I4: verificar metrica de resultado e satisfazer: exit=0 I4 | satisfeito=True | metrica de resultado 'MET-101' apurada: 1 dia util
+ok | etapa atual
+======================================================================
+E5 -- Relatorio de Piloto
+======================================================================
+======================================================================
+P10 -- configuracao, ciclo 1, ciclo 2 com drift
+======================================================================
+OK P10: gravar CAL-101 (rotina, responsavel Marina Prado, metricas_ref=[MET-101,MET-102]): exit=0 calibragem gravada: registro/calibragem/CAL-101.yaml
+OK P10: registrar sessao: exit=0 ok | etapa atual: P10 | camada: EX4
+OK P10: encerrar (primeira vez): exit=0 ok | etapa atual: P10 | camada: EX4
+OK P10: registrar recorrencia (mecanismo generico do nucleo): exit=0 ok | etapa atual: P10 | camada: EX4
+OK I5: verificar responsavel de recalibragem e satisfazer: exit=0 I5 | satisfeito=True | responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal'
+ok 
+OK P10 ciclo 1: AG-04 registra ciclo sem drift: exit=0 calibragem gravada: registro/calibragem/CAL-101-C01.yaml
+OK P10 ciclo 2: AG-04 detecta e quantifica drift, recomenda: exit=0 calibragem gravada: registro/calibragem/CAL-101-C02.yaml
+OK(neg) NEGATIVO: AG-04 tenta gravar a decisao de recalibragem: exit=1 agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar ex
+OK P10 ciclo 2: Marina Prado (humano nominal) decide recalibrar: exit=0 calibragem gravada: registro/calibragem/CAL-101-C02.yaml
+======================================================================
+E5 -- emissao apos P8+P9+P10 e I3+I4+I5
+======================================================================
+OK E5 (portao): emitir (P8+P9+P10, I3+I4+I5): exit=0 ok | etapa atual: P10 | camada: EX4
+OK E5: renderizar e emitir (materializacao): exit=0 E5 renderizado: caso/entregaveis/E5.md
+E5: ok | etapa atual: P10 | camada: EX4
+======================================================================
+Negativos adicionais de fronteira e registro/
+======================================================================
+OK P10: skill de HB-18 carrega com sessao ja registrada nesta etapa: exit=0 
+OK(neg) NEGATIVO: AG-01 nao esta autorizado a HB-17 (fronteira formal AG x HB): exit=1 papel 'AG-01' nao esta autorizado a executar 'HB-17'
+OK(neg) NEGATIVO: escrita direta em registro/estado.json (G5): exit=2 Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos script
+
+======================================================================
+Percurso concluido. 57 passos registrados.
+Passos com exit != 0 fora dos negativos esperados: 0
+copiado: RN-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-RN-101.yaml
+copiado: BL-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-BL-101.yaml
+copiado: OP-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-OP-101.yaml
+copiado: AUT-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-AUT-101.yaml
+copiado: CT-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-CT-101.yaml
+copiado: MET-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-MET-101.yaml
+copiado: MET-102 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-MET-102.yaml
+copiado: CAL-101 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-CAL-101.yaml
+copiado: CAL-101-C01 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-CAL-101-C01.yaml
+copiado: CAL-101-C02 -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-CAL-101-C02.yaml
+copiado: E1.md -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-E1.md
+copiado: E2.md -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-E2.md
+copiado: E3.md -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-E3.md
+copiado: E4.md -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-E4.md
+copiado: E5.md -> /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/.projectdocs/evidencias/sprint2/2.6.6/caso-controle-E5.md
+copiado: estado-final-caso.json, eventos.jsonl
+gravado: caso-controle-log-comandos.txt
+
+CASO_TEMP=/tmp/tmp13w4yi1m/caso

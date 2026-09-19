@@ -1,0 +1,24 @@
+commit 31ffff2260f40c06a323087791cf8e17062a4ee5
+Author: valejr <CvGonjr@github.com>
+Date:   Sat Sep 19 20:31:22 2026 -0300
+
+    fix(field): allow agent authorship of calibration cycle records
+    
+    calibragem.py::checar_autoria() blocked declarado_por/registrado_por
+    from being an agent for both rotina_calibragem and ciclo_calibragem,
+    contradicting the module's own documented contract ("o agente pode
+    preparar um ciclo inteiro"). Only the decisao field should be
+    human-only, already enforced separately by checar_decisao().
+    
+    Split into checar_autoria() (rotina, unchanged: always human) and
+    checar_autoria_ciclo() (ciclo: authorship open to agents, decision
+    still gated). Found while building the 2.6.6 control case, which is
+    the first to exercise an agent-authored calibration cycle end to end;
+    2.6.3's fixtures always defaulted declarado_por/registrado_por to a
+    human name even when passing an agent as --ator.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ eiac-campo/.claude-plugin/plugin.json |  2 +-
+ eiac-campo/scripts/calibragem.py      | 17 ++++++++++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)

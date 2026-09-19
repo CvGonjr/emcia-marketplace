@@ -1,0 +1,1 @@
+ok    2.6.6-C18 decisao de recalibragem em P10 exige humano (agente recusado, humano aceito)

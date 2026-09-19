@@ -1,0 +1,1 @@
+ok    2.6.6-C22 13/13 HB automatizadas possuem criterio_de_verificacao

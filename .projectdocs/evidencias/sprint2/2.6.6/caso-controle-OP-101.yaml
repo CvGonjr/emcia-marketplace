@@ -1,0 +1,18 @@
+id: OP-101
+estado: validado
+ponto_insercao: recebimento do pedido de reembolso completo
+momento: imediatamente apos upload do comprovante
+sistema: sistema de gestao de reembolsos
+entrada: numero do pedido e comprovante anexado
+saida: pedido classificado e encaminhado a analise
+ator_humano: Fernanda Lima, analista de reembolsos
+excecao: comprovante ilegivel ou incompleto
+fallback: encaminhar para fila manual de Fernanda Lima
+responsavel_operacional: Fernanda Lima
+procedencia: D
+declarado_por: Fernanda Lima
+registrado_por: Celso do Vale
+data: 2026-09-19
+versao: 2
+validado_por: Rafael Nogueira
+data_validacao: 2026-09-19

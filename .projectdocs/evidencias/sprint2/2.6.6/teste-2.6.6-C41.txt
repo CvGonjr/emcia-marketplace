@@ -1,0 +1,1 @@
+ok    2.6.6-C41 materializacao sem evidencia (portao fechado) recusada, nao inventa conteudo (E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1)

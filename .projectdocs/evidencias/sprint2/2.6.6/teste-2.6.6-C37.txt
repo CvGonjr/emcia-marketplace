@@ -1,0 +1,1 @@
+ok    2.6.6-C37 recusa de escrita direta em registro/ gera evento TentativaNegada

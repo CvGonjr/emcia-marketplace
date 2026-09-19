@@ -1,0 +1,11 @@
+id: BL-101
+indicador: tempo de analise inicial do pedido de reembolso
+valor_atual: 3 dias uteis
+apuracao: medido
+data: 2026-09-01
+nivel: N2
+procedencia: V
+evidencia: amostra de 40 pedidos, agosto/2026
+declarado_por: Fernanda Lima
+registrado_por: Celso do Vale
+versao: 1

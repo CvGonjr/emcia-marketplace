@@ -1,0 +1,1 @@
+ok    2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis

@@ -1,0 +1,1 @@
+ok    2.6.6-C38 AG-03 opera em camada EX2, nunca EX3/EX4 (decisao humana protegida)

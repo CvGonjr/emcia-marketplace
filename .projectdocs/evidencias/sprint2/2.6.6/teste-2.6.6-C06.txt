@@ -1,0 +1,1 @@
+ok    2.6.6-C06 escrita direta em contexto/ continua recusada (G2b)

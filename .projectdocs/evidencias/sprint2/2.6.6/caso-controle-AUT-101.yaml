@@ -1,0 +1,20 @@
+id: AUT-101
+estado: "decidido"
+operacional_ref: "OP-101"
+escopo: "classificacao automatica de pedidos de reembolso ate R$ 1.000"
+procedencia: "D"
+declarado_por: "Fernanda Lima"
+registrado_por: "Celso do Vale"
+data: "2026-09-19"
+versao: 3
+decisor: "Marina Prado"
+data_decisao: "2026-09-19"
+justificativa_decisao: "termo revisado com compliance, autonomia liberada para o escopo descrito"
+faz_sozinha:
+  - "classificar pedido com comprovante legivel e valor ate R$ 1.000"
+exige_aprovacao:
+  - "aprovar reembolso acima de R$ 1.000"
+nunca_faz:
+  - "alterar dados bancarios do beneficiario"
+gatilhos_escalonamento:
+  - "comprovante suspeito de fraude"

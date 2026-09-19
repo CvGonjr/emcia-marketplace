@@ -1,0 +1,17 @@
+id: CAL-101-C02
+calibragem_ref: CAL-101
+ciclo: 2
+data_verificacao: 2026-12-19
+drift_detectado: true
+procedencia: D
+declarado_por: AG-04
+registrado_por: AG-04
+data: 2026-12-19
+versao: 1
+drift_descricao: tempo de analise voltou a subir para 2.5 dias uteis
+drift_quantificacao: variacao de +150% sobre o resultado apurado em P9
+recomendacao_agente: recalibrar os limiares de classificacao automatica
+decisao: recalibrar
+decisor: Marina Prado
+data_decisao: 2026-12-20
+justificativa_decisao: "causa raiz identificada: mudanca no formato do comprovante"

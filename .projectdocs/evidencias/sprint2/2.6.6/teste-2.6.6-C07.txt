@@ -1,0 +1,1 @@
+ok    2.6.6-C07 escrita direta em registro/ continua recusada (G5)

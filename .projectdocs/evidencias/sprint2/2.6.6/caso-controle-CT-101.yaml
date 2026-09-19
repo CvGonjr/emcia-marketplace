@@ -1,0 +1,41 @@
+id: CT-101
+estado: revisado
+modo: assistido
+duracao: 3 semanas
+plano_reversao: Reverter para analise manual em caso de falha critica
+criterio_aprovacao_escala: 90% de acerto nos casos criticos
+criterio_aprovacao_escala_definido_em: 2026-09-15
+procedencia: D
+declarado_por: Celso do Vale
+registrado_por: Celso do Vale
+data: 2026-09-18
+versao: 2
+revisado_por: Marina Prado
+data_revisao: 2026-09-19
+casos:
+  - identificador: CT-101-01
+    origem: RN-101
+    entrada: Pedido de reembolso completo, valor R$ 300, comprovante legivel
+    saida_esperada: Aprovado automaticamente
+    criterio_aprovacao: Classificacao igual a saida esperada
+    categoria: celula_critica
+    revisor: Marina Prado
+    data_revisao: 2026-09-19
+    esperado_definido_em: 2026-09-15
+    esperado_definido_por: Celso do Vale
+    saida_obtida: Aprovado automaticamente
+    obtido_em: 2026-09-19
+    resultado: aderente
+  - identificador: CT-101-02
+    origem: RN-101
+    entrada: Pedido de reembolso completo, valor R$ 300, comprovante legivel
+    saida_esperada: Encaminhado para revisao manual
+    criterio_aprovacao: Classificacao igual a saida esperada
+    categoria: comum
+    revisor: Marina Prado
+    data_revisao: 2026-09-19
+    esperado_definido_em: 2026-09-15
+    esperado_definido_por: Celso do Vale
+    saida_obtida: Aprovado automaticamente
+    obtido_em: 2026-09-19
+    resultado: divergente

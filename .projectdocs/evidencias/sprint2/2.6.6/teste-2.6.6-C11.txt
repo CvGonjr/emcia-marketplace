@@ -1,0 +1,1 @@
+ok    2.6.6-C11 agente nao decide autonomia (agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).)

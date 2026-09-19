@@ -1,0 +1,1 @@
+ok    2.6.6-C04 percurso P1-P5 (via P2/P3a/P3b/P3d/P4) executa sem falha, etapa em P5

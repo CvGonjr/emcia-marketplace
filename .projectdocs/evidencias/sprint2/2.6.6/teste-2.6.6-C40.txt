@@ -1,0 +1,1 @@
+ok    2.6.6-C40 log do caso de controle preservado para auditoria de bypass (nenhuma chamada fora dos scripts oficiais)

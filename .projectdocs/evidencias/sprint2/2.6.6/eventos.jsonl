@@ -1,0 +1,56 @@
+{"evento": "NivelApurado", "data": "2026-09-19T20:26:04", "nivel": "N2", "anterior": null, "autor": "Celso do Vale", "eixos": "DAD 4, GOV 5, CRI 7"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:04", "etapa": "F0", "autor": "Celso do Vale"}
+{"evento": "RecusaMaquina", "data": "2026-09-19T20:26:04", "acao_tentada": "encerrar", "alvo": "P3a", "motivo": "P3a nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.", "autor": "Celso do Vale", "etapa_corrente": "P1"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E1", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E1.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P1", "autor": "Celso do Vale"}
+{"evento": "TentativaNegada", "data": "2026-09-19T20:26:05", "motivo": "Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).", "etapa": "P2", "ferramenta": "Write", "alvo": "contexto/regras/RN-999.yaml"}
+{"evento": "ObjetoContextoCurado", "data": "2026-09-19T20:26:05", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-101.yaml", "id": "RN-101", "procedencia": "D", "versao": 1, "registrado_por": "Celso do Vale", "versao_anterior": null}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P2", "autor": "Celso do Vale"}
+{"evento": "LinhaDeBaseRegistrada", "data": "2026-09-19T20:26:05", "arquivo": "registro/baseline/BL-101.yaml", "id": "BL-101", "indicador": "tempo de analise inicial do pedido de reembolso", "apuracao": "medido", "nivel": "N2", "ator": "Marina Prado", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P3a", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T20:26:05", "n": "1", "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i1 :: linha de base 'BL-101' registrada em 2026-09-01 (apuracao medido, nivel N2) (ref: registro/baseline/BL-101.yaml)"}
+{"evento": "TentativaNegada", "data": "2026-09-19T20:26:05", "motivo": "EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.", "etapa": "P3b", "camada_exigida": "EX4", "nivel": "N2", "ferramenta": "Read"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T20:26:05", "etapa": "P3b", "autor": "Celso do Vale", "participantes": "Fernanda, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P3b", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P3d", "autor": "Celso do Vale"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E2", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E2", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E2.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:05", "etapa": "P4", "autor": "Celso do Vale"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E3-D", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E3-E", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:05", "entregavel": "E3-D", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E3.md", "versao": 1}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:06", "entregavel": "E3-E", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E3.md", "versao": 1}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:06", "etapa": "P6", "autor": "Celso do Vale"}
+{"evento": "EspecificacaoOperacionalRegistrada", "data": "2026-09-19T20:26:06", "arquivo": "registro/operacional/OP-101.yaml", "id": "OP-101", "estado": "proposta", "versao": 1, "ator": "AG-02", "validado_por": null}
+{"evento": "EspecificacaoOperacionalRecusada", "data": "2026-09-19T20:26:06", "arquivo": "registro/operacional/OP-101.yaml", "erros": ["agente nao pode validar a especificacao operacional: o estado 'validado' exige ator humano nomeado (CAT-01 3.5.1, mesmo principio aplicado ao termo de autonomia de P7)."], "ator": "AG-02", "estado_tentado": "validado"}
+{"evento": "EspecificacaoOperacionalValidada", "data": "2026-09-19T20:26:06", "arquivo": "registro/operacional/OP-101.yaml", "id": "OP-101", "estado": "validado", "versao": 2, "ator": "Rafael Nogueira", "validado_por": "Rafael Nogueira"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T20:26:06", "etapa": "P7", "autor": "Celso do Vale", "participantes": "Fernanda, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:06", "etapa": "P7", "autor": "Celso do Vale"}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T20:26:06", "arquivo": "registro/governanca/autonomia/AUT-101.yaml", "id": "AUT-101", "estado": "rascunho", "versao": 1, "ator": "AG-03", "decisor": null}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T20:26:06", "arquivo": "registro/governanca/autonomia/AUT-101.yaml", "id": "AUT-101", "estado": "proposto", "versao": 2, "ator": "AG-03", "decisor": null}
+{"evento": "TermoAutonomiaRecusado", "data": "2026-09-19T20:26:06", "arquivo": "registro/governanca/autonomia/AUT-101.yaml", "erros": ["agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1)."], "ator": "AG-03", "estado_tentado": "decidido"}
+{"evento": "AutonomiaDecidida", "data": "2026-09-19T20:26:06", "arquivo": "registro/governanca/autonomia/AUT-101.yaml", "id": "AUT-101", "estado": "decidido", "versao": 3, "ator": "Marina Prado", "decisor": "Marina Prado"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T20:26:06", "n": "2", "item": "Termo de autonomia escrito", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i2 :: termo 'AUT-101' decidido por 'Marina Prado' em 2026-09-19 (ref: registro/governanca/autonomia/AUT-101.yaml)"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:06", "entregavel": "E4", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:06", "entregavel": "E4", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E4.md", "versao": 1}
+{"evento": "ConjuntoPilotoRegistrado", "data": "2026-09-19T20:26:06", "arquivo": "registro/piloto/CT-101.yaml", "id": "CT-101", "estado": "rascunho", "versao": 1, "ator": "Celso do Vale", "n_casos": 2}
+{"evento": "ConjuntoPilotoRevisado", "data": "2026-09-19T20:26:06", "arquivo": "registro/piloto/CT-101.yaml", "id": "CT-101", "estado": "revisado", "versao": 2, "ator": "Marina Prado", "n_casos": 2}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:06", "etapa": "P8", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T20:26:06", "n": "3", "item": "Casos de teste com saida esperada", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i3 :: conjunto 'CT-101' revisado com 2 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-101.yaml)"}
+{"evento": "MetricaApurada", "data": "2026-09-19T20:26:06", "arquivo": "registro/metricas/MET-102.yaml", "id": "MET-102", "estado": "apurada", "tipo_metrica": "uso", "versao": 1, "ator": "Marina Prado"}
+{"evento": "MetricaRegistrada", "data": "2026-09-19T20:26:07", "arquivo": "registro/metricas/MET-101.yaml", "id": "MET-101", "estado": "planejada", "tipo_metrica": "resultado", "versao": 1, "ator": "Celso do Vale"}
+{"evento": "MetricaApurada", "data": "2026-09-19T20:26:07", "arquivo": "registro/metricas/MET-101.yaml", "id": "MET-101", "estado": "apurada", "tipo_metrica": "resultado", "versao": 2, "ator": "Marina Prado"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:07", "etapa": "P9", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T20:26:07", "n": "4", "item": "Ao menos uma metrica de resultado", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i4 :: metrica de resultado 'MET-101' apurada: 1 dia util (ref: registro/metricas/MET-101.yaml)"}
+{"evento": "RotinaCalibragemRegistrada", "data": "2026-09-19T20:26:07", "arquivo": "registro/calibragem/CAL-101.yaml", "id": "CAL-101", "responsavel": "Marina Prado", "cadencia": "mensal", "versao": 1, "ator": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T20:26:07", "etapa": "P10", "autor": "Celso do Vale", "participantes": "Fernanda, Celso"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T20:26:07", "etapa": "P10", "autor": "Celso do Vale"}
+{"evento": "RecorrenciaRegistrada", "data": "2026-09-19T20:26:07", "etapa": "P10", "autor": "Celso do Vale", "ciclo": 1, "cadencia": "mensal", "responsavel": "Marina Prado"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T20:26:07", "n": "5", "item": "Responsavel nomeado pela recalibragem", "autor": "Marina Prado", "evidencia": "inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-101.yaml)"}
+{"evento": "CicloCalibragemRegistrado", "data": "2026-09-19T20:26:07", "arquivo": "registro/calibragem/CAL-101-C01.yaml", "id": "CAL-101-C01", "ciclo": 1, "drift_detectado": false, "decisao": null, "ator": "AG-04"}
+{"evento": "CicloCalibragemRegistrado", "data": "2026-09-19T20:26:07", "arquivo": "registro/calibragem/CAL-101-C02.yaml", "id": "CAL-101-C02", "ciclo": 2, "drift_detectado": true, "decisao": null, "ator": "AG-04"}
+{"evento": "CicloCalibragemRecusado", "data": "2026-09-19T20:26:07", "arquivo": "registro/calibragem/CAL-101-C02.yaml", "erros": ["agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar exige ator humano nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5)."], "ator": "AG-04"}
+{"evento": "DecisaoRecalibragemRegistrada", "data": "2026-09-19T20:26:07", "arquivo": "registro/calibragem/CAL-101-C02.yaml", "id": "CAL-101-C02", "ciclo": 2, "drift_detectado": true, "decisao": "recalibrar", "ator": "Marina Prado"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:07", "entregavel": "E5", "autor": "Celso do Vale", "arquivo": null, "versao": null}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T20:26:07", "entregavel": "E5", "autor": "Celso do Vale", "arquivo": "caso/entregaveis/E5.md", "versao": 1}
+{"evento": "TentativaNegada", "data": "2026-09-19T20:26:07", "motivo": "Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.", "etapa": "P10", "ferramenta": "Write", "alvo": "registro/estado.json"}
