@@ -63,7 +63,17 @@ eventos de recusa) rodam separadamente:
 python3 testes/nucleo_2_6_1.py
 ```
 
-O total acumulado é de 197 verificações.
+As 38 verificações operacionais de P6 e P7 (pacote 2.6.2: especificação
+operacional, termo de autonomia, fronteira agente×humano em ambos,
+dependência P7→P6, evidência para o inegociável 2, e a correção de G1
+em `guarda.py` — sessão humana válida libera carregamento de skill
+EX3/EX4) rodam separadamente:
+
+```bash
+python3 testes/campo_2_6_2.py
+```
+
+O total acumulado é de 235 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -344,6 +354,52 @@ Reproduz e corrige o defeito do baseline (2.6-BL12): antes deste pacote,
 playbook, não apenas a etapa corrente do caso — uma etapa em `P1` podia
 "encerrar" `P5` e o estado pulava direto para `P6`. `2.6.1-T01`
 reproduz esse cenário e confirma a recusa.
+
+## P6 e P7 — pacote 2.6.2
+
+Implementa operacionalmente P6 (especificação operacional) e P7 (termo
+de autonomia), inteiramente em `eiac-campo/scripts/` — `operacional.py`
+e `governanca.py` reaproveitam primitivas genéricas do núcleo
+(`estrutura.validar`, `estado.evento`, `estado.autor_e_agente`) sem
+introduzir semântica de método em `eiac-nucleo/`.
+
+| ID | Prova |
+|---|---|
+| 2.6.2-T01/T02 | P6 com entradas válidas aceito; sem campo obrigatório recusado |
+| 2.6.2-T03 | P6 não reexecuta P4/P5 (`operacional.py` não invoca outro script) |
+| 2.6.2-T04/T05 | Desenho operacional estruturado; saída marcada `proposta`, distinta de validação |
+| 2.6.2-T06 | P6 produz especificação (schema textual/lista), não aciona deployment |
+| 2.6.2-T07/T08 | P7 com P6 validado aceito; sem P6 (`operacional_ref` não resolve) recusado |
+| 2.6.2-T09/T10/T10b | Agente prepara minuta (rascunho→proposto) aceito; agente tenta decidir recusado, com evento `TermoAutonomiaRecusado` |
+| 2.6.2-T11/T11b | Humano autorizado decide, evento `AutonomiaDecidida` |
+| 2.6.2-T12/T13 | Decisor genérico ("equipe") recusado; pessoa nomeada aceita |
+| 2.6.2-T14/T15 | Decisão sem justificativa recusada; decisão completa aceita |
+| 2.6.2-T16/T17 | Termo com estrutura mínima; decisor nunca é agente |
+| 2.6.2-T18/T19 | Escrita direta em `registro/governanca/` recusada (G5); caminho autorizado funcional |
+| 2.6.2-T20–T24 | Fronteira: ação autônoma só após decisão humana; minuta ≠ autorização; `nunca_faz` preservado; gatilhos preservados; exceção/fallback presentes |
+| 2.6.2-T25–T27 | Evidência para o inegociável 2: sem termo decidido insuficiente; termo decidido disponível; booleano solto não é o padrão de evidência deste pacote |
+| 2.6.2-T28–T30 | Eventos de tentativa de agente, decisão inválida e decisão válida, todos rastreáveis |
+| 2.6.2-T31 | Ausência de hard-code comportamental de P6/P7/autonomia/E4 no núcleo |
+| 2.6.2-T32/T33 | Regressão da Ação 2.5 e do pacote 2.6.1 |
+| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill EX3/EX4 sem sessão bloqueada; com sessão válida da mesma etapa carrega; sessão de outra etapa não libera |
+
+**Achado corrigido neste pacote:** `guarda.py` G1 bloqueava o
+carregamento do próprio `SKILL.md` para qualquer etapa EX3/EX4,
+independentemente de sessão humana registrada — comportamento
+pré-existente (já afetava `hb-confrontar`, `hb-priorizar`,
+`hb-classificar`), descoberto ao escrever `hb-operacionalizar`/
+`hb-governar`. G1 agora libera o carregamento quando existe sessão
+humana válida **para a etapa corrente** — não libera decisão, aprovação
+ou fechamento de etapa por agente, que continuam bloqueados por outras
+regras (`delegavel:false` em `avancar.encerrar()`,
+`operacional.py`/`governanca.py` recusando agente em
+`estado: validado`/`decidido`).
+
+Objetos produzidos: `registro/operacional/OP-*.yaml` (estados
+`proposta`→`validado`) e `registro/governanca/autonomia/AUT-*.yaml`
+(estados `rascunho`→`proposto`→`decidido`) — dois domínios distintos de
+`contexto/` (CTX-01, intocado) e de `registro/estado.json` (máquina de
+etapas, também intocada em sua semântica).
 
 ## Deslocamento da fronteira por nível
 

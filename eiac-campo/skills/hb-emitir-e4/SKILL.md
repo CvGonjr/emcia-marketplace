@@ -9,7 +9,7 @@ description: Emite o guia operacional e o termo de autonomia. Use quando /emitir
 # E4 — Guia operacional
 
 **Modelo:** modelo E4, ação 1.6.
-**Portão:** ver pendência em `reference/gates.md` antes de emitir.
+**Portão:** P6, P7 encerrados + inegociável 2 (`reference/gates.md`).
 
 ## A seção que determina adoção
 
@@ -17,10 +17,14 @@ O que fazer quando a solução erra. **Encaminhamento para uma área equivale a 
 
 ## Termo de autonomia
 
-Estabelecido no P7 e emitido aqui, escrito e assinado. É o item inegociável 2 e bloqueia este entregável.
+Estabelecido no P7 (`hb-governar`) e emitido aqui, escrito e decidido por pessoa nomeada — nunca por agente. É o item inegociável 2 e bloqueia este entregável. O registro fica em `registro/governanca/autonomia/AUT-*.yaml`, com o estado `decidido` exigindo `decisor`, `data_decisao` e `justificativa_decisao`.
 
-## Pendência
+## Desenho operacional
 
-A correspondência entre passos e entregáveis diverge entre o relatório do PFC e os documentos internos, e a diferença decide se os casos de teste do P8 são cobrados aqui ou no E5. **Não resolva sozinho.** Pare e pergunte.
+P6 (`hb-operacionalizar`) produz `registro/operacional/OP-*.yaml`, referenciado pelo termo de autonomia (`operacional_ref`). É insumo das seções 1-2 deste entregável (o que muda no processo, passo a passo da nova rotina).
+
+## Estado deste pacote
+
+A materialização final de `caso/entregaveis/E4.md` a partir de P6/P7, a validação semântica completa do inegociável 2 e a ativação definitiva deste portão pertencem ao pacote 2.6.5. Até lá, P6/P7 produzem apenas os insumos rastreáveis — não declare E4 emitido em definitivo com base neles isoladamente.
 
 **Saída:** `caso/entregaveis/E4.md`

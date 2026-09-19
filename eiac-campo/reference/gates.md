@@ -10,8 +10,8 @@ Todo entregável tem **exatamente um portão**. O portão declara as etapas que 
 | E2 | Dossiê verificado | F1 | P1, P2, P3a, P3b, P3d | Modelo E2 |
 | E3-D | Decisão da solução — **sempre emitido** | F2 | P4, P5 | Modelo E3, parte de decisão |
 | E3-E | Especificação da solução — **condicionado ao portão de P5** | F2 | P5 concluído por agente | Modelo E3, parte de especificação |
-| E4 | Guia operacional | F3 | P6, P7 *(ver pendência)* | Modelo E4 |
-| E5 | Relatório de piloto e calibragem | F4 | P9, P10 *(ver pendência)* | Modelo E5 |
+| E4 | Guia operacional | F3 | P6, P7 | Modelo E4 |
+| E5 | Relatório de piloto e calibragem | F4 | P8, P9, P10 | Modelo E5 |
 
 ### O portão do E3
 
@@ -27,7 +27,7 @@ Cinco itens não escalam para baixo. Cada um é condição de emissão do seu en
 |---|---|---|---|
 | 1 | Medição inicial registrada, `apuracao` diferente de `estimado` | P3a | E2 |
 | 2 | Termo de autonomia escrito | P7 | E4 |
-| 3 | Casos de teste com saída esperada | P8 | *ver pendência* |
+| 3 | Casos de teste com saída esperada | P8 | E5 |
 | 4 | Ao menos uma métrica de resultado, não só de uso | P9 | E5 |
 | 5 | Responsável nomeado pela recalibragem, com nome próprio | P10 | E5 |
 
@@ -44,11 +44,14 @@ Não são entregues ao cliente e não têm condição de emissão.
 | Log de tentativas negadas | Todas | Lição aprendida |
 | Quadro de Contraste | Sprint 4 | Anexo do relatório |
 
-## Pendência bloqueante
+## Correspondência entregável × passo (resolvida)
 
-A correspondência entre entregáveis e passos diverge entre documentos:
+A correspondência entre entregáveis e passos foi fixada por
+EMCIA-CAM-01/EMCIA-ESP-01 v0.2 (17/09/2026), coincidindo com o relatório
+do PFC: **E4 = P6, P7**; **E5 = P8, P9, P10**. Ver `decisoes/013` no
+repositório. A tabela acima já reflete essa correspondência.
 
-- **Relatório do PFC:** P6–P7 em E4, P8–P10 em E5
-- **Documentos internos:** P6–P8 em E4, P9–P10 em E5
-
-A diferença decide onde o item inegociável 3 é cobrado. **Não resolva por conta própria** — a emissão de E4 e E5 fica suspensa até a decisão.
+Fixar o portão não significa afirmar que os cinco entregáveis já são
+emitíveis em produção — a validação semântica completa dos cinco
+inegociáveis e a materialização dos documentos pertencem aos pacotes
+2.6.2–2.6.5 (Sprint 2 do Code Plugin).

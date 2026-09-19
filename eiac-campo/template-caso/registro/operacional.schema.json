@@ -1,0 +1,55 @@
+{
+  "nome": "Especificacao operacional",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAM-01 3.2, EMCIA-MET-01 3.4.6, EMCIA-E4 1-2",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "especificacao_operacional": {
+      "id_pattern": "OP-[0-9]{3,}",
+      "required": [
+        "id", "estado", "ponto_insercao", "momento", "sistema", "entrada",
+        "saida", "ator_humano", "excecao", "fallback",
+        "responsavel_operacional", "procedencia", "declarado_por",
+        "registrado_por", "data", "versao"
+      ],
+      "nonempty": [
+        "id", "estado", "ponto_insercao", "momento", "sistema", "entrada",
+        "saida", "ator_humano", "excecao", "fallback",
+        "responsavel_operacional", "procedencia", "declarado_por",
+        "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "estado": "string",
+        "ponto_insercao": "string",
+        "momento": "string",
+        "sistema": "string",
+        "entrada": "string",
+        "saida": "string",
+        "ator_humano": "string",
+        "excecao": "string",
+        "fallback": "string",
+        "evidencia_criterio_verificacao": "string",
+        "responsavel_operacional": "string",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer",
+        "validado_por": "string",
+        "data_validacao": "date"
+      },
+      "enums": {
+        "estado": ["proposta", "validado"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_validacao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia_criterio_verificacao"]
+      }
+    }
+  }
+}

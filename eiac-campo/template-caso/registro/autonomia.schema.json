@@ -1,0 +1,51 @@
+{
+  "nome": "Termo de autonomia",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-CAM-01 3.3/Anexo A, EMCIA-E3-B1.3/B1.4, EMCIA-E4 3-4, EMCIA-TRA-01 3.5",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "termo_autonomia": {
+      "id_pattern": "AUT-[0-9]{3,}",
+      "required": [
+        "id", "estado", "operacional_ref", "escopo", "faz_sozinha",
+        "exige_aprovacao", "nunca_faz", "gatilhos_escalonamento",
+        "procedencia", "declarado_por", "registrado_por", "data", "versao"
+      ],
+      "nonempty": [
+        "id", "estado", "operacional_ref", "escopo", "faz_sozinha",
+        "exige_aprovacao", "nunca_faz", "gatilhos_escalonamento",
+        "procedencia", "declarado_por", "registrado_por", "data"
+      ],
+      "types": {
+        "id": "string",
+        "estado": "string",
+        "operacional_ref": "string",
+        "escopo": "string",
+        "faz_sozinha": "list",
+        "exige_aprovacao": "list",
+        "nunca_faz": "list",
+        "gatilhos_escalonamento": "list",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "data": "date",
+        "versao": "integer",
+        "decisor": "string",
+        "data_decisao": "date",
+        "justificativa_decisao": "string",
+        "evidencia": "string"
+      },
+      "enums": {
+        "estado": ["rascunho", "proposto", "decidido"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}",
+        "data_decisao": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    }
+  }
+}
