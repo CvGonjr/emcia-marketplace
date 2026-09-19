@@ -1,0 +1,2850 @@
+commit 2105f6c8c9071bc3410fdc843689c8cfd91b12b7
+Author: valejr <CvGonjr@github.com>
+Date:   Fri Sep 18 23:32:43 2026 -0300
+
+    feat(nucleo): enforce generic F0-P10 protocol contracts
+    
+    Fixes a real baseline defect (2.6-BL12): avancar.py --encerrar accepted
+    any playbook step regardless of the case's actual current step, letting
+    a case in P1 "close" P5 and jump straight to P6. Also adds generic,
+    method-agnostic support for: dependency/delegability checks already
+    present are preserved; recorrence with cadence/responsible-party
+    contract; an authorized satisfazer-inegociavel path replacing the bare
+    boolean flag; registro/ write protection (guarda.py G5); declarative
+    condition evaluation for portao gates; and RecusaMaquina/RecusaEmissao
+    events on every refusal path. No P6-P10 semantics were added to
+    eiac-nucleo — verified via hard-code search.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ .../evidencias/sprint2/2.6.1/eventos.jsonl         |   6 +
+ .../sprint2/2.6.1/matriz-regras-nucleo.md          |  50 +++
+ .projectdocs/evidencias/sprint2/2.6.1/resultado.md | 253 +++++++++++
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T01.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T02.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T03.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T04.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T05.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T06.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T07.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T08.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T09.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T10.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T11.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T12.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T13.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T14.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T15.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T16.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T17.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T18.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T19.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T20.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T21.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T22.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T23.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T24.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T25.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T26.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T27.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T28.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T29.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T30.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T31.txt   |  24 +
+ .../evidencias/sprint2/2.6.1/teste-2.6.1-T32.txt   |  24 +
+ .../sprint2/2.6.1/teste-2.6.1-saida-completa.txt   |  43 ++
+ .../sprint2/2.6.1/teste-regressao-final.txt        | 236 ++++++++++
+ .../sprint2/2.6.1/teste-regressao-inicial.txt      | 192 ++++++++
+ eiac-nucleo/.claude-plugin/plugin.json             |   2 +-
+ eiac-nucleo/commands/registrar-recorrencia.md      |  12 +
+ eiac-nucleo/commands/satisfazer-inegociavel.md     |  12 +
+ eiac-nucleo/scripts/avancar.py                     | 170 ++++++-
+ eiac-nucleo/scripts/guarda.py                      |  26 +-
+ eiac-nucleo/scripts/playbook.py                    |  44 ++
+ testes/README.md                                   |  52 ++-
+ testes/nucleo_2_6_1.py                             | 499 +++++++++++++++++++++
+ 46 files changed, 2360 insertions(+), 5 deletions(-)
+
+==================================================================
+
+commit 2105f6c8c9071bc3410fdc843689c8cfd91b12b7
+Author: valejr <CvGonjr@github.com>
+Date:   Fri Sep 18 23:32:43 2026 -0300
+
+    feat(nucleo): enforce generic F0-P10 protocol contracts
+    
+    Fixes a real baseline defect (2.6-BL12): avancar.py --encerrar accepted
+    any playbook step regardless of the case's actual current step, letting
+    a case in P1 "close" P5 and jump straight to P6. Also adds generic,
+    method-agnostic support for: dependency/delegability checks already
+    present are preserved; recorrence with cadence/responsible-party
+    contract; an authorized satisfazer-inegociavel path replacing the bare
+    boolean flag; registro/ write protection (guarda.py G5); declarative
+    condition evaluation for portao gates; and RecusaMaquina/RecusaEmissao
+    events on every refusal path. No P6-P10 semantics were added to
+    eiac-nucleo — verified via hard-code search.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/eventos.jsonl b/.projectdocs/evidencias/sprint2/2.6.1/eventos.jsonl
+new file mode 100644
+index 0000000..7847a7f
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/eventos.jsonl
+@@ -0,0 +1,6 @@
++{"evento": "NivelApurado", "data": "2026-09-18T23:30:14", "nivel": "N1", "anterior": null, "autor": "Celso do Vale", "eixos": "DAD 3, GOV 3, CRI 3"}
++{"evento": "EtapaEncerrada", "data": "2026-09-18T23:30:14", "etapa": "F0", "autor": "Celso do Vale"}
++{"evento": "RecusaMaquina", "data": "2026-09-18T23:30:14", "acao_tentada": "encerrar", "alvo": "P5", "motivo": "P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.", "autor": "Celso do Vale", "etapa_corrente": "P1"}
++{"evento": "TentativaNegada", "data": "2026-09-18T23:30:14", "motivo": "Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.", "etapa": "P1", "ferramenta": "Write", "alvo": "registro/estado.json"}
++{"evento": "RecusaEmissao", "data": "2026-09-18T23:30:14", "acao_tentada": "emitir", "alvo": "E5", "motivo": "E5 exige as etapas ['P8', 'P9', 'P10'] encerradas", "autor": "Celso do Vale", "etapa_corrente": "P1"}
++{"evento": "InegociavelSatisfeito", "data": "2026-09-18T23:30:14", "n": "1", "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "autor": "Celso do Vale", "evidencia": "linha de base registrada em caso/P3a-linha-base.md"}
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/matriz-regras-nucleo.md b/.projectdocs/evidencias/sprint2/2.6.1/matriz-regras-nucleo.md
+new file mode 100644
+index 0000000..1939d81
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/matriz-regras-nucleo.md
+@@ -0,0 +1,50 @@
++# Matriz de regras genéricas — núcleo (pacote 2.6.1)
++
++**HEAD inicial:** `70d1d9bf793ab53b0218b1a5663915c4baa1c9ae`
++
++Nenhuma regra abaixo conhece semântica EMCIA (P6–P10, E4/E5, autonomia,
++recalibragem, piloto, métrica de resultado). Todas leem campos genéricos
++do playbook (`delegavel`, `depende_de`, `camada`, `recorrente`,
++`cadencia_obrigatoria`, `responsavel_obrigatorio`, `inegociavel`,
++`portao`, `condicao`) ou do estado (`etapa_atual`, `cumprimentos`,
++`inegociaveis`).
++
++| Regra genérica | Campo no playbook/estado | Mecanismo | Negativo | Positivo | Estado |
++|---|---|---|---|---|---|
++| Etapa corrente | `st["etapa_atual"]` | `avancar.encerrar()` compara `etapa_id != st["etapa_atual"]` antes de qualquer outra checagem | T01 | T02 | CONFORME |
++| Dependência | `depende_de` | `avancar.encerrar()` e `guarda.py` G3 checam `cumprimentos[dep]["cumprido"]` | T03, T03b | T04 | CONFORME |
++| Delegabilidade | `delegavel: false` | `guarda.py` G1 (por habilidade em carregamento) e `avancar.encerrar()` (por sessão exigida) | T06 | T05, T07 | CONFORME |
++| Camadas EX1–EX4 | `camada.<nível>` | `playbook.carregar()` rejeita valor fora do conjunto fixo | T08 | (regressão: playbook oficial válido) | CONFORME |
++| Critério de verificação | `automatizado` / `criterio_de_verificacao` | `playbook.capacidade_valida()` — mecanismo isolado, sem integração ao playbook oficial | T09 | T10, T10b | MECANISMO CONFORME; integração a HB/AG real PENDENTE 2.6.4 |
++| Responsável nominal | `responsavel_obrigatorio` | `avancar.registrar_recorrencia()` + `_ator_valido()` (nome não vazio, não agente, não genérico) | T11, T12b | T12 | CONFORME |
++| Cadência obrigatória | `cadencia_obrigatoria` | `avancar.registrar_recorrencia()` exige `cadencia` não vazia | T13 | T14 | CONFORME |
++| Recorrência (contrato) | `recorrente` + `cadencia_obrigatoria` + `responsavel_obrigatorio` | `playbook.carregar()` recusa `recorrente: true` sem os dois campos de suporte | T15 | T16 | CONFORME |
++| Recorrência (execução) | `estado_recorrente` em `cumprimentos[etapa]` | `avancar.registrar_recorrencia()` grava ciclo/`ultima_verificacao`/histórico sem apagar ciclos anteriores | — (T15 cobre o contrato) | T11–T14 (fluxo completo) | CONFORME |
++| Inegociável — caminho positivo | `st["inegociaveis"][n]` como registro `{satisfeito, evidencia, autor, data}` | `avancar.satisfazer_inegociavel()` — único caminho autorizado | T18, T19 | T20, T20b, T20c | CONFORME |
++| Inegociável — booleano mágico | idem | `emitir()` valida `registro.get("satisfeito")` e `evidencia`/`autor` não vazios, não apenas truthy | T18 (bloqueado por G5 antes mesmo de chegar ao inegociável) | T20c | CONFORME |
++| Proteção de `registro/` | caminho `registro/` | `guarda.py` G5 — bloqueia `Write`/`Edit`/`Bash`-redirect; permite invocação de `avancar.py`/`curar.py`/`validar.py`/`selar.py` via `Bash` | T21 | T22 | CONFORME |
++| Proteção de `caso/` (revalidação) | caminho `caso/` | `guarda.py` G2 — inalterado neste pacote | T31 (mesmo teste cobre negativo e positivo já coberto em `negativos.sh`) | `negativos.sh` #2 | CONFORME (revalidado, sem regressão) |
++| Proteção de `contexto/` (revalidação) | caminho `contexto/` | `guarda.py` G2b — inalterado neste pacote | T23 | T24 | CONFORME (revalidado, sem regressão) |
++| Integridade de portão | `entregaveis[].portao` | `playbook.carregar()` recusa referência a etapa inexistente | T25 | (regressão: playbook oficial válido) | CONFORME |
++| Integridade de inegociável em portão | `entregaveis[].inegociavel` | `playbook.carregar()` recusa referência a inegociável inexistente | T26 | (regressão: playbook oficial válido) | CONFORME |
++| Condição declarativa — avaliação | `entregaveis[].condicao` `{campo, etapa, operador, valor}` | `avancar._avaliar_condicao()` lê `cumprimentos[etapa][campo]` e compara pelo operador | T27b | T27 | CONFORME |
++| Condição declarativa — integridade | idem | `playbook.carregar()` recusa `condicao` incompleta ou com operador fora de `CONDICAO_OPERADORES` | T28 | (regressão: E3-E do playbook oficial válido) | CONFORME |
++| Eventos de recusa da máquina | — | `avancar.main()` emite `RecusaMaquina`/`RecusaEmissao` em todo caminho de erro antes de sair | T29 | T01b (mesmo mecanismo) | CONFORME |
++| Eventos de recusa de emissão | — | idem, `tipo_evento = "RecusaEmissao"` quando `acao == "emitir"` | T30 | T20c (emissão bem-sucedida também gera `EntregavelEmitido`) | CONFORME |
++| Selo Git | — | `selar.py` — inalterado neste pacote | (coberto por `negativos.sh` #18/#19/#21) | T32, `negativos.sh` #20 | CONFORME (revalidado, sem regressão) |
++
++## Hard-code EMCIA no núcleo
++
++Busca (`grep -rniE` por P6–P10, E4, E5, autonomia, recalibragem, piloto,
++métrica de resultado em `eiac-nucleo/scripts/`, `eiac-nucleo/commands/`,
++`eiac-nucleo/hooks/`) após as edições: **2 ocorrências, ambas não
++comportamentais** —
++
++1. `avancar.py` linha 7: exemplo de uso no docstring do CLI
++   (`--registrar-recorrencia P10 ...`), ilustrando a sintaxe com um valor
++   plausível — não é uma decisão de código.
++2. `avancar.py` linha ~147: comentário explicando o que o núcleo **não**
++   decide ("baseline, termo de autonomia etc.").
++
++Nenhuma ocorrência é um `if etapa == "P7"` ou equivalente. `HARD-CODE
++EMCIA NO NÚCLEO: 0` (comportamental).
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/resultado.md b/.projectdocs/evidencias/sprint2/2.6.1/resultado.md
+new file mode 100644
+index 0000000..d3388b4
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/resultado.md
+@@ -0,0 +1,253 @@
++# Pacote 2.6.1 — Núcleo genérico de protocolos
++
++## 1. Identificação
++
++**Ação:** 2.6 — Agentes e Protocolos
++**Pacote:** 2.6.1
++**Branch:** master
++**HEAD inicial:** `70d1d9bf793ab53b0218b1a5663915c4baa1c9ae`
++**HEAD final:** registrado em `git-show.txt` após o commit deste pacote.
++**Data/hora:** 2026-09-18 23:30 -0300
++
++## 2. Documentos consultados
++
++Leitura obrigatória: EMCIA-ARQ-01 v0.2 (arquitetura do Estúdio,
++separação núcleo/campo, cinco camadas de referência), EMCIA-ESP-01 v0.2
++(invariantes de carga, guardas mínimas G1–G6, eventos mínimos),
++EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRA-01 (procedimentos transversais —
++consultado; TRA-V01–V10 fora de escopo deste pacote, já cobertos por P3d
++na Ação 2.5), EMCIA-TST-01, EMCIA-GLO-01, EMCIA-IMP-01. Consultado:
++EMCIA-VER-01, EMCIA-CTX-01, EMCIA-E1–E5, evidências de 2.6.0
++(`resultado.md`, `matriz-contrato-f0-p10.md`).
++
++## 3. Baseline relacionado
++
++`2.6-BL12` (máquina de estados PARCIAL — `avancar.py` encerrava etapa por
++argumento sem checar etapa corrente), `2.6-BL13` (dependências PARCIAL),
++`2.6-BL14` (guardas de camada PARCIAL), `2.6-BL15` (eventos de recusa
++PARCIAL — guarda/validador geravam evento, máquina de etapas e emissão
++não), `2.6-BL16` (proteção de `caso/` PARCIAL), `2.6-BL17` (proteção de
++`registro/` AUSENTE — escrita direta retornava rc=0), `2.6-BL26`
++(caminho positivo dos inegociáveis AUSENTE — flag manual sem trilha).
++
++`D-08` (`registro/` sem proteção), `D-09` (recusas da máquina sem
++evento).
++
++## 4. Estado inicial
++
++Reproduzido e confirmado antes de qualquer edição: com o caso em `P1`,
++`avancar.py --encerrar P5 --autor "Celso"` retornava `exit 0` e movia
++`etapa_atual` diretamente para `P6`, pulando `P2, P3a, P3b, P3d, P4, P5`
++sem checar dependências nem sessões dessas etapas intermediárias — bug
++exato de `2.6-BL12`. `guarda.py` não possuía nenhuma regra sobre
++`registro/`: `Write`/`Edit`/redirecionamento de shell nesse caminho
++passavam sem recusa. `avancar.py` retornava mensagens de erro em `stderr`
++em todo caminho de recusa, mas só emitia evento explicitamente em dois
++pontos (`apurar_nivel`, `encerrar` com sucesso); todo `return "mensagem"`
++de erro em `encerrar()`/`emitir()` saía sem `E.evento()`.
++`st["inegociaveis"][n]` era um booleano simples, gravável apenas por
++edição direta do JSON (nenhum comando o produzia).
++
++## 5. Arquitetura do núcleo após o pacote
++
++Nenhum vocabulário EMCIA foi introduzido em `eiac-nucleo/`. Busca
++`grep -rniE` por P6–P10, E4, E5, autonomia, recalibragem, piloto, métrica
++de resultado em `eiac-nucleo/scripts/`, `eiac-nucleo/commands/`,
++`eiac-nucleo/hooks/` após as edições: 2 ocorrências, ambas não
++comportamentais (exemplo de CLI no docstring de `avancar.py` e comentário
++explicando o que o núcleo não decide). `HARD-CODE EMCIA NO NÚCLEO: 0`
++comportamental. Ver `matriz-regras-nucleo.md` §"Hard-code EMCIA no
++núcleo".
++
++## 6. Máquina de estados
++
++`avancar.encerrar()` agora recusa qualquer `etapa_id != st["etapa_atual"]`
++antes de qualquer outra checagem. Corrige `2.6-BL12` sem introduzir
++vocabulário de etapa: a comparação é puramente estrutural. `2.6.1-T01`
++reproduz o cenário exato do baseline (`P1` corrente, tentativa de
++encerrar `P5`) e confirma a recusa; `2.6.1-T02` confirma que a etapa
++corrente correta continua encerrando normalmente.
++
++## 7. Dependências
++
++Comportamento pré-existente (`depende_de`) preservado e revalidado —
++`2.6.1-T03`/`T03b` isolam a checagem de dependência (G3 em `guarda.py` e
++a checagem equivalente em `avancar.encerrar()`) de outras causas de
++recusa (delegabilidade), usando uma etapa delegável (`P3d`, EX3) em vez
++de uma etapa humana. `2.6.1-T04` confirma que dependência satisfeita
++libera o avanço.
++
++## 8. Delegabilidade e camadas
++
++`delegavel: false` continua bloqueado genericamente em `guarda.py` (G1) e
++em `avancar.encerrar()` (exige sessão registrada). Nenhum nome de etapa
++aparece nesse código — a regra lê `e.get("delegavel")` e `cam in ("EX3",
++"EX4")`. `2.6.1-T05`/`T06`/`T07` confirmam positivo/negativo/positivo
++pós-sessão. `playbook.carregar()` (já implementado em 2.6.0) continua
++recusando camada fora de `EX1`–`EX4`; `2.6.1-T08` revalida com fixture.
++
++## 9. Critério de verificação
++
++Implementado como mecanismo **isolado**: `playbook.capacidade_valida()`
++recebe um dict `{automatizado, criterio_de_verificacao}` sintético e
++aplica a regra "capacidade automatizada sem critério não é válida para
++carregamento/execução" — sem tocar no playbook oficial, sem estruturar
++`hb: [...]` em objetos, sem conhecer HB-01 ou AG-01. Testado
++isoladamente por `2.6.1-T09`/`T10`/`T10b`. Decisão explícita registrada
++com o usuário antes da implementação: a integração com as 18 HB e 4 AG
++reais pertence a 2.6.4; este pacote só constrói e testa o mecanismo
++genérico.
++
++## 10. Recorrência, cadência e responsável
++
++Novo comando `avancar.py --registrar-recorrencia <etapa> --cadencia
++<...> --responsavel <...>`. Exige que a etapa já tenha sido encerrada ao
++menos uma vez, e que `cadencia`/`responsavel` estejam presentes quando o
++playbook marcar `cadencia_obrigatoria`/`responsavel_obrigatorio`.
++`_ator_valido()` recusa nome vazio, agente, ou termo genérico de coletivo
++("equipe", "área", "time", "setor", "departamento", "a definir") — o
++núcleo não sabe o que é "responsável pela recalibragem", só que um
++coletivo não é uma pessoa nomeada. Cada registro atualiza
++`cumprimentos[etapa]["estado_recorrente"]` com `ciclo`,
++`ultima_verificacao` (nome de campo já usado por EMCIA-CAM-01 Anexo D) e
++`historico` — sem apagar ciclos anteriores. `2.6.1-T11`–`T14` cobrem
++ausência/presença de responsável e cadência; `2.6.1-T15`/`T16` revalidam
++a checagem estrutural já existente desde 2.6.0 (recorrente exige os dois
++campos de suporte no contrato).
++
++## 11. Inegociáveis
++
++Novo comando `avancar.py --satisfazer-inegociavel <n> --evidencia <...>`
++— único caminho autorizado. Grava um registro estruturado
++`{satisfeito, evidencia, autor, data}` em vez de um booleano solto, e
++`emitir()` passou a validar essa estrutura (`registro.get("satisfeito")`
++e `evidencia`/`autor` não vazios), não apenas um valor truthy.
++`2.6.1-T18` confirma que a escrita direta do booleano mágico é bloqueada
++pela G5 nova (protege `registro/`, que inclui `estado.json`); `T19`
++confirma que o caminho autorizado exige evidência; `T20`/`T20b`/`T20c`
++confirmam satisfação válida, evento `InegociavelSatisfeito`, e liberação
++da emissão. O núcleo não julga a semântica da evidência — isso permanece
++decisão humana/metodológica dos pacotes seguintes.
++
++## 12. Proteção de registro/
++
++Nova regra G5 em `guarda.py`, espelhando G2/G2b: bloqueia
++`Write`/`Edit`/`Bash`-redirecionamento para `registro/`. Permite que
++`Bash` invoque `avancar.py`/`curar.py`/`validar.py`/`selar.py`
++normalmente, porque esses scripts escrevem via `estado.gravar()` (I/O
++Python direto), nunca via redirecionamento de shell — a mesma
++distinção que já protegia `caso/` e `contexto/` sem bloquear o próprio
++Estúdio. `2.6.1-T21`/`T22` confirmam negativo/positivo.
++
++## 13. Regressão de contexto/
++
++Nenhuma mudança em G2b. `2.6.1-T23`/`T24` revalidam: escrita direta
++continua recusada, curadoria via `curar.py` continua funcional
++(fixture de Termo ajustada para incluir os campos `nao_e` e
++`sinonimos_em_uso` exigidos pelo schema — erro do teste, não do
++produto).
++
++## 14. Portões e condições
++
++`playbook.carregar()` (2.6.0) já recusava portão/inegociável órfão;
++revalidado por `2.6.1-T25`/`T26`. Neste pacote, `carregar()` passou a
++validar a **estrutura** de `condicao` declarativa (campos obrigatórios
++`campo`/`etapa`/`operador`, etapa referenciada existente, operador
++dentro de `CONDICAO_OPERADORES = {"contem", "igual", "diferente"}`).
++`avancar._avaliar_condicao()` faz a **avaliação** em tempo de emissão,
++lendo `cumprimentos[etapa][campo]` sem conhecer o significado do campo —
++`2.6.1-T27`/`T27b` demonstram a condição de E3-E (já declarada em 2.6.0)
++sendo satisfeita e não satisfeita conforme um valor gravado por uma
++etapa anterior. `2.6.1-T28` confirma que operador desconhecido é
++recusado explicitamente no carregamento, não ignorado.
++
++## 15. Eventos
++
++`avancar.main()` agora emite `RecusaMaquina` (para `apurar-nivel`,
++`encerrar`, `registrar-sessao`, `registrar-recorrencia`,
++`satisfazer-inegociavel`) ou `RecusaEmissao` (para `emitir`) em **todo**
++caminho de erro, com `acao_tentada`, `alvo`, `motivo`, `autor` e
++`etapa_corrente`. `2.6.1-T29`/`T30` confirmam. Evidência consolidada em
++`eventos.jsonl` desta pasta, com um `RecusaMaquina`, um
++`TentativaNegada` (G5), um `RecusaEmissao` e um `InegociavelSatisfeito`
++no mesmo percurso.
++
++## 16. Testes
++
++39 verificações (`2.6.1-T01`–`T32`, com sub-itens `T01b`, `T03b`,
++`T10b`, `T12b`, `T20b`, `T20c`, `T27b`), todas PASS. Ver
++`teste-2.6.1-T01.txt` a `teste-2.6.1-T32.txt` e
++`matriz-regras-nucleo.md`.
++
++## 17. Pares negativo/positivo
++
++Todas as travas críticas listadas em §36 do pacote têm par
++negativo+positivo: etapa corrente (T01/T02), dependência (T03/T04),
++delegabilidade (T06/T05,T07), cadência (T13/T14), responsável
++(T11/T12), inegociável (T18,T19/T20), `registro/` (T21/T22), condição de
++portão (T27b/T27).
++
++## 18. Regressão
++
++**Antes:** 158 verificações (129 da Ação 2.5 + 29 de 2.6.0), 158 PASS, 0
++FAIL, 0 SKIP. Ver `teste-regressao-inicial.txt`.
++
++**Pacote 2.6.1:** 39 verificações, 39 PASS, 0 FAIL.
++
++**Depois:** 197 verificações, 197 PASS, 0 FAIL, 0 SKIP. Ver
++`teste-regressao-final.txt`.
++
++Comparação histórica: S2-BL 26 PASS → final Ação 2.5 129 PASS → final
++2.6.0 158 PASS → final 2.6.1 197 PASS. Crescimento rastreável aos
++requisitos deste pacote (etapa corrente, dependências, delegabilidade,
++critério de verificação, recorrência, cadência, responsável,
++inegociáveis, `registro/`, portões/condições, eventos), não meta
++numérica.
++
++## 19. Defeitos encontrados
++
++Um defeito de produção real, já catalogado no baseline (`2.6-BL12`),
++reproduzido e corrigido: `avancar.py --encerrar <etapa>` não verificava
++se a etapa informada era a etapa corrente do caso. Seis bugs de fixture
++de teste (não de produto), todos no próprio `testes/nucleo_2_6_1.py`
++durante sua construção: (1) alvo de teste que casava com G1 antes de G3
++(T03b); (2) sequência de setup que não registrava sessão para `P7`
++antes de tentar encerrá-lo (T11–T14, afetando também P10 pois P10
++também é não delegável); (3) fixture de Termo em T24 sem os campos
++`nao_e`/`sinonimos_em_uso` exigidos pelo schema do caso. Todos
++corrigidos antes da execução registrada como evidência.
++
++## 20. Correções e retestes
++
++Ver seções 6–15 acima. Todos os testes envolvidos foram reexecutados
++após cada correção; evidência final em `teste-2.6.1-*.txt` reflete a
++versão corrigida.
++
++## 21. Itens adiados
++
++- **2.6.2** — P6 e P7 operacionais (decisão humana de autonomia).
++- **2.6.3** — P8, P9 e P10 operacionais; mecanismo de scheduler real
++  para recorrência (este pacote só representa o estado, não agenda).
++- **2.6.4** — 18 HB e 4 AG estruturados; integração do mecanismo de
++  `criterio_de_verificacao` com capacidades reais do playbook.
++- **2.6.5** — seis autorizações ativas com semântica completa,
++  inegociáveis semanticamente verificados (este pacote garante só o
++  registro rastreável, não a validação de conteúdo), geração material
++  de E4/E5.
++- **2.6.6** — caso de controle F0–P10 e suíte end-to-end.
++
++## 22. Commit
++
++Ver `git-show.txt` nesta pasta.
++
++## 23. Estado final
++
++**CONFORME.**
++
++O núcleo agora impõe genericamente etapa corrente, dependências,
++delegabilidade, camadas, recorrência/cadência/responsável, inegociáveis
++por caminho autorizado, proteção de `registro/`, integridade de
++portão/condição e eventos de recusa — tudo sem conhecer a semântica
++específica de P6–P10, E4, E5, autonomia, recalibragem, piloto ou métrica
++de resultado. Não se afirma que P6–P10 estão operacionalmente
++implementados — isso permanece para os pacotes seguintes.
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T01.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T01.txt
+new file mode 100644
+index 0000000..9a5734a
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T01.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T01
++REQUISITO: encerrar etapa que NAO e corrente -> RECUSA + evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T01 encerrar etapa que NAO e corrente recusado (P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T02.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T02.txt
+new file mode 100644
+index 0000000..d640cb6
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T02.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T02
++REQUISITO: encerrar etapa corrente valida -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T02 encerrar etapa corrente valida aceito
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T03.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T03.txt
+new file mode 100644
+index 0000000..2da37b7
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T03.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T03
++REQUISITO: dependencia nao satisfeita -> RECUSA + evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T04.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T04.txt
+new file mode 100644
+index 0000000..b99b03c
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T04.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T04
++REQUISITO: dependencia satisfeita -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T04 dependencia satisfeita permite prosseguir
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T05.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T05.txt
+new file mode 100644
+index 0000000..904aaeb
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T05.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T05
++REQUISITO: etapa delegavel executada por ator permitido -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T05 etapa delegavel executada por ator permitido: PASS
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T06.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T06.txt
+new file mode 100644
+index 0000000..769edca
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T06.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T06
++REQUISITO: etapa nao delegavel tentada por agente -> RECUSA + evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T06 etapa nao delegavel tentada por agente recusada (EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T07.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T07.txt
+new file mode 100644
+index 0000000..e6b3b3a
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T07.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T07
++REQUISITO: etapa nao delegavel executada por humano autorizado -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T08.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T08.txt
+new file mode 100644
+index 0000000..dca4e86
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T08.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T08
++REQUISITO: camada invalida -> contrato recusado
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T08 camada invalida recusada pelo contrato (etapa P1: camada 'EX5' fora de EX1-EX4)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T09.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T09.txt
+new file mode 100644
+index 0000000..6ca9e0e
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T09.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T09
++REQUISITO: capacidade automatizada sem criterio_de_verificacao -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada (capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T10.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T10.txt
+new file mode 100644
+index 0000000..4036e59
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T10.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T10
++REQUISITO: capacidade automatizada com criterio -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T11.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T11.txt
+new file mode 100644
+index 0000000..003f0c5
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T11.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T11
++REQUISITO: responsavel obrigatorio ausente -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T11 responsavel obrigatorio ausente recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T12.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T12.txt
+new file mode 100644
+index 0000000..8a8a55e
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T12.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T12
++REQUISITO: responsavel nominal valido -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T12 responsavel nominal valido aceito
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T13.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T13.txt
+new file mode 100644
+index 0000000..06d4055
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T13.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T13
++REQUISITO: cadencia obrigatoria ausente -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T13 cadencia obrigatoria ausente recusada (P10 exige cadencia declarada para registrar recorrencia)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T14.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T14.txt
+new file mode 100644
+index 0000000..e2554cd
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T14.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T14
++REQUISITO: cadencia valida -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T14 cadencia valida aceita
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T15.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T15.txt
+new file mode 100644
+index 0000000..3fe424e
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T15.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T15
++REQUISITO: recorrente sem contrato suficiente -> RECUSA/INVALIDO
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T16.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T16.txt
+new file mode 100644
+index 0000000..c24249e
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T16.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T16
++REQUISITO: recorrente com contrato suficiente -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T16 recorrente com contrato suficiente aceito no carregamento
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T17.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T17.txt
+new file mode 100644
+index 0000000..b30736d
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T17.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T17
++REQUISITO: inegociavel sem satisfacao -> portao permanece fechado
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T17 inegociavel sem satisfacao mantem portao fechado (E2 bloqueado pelo item inegociavel 1: Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3))
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T18.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T18.txt
+new file mode 100644
+index 0000000..f476ca5
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T18.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T18
++REQUISITO: satisfazer inegociavel por escrita direta em estado -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T19.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T19.txt
+new file mode 100644
+index 0000000..5deeb33
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T19.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T19
++REQUISITO: registrar satisfacao por caminho autorizado sem evidencia -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado (inegociavel 1 exige evidencia nao vazia para ser satisfeito)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T20.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T20.txt
+new file mode 100644
+index 0000000..0169c16
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T20.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T20
++REQUISITO: registrar satisfacao por caminho autorizado valido -> PASS + evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T21.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T21.txt
+new file mode 100644
+index 0000000..295986c
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T21.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T21
++REQUISITO: escrita direta em registro/ -> RECUSA
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T21 escrita direta em registro/ recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T22.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T22.txt
+new file mode 100644
+index 0000000..75f41c9
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T22.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T22
++REQUISITO: escrita autorizada em registro/ -> PASS
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T23.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T23.txt
+new file mode 100644
+index 0000000..383656c
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T23.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T23
++REQUISITO: escrita direta em contexto/ continua recusada
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T24.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T24.txt
+new file mode 100644
+index 0000000..f30cd77
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T24.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T24
++REQUISITO: escrita autorizada em contexto/ continua funcional
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T25.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T25.txt
+new file mode 100644
+index 0000000..3ba2644
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T25.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T25
++REQUISITO: portao com etapa inexistente -> contrato invalido
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T25 portao com etapa inexistente recusado (entregavel E1: portao referencia etapa inexistente ['P99'])
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T26.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T26.txt
+new file mode 100644
+index 0000000..ba80ea6
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T26.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T26
++REQUISITO: portao com inegociavel inexistente -> contrato invalido
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T26 portao com inegociavel inexistente recusado (entregavel E4: referencia inegociavel inexistente 99)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T27.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T27.txt
+new file mode 100644
+index 0000000..54e4855
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T27.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T27
++REQUISITO: condicao declarativa suportada -> avaliacao correta
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T28.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T28.txt
+new file mode 100644
+index 0000000..c0ffe7b
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T28.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T28
++REQUISITO: condicao declarativa desconhecida -> RECUSA explicita
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T29.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T29.txt
+new file mode 100644
+index 0000000..a31544b
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T29.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T29
++REQUISITO: recusa de avancar gera evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T29 recusa de avancar (fora de ordem) gera evento
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T30.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T30.txt
+new file mode 100644
+index 0000000..36f48c9
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T30.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T30
++REQUISITO: recusa de emissao gera evento
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T30 recusa de emissao gera evento
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T31.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T31.txt
+new file mode 100644
+index 0000000..3a1b6bd
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T31.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T31
++REQUISITO: protecao de caso/ continua ativa
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T31 protecao de caso/ continua ativa (Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. Toda assercao exige procedencia D, I ou V.)
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T32.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T32.txt
+new file mode 100644
+index 0000000..4b337a2
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-T32.txt
+@@ -0,0 +1,24 @@
++PACOTE: 2.6.1
++TESTE: 2.6.1-T32
++REQUISITO: selo Git continua funcional
++DATA/HORA: 2026-09-18 23:29:33 -0300
++HEAD INICIAL: 70d1d9bf793ab53b0218b1a5663915c4baa1c9ae
++COMANDO: python3 testes/nucleo_2_6_1.py
++
++PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
++eiac-campo/template-caso; para fixtures negativas de playbook, copy.deepcopy
++do playbook oficial gravado apenas em diretorio temporario, nunca no
++arquivo oficial.
++
++ENTRADA: ver corpo do script testes/nucleo_2_6_1.py, bloco correspondente
++a este ID.
++
++RESULTADO ESPERADO: ver requisito acima.
++
++RESULTADO OBTIDO (linha da suite):
++  ok    2.6.1-T32 selo git continua funcional apos as mudancas do nucleo
++
++EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
++do caso temporario (ver T01b, T20b, T29, T30).
++
++RESULTADO FINAL: PASS
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-saida-completa.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-saida-completa.txt
+new file mode 100644
+index 0000000..b261c6f
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-2.6.1-saida-completa.txt
+@@ -0,0 +1,43 @@
++== testes 2.6.1 -- nucleo generico de protocolos
++  ok    2.6.1-T01 encerrar etapa que NAO e corrente recusado (P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.)
++  ok    2.6.1-T01b recusa de etapa fora de ordem gera evento RecusaMaquina
++  ok    2.6.1-T02 encerrar etapa corrente valida aceito
++  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
++  ok    2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita (A etapa P3d depende de P3b, que nao foi cumprida. Modalidade de P3b: presencial.)
++  ok    2.6.1-T04 dependencia satisfeita permite prosseguir
++  ok    2.6.1-T05 etapa delegavel executada por ator permitido: PASS
++  ok    2.6.1-T06 etapa nao delegavel tentada por agente recusada (EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.)
++  ok    2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS
++  ok    2.6.1-T08 camada invalida recusada pelo contrato (etapa P1: camada 'EX5' fora de EX1-EX4)
++  ok    2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada (capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
++  ok    2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita
++  ok    2.6.1-T10b capacidade nao automatizada nao exige criterio (controle)
++  INTEGRACAO COM HB/AG REAIS DO PLAYBOOK: PENDENTE 2.6.4 -- mecanismo generico testado isoladamente (T09/T10), sem bloco 'capacidades' no playbook oficial. Conforme decisao registrada no pacote.
++  ok    2.6.1-T11 responsavel obrigatorio ausente recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
++  ok    2.6.1-T12 responsavel nominal valido aceito
++  ok    2.6.1-T12b responsavel generico ('equipe') recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
++  ok    2.6.1-T13 cadencia obrigatoria ausente recusada (P10 exige cadencia declarada para registrar recorrencia)
++  ok    2.6.1-T14 cadencia valida aceita
++  ok    2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
++  ok    2.6.1-T16 recorrente com contrato suficiente aceito no carregamento
++  ok    2.6.1-T17 inegociavel sem satisfacao mantem portao fechado (E2 bloqueado pelo item inegociavel 1: Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3))
++  ok    2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++  ok    2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado (inegociavel 1 exige evidencia nao vazia para ser satisfeito)
++  ok    2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito
++  ok    2.6.1-T20b evento InegociavelSatisfeito presente
++  ok    2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado
++  ok    2.6.1-T21 escrita direta em registro/ recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++  ok    2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional
++  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
++  ok    2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional
++  ok    2.6.1-T25 portao com etapa inexistente recusado (entregavel E1: portao referencia etapa inexistente ['P99'])
++  ok    2.6.1-T26 portao com inegociavel inexistente recusado (entregavel E4: referencia inegociavel inexistente 99)
++  ok    2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)
++  ok    2.6.1-T27b condicao declarativa nao satisfeita bloqueia emissao (E3-E nao emite: condicao declarativa nao satisfeita (Somente quando a classificacao tecnologica de P5 determinar solucao agentica))
++  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
++  ok    2.6.1-T29 recusa de avancar (fora de ordem) gera evento
++  ok    2.6.1-T30 recusa de emissao gera evento
++  ok    2.6.1-T31 protecao de caso/ continua ativa (Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. Toda assercao exige procedencia D, I ou V.)
++  ok    2.6.1-T32 selo git continua funcional apos as mudancas do nucleo
++
++39 verificacoes do pacote 2.6.1, 0 falhas
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-final.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-final.txt
+new file mode 100644
+index 0000000..abaf080
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-final.txt
+@@ -0,0 +1,236 @@
++== testes negativos
++  ok    1 habilidade EX4 negada
++  ok    2 escrita direta negada
++  ok    2b bash para caso/ negado
++  ok    3 assercao sem procedencia recusada
++  ok    4 assercao valida gravada
++  ok    2.5.0-T01 D valido aceito
++  ok    2.5.0-T02 I sem premissa recusado
++  ok    2.5.0-T03 I com premissa aceito
++  ok    2.5.0-T04 V sem evidencia recusado
++  ok    2.5.0-T05 V com evidencia aceito
++  ok    2.5.0-T06 X/campo/externo recusados como procedencia
++  ok    2.5.0-T07 V coexiste com apuracao separada
++  ok    5 encerramento sem sessao recusado
++  ok    6 autor agente recusado
++  ok    7 emissao com portao fechado recusada
++  ok    9 P1 em N3 negada (EX3)
++  ok    10 P1 em N1 permitida (EX2)
++  ok    11 etapa sem nivel apurado negada
++  ok    12 F0 sem nivel nao encerra
++  ok    13 camada plana recusada
++  ok    14 nivel fora do playbook recusado
++  ok    15 nivel apurado por agente recusado
++  ok    16 nivel apurado grava com evento
++  ok    17 F0 encerra apos nivel apurado
++  ok    18 selo por agente recusado
++  ok    19 selo sem repositorio recusado
++  ok    20 selo commita com autor nomeado e evento
++  ok    21 selo sem mudanca recusado
++  ok    22 fronteira acompanha o nivel
++  ok    23 P3b marcada nao delegavel nos dois niveis
++  ok    24 documento citado ausente recusado
++  ok    25 documento presente grava com hash na trilha
++  ok    8 playbook incompleto recusado
++
++todas as travas recusam como devem
++== testes/contexto.py ==
++== objetos CTX — pacote 2.5.1
++  ok    2.5.1-T01 Termo válido
++  ok    2.5.1-T02 Entidade válida
++  ok    2.5.1-T03 Regra válida
++  ok    2.5.1-T04 Fonte válida
++  ok    2.5.1-T05 Termo sem significado
++  ok    2.5.1-T06 Entidade sem nome
++  ok    2.5.1-T07 Regra sem estabilidade
++  ok    2.5.1-T08 Fonte sem contrato.significado
++  ok    2.5.1-T09 D/I/V nos quatro objetos
++  ok    2.5.1-T10 Taxonomias obsoletas
++  ok    2.5.1-T11 Sete campos centrais da Regra
++
++11 testes estruturais aprovados
++== testes/curadoria.py ==
++== curadoria, autoria e versionamento I->V — pacote 2.5.2
++  ok    2.5.2-T01 D com autoria humana valida
++  ok    2.5.2-T02 I sem premissa
++  ok    2.5.2-T03 I com premissa
++  ok    2.5.2-T04 V sem evidencia
++  ok    2.5.2-T05 V com evidencia
++  ok    2.5.2-T06 agente como autoria_conteudo
++  ok    2.5.2-T07 pessoa como autoria_conteudo
++  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
++  ok    2.5.2-T09 sobrescrever I por V sem nova versao
++  ok    2.5.2-T10 I -> V com nova versao
++  ok    2.5.2-T11 historico preservado
++  ok    2.5.2-T12 escrita direta em contexto/
++  ok    2.5.2-T13 escrita autorizada em contexto/
++  ok    2.5.2-T14 rascunho nao e contexto curado
++  ok    2.5.2-T15 recusa gera evento
++  ok    2.5.2-T16 operacao valida gera trilha
++  ok    2.5.2-T-baseline registrado-por AG-01 (achado do baseline)
++
++17 testes de curadoria aprovados
++== testes/p3d.py ==
++== integracao CTX <-> P3d — pacote 2.5.3
++  ok    2.5.3-T01 classificacao oficial valida (alinhada)
++  ok    2.5.3-T02 classificacao fora da taxonomia oficial
++  ok    2.5.3-T03 divergencia sem referencia_p3d
++  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
++  ok    2.5.3-T05 divergencia com referencia_p3d valida
++  ok    2.5.3-T06 referencia resolve para o registro correto
++  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
++  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
++  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
++  ok    2.5.3-T10 atualizacao do confronto preserva historico
++  ok    2.5.3-T11 agente nao confirma confronto humano
++  ok    2.5.3-T12 controle humano valido
++
++12 testes de integracao CTX<->P3d aprovados
++== testes/ctx_v.py ==
++== bateria CTX-V01-V11 — pacote 2.5.4
++  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
++  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
++  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
++  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
++  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
++  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
++  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
++  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
++  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
++  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
++  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
++  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
++  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
++  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
++  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
++  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
++  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
++  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
++  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
++  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
++  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
++  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
++  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
++
++23 verificacoes CTX-V01-V11 aprovadas
++== testes/integracao.py ==
++== integracao P2/P3 -> CTX -> P4/P5 — pacote 2.5.5
++  ok    2.5.5-T01 P2 produz candidato CTX em rascunho/
++  ok    2.5.5-T02 candidato sem curadoria nao e consumido
++  ok    2.5.5-T03 candidato de P2 curado entra no CTX
++  ok    2.5.5-T04 P3b gera Regra candidata rastreavel
++  ok    2.5.5-T05 P3d atualiza vinculo de confronto (preserva versionamento)
++  ok    2.5.5-T05b P3d com historico correto entra (controle positivo)
++  ok    2.5.5-T06 P4 consome contexto valido via quadro.py
++  ok    2.5.5-T07 P4 com contexto/regras vazio (nenhuma regra curada)
++  ok    2.5.5-T08 P4 nao reinfere frequencia/consequencia (le do YAML)
++  ok    2.5.5-T09 P5 consome os sete campos centrais
++  ok    2.5.5-T10 P5 com Regra incompleta
++  ok    2.5.5-T11 P5 distingue I de V (I visivel, nao mascarada)
++  ok    2.5.5-T12 P5 com V valida
++  ok    2.5.5-T13 CTX invalido (CTX-V05) nao e consumido
++  ok    2.5.5-T14 evento de falha de consumo/curadoria
++  ok    2.5.5-T15 fluxo minimo P2 -> CTX -> P4
++  ok    2.5.5-T16 fluxo minimo P3 -> CTX -> P5
++
++17 testes de integracao aprovados
++== testes/consolidado.py ==
++== verificacao consolidada da Acao 2.5 — caso CTX-TEST-2.5.6-001
++  ok    2.5.6-C01 D/I/V integrados
++  ok    2.5.6-C02 quatro objetos CTX
++  ok    2.5.6-C03 autoria_conteudo != registrado_por, agente recusado como autor
++  ok    2.5.6-C04 curadoria rascunho -> contexto
++  ok    2.5.6-C05 bloqueio de escrita direta em contexto/
++  ok    2.5.6-C06 I -> V com historico (aqui, D -> V, mesma regra de versionamento)
++  ok    2.5.6-C07 integracao P3d
++  ok    2.5.6-C08 CTX-V01-CTX-V11 (reexecucao)
++  ok    2.5.6-C09 referencias Termo/Entidade/Fonte
++  ok    2.5.6-C10 P2 -> CTX
++  ok    2.5.6-C11 P3 -> CTX (P3b e P3d)
++  ok    2.5.6-C12 CTX -> P4
++  ok    2.5.6-C13 CTX -> P5
++  ok    2.5.6-C14 nao reinterpretacao
++  ok    2.5.6-C15 eventos
++  ok    2.5.6-C16 percurso integrado da camada
++
++16 verificacoes consolidadas aprovadas
++== testes/playbook_2_6_0.py ==
++== testes 2.6.0 -- contrato executavel F0-P10
++  ok    2.6.0-T01 playbook e JSON valido
++  ok    2.6.0-T02 exatamente 13 etapas canonicas
++  ok    2.6.0-T03 IDs de etapa unicos
++  ok    2.6.0-T04 conjunto esperado F0-P10 presente
++  ok    2.6.0-T05 P3b permanece nao delegavel
++  ok    2.6.0-T06 P7 declarada nao delegavel
++  ok    2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis
++  ok    2.6.0-T08 P10 e recorrente
++  ok    2.6.0-T09 P10 declara necessidade de cadencia
++  ok    2.6.0-T10 P10 declara necessidade de responsavel
++  ok    2.6.0-T11 cinco inegociaveis declarados
++  ok    2.6.0-T12 mapeamento dos cinco inegociaveis correto
++  ok    2.6.0-T13 seis autorizacoes presentes
++  ok    2.6.0-T14 E1 depende de F0
++  ok    2.6.0-T15 E2 depende de P1/P2/P3a/P3b/P3d
++  ok    2.6.0-T16 E3-D depende de P4/P5
++  ok    2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel
++  ok    2.6.0-T18 E4 = P6/P7 + inegociavel 2
++  ok    2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5
++  ok    2.6.0-T20 nenhuma referencia a etapa inexistente
++  ok    2.6.0-T21 nenhuma dependencia orfa entre inegociaveis/entregaveis
++  ok    2.6.0-T22 portao_pendente removido de E4/E5
++  ok    2.6.0-T23 D/I/V permanece inalterado
++  ok    2.6.0-T24 playbook.py aceita o contrato oficial com 13 etapas
++
++== testes negativos 2.6.0 -- fixtures temporarias, playbook oficial preservado
++  ok    2.6.0-N01 playbook sem P7 recusado (etapa P8: depende de etapa inexistente 'P7')
++  CAPACIDADE DECLARATIVA OK / VALIDADOR DO NUCLEO PENDENTE PARA 2.6.1: playbook.py verifica apenas se as etapas do portao existem, nao a composicao esperada do contrato do metodo (isso e regra semantica, nao estrutural, ver ESP-01 3.8).
++  ok    2.6.0-N02 registrado como pendencia de validacao semantica (2.6.1); estrutura oficial ja corrigida no playbook (T19)
++  ok    2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
++  ok    2.6.0-N04 inegociavel com etapa inexistente recusado (inegociavel 1: passo referencia etapa inexistente 'P99')
++  ok    2.6.0-N05 camada fora de EX1-EX4 recusada (etapa P7: camada 'EX9' fora de EX1-EX4)
++
++29 verificacoes do pacote 2.6.0, 0 falhas
++== testes/nucleo_2_6_1.py ==
++== testes 2.6.1 -- nucleo generico de protocolos
++  ok    2.6.1-T01 encerrar etapa que NAO e corrente recusado (P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.)
++  ok    2.6.1-T01b recusa de etapa fora de ordem gera evento RecusaMaquina
++  ok    2.6.1-T02 encerrar etapa corrente valida aceito
++  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
++  ok    2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita (A etapa P3d depende de P3b, que nao foi cumprida. Modalidade de P3b: presencial.)
++  ok    2.6.1-T04 dependencia satisfeita permite prosseguir
++  ok    2.6.1-T05 etapa delegavel executada por ator permitido: PASS
++  ok    2.6.1-T06 etapa nao delegavel tentada por agente recusada (EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.)
++  ok    2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS
++  ok    2.6.1-T08 camada invalida recusada pelo contrato (etapa P1: camada 'EX5' fora de EX1-EX4)
++  ok    2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada (capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
++  ok    2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita
++  ok    2.6.1-T10b capacidade nao automatizada nao exige criterio (controle)
++  INTEGRACAO COM HB/AG REAIS DO PLAYBOOK: PENDENTE 2.6.4 -- mecanismo generico testado isoladamente (T09/T10), sem bloco 'capacidades' no playbook oficial. Conforme decisao registrada no pacote.
++  ok    2.6.1-T11 responsavel obrigatorio ausente recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
++  ok    2.6.1-T12 responsavel nominal valido aceito
++  ok    2.6.1-T12b responsavel generico ('equipe') recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
++  ok    2.6.1-T13 cadencia obrigatoria ausente recusada (P10 exige cadencia declarada para registrar recorrencia)
++  ok    2.6.1-T14 cadencia valida aceita
++  ok    2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
++  ok    2.6.1-T16 recorrente com contrato suficiente aceito no carregamento
++  ok    2.6.1-T17 inegociavel sem satisfacao mantem portao fechado (E2 bloqueado pelo item inegociavel 1: Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3))
++  ok    2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++  ok    2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado (inegociavel 1 exige evidencia nao vazia para ser satisfeito)
++  ok    2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito
++  ok    2.6.1-T20b evento InegociavelSatisfeito presente
++  ok    2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado
++  ok    2.6.1-T21 escrita direta em registro/ recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
++  ok    2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional
++  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
++  ok    2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional
++  ok    2.6.1-T25 portao com etapa inexistente recusado (entregavel E1: portao referencia etapa inexistente ['P99'])
++  ok    2.6.1-T26 portao com inegociavel inexistente recusado (entregavel E4: referencia inegociavel inexistente 99)
++  ok    2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)
++  ok    2.6.1-T27b condicao declarativa nao satisfeita bloqueia emissao (E3-E nao emite: condicao declarativa nao satisfeita (Somente quando a classificacao tecnologica de P5 determinar solucao agentica))
++  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
++  ok    2.6.1-T29 recusa de avancar (fora de ordem) gera evento
++  ok    2.6.1-T30 recusa de emissao gera evento
++  ok    2.6.1-T31 protecao de caso/ continua ativa (Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. Toda assercao exige procedencia D, I ou V.)
++  ok    2.6.1-T32 selo git continua funcional apos as mudancas do nucleo
++
++39 verificacoes do pacote 2.6.1, 0 falhas
+diff --git a/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-inicial.txt b/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-inicial.txt
+new file mode 100644
+index 0000000..c5a362b
+--- /dev/null
++++ b/.projectdocs/evidencias/sprint2/2.6.1/teste-regressao-inicial.txt
+@@ -0,0 +1,192 @@
++== testes negativos
++  ok    1 habilidade EX4 negada
++  ok    2 escrita direta negada
++  ok    2b bash para caso/ negado
++  ok    3 assercao sem procedencia recusada
++  ok    4 assercao valida gravada
++  ok    2.5.0-T01 D valido aceito
++  ok    2.5.0-T02 I sem premissa recusado
++  ok    2.5.0-T03 I com premissa aceito
++  ok    2.5.0-T04 V sem evidencia recusado
++  ok    2.5.0-T05 V com evidencia aceito
++  ok    2.5.0-T06 X/campo/externo recusados como procedencia
++  ok    2.5.0-T07 V coexiste com apuracao separada
++  ok    5 encerramento sem sessao recusado
++  ok    6 autor agente recusado
++  ok    7 emissao com portao fechado recusada
++  ok    9 P1 em N3 negada (EX3)
++  ok    10 P1 em N1 permitida (EX2)
++  ok    11 etapa sem nivel apurado negada
++  ok    12 F0 sem nivel nao encerra
++  ok    13 camada plana recusada
++  ok    14 nivel fora do playbook recusado
++  ok    15 nivel apurado por agente recusado
++  ok    16 nivel apurado grava com evento
++  ok    17 F0 encerra apos nivel apurado
++  ok    18 selo por agente recusado
++  ok    19 selo sem repositorio recusado
++  ok    20 selo commita com autor nomeado e evento
++  ok    21 selo sem mudanca recusado
++  ok    22 fronteira acompanha o nivel
++  ok    23 P3b marcada nao delegavel nos dois niveis
++  ok    24 documento citado ausente recusado
++  ok    25 documento presente grava com hash na trilha
++  ok    8 playbook incompleto recusado
++
++todas as travas recusam como devem
++== testes/contexto.py ==
++== objetos CTX — pacote 2.5.1
++  ok    2.5.1-T01 Termo válido
++  ok    2.5.1-T02 Entidade válida
++  ok    2.5.1-T03 Regra válida
++  ok    2.5.1-T04 Fonte válida
++  ok    2.5.1-T05 Termo sem significado
++  ok    2.5.1-T06 Entidade sem nome
++  ok    2.5.1-T07 Regra sem estabilidade
++  ok    2.5.1-T08 Fonte sem contrato.significado
++  ok    2.5.1-T09 D/I/V nos quatro objetos
++  ok    2.5.1-T10 Taxonomias obsoletas
++  ok    2.5.1-T11 Sete campos centrais da Regra
++
++11 testes estruturais aprovados
++== testes/curadoria.py ==
++== curadoria, autoria e versionamento I->V — pacote 2.5.2
++  ok    2.5.2-T01 D com autoria humana valida
++  ok    2.5.2-T02 I sem premissa
++  ok    2.5.2-T03 I com premissa
++  ok    2.5.2-T04 V sem evidencia
++  ok    2.5.2-T05 V com evidencia
++  ok    2.5.2-T06 agente como autoria_conteudo
++  ok    2.5.2-T07 pessoa como autoria_conteudo
++  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
++  ok    2.5.2-T09 sobrescrever I por V sem nova versao
++  ok    2.5.2-T10 I -> V com nova versao
++  ok    2.5.2-T11 historico preservado
++  ok    2.5.2-T12 escrita direta em contexto/
++  ok    2.5.2-T13 escrita autorizada em contexto/
++  ok    2.5.2-T14 rascunho nao e contexto curado
++  ok    2.5.2-T15 recusa gera evento
++  ok    2.5.2-T16 operacao valida gera trilha
++  ok    2.5.2-T-baseline registrado-por AG-01 (achado do baseline)
++
++17 testes de curadoria aprovados
++== testes/p3d.py ==
++== integracao CTX <-> P3d — pacote 2.5.3
++  ok    2.5.3-T01 classificacao oficial valida (alinhada)
++  ok    2.5.3-T02 classificacao fora da taxonomia oficial
++  ok    2.5.3-T03 divergencia sem referencia_p3d
++  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
++  ok    2.5.3-T05 divergencia com referencia_p3d valida
++  ok    2.5.3-T06 referencia resolve para o registro correto
++  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
++  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
++  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
++  ok    2.5.3-T10 atualizacao do confronto preserva historico
++  ok    2.5.3-T11 agente nao confirma confronto humano
++  ok    2.5.3-T12 controle humano valido
++
++12 testes de integracao CTX<->P3d aprovados
++== testes/ctx_v.py ==
++== bateria CTX-V01-V11 — pacote 2.5.4
++  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
++  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
++  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
++  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
++  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
++  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
++  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
++  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
++  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
++  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
++  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
++  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
++  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
++  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
++  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
++  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
++  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
++  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
++  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
++  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
++  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
++  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
++  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
++
++23 verificacoes CTX-V01-V11 aprovadas
++== testes/integracao.py ==
++== integracao P2/P3 -> CTX -> P4/P5 — pacote 2.5.5
++  ok    2.5.5-T01 P2 produz candidato CTX em rascunho/
++  ok    2.5.5-T02 candidato sem curadoria nao e consumido
++  ok    2.5.5-T03 candidato de P2 curado entra no CTX
++  ok    2.5.5-T04 P3b gera Regra candidata rastreavel
++  ok    2.5.5-T05 P3d atualiza vinculo de confronto (preserva versionamento)
++  ok    2.5.5-T05b P3d com historico correto entra (controle positivo)
++  ok    2.5.5-T06 P4 consome contexto valido via quadro.py
++  ok    2.5.5-T07 P4 com contexto/regras vazio (nenhuma regra curada)
++  ok    2.5.5-T08 P4 nao reinfere frequencia/consequencia (le do YAML)
++  ok    2.5.5-T09 P5 consome os sete campos centrais
++  ok    2.5.5-T10 P5 com Regra incompleta
++  ok    2.5.5-T11 P5 distingue I de V (I visivel, nao mascarada)
++  ok    2.5.5-T12 P5 com V valida
++  ok    2.5.5-T13 CTX invalido (CTX-V05) nao e consumido
++  ok    2.5.5-T14 evento de falha de consumo/curadoria
++  ok    2.5.5-T15 fluxo minimo P2 -> CTX -> P4
++  ok    2.5.5-T16 fluxo minimo P3 -> CTX -> P5
++
++17 testes de integracao aprovados
++== testes/consolidado.py ==
++== verificacao consolidada da Acao 2.5 — caso CTX-TEST-2.5.6-001
++  ok    2.5.6-C01 D/I/V integrados
++  ok    2.5.6-C02 quatro objetos CTX
++  ok    2.5.6-C03 autoria_conteudo != registrado_por, agente recusado como autor
++  ok    2.5.6-C04 curadoria rascunho -> contexto
++  ok    2.5.6-C05 bloqueio de escrita direta em contexto/
++  ok    2.5.6-C06 I -> V com historico (aqui, D -> V, mesma regra de versionamento)
++  ok    2.5.6-C07 integracao P3d
++  ok    2.5.6-C08 CTX-V01-CTX-V11 (reexecucao)
++  ok    2.5.6-C09 referencias Termo/Entidade/Fonte
++  ok    2.5.6-C10 P2 -> CTX
++  ok    2.5.6-C11 P3 -> CTX (P3b e P3d)
++  ok    2.5.6-C12 CTX -> P4
++  ok    2.5.6-C13 CTX -> P5
++  ok    2.5.6-C14 nao reinterpretacao
++  ok    2.5.6-C15 eventos
++  ok    2.5.6-C16 percurso integrado da camada
++
++16 verificacoes consolidadas aprovadas
++== testes/playbook_2_6_0.py ==
++== testes 2.6.0 -- contrato executavel F0-P10
++  ok    2.6.0-T01 playbook e JSON valido
++  ok    2.6.0-T02 exatamente 13 etapas canonicas
++  ok    2.6.0-T03 IDs de etapa unicos
++  ok    2.6.0-T04 conjunto esperado F0-P10 presente
++  ok    2.6.0-T05 P3b permanece nao delegavel
++  ok    2.6.0-T06 P7 declarada nao delegavel
++  ok    2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis
++  ok    2.6.0-T08 P10 e recorrente
++  ok    2.6.0-T09 P10 declara necessidade de cadencia
++  ok    2.6.0-T10 P10 declara necessidade de responsavel
++  ok    2.6.0-T11 cinco inegociaveis declarados
++  ok    2.6.0-T12 mapeamento dos cinco inegociaveis correto
++  ok    2.6.0-T13 seis autorizacoes presentes
++  ok    2.6.0-T14 E1 depende de F0
++  ok    2.6.0-T15 E2 depende de P1/P2/P3a/P3b/P3d
++  ok    2.6.0-T16 E3-D depende de P4/P5
++  ok    2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel
++  ok    2.6.0-T18 E4 = P6/P7 + inegociavel 2
++  ok    2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5
++  ok    2.6.0-T20 nenhuma referencia a etapa inexistente
++  ok    2.6.0-T21 nenhuma dependencia orfa entre inegociaveis/entregaveis
++  ok    2.6.0-T22 portao_pendente removido de E4/E5
++  ok    2.6.0-T23 D/I/V permanece inalterado
++  ok    2.6.0-T24 playbook.py aceita o contrato oficial com 13 etapas
++
++== testes negativos 2.6.0 -- fixtures temporarias, playbook oficial preservado
++  ok    2.6.0-N01 playbook sem P7 recusado (etapa P8: depende de etapa inexistente 'P7')
++  CAPACIDADE DECLARATIVA OK / VALIDADOR DO NUCLEO PENDENTE PARA 2.6.1: playbook.py verifica apenas se as etapas do portao existem, nao a composicao esperada do contrato do metodo (isso e regra semantica, nao estrutural, ver ESP-01 3.8).
++  ok    2.6.0-N02 registrado como pendencia de validacao semantica (2.6.1); estrutura oficial ja corrigida no playbook (T19)
++  ok    2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
++  ok    2.6.0-N04 inegociavel com etapa inexistente recusado (inegociavel 1: passo referencia etapa inexistente 'P99')
++  ok    2.6.0-N05 camada fora de EX1-EX4 recusada (etapa P7: camada 'EX9' fora de EX1-EX4)
++
++29 verificacoes do pacote 2.6.0, 0 falhas
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 9a3efd1..c1ee73d 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.12",
++  "version": "0.2.13",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-nucleo/commands/registrar-recorrencia.md b/eiac-nucleo/commands/registrar-recorrencia.md
+new file mode 100644
+index 0000000..eeaac82
+--- /dev/null
++++ b/eiac-nucleo/commands/registrar-recorrencia.md
+@@ -0,0 +1,12 @@
++---
++description: Registra um novo ciclo de uma etapa recorrente, com cadência e responsável.
++argument-hint: <etapa> <cadência> <responsável>
++---
++Só se aplica a etapas que o playbook marca `recorrente: true`, e só depois que a etapa foi encerrada ao menos uma vez.
++
++Pergunte ao operador, se não vierem nos argumentos: etapa, cadência (conforme o nível) e responsável nomeado.
++
++Depois execute:
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-recorrencia <etapa> --autor "<nome da pessoa>" --cadencia "<cadência>" --responsavel "<nome da pessoa>"`
++
++O responsável precisa ser pessoa nomeada — "equipe" ou "área" não satisfaz `responsavel_obrigatorio`. Se o script recusar, apresente o motivo sem contorná-lo.
+diff --git a/eiac-nucleo/commands/satisfazer-inegociavel.md b/eiac-nucleo/commands/satisfazer-inegociavel.md
+new file mode 100644
+index 0000000..23a1125
+--- /dev/null
++++ b/eiac-nucleo/commands/satisfazer-inegociavel.md
+@@ -0,0 +1,12 @@
++---
++description: Registra a satisfação de um item inegociável do playbook, com evidência rastreável.
++argument-hint: <número do inegociável> <evidência>
++---
++Este é o único caminho autorizado para satisfazer um item inegociável — uma flag manual no estado não é aceita e é bloqueada pela guarda (`registro/` não aceita escrita direta).
++
++Pergunte ao operador, se não vierem nos argumentos: qual item inegociável e qual evidência sustenta a satisfação (documento, sessão, referência).
++
++Depois execute:
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --satisfazer-inegociavel <n> --autor "<nome da pessoa>" --evidencia "<descrição ou caminho>"`
++
++O núcleo não julga se a evidência de fato comprova o item — isso é decisão humana/metodológica. Ele exige apenas que evidência e autor estejam presentes e rastreáveis. Se o script recusar, apresente o motivo sem contorná-lo.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index f00ef16..4a43113 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -4,15 +4,36 @@ Uso:
+   python3 avancar.py --apurar-nivel N2 --autor "Nome" --eixos "DAD 4, GOV 5, CRI 7"
+   python3 avancar.py --encerrar P2 --autor "Nome"
+   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
++  python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
++  python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
+   python3 avancar.py --emitir E2 --autor "Nome"
++
++Toda recusa desta maquina produz evento RecusaMaquina ou RecusaEmissao,
++com a acao tentada, o motivo e o estado relevante no momento da recusa —
++recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
+ """
+-import argparse, pathlib, sys
++import argparse, datetime, pathlib, sys
+ 
+ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
+ 
+ 
++def _ator_valido(nome):
++    """Pessoa nomeada: nao vazio, nao generico, nao agente.
++
++    'equipe', 'area' e afins nao satisfazem responsavel_obrigatorio (ESP-01
++    3.6, CAM-01 anexo D: "responsavel e pessoa, nao area"). O nucleo nao
++    conhece o motivo metodologico; conhece apenas que um nome generico de
++    coletivo nao e uma pessoa nomeada.
++    """
++    nome = (nome or "").strip()
++    if not nome or E.autor_e_agente(nome):
++        return False
++    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
++    return nome.lower() not in genericos
++
++
+ def apurar_nivel(st, pb, nivel, autor, eixos):
+     if nivel not in pb["niveis"]:
+         return f"nivel '{nivel}' nao existe no playbook: {pb['niveis']}"
+@@ -29,6 +50,15 @@ def encerrar(st, pb, etapa_id, autor):
+     et = P.etapa(pb, etapa_id)
+     if not et:
+         return f"etapa {etapa_id} nao existe no playbook"
++
++    # A etapa so pode ser encerrada se for a etapa corrente do caso — sem
++    # essa checagem, qualquer etapa declarada no playbook podia ser marcada
++    # cumprida fora de ordem (2.6-BL12), inclusive pulando dependencias e
++    # sessoes ainda nao satisfeitas de etapas intermediarias.
++    if etapa_id != st["etapa_atual"]:
++        return (f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
++                f"So a etapa corrente pode ser encerrada.")
++
+     if etapa_id == "F0" and not st.get("nivel"):
+         return ("F0 nao encerra sem o nivel apurado. A camada das etapas seguintes "
+                 "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
+@@ -40,6 +70,7 @@ def encerrar(st, pb, etapa_id, autor):
+     dep = et.get("depende_de")
+     if dep and not st["cumprimentos"].get(dep, {}).get("cumprido"):
+         return f"{etapa_id} depende de {dep}, ainda nao cumprida"
++
+     st["cumprimentos"].setdefault(etapa_id, {})
+     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})
+     idx = [e["id"] for e in pb["etapas"]].index(etapa_id)
+@@ -62,6 +93,107 @@ def registrar_sessao(st, etapa_id, autor, participantes):
+     return None
+ 
+ 
++def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
++    """Etapa recorrente (playbook 'recorrente': true) nao desaparece apos o
++    primeiro encerramento — cada novo ciclo atualiza 'ultima_verificacao'
++    sem apagar o historico de ciclos anteriores (CAM-01 3.8, anexo D).
++
++    O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
++    estejam presentes quando o playbook marcar a etapa como recorrente e
++    cadencia_obrigatoria/responsavel_obrigatorio.
++    """
++    et = P.etapa(pb, etapa_id)
++    if not et:
++        return f"etapa {etapa_id} nao existe no playbook"
++    if not et.get("recorrente"):
++        return f"{etapa_id} nao e uma etapa recorrente no playbook"
++    if not st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
++        return f"{etapa_id} precisa ser encerrada ao menos uma vez antes de registrar recorrencia"
++
++    if et.get("cadencia_obrigatoria") and not (cadencia or "").strip():
++        return f"{etapa_id} exige cadencia declarada para registrar recorrencia"
++    if et.get("responsavel_obrigatorio") and not _ator_valido(responsavel):
++        return (f"{etapa_id} exige responsavel nominal (pessoa nomeada, nao agente "
++                f"nem area/equipe generica) para registrar recorrencia")
++
++    registro = st["cumprimentos"].setdefault(etapa_id, {})
++    ciclo = registro.setdefault("estado_recorrente", {"ciclo": 0, "historico": []})
++    ciclo["ciclo"] += 1
++    agora = datetime.datetime.now().isoformat(timespec="seconds")
++    if ciclo.get("ultima_verificacao"):
++        ciclo["historico"].append({
++            "ciclo": ciclo["ciclo"] - 1,
++            "verificado_em": ciclo["ultima_verificacao"],
++            "responsavel": ciclo.get("responsavel"),
++        })
++    ciclo["ultima_verificacao"] = agora
++    ciclo["cadencia"] = cadencia
++    ciclo["responsavel"] = responsavel
++    E.evento("RecorrenciaRegistrada", etapa=etapa_id, autor=autor,
++             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel)
++    return None
++
++
++def satisfazer_inegociavel(st, pb, n, autor, evidencia):
++    """Caminho autorizado para satisfazer um item inegociavel.
++
++    O baseline mostrou que uma flag manual (estado['inegociaveis'][n] = true)
++    podia satisfazer o portao sem provar nada (2.6-BL26): nao havia caminho
++    autorizado, so a gravacao direta do estado. Este e o unico caminho: exige
++    evidencia nao vazia e autor pessoa nomeada, e o registro guarda id,
++    evidencia, ator e timestamp — nao apenas um booleano.
++
++    O nucleo nao valida a SEMANTICA da evidencia (se ela de fato prova
++    baseline, termo de autonomia etc.) — isso e decisao humana/metodologica
++    dos pacotes 2.6.2/2.6.3/2.6.5. O nucleo garante apenas que o registro
++    de satisfacao existe, esta associado a um item real do playbook, tem
++    evidencia declarada e autor humano.
++    """
++    item = next((i for i in pb["inegociaveis"] if str(i["n"]) == str(n)), None)
++    if not item:
++        return f"item inegociavel {n} nao existe no playbook"
++    if not (evidencia or "").strip():
++        return f"inegociavel {n} exige evidencia nao vazia para ser satisfeito"
++
++    agora = datetime.datetime.now().isoformat(timespec="seconds")
++    st.setdefault("inegociaveis", {})[str(n)] = {
++        "satisfeito": True, "evidencia": evidencia, "autor": autor, "data": agora,
++    }
++    E.evento("InegociavelSatisfeito", n=n, item=item["item"], autor=autor,
++             evidencia=evidencia)
++    return None
++
++
++def _avaliar_condicao(condicao, st):
++    """Avalia uma condicao declarativa {campo, etapa, operador, valor}.
++
++    O nucleo nao sabe o que 'classificacao_tecnologica' ou 'agente'
++    significam; sabe ler o valor que o cumprimento da etapa registrou sob
++    'campo' e comparar pelo operador declarado. Operador desconhecido e
++    contrato invalido, nao condicao ignorada silenciosamente (2.6.0 28).
++    """
++    campo = condicao.get("campo")
++    etapa_id = condicao.get("etapa")
++    operador = condicao.get("operador")
++    esperado = condicao.get("valor")
++    if not campo or not etapa_id or not operador:
++        return None, f"condicao declarativa incompleta: {condicao}"
++    if operador not in P.CONDICAO_OPERADORES:
++        return None, (f"condicao usa operador '{operador}' desconhecido pelo motor. "
++                      f"Esperado um de {sorted(P.CONDICAO_OPERADORES)}.")
++    valor = st.get("cumprimentos", {}).get(etapa_id, {}).get(campo)
++    if operador == "igual":
++        return valor == esperado, None
++    if operador == "diferente":
++        return valor != esperado, None
++    # contem: valor pode ser string ou lista; ausencia do campo nao satisfaz
++    if valor is None:
++        return False, None
++    if isinstance(valor, (list, tuple, set)):
++        return esperado in valor, None
++    return esperado in str(valor), None
++
++
+ def emitir(st, pb, ent_id, autor):
+     ent = next((d for d in pb.get("entregaveis", []) if d["id"] == ent_id), None)
+     if not ent:
+@@ -73,10 +205,25 @@ def emitir(st, pb, ent_id, autor):
+                 if not st["cumprimentos"].get(e, {}).get("cumprido")]
+     if faltando:
+         return f"{ent_id} exige as etapas {faltando} encerradas"
++
++    condicao = ent.get("condicao")
++    if isinstance(condicao, dict):
++        satisfeita, erro = _avaliar_condicao(condicao, st)
++        if erro:
++            return f"{ent_id}: {erro}"
++        if not satisfeita:
++            return (f"{ent_id} nao emite: condicao declarativa nao satisfeita "
++                    f"({condicao.get('descricao', condicao)})")
++
+     for n in ent.get("inegociavel", []):
+         item = next(i for i in pb["inegociaveis"] if i["n"] == n)
+-        if not st.get("inegociaveis", {}).get(str(n)):
++        registro = st.get("inegociaveis", {}).get(str(n))
++        if not registro or not isinstance(registro, dict) or not registro.get("satisfeito"):
+             return f"{ent_id} bloqueado pelo item inegociavel {n}: {item['item']}"
++        if not (registro.get("evidencia") or "").strip() or not registro.get("autor"):
++            return (f"{ent_id} bloqueado: registro do inegociavel {n} "
++                    f"nao possui evidencia/autor rastreaveis")
++
+     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor)
+     return None
+ 
+@@ -85,9 +232,14 @@ def main():
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--apurar-nivel")
+     ap.add_argument("--encerrar"); ap.add_argument("--registrar-sessao")
++    ap.add_argument("--registrar-recorrencia")
++    ap.add_argument("--satisfazer-inegociavel")
+     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
+     ap.add_argument("--participantes", default="")
+     ap.add_argument("--eixos", default="")
++    ap.add_argument("--cadencia", default="")
++    ap.add_argument("--responsavel", default="")
++    ap.add_argument("--evidencia", default="")
+     a = ap.parse_args()
+ 
+     st = E.ler()
+@@ -98,17 +250,31 @@ def main():
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+ 
+     if a.apurar_nivel:
++        acao, alvo = "apurar_nivel", a.apurar_nivel
+         err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
+     elif a.registrar_sessao:
++        acao, alvo = "registrar_sessao", a.registrar_sessao
+         err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
++    elif a.registrar_recorrencia:
++        acao, alvo = "registrar_recorrencia", a.registrar_recorrencia
++        err = registrar_recorrencia(st, pb, a.registrar_recorrencia, a.autor,
++                                     a.cadencia, a.responsavel)
++    elif a.satisfazer_inegociavel:
++        acao, alvo = "satisfazer_inegociavel", a.satisfazer_inegociavel
++        err = satisfazer_inegociavel(st, pb, a.satisfazer_inegociavel, a.autor, a.evidencia)
+     elif a.encerrar:
++        acao, alvo = "encerrar", a.encerrar
+         err = encerrar(st, pb, a.encerrar, a.autor)
+     elif a.emitir:
++        acao, alvo = "emitir", a.emitir
+         err = emitir(st, pb, a.emitir, a.autor)
+     else:
+         print("nada a fazer", file=sys.stderr); sys.exit(1)
+ 
+     if err:
++        tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
++        E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,
++                 autor=a.autor, etapa_corrente=st.get("etapa_atual"))
+         print(err, file=sys.stderr); sys.exit(1)
+     E.gravar(st)
+     print(f"ok | etapa atual: {st['etapa_atual']} | camada: {st.get('camada_atual')}")
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 33526f8..bc1af46 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -1,9 +1,15 @@
+ """Guarda de camada. Hook PreToolUse: exit 2 bloqueia a chamada.
+ 
+-Tres regras, nesta ordem:
++Regras, sem ordem fixa exigida entre si:
+   G1  habilidade de camada nao delegavel nao carrega
+   G2  escrita direta em caso/ e negada; toda assercao passa pelo validador
++  G2b escrita direta em contexto/ e negada; todo objeto passa pelo curador
+   G3  etapa dependente exige o cumprimento declarado no playbook
++  G4  nivel nao apurado apos F0 bloqueia a etapa
++  G5  escrita direta em registro/ e negada; apenas os scripts do nucleo
++      (avancar.py, curar.py, validar.py, selar.py) gravam ali, via
++      estado.gravar()/estado.evento(), nunca por Write/Edit/redirecionamento
++      de shell
+ """
+ import json, sys, pathlib
+ 
+@@ -93,6 +99,24 @@ def main():
+             etapa=etapa_id,
+         )
+ 
++    # G5 — escrita direta em registro/ (playbook, estado, eventos, selos)
++    # so os scripts do nucleo gravam ali; passar por Write/Edit ou
++    # redirecionamento de shell contorna estado, inegociaveis, portoes e
++    # eventos (2.6-BL17, D-08).
++    escrita_registro = ferramenta in ("Write", "Edit") and alvo.startswith("registro/")
++    escrita_registro_bash = ferramenta == "Bash" and " registro/" in comando and any(
++        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
++    )
++    if escrita_registro or escrita_registro_bash:
++        negar(
++            "Escrita direta em registro/ nao e permitida. "
++            "Etapa, estado e eventos so mudam pelos scripts do nucleo: "
++            "avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), "
++            "validar.py (asserção) ou selar.py (selo). Escrita direta contorna "
++            "portoes e trilha de eventos.",
++            etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
++        )
++
+     # G3 — dependencia entre etapas
+     dep = etapa.get("depende_de")
+     if dep and not st.get("cumprimentos", {}).get(dep, {}).get("cumprido"):
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 8923dfc..185a2ff 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -4,6 +4,11 @@ import json, pathlib, sys
+ OBRIGATORIO_ETAPA = {"id", "camada", "modalidade"}
+ OBRIGATORIO_ENTREGAVEL = {"id", "portao"}
+ 
++# Operadores que o motor generico de condicoes declarativas (avancar.py)
++# sabe avaliar. Um portao com operador fora deste conjunto e contrato
++# invalido, nao condicao ignorada silenciosamente (2.6.0 secao 28).
++CONDICAO_OPERADORES = {"contem", "igual", "diferente"}
++
+ 
+ def carregar():
+     p = pathlib.Path("registro/playbook.json")
+@@ -49,6 +54,20 @@ def carregar():
+         orfas = [p for p in d["portao"] if p not in ids_etapa]
+         if orfas:
+             return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"
++        condicao = d.get("condicao")
++        if condicao is not None:
++            if not isinstance(condicao, dict):
++                return None, f"entregavel {d['id']}: condicao precisa ser um objeto declarativo"
++            faltando_cond = {"campo", "etapa", "operador"} - set(condicao)
++            if faltando_cond:
++                return None, f"entregavel {d['id']}: condicao sem {sorted(faltando_cond)}"
++            if condicao["etapa"] not in ids_etapa:
++                return None, (f"entregavel {d['id']}: condicao referencia etapa "
++                              f"inexistente '{condicao['etapa']}'")
++            if condicao["operador"] not in CONDICAO_OPERADORES:
++                return None, (f"entregavel {d['id']}: condicao usa operador "
++                              f"'{condicao['operador']}' desconhecido pelo motor. "
++                              f"Esperado um de {sorted(CONDICAO_OPERADORES)}.")
+ 
+     if not pb.get("inegociaveis"):
+         return None, "playbook sem itens inegociaveis"
+@@ -114,6 +133,31 @@ def natureza(pb, etapa_id, nivel):
+         else "preparacao delegavel"
+ 
+ 
++def capacidade_valida(capacidade):
++    """Mecanismo generico de criterio de verificacao (ESP-01 G6).
++
++    Recebe um dict {automatizado: bool, criterio_de_verificacao: str|None,
++    ...} e devolve (True, None) ou (False, motivo). Nao sabe o que e HB,
++    AG ou qualquer semantica EMCIA — so aplica a regra "capacidade
++    automatizada sem criterio de verificacao nao e valida para carregamento".
++
++    A integracao com as 18 HB e 4 AG reais, estruturados no playbook
++    oficial, pertence ao pacote 2.6.4. Este pacote (2.6.1) so constroi e
++    testa o mecanismo, isolado de qualquer contrato concreto.
++    """
++    if not isinstance(capacidade, dict):
++        return False, "capacidade precisa ser um objeto com 'automatizado' e 'criterio_de_verificacao'"
++    if not capacidade.get("automatizado"):
++        return True, None
++    criterio = capacidade.get("criterio_de_verificacao")
++    if not (isinstance(criterio, str) and criterio.strip()):
++        return False, (
++            "capacidade automatizada sem criterio_de_verificacao nao e valida "
++            "para carregamento/execucao"
++        )
++    return True, None
++
++
+ def proxima_fronteira(pb, etapa_id, nivel):
+     """Primeira etapa daqui em diante que exige pessoa. None se nao houver.
+ 
+diff --git a/testes/README.md b/testes/README.md
+index 93f3064..541102d 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -53,7 +53,17 @@ separadamente:
+ python3 testes/playbook_2_6_0.py
+ ```
+ 
+-O total acumulado é de 158 verificações.
++As 39 verificações do núcleo genérico de protocolos (pacote 2.6.1: etapa
++corrente, dependências, delegabilidade, camadas, critério de verificação,
++recorrência, cadência, responsável nominal, inegociáveis por caminho
++autorizado, proteção de `registro/`, integridade de portão/condição e
++eventos de recusa) rodam separadamente:
++
++```bash
++python3 testes/nucleo_2_6_1.py
++```
++
++O total acumulado é de 197 verificações.
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+@@ -295,6 +305,46 @@ referenciando etapa inexistente, portão/inegociável referenciando etapa
+ ou inegociável inexistente, e etapa recorrente exigindo cadência e
+ responsável declarados.
+ 
++## Núcleo genérico de protocolos — pacote 2.6.1
++
++Fortalece `avancar.py`, `guarda.py` e `playbook.py` para impor o contrato
++declarado em 2.6.0 sem conhecer semântica EMCIA — nenhuma decisão usa
++`if etapa == "P7"` ou equivalente; tudo lê campos genéricos do playbook
++(`delegavel`, `depende_de`, `camada`, `recorrente`, `cadencia_obrigatoria`,
++`responsavel_obrigatorio`, `condicao`) ou do estado.
++
++| ID | Prova |
++|---|---|
++| 2.6.1-T01/T01b | Encerrar etapa que não é a corrente → recusado, com evento `RecusaMaquina` |
++| 2.6.1-T02 | Encerrar a etapa corrente válida → aceito |
++| 2.6.1-T03/T03b | Dependência não satisfeita → recusada por `avancar.py` e por `guarda.py` (G3) |
++| 2.6.1-T04 | Dependência satisfeita → prossegue |
++| 2.6.1-T05 | Etapa delegável executada por ator permitido → aceito |
++| 2.6.1-T06 | Etapa não delegável tentada por agente → recusada (G1) |
++| 2.6.1-T07 | Mesma etapa, humano autorizado, sessão registrada → aceito |
++| 2.6.1-T08 | Camada fora de EX1–EX4 (fixture) → contrato recusado |
++| 2.6.1-T09/T10/T10b | Mecanismo isolado de critério de verificação (`playbook.capacidade_valida()`) — capacidade automatizada sem critério recusada, com critério aceita, não automatizada não exige critério |
++| 2.6.1-T11/T12/T12b | Responsável obrigatório ausente ou genérico ("equipe") recusado; pessoa nomeada aceita |
++| 2.6.1-T13/T14 | Cadência obrigatória ausente recusada; cadência válida aceita |
++| 2.6.1-T15/T16 | Etapa recorrente sem cadência/responsável declarados recusada no carregamento; com o contrato completo aceita |
++| 2.6.1-T17 | Inegociável sem satisfação mantém portão fechado |
++| 2.6.1-T18 | Tentativa de satisfazer inegociável por escrita direta em `registro/estado.json` recusada |
++| 2.6.1-T19/T20/T20b/T20c | Satisfação por caminho autorizado (`--satisfazer-inegociavel`) sem evidência recusada; com evidência aceita, gera evento `InegociavelSatisfeito`, e libera a emissão |
++| 2.6.1-T21/T22 | Escrita direta em `registro/` recusada (G5); invocação autorizada dos scripts do núcleo via `Bash` continua funcional |
++| 2.6.1-T23/T24 | Regressão da Ação 2.5: `contexto/` continua protegido e a curadoria continua funcional |
++| 2.6.1-T25/T26 | Portão com etapa ou inegociável inexistente → contrato inválido |
++| 2.6.1-T27/T27b | Condição declarativa suportada avaliada corretamente (satisfeita e não satisfeita) |
++| 2.6.1-T28 | Condição com operador desconhecido → recusada explicitamente no carregamento, não ignorada |
++| 2.6.1-T29/T30 | Recusa de `avancar`/`emitir` gera evento auditável (`RecusaMaquina`/`RecusaEmissao`) |
++| 2.6.1-T31 | Proteção de `caso/` revalidada, sem regressão |
++| 2.6.1-T32 | Selo Git revalidado, sem regressão |
++
++Reproduz e corrige o defeito do baseline (2.6-BL12): antes deste pacote,
++`avancar.py --encerrar <etapa>` aceitava qualquer etapa declarada no
++playbook, não apenas a etapa corrente do caso — uma etapa em `P1` podia
++"encerrar" `P5` e o estado pulava direto para `P6`. `2.6.1-T01`
++reproduz esse cenário e confirma a recusa.
++
+ ## Deslocamento da fronteira por nível
+ 
+ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa depende do nível do caso.**
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+new file mode 100644
+index 0000000..0c72070
+--- /dev/null
++++ b/testes/nucleo_2_6_1.py
+@@ -0,0 +1,499 @@
++#!/usr/bin/env python3
++"""Verificacao do nucleo generico de protocolos -- pacote 2.6.1.
++
++Cobre: etapa corrente, dependencias, delegabilidade, camadas EX,
++criterio de verificacao (mecanismo isolado), recorrencia, cadencia,
++responsavel nominal, inegociaveis por caminho autorizado, protecao de
++registro/, integridade de portoes/condicoes e eventos de recusa.
++
++Nenhum teste aqui deve depender de um nome literal de etapa alem do que o
++proprio playbook oficial ja declara (P1..P10 aparecem como dados, nunca
++como decisao hard-coded do nucleo).
++"""
++import copy
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
++PLAYBOOK_SCRIPT = RAIZ / "eiac-nucleo" / "scripts" / "playbook.py"
++
++sys.path.insert(0, str(RAIZ / "eiac-nucleo" / "scripts"))
++import playbook as P  # noqa: E402
++
++pb_oficial = json.loads((TEMPLATE / "registro" / "playbook.json").read_text(encoding="utf-8"))
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def preparar_caso():
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    caso = tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    return caso
++
++
++def avancar(caso, **kwargs):
++    comando = ["python3", str(AVANCAR)]
++    for chave, valor in kwargs.items():
++        comando += [f"--{chave.replace('_', '-')}", str(valor)]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def guarda(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(["python3", str(GUARDA)], cwd=caso, input=entrada,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def apurar_e_encerrar_f0(caso):
++    avancar(caso, apurar_nivel="N1", autor="Celso do Vale", eixos="DAD 3, GOV 3, CRI 3")
++    return avancar(caso, encerrar="F0", autor="Celso do Vale")
++
++
++ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
++
++
++def percorrer_ate(caso, ate_etapa_id):
++    """Encerra F0 e todas as etapas ate (e incluindo) ate_etapa_id, em
++    ordem, registrando sessao para as etapas nao delegaveis do playbook.
++    """
++    apurar_e_encerrar_f0(caso)
++    ordem = [e["id"] for e in pb_oficial["etapas"]]
++    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++            avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
++                    participantes="Ana, Celso")
++        avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++
++
++print("== testes 2.6.1 -- nucleo generico de protocolos")
++
++# --- T01/T02: etapa corrente ---------------------------------------------
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++# apos F0, etapa corrente e P1 (primeira etapa do playbook oficial)
++codigo, saida, erro = avancar(caso, encerrar="P5", autor="Celso do Vale")
++if codigo != 0 and "nao e a etapa corrente" in erro:
++    ok(f"2.6.1-T01 encerrar etapa que NAO e corrente recusado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T01 encerrar etapa fora de ordem foi ACEITO: exit={codigo} stderr={erro}")
++
++evs = eventos(caso)
++if any(e.get("evento") == "RecusaMaquina" and e.get("acao_tentada") == "encerrar" for e in evs):
++    ok("2.6.1-T01b recusa de etapa fora de ordem gera evento RecusaMaquina")
++else:
++    falha("2.6.1-T01b recusa de etapa fora de ordem NAO gerou evento")
++
++codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.1-T02 encerrar etapa corrente valida aceito")
++else:
++    falha(f"2.6.1-T02 encerrar etapa corrente RECUSADO: {erro}")
++
++# --- T03/T04: dependencias -------------------------------------------------
++# P3d depende de P3b e e delegavel (EX3, nao EX4) -- isola a checagem G3
++# (dependencia) da checagem G1 (camada humana), que testamos em T06.
++caso_dep = preparar_caso()
++apurar_e_encerrar_f0(caso_dep)
++for e in ["P1", "P2", "P3a"]:
++    avancar(caso_dep, encerrar=e, autor="Celso do Vale")
++# nao registra sessao nem encerra P3b -- forca o estado para P3d (que
++# depende de P3b) sem que P3b esteja cumprida, e usa avancar.py --encerrar,
++# que aplica a mesma checagem de dependencia que guarda.py usa (G3).
++estado_path = caso_dep / "registro" / "estado.json"
++st = json.loads(estado_path.read_text(encoding="utf-8"))
++st["etapa_atual"] = "P3d"
++st["camada_atual"] = "EX3"
++estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++codigo, saida, erro = avancar(caso_dep, encerrar="P3d", autor="Celso do Vale")
++if codigo != 0 and "depende de" in erro:
++    ok(f"2.6.1-T03 dependencia nao satisfeita bloqueada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T03 dependencia nao satisfeita NAO foi bloqueada: exit={codigo} stderr={erro}")
++
++# tambem confirma que a guarda (G3, fora do avancar.py) bloqueia qualquer
++# ferramenta nessa condicao -- alvo neutro (nao casa com nenhuma
++# 'habilidade' do playbook), para isolar G3 de G1
++codigo, saida, erro = guarda(caso_dep, "Read", {"file_path": "fontes/documento-generico.md"})
++if codigo == 2 and "depende de" in erro:
++    ok(f"2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita ({erro.strip()})")
++else:
++    falha(f"2.6.1-T03b guarda NAO bloqueou dependencia nao satisfeita: exit={codigo} stderr={erro}")
++
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++for e in ["P1", "P2", "P3a"]:
++    avancar(caso, encerrar=e, autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso, encerrar="P3b", autor="Celso do Vale")
++if avancar(caso, encerrar="P3d", autor="Celso do Vale")[0] == 0:
++    ok("2.6.1-T04 dependencia satisfeita permite prosseguir")
++else:
++    falha("2.6.1-T04 dependencia satisfeita foi RECUSADA")
++
++# --- T05/T06/T07: delegabilidade -------------------------------------------
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.1-T05 etapa delegavel executada por ator permitido: PASS")
++else:
++    falha(f"2.6.1-T05 etapa delegavel RECUSADA: {erro}")
++
++for e in ["P2", "P3a"]:
++    avancar(caso, encerrar=e, autor="Celso do Vale")
++# etapa corrente agora e P3b, delegavel:false
++codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
++if codigo == 2 and "delegavel" in erro:
++    ok(f"2.6.1-T06 etapa nao delegavel tentada por agente recusada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T06 etapa nao delegavel NAO foi bloqueada: exit={codigo} stderr={erro}")
++
++avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++codigo, saida, erro = avancar(caso, encerrar="P3b", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS")
++else:
++    falha(f"2.6.1-T07 etapa nao delegavel com sessao registrada foi RECUSADA: {erro}")
++
++# --- T08: camada invalida (fixture temporaria) ------------------------------
++
++
++def rodar_playbook_py(pb_dict):
++    tmp = pathlib.Path(tempfile.mkdtemp())
++    (tmp / "registro").mkdir()
++    (tmp / "registro" / "playbook.json").write_text(
++        json.dumps(pb_dict, ensure_ascii=False, indent=2), encoding="utf-8")
++    proc = subprocess.run([sys.executable, str(PLAYBOOK_SCRIPT)], cwd=tmp,
++                           text=True, capture_output=True, check=False)
++    shutil.rmtree(tmp, ignore_errors=True)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++pb_t08 = copy.deepcopy(pb_oficial)
++for e in pb_t08["etapas"]:
++    if e["id"] == "P1":
++        e["camada"] = {n: "EX5" for n in pb_t08["niveis"]}
++codigo, saida, erro = rodar_playbook_py(pb_t08)
++if codigo != 0:
++    ok(f"2.6.1-T08 camada invalida recusada pelo contrato ({erro.strip()})")
++else:
++    falha("2.6.1-T08 camada invalida foi ACEITA")
++
++# --- T09/T10: criterio de verificacao (mecanismo isolado, fixtures sinteticas) ---
++sem_criterio = {"automatizado": True, "criterio_de_verificacao": None}
++valido, motivo = P.capacidade_valida(sem_criterio)
++if not valido and "criterio_de_verificacao" in motivo:
++    ok(f"2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada ({motivo})")
++else:
++    falha(f"2.6.1-T09 capacidade sem criterio foi ACEITA: valido={valido} motivo={motivo}")
++
++com_criterio = {"automatizado": True, "criterio_de_verificacao": "saida revisada por humano"}
++valido, motivo = P.capacidade_valida(com_criterio)
++if valido:
++    ok("2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita")
++else:
++    falha(f"2.6.1-T10 capacidade com criterio foi RECUSADA: {motivo}")
++
++nao_automatizada = {"automatizado": False}
++valido, motivo = P.capacidade_valida(nao_automatizada)
++if valido:
++    ok("2.6.1-T10b capacidade nao automatizada nao exige criterio (controle)")
++else:
++    falha(f"2.6.1-T10b capacidade nao automatizada foi RECUSADA indevidamente: {motivo}")
++
++print("  INTEGRACAO COM HB/AG REAIS DO PLAYBOOK: PENDENTE 2.6.4 -- mecanismo "
++      "generico testado isoladamente (T09/T10), sem bloco 'capacidades' no "
++      "playbook oficial. Conforme decisao registrada no pacote.")
++
++# --- T11/T12: responsavel nominal obrigatorio -------------------------------
++caso = preparar_caso()
++percorrer_ate(caso, "P10")
++# etapa corrente agora e a seguinte a P10 (ou P10 permanece se for a
++# ultima); em qualquer caso P10 ja foi encerrada ao menos uma vez.
++codigo, saida, erro = avancar(caso, registrar_recorrencia="P10", autor="Celso do Vale",
++                               cadencia="trimestral", responsavel="")
++if codigo != 0 and "responsavel" in erro:
++    ok(f"2.6.1-T11 responsavel obrigatorio ausente recusado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T11 recorrencia sem responsavel foi ACEITA: exit={codigo} stderr={erro}")
++
++codigo, saida, erro = avancar(caso, registrar_recorrencia="P10", autor="Celso do Vale",
++                               cadencia="trimestral", responsavel="Marina Prado")
++if codigo == 0:
++    ok("2.6.1-T12 responsavel nominal valido aceito")
++else:
++    falha(f"2.6.1-T12 responsavel nominal valido foi RECUSADO: {erro}")
++
++# controle: nome generico ("equipe") tambem deve ser recusado
++codigo, saida, erro = avancar(caso, registrar_recorrencia="P10", autor="Celso do Vale",
++                               cadencia="trimestral", responsavel="equipe")
++if codigo != 0:
++    ok(f"2.6.1-T12b responsavel generico ('equipe') recusado ({erro.strip()})")
++else:
++    falha("2.6.1-T12b responsavel generico 'equipe' foi ACEITO")
++
++# --- T13/T14: cadencia obrigatoria ------------------------------------------
++caso2 = preparar_caso()
++percorrer_ate(caso2, "P10")
++codigo, saida, erro = avancar(caso2, registrar_recorrencia="P10", autor="Celso do Vale",
++                               cadencia="", responsavel="Marina Prado")
++if codigo != 0 and "cadencia" in erro:
++    ok(f"2.6.1-T13 cadencia obrigatoria ausente recusada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T13 recorrencia sem cadencia foi ACEITA: exit={codigo} stderr={erro}")
++
++codigo, saida, erro = avancar(caso2, registrar_recorrencia="P10", autor="Celso do Vale",
++                               cadencia="trimestral", responsavel="Marina Prado")
++if codigo == 0:
++    ok("2.6.1-T14 cadencia valida aceita")
++else:
++    falha(f"2.6.1-T14 cadencia valida foi RECUSADA: {erro}")
++
++# --- T15/T16: etapa recorrente sem/com contrato suficiente ------------------
++pb_t15 = copy.deepcopy(pb_oficial)
++for e in pb_t15["etapas"]:
++    if e["id"] == "P10":
++        e.pop("cadencia_obrigatoria", None)
++codigo, saida, erro = rodar_playbook_py(pb_t15)
++if codigo != 0 and "recorrente" in erro:
++    ok(f"2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento ({erro.strip()})")
++else:
++    falha(f"2.6.1-T15 recorrente sem cadencia_obrigatoria foi ACEITO: exit={codigo}")
++
++codigo, saida, erro = rodar_playbook_py(pb_oficial)
++if codigo == 0:
++    ok("2.6.1-T16 recorrente com contrato suficiente aceito no carregamento")
++else:
++    falha(f"2.6.1-T16 playbook oficial (P10 recorrente valido) foi RECUSADO: {erro}")
++
++# --- T17/T18/T19/T20: inegociaveis -------------------------------------------
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++for e in ["P1", "P2", "P3a"]:
++    avancar(caso, encerrar=e, autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso, encerrar="P3b", autor="Celso do Vale")
++avancar(caso, encerrar="P3d", autor="Celso do Vale")
++codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
++if codigo != 0 and "inegociavel" in erro:
++    ok(f"2.6.1-T17 inegociavel sem satisfacao mantem portao fechado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T17 emissao com inegociavel insatisfeito foi ACEITA: exit={codigo}")
++
++codigo, saida, erro = guarda(caso, "Write", {"file_path": "registro/estado.json", "content": "{}"})
++if codigo == 2:
++    ok(f"2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T18 escrita direta em estado NAO foi bloqueada: exit={codigo}")
++
++codigo, saida, erro = avancar(caso, satisfazer_inegociavel="1", autor="Celso do Vale", evidencia="")
++if codigo != 0 and "evidencia" in erro:
++    ok(f"2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T19 satisfazer inegociavel sem evidencia foi ACEITO: exit={codigo}")
++
++codigo, saida, erro = avancar(caso, satisfazer_inegociavel="1", autor="Celso do Vale",
++                               evidencia="linha de base registrada em caso/P3a-linha-base.md")
++if codigo == 0:
++    ok("2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito")
++else:
++    falha(f"2.6.1-T20 satisfazer inegociavel valido foi RECUSADO: {erro}")
++evs = eventos(caso)
++if any(e.get("evento") == "InegociavelSatisfeito" for e in evs):
++    ok("2.6.1-T20b evento InegociavelSatisfeito presente")
++else:
++    falha("2.6.1-T20b evento InegociavelSatisfeito AUSENTE")
++
++codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado")
++else:
++    falha(f"2.6.1-T20c E2 foi RECUSADO apos inegociavel satisfeito: {erro}")
++
++# --- T21/T22: protecao de registro/ -----------------------------------------
++caso = preparar_caso()
++codigo, saida, erro = guarda(caso, "Write", {"file_path": "registro/estado.json", "content": "{}"})
++if codigo == 2 and "registro/" in erro:
++    ok(f"2.6.1-T21 escrita direta em registro/ recusada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T21 escrita direta em registro/ NAO foi bloqueada: exit={codigo} stderr={erro}")
++
++codigo, saida, erro = guarda(caso, "Bash", {
++    "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3'"
++})
++if codigo == 0:
++    ok("2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional")
++else:
++    falha(f"2.6.1-T22 chamada autorizada ao nucleo foi bloqueada pela guarda: exit={codigo} stderr={erro}")
++
++# --- T23/T24: regressao de contexto/ (Acao 2.5) ------------------------------
++caso = preparar_caso()
++codigo, saida, erro = guarda(caso, "Write", {"file_path": "contexto/regras/RN-001.yaml", "content": "x"})
++if codigo == 2 and "contexto/" in erro:
++    ok(f"2.6.1-T23 escrita direta em contexto/ continua recusada ({erro.strip()})")
++else:
++    falha(f"2.6.1-T23 escrita direta em contexto/ NAO foi bloqueada: exit={codigo}")
++
++CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
++termo_yaml = (
++    'id: T-900\n'
++    'termo: guia de autorizacao\n'
++    'significado: documento que autoriza a emissao do procedimento\n'
++    'nao_e: a guia de encaminhamento medico\n'
++    'sinonimos_em_uso: []\n'
++    'procedencia: D\n'
++    'declarado_por: Ana Paula\n'
++    'registrado_por: Celso do Vale\n'
++    'data: "2026-09-18"\n'
++    'premissa: ""\n'
++    'evidencia: ""\n'
++    'versao: 1\n'
++)
++(caso / "rascunho" / "T-900.yaml").write_text(termo_yaml, encoding="utf-8")
++proc = subprocess.run(
++    ["python3", str(CURADOR), "--tipo", "termo", "--arquivo", "contexto/termos/T-900.yaml",
++     "--registrado-por", "Celso do Vale"],
++    cwd=caso, text=True, capture_output=True, check=False,
++)
++if proc.returncode == 0:
++    ok("2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional")
++else:
++    falha(f"2.6.1-T24 curadoria autorizada foi RECUSADA apos as mudancas do nucleo: {proc.stderr}")
++
++# --- T25/T26: integridade de portoes -----------------------------------------
++pb_t25 = copy.deepcopy(pb_oficial)
++for d in pb_t25["entregaveis"]:
++    if d["id"] == "E1":
++        d["portao"] = ["P99"]
++codigo, saida, erro = rodar_playbook_py(pb_t25)
++if codigo != 0 and "inexistente" in erro:
++    ok(f"2.6.1-T25 portao com etapa inexistente recusado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T25 portao com etapa inexistente foi ACEITO: exit={codigo}")
++
++pb_t26 = copy.deepcopy(pb_oficial)
++for d in pb_t26["entregaveis"]:
++    if d["id"] == "E4":
++        d["inegociavel"] = [99]
++codigo, saida, erro = rodar_playbook_py(pb_t26)
++if codigo != 0 and "inegociavel" in erro:
++    ok(f"2.6.1-T26 portao com inegociavel inexistente recusado ({erro.strip()})")
++else:
++    falha(f"2.6.1-T26 portao com inegociavel inexistente foi ACEITO: exit={codigo}")
++
++# --- T27/T28: condicoes declarativas -----------------------------------------
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++for e in ["P1", "P2", "P3a"]:
++    avancar(caso, encerrar=e, autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++for e in ["P3b", "P3d"]:
++    avancar(caso, encerrar=e, autor="Celso do Vale")
++avancar(caso, encerrar="P4", autor="Celso do Vale")
++# forca o cumprimento de P5 com o campo que a condicao declarativa de E3-E
++# consulta (classificacao_tecnologica), simulando o que uma skill de P5
++# gravaria -- o nucleo so le o campo, nao decide seu significado.
++estado_path = caso / "registro" / "estado.json"
++st = json.loads(estado_path.read_text(encoding="utf-8"))
++st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
++                             "classificacao_tecnologica": "agente"}
++estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
++if codigo == 0:
++    ok("2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)")
++else:
++    falha(f"2.6.1-T27 condicao declarativa satisfeita foi RECUSADA: {erro}")
++
++st["cumprimentos"]["P5"]["classificacao_tecnologica"] = "habilitador"
++estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
++if codigo != 0 and "condicao" in erro:
++    ok(f"2.6.1-T27b condicao declarativa nao satisfeita bloqueia emissao ({erro.strip()})")
++else:
++    falha(f"2.6.1-T27b condicao nao satisfeita foi ACEITA: exit={codigo}")
++
++pb_t28 = copy.deepcopy(pb_oficial)
++for d in pb_t28["entregaveis"]:
++    if d["id"] == "E3-E":
++        d["condicao"]["operador"] = "operador_desconhecido"
++codigo, saida, erro = rodar_playbook_py(pb_t28)
++if codigo != 0 and "operador" in erro:
++    ok(f"2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento ({erro.strip()})")
++else:
++    falha(f"2.6.1-T28 operador desconhecido foi ACEITO pelo carregador: exit={codigo}")
++
++# --- T29/T30: eventos de recusa ----------------------------------------------
++caso = preparar_caso()
++apurar_e_encerrar_f0(caso)
++avancar(caso, encerrar="P9", autor="Celso do Vale")  # fora de ordem: corrente e P1
++evs = eventos(caso)
++if any(e.get("evento") == "RecusaMaquina" for e in evs):
++    ok("2.6.1-T29 recusa de avancar (fora de ordem) gera evento")
++else:
++    falha("2.6.1-T29 recusa de avancar NAO gerou evento")
++
++avancar(caso, emitir="E5", autor="Celso do Vale")  # portao fechado
++evs = eventos(caso)
++if any(e.get("evento") == "RecusaEmissao" for e in evs):
++    ok("2.6.1-T30 recusa de emissao gera evento")
++else:
++    falha("2.6.1-T30 recusa de emissao NAO gerou evento")
++
++# --- T31: protecao de caso/ (revalidacao, nao reimplementacao) ---------------
++caso = preparar_caso()
++codigo, saida, erro = guarda(caso, "Write", {"file_path": "caso/x.md", "content": "texto"})
++if codigo == 2 and "caso/" in erro:
++    ok(f"2.6.1-T31 protecao de caso/ continua ativa ({erro.strip()})")
++else:
++    falha(f"2.6.1-T31 protecao de caso/ NAO esta ativa: exit={codigo}")
++
++# --- T32: selo git continua funcional ----------------------------------------
++caso = preparar_caso()
++subprocess.run(["git", "init", "-q"], cwd=caso, check=False)
++subprocess.run(["git", "config", "user.email", "teste@example.com"], cwd=caso, check=False)
++subprocess.run(["git", "config", "user.name", "Teste"], cwd=caso, check=False)
++(caso / "rascunho" / "ping.txt").write_text("marcador\n", encoding="utf-8")
++proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", "teste 2.6.1"],
++                       cwd=caso, text=True, capture_output=True, check=False)
++if proc.returncode == 0 and "selado" in proc.stdout:
++    ok("2.6.1-T32 selo git continua funcional apos as mudancas do nucleo")
++else:
++    falha(f"2.6.1-T32 selo git falhou: exit={proc.returncode} stdout={proc.stdout} stderr={proc.stderr}")
++
++print()
++print(f"{total} verificacoes do pacote 2.6.1, {falhas} falhas")
++if falhas:
++    sys.exit(1)
