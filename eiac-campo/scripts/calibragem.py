@@ -46,12 +46,27 @@ def _ator_pessoa_nomeada(nome):
 
 
 def checar_autoria(dados):
+    """Autoria da rotina (rotina_calibragem): declarado_por, registrado_por
+    e responsavel sao sempre humanos -- a rotina em si (cadencia, canal de
+    incidente, responsavel pela recalibragem) e decisao de governanca, nao
+    preparacao agentica.
+    """
     erros = []
     for campo in ("declarado_por", "registrado_por", "responsavel"):
         valor = dados.get(campo)
         if valor is not None and E.autor_e_agente(valor):
             erros.append(f"{campo} nao pode ser agente: '{valor}'")
     return erros
+
+
+def checar_autoria_ciclo(dados):
+    """Autoria do ciclo (ciclo_calibragem): declarado_por/registrado_por
+    podem ser agente -- o agente pode preparar um ciclo inteiro (deteccao,
+    quantificacao, recomendacao), como o modulo ja documenta no cabecalho.
+    So o campo 'decisao' e vedado a agente, e isso ja e responsabilidade
+    de checar_decisao(), nao desta funcao.
+    """
+    return []
 
 
 def checar_responsavel_nominal(candidato):
@@ -210,7 +225,7 @@ def gravar_ciclo(destino, ator, schema_caminho="registro/calibragem.schema.json"
         return f"estrutura invalida: {erro}"
 
     erros = X.validar(candidato, schema, "ciclo_calibragem")
-    erros += checar_autoria(candidato)
+    erros += checar_autoria_ciclo(candidato)
     erros += checar_calibragem_ref(candidato)
     erros += checar_drift(candidato)
     erros += checar_decisao(candidato, ator)
