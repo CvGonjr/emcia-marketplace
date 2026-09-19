@@ -104,7 +104,17 @@ separadamente:
 python3 testes/campo_2_6_5.py
 ```
 
-O total acumulado é de 404 verificações.
+As 43 verificações da verificação integral F0–P10 (pacote 2.6.6: caso de
+controle novo, percurso completo, fronteira EX1–EX4, HB/AG, cinco
+inegociáveis, seis portões, cinco entregáveis, proteção de registro/
+contexto, não invenção, rastreabilidade ponta a ponta) rodam
+separadamente:
+
+```bash
+python3 testes/campo_2_6_6.py
+```
+
+O total acumulado é de 447 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -570,6 +580,49 @@ Objeto novo: `registro/baseline/BL-*.yaml` (linha de base, inegociável
 exige "registrada e datada"; o formato concreto é a tabela de EMCIA-E2
 Parte A.3). `BL-nnn` é convenção técnica do Estúdio para
 rastreabilidade, não terminologia do método.
+
+## Verificação integral F0–P10 — pacote 2.6.6
+
+Demonstra, em um caso de controle inteiramente novo (nenhum estado
+reaproveitado de casos anteriores), o percurso F0→P10 completo: 13/13
+etapas, fronteira EX1–EX4 nos quatro pontos críticos (P3b, validação de
+P6, decisão de P7, decisão de recalibragem em P10), cinco inegociáveis
+satisfeitos a partir de artefato real, seis portões avaliados
+corretamente (cenário agêntico, E3-E AUTORIZADO), cinco entregáveis
+materializados, proteção de `registro/`/`contexto/` reconfirmada,
+ausência de bypass manual e rastreabilidade ponta a ponta de um elemento
+central do caso (RN-101 → P4 → P5 → E3 → P6/P7 → P8/P9 → P10 → E5).
+
+| ID | Prova |
+|---|---|
+| 2.6.6-C01–C04 | Contrato com 13 etapas; caso novo inicia em F0; F0→P1 válido; percurso P1–P5 executa sem falha |
+| 2.6.6-C05 | P3b permanece não delegável a agente |
+| 2.6.6-C06/C07 | Escrita direta em `contexto/` e em `registro/` continuam recusadas |
+| 2.6.6-C08/C09 | P6 é etapa operacional executável; validação exige humano (agente recusado, humano aceito) |
+| 2.6.6-C10–C12 | P7 é etapa operacional executável; agente não decide autonomia; humano nominal decide |
+| 2.6.6-C13/C14 | P8 produz casos com saída esperada; P9 produz métrica de resultado apurada |
+| 2.6.6-C15/C16 | P10 é recorrente; dois ciclos preservados sem sobrescrita |
+| 2.6.6-C17/C18 | Agente (AG-04) detecta e registra drift; decisão de recalibragem exige humano |
+| 2.6.6-C19–C22 | 18/18 HB resolvíveis; 4/4 AG resolvíveis; fronteira formal AG×HB (negativo/positivo); critérios de verificação presentes nas HB automatizadas |
+| 2.6.6-C23–C27 | Cinco inegociáveis (I1–I5) satisfeitos |
+| 2.6.6-C28–C35 | Seis autorizações (E1, E2, E3-D, E3-E AUTORIZADO, E4, E5) e cinco entregáveis materiais confirmados |
+| 2.6.6-C36/C37 | Recusa de etapa incorreta e de escrita direta geram evento |
+| 2.6.6-C38 | Nenhum AG declarado em camada EX3/EX4 |
+| 2.6.6-C39 | Trilha integral recuperável (categorias mínimas de evento presentes) |
+| 2.6.6-C40 | Log do caso de controle preservado para auditoria de bypass |
+| 2.6.6-C41 | Materialização sem evidência (portão fechado) recusada, não inventa conteúdo |
+| 2.6.6-C42 | Rastreabilidade ponta a ponta com IDs preservados sem reinvenção |
+| 2.6.6-C43 | Regressão completa sem falha inexplicada |
+
+Defeito encontrado e corrigido durante a construção do caso de controle
+(não pré-existente à leitura, surgiu ao exercitar pela primeira vez um
+ciclo de calibragem com autoria de agente ponta a ponta):
+`calibragem.py::checar_autoria()` recusava indevidamente
+`declarado_por`/`registrado_por` de agente também para
+`ciclo_calibragem`, quando o próprio módulo já documentava que "o agente
+pode preparar um ciclo inteiro". Corrigido com uma função dedicada
+(`checar_autoria_ciclo()`), sem alterar a autoria da rotina (sempre
+humana) nem a vedação de `decisao` a agente.
 
 ## Deslocamento da fronteira por nível
 
