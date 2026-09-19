@@ -27,6 +27,7 @@ import json  # noqa: E402
 
 
 DIRETORIO_PILOTO = pathlib.Path("registro/piloto")
+DIRETORIO_BASELINE = pathlib.Path("registro/baseline")
 
 
 def _ator_pessoa_nomeada(nome):
@@ -83,6 +84,36 @@ def checar_baseline(candidato):
     return erros
 
 
+def checar_baseline_ref(candidato):
+    """Quando declarado, baseline_ref precisa resolver contra o mesmo
+    artefato de linha de base usado pelo inegociavel 1 (P3a) -- P9 nao
+    inventa uma segunda linha de base propria (2.6.5 secao 11 do pacote,
+    item 11 da diretriz do usuario). linha_base/linha_base_data continuam
+    sendo os campos que este objeto declara (Anexo C); quando baseline_ref
+    existe, eles precisam corresponder ao artefato referenciado -- nao
+    sao dois valores independentes que por acaso concordam.
+    """
+    ref = candidato.get("baseline_ref")
+    if not ref:
+        return []
+    alvo = DIRETORIO_BASELINE / f"{ref}.yaml"
+    if not alvo.exists():
+        return [f"baseline_ref '{ref}' nao resolve — {alvo} nao existe"]
+    try:
+        base = X.carregar_yaml(alvo.read_text(encoding="utf-8"))
+    except (X.ErroYaml, ValueError) as erro:
+        return [f"baseline_ref '{ref}' esta ilegivel: {erro}"]
+    erros = []
+    if str(candidato.get("linha_base") or "") != str(base.get("valor_atual") or ""):
+        erros.append(f"baseline_ref '{ref}': 'linha_base' ('{candidato.get('linha_base')}') "
+                     f"nao corresponde a 'valor_atual' do artefato referenciado "
+                     f"('{base.get('valor_atual')}')")
+    if str(candidato.get("linha_base_data") or "") != str(base.get("data") or ""):
+        erros.append(f"baseline_ref '{ref}': 'linha_base_data' nao corresponde "
+                     f"a 'data' do artefato referenciado")
+    return erros
+
+
 def checar_apuracao(candidato):
     """Estado 'apurada' exige resultado, data, procedencia do resultado e
     declaracao explicita de fatores externos que possam ter influenciado
@@ -119,6 +150,7 @@ def gravar_metrica(destino, ator, schema_caminho="registro/metricas.schema.json"
     erros += checar_autoria(candidato)
     erros += checar_piloto_ref(candidato)
     erros += checar_baseline(candidato)
+    erros += checar_baseline_ref(candidato)
     erros += checar_apuracao(candidato)
 
     if erros:

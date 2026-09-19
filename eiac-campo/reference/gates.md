@@ -55,3 +55,23 @@ Fixar o portão não significa afirmar que os cinco entregáveis já são
 emitíveis em produção — a validação semântica completa dos cinco
 inegociáveis e a materialização dos documentos pertencem aos pacotes
 2.6.2–2.6.5 (Sprint 2 do Code Plugin).
+
+## Verificação semântica e materialização (pacote 2.6.5)
+
+Os cinco inegociáveis passam a ser verificados a partir de artefato real,
+nunca de flag solta: `scripts/inegociaveis.py --verificar <N> --arquivo
+<artefato>` lê o registro correspondente (`registro/baseline/` para I1,
+`registro/governanca/autonomia/` para I2, `registro/piloto/` para I3,
+`registro/metricas/` para I4, `registro/calibragem/` para I5) e só chama
+`avancar.py --satisfazer-inegociavel` depois de confirmar semanticamente
+que o requisito está atendido.
+
+Cada entregável passa a ter arquivo material real em
+`caso/entregaveis/<ID>.md`, renderizado por `scripts/entregaveis.py` a
+partir desses mesmos artefatos — nunca preenchido com texto genérico
+quando falta evidência. `avancar.py --emitir --materializar <arquivo>`
+recusa registrar `EntregavelEmitido` se o arquivo indicado não existir ou
+estiver vazio (D-12).
+
+`E3-E` avaliado sobre um caso não agêntico devolve `NAO_APLICAVEL`, não
+falha — é resultado legítimo do método, não erro de emissão.

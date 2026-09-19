@@ -440,10 +440,14 @@ else:
 st["cumprimentos"]["P5"]["classificacao_tecnologica"] = "habilitador"
 estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
 codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
-if codigo != 0 and "condicao" in erro:
-    ok(f"2.6.1-T27b condicao declarativa nao satisfeita bloqueia emissao ({erro.strip()})")
+# Desde 2.6.5 (secao 24 do pacote), condicao declarativa nao satisfeita e
+# NAO_APLICAVEL (exit 0), nao RECUSA (exit != 0) -- "nao aplicavel" nao e
+# falha. O teste original (2.6.1) esperava recusa; corrigido aqui para o
+# contrato que 2.6.5 formalizou.
+if codigo == 0 and "NAO_APLICAVEL" in saida:
+    ok(f"2.6.1-T27b condicao declarativa nao satisfeita e NAO_APLICAVEL, nao recusa ({saida.strip()})")
 else:
-    falha(f"2.6.1-T27b condicao nao satisfeita foi ACEITA: exit={codigo}")
+    falha(f"2.6.1-T27b condicao nao satisfeita nao produziu NAO_APLICAVEL: exit={codigo} saida={saida!r} erro={erro!r}")
 
 pb_t28 = copy.deepcopy(pb_oficial)
 for d in pb_t28["entregaveis"]:

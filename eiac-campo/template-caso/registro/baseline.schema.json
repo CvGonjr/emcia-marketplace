@@ -1,0 +1,43 @@
+{
+  "nome": "Linha de base",
+  "versao": "0.1.0",
+  "referencia": "EMCIA-MET-01 3.4.3, EMCIA-E2 Parte A.3",
+  "procedencia": ["D", "I", "V"],
+  "objetos": {
+    "linha_de_base": {
+      "id_pattern": "BL-[0-9]{3,}",
+      "required": [
+        "id", "indicador", "valor_atual", "apuracao", "data",
+        "nivel", "procedencia", "declarado_por", "registrado_por", "versao"
+      ],
+      "nonempty": [
+        "id", "indicador", "valor_atual", "apuracao", "data",
+        "nivel", "procedencia", "declarado_por", "registrado_por"
+      ],
+      "types": {
+        "id": "string",
+        "indicador": "string",
+        "valor_atual": "string",
+        "apuracao": "string",
+        "como_obtido": "string",
+        "data": "date",
+        "nivel": "string",
+        "procedencia": "string",
+        "declarado_por": "string",
+        "registrado_por": "string",
+        "versao": "integer"
+      },
+      "enums": {
+        "apuracao": ["estimado", "calculado", "medido"],
+        "nivel": ["N1", "N2", "N3"]
+      },
+      "patterns": {
+        "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      },
+      "conditional_nonempty": {
+        "I": ["premissa"],
+        "V": ["evidencia"]
+      }
+    }
+  }
+}

@@ -194,38 +194,77 @@ def _avaliar_condicao(condicao, st):
     return esperado in str(valor), None
 
 
-def emitir(st, pb, ent_id, autor):
+NAO_APLICAVEL = "NAO_APLICAVEL"
+
+
+def emitir(st, pb, ent_id, autor, materializar=None):
+    """Avalia o portao de um entregavel e, se autorizado, registra a emissao.
+
+    Devolve (None, None) quando autorizado, (NAO_APLICAVEL, motivo) quando a
+    condicao declarativa do entregavel nao se aplica a este caso (isso nao e
+    falha), ou (erro, None) quando negado. O nucleo nao sabe o que "E3-E" ou
+    "condicao agentica" significam -- so avalia etapas do portao, a condicao
+    declarativa {campo, etapa, operador, valor} e os registros estruturados
+    de inegociavel ja gravados por satisfazer_inegociavel().
+
+    ``materializar``, quando informado, e o caminho de um arquivo que o
+    chamador (eiac-campo) ja renderizou a partir do conteudo real do caso.
+    O nucleo nao sabe gerar esse conteudo -- so recusa registrar a emissao
+    se o arquivo nao existir ou estiver vazio, para que 'EntregavelEmitido'
+    nunca aponte para um documento que nao existe (2.6.5, D-12).
+    """
     ent = next((d for d in pb.get("entregaveis", []) if d["id"] == ent_id), None)
     if not ent:
-        return f"entregavel {ent_id} nao existe no playbook"
+        return f"entregavel {ent_id} nao existe no playbook", None
     if ent.get("portao_pendente"):
         return (f"{ent_id} tem portao pendente de decisao no playbook. "
-                f"Nao emita ate a pendencia ser resolvida.")
+                f"Nao emita ate a pendencia ser resolvida."), None
     faltando = [e for e in ent["portao"]
                 if not st["cumprimentos"].get(e, {}).get("cumprido")]
     if faltando:
-        return f"{ent_id} exige as etapas {faltando} encerradas"
+        return f"{ent_id} exige as etapas {faltando} encerradas", None
 
     condicao = ent.get("condicao")
     if isinstance(condicao, dict):
         satisfeita, erro = _avaliar_condicao(condicao, st)
         if erro:
-            return f"{ent_id}: {erro}"
+            return f"{ent_id}: {erro}", None
         if not satisfeita:
-            return (f"{ent_id} nao emite: condicao declarativa nao satisfeita "
-                    f"({condicao.get('descricao', condicao)})")
+            return None, (f"{ent_id} nao aplicavel a este caso: condicao "
+                          f"declarativa nao satisfeita "
+                          f"({condicao.get('descricao', condicao)})")
 
     for n in ent.get("inegociavel", []):
         item = next(i for i in pb["inegociaveis"] if i["n"] == n)
         registro = st.get("inegociaveis", {}).get(str(n))
         if not registro or not isinstance(registro, dict) or not registro.get("satisfeito"):
-            return f"{ent_id} bloqueado pelo item inegociavel {n}: {item['item']}"
+            return f"{ent_id} bloqueado pelo item inegociavel {n}: {item['item']}", None
         if not (registro.get("evidencia") or "").strip() or not registro.get("autor"):
             return (f"{ent_id} bloqueado: registro do inegociavel {n} "
-                    f"nao possui evidencia/autor rastreaveis")
+                    f"nao possui evidencia/autor rastreaveis"), None
 
-    E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor)
-    return None
+    arquivo, versao = None, None
+    if materializar is not None:
+        caminho = pathlib.Path(materializar)
+        if not caminho.exists():
+            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
+                    f"nao existe. Emissao sem artefato real nao e emissao "
+                    f"conforme (2.6.5, D-12)."), None
+        conteudo = caminho.read_text(encoding="utf-8")
+        if not conteudo.strip():
+            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
+                    f"esta vazia."), None
+        arquivo = str(caminho)
+        registro_emissao = st.setdefault("entregaveis_emitidos", {})
+        anterior = registro_emissao.get(ent_id)
+        versao = (anterior.get("versao") + 1) if anterior else 1
+        registro_emissao[ent_id] = {
+            "arquivo": arquivo, "versao": versao, "autor": autor,
+        }
+
+    E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor,
+             arquivo=arquivo, versao=versao)
+    return None, None
 
 
 def main():
@@ -240,6 +279,8 @@ def main():
     ap.add_argument("--cadencia", default="")
     ap.add_argument("--responsavel", default="")
     ap.add_argument("--evidencia", default="")
+    ap.add_argument("--materializar", default=None,
+                     help="caminho do artefato real ja renderizado pelo chamador")
     a = ap.parse_args()
 
     st = E.ler()
@@ -267,7 +308,13 @@ def main():
         err = encerrar(st, pb, a.encerrar, a.autor)
     elif a.emitir:
         acao, alvo = "emitir", a.emitir
-        err = emitir(st, pb, a.emitir, a.autor)
+        err, nao_aplicavel = emitir(st, pb, a.emitir, a.autor,
+                                     materializar=a.materializar)
+        if nao_aplicavel:
+            E.evento("EntregavelNaoAplicavel", entregavel=a.emitir, motivo=nao_aplicavel,
+                     autor=a.autor)
+            print(f"NAO_APLICAVEL | {nao_aplicavel}")
+            sys.exit(0)
     else:
         print("nada a fazer", file=sys.stderr); sys.exit(1)
 

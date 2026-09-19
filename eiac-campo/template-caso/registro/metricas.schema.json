@@ -22,6 +22,7 @@
         "id": "string",
         "estado": "string",
         "piloto_ref": "string",
+        "baseline_ref": "string",
         "metrica": "string",
         "tipo": "string",
         "linha_base": "string",
