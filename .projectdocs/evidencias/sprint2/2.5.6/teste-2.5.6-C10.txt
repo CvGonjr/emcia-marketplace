@@ -1,0 +1,28 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C10
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: P2 -> CTX
+DATA/HORA: 2026-09-18T22:04:31-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-200.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+candidato em rascunho/ nao e contexto por si so; curado, materializa objeto CTX valido
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+--- comando 1 ---
+termo curado: contexto/termos/T-200.yaml
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T22:04:31", "tipo_objeto": "termo", "arquivo": "contexto/termos/T-200.yaml", "id": "T-200", "procedencia": "I", "versao": null, "registrado_por": "Rafael Nogueira", "versao_anterior": null}
+
+RESULTADO FINAL: PASS

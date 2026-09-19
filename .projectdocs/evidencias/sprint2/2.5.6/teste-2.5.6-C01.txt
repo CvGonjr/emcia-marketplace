@@ -1,0 +1,53 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C01
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: D/I/V integrados
+DATA/HORA: 2026-09-18T22:04:30-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-101.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-102.yaml --registrado-por Rafael Nogueira
+[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-102.yaml --registrado-por Rafael Nogueira
+[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-103.yaml --registrado-por Rafael Nogueira
+[5] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-103.yaml --registrado-por Rafael Nogueira
+[6] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo termo --arquivo contexto/termos/T-104.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 1
+[3] 0
+[4] 1
+[5] 0
+[6] 1
+
+RESULTADO ESPERADO:
+D aceita; I sem premissa recusa; I com premissa aceita; V sem evidencia recusa; V com evidencia aceita; X fora do contrato recusa
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+--- comando 1 ---
+termo curado: contexto/termos/T-101.yaml
+--- comando 2 ---
+--- comando 3 ---
+termo curado: contexto/termos/T-102.yaml
+--- comando 4 ---
+--- comando 5 ---
+termo curado: contexto/termos/T-103.yaml
+--- comando 6 ---
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+procedencia I exige campo preenchido: premissa
+--- comando 3 ---
+--- comando 4 ---
+procedencia V exige campo preenchido: evidencia
+--- comando 5 ---
+--- comando 6 ---
+procedencia invalida: esperado um de ['D', 'I', 'V']
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T22:04:30", "tipo_objeto": "termo", "arquivo": "contexto/termos/T-104.yaml", "erros": ["procedencia invalida: esperado um de ['D', 'I', 'V']"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

@@ -1,0 +1,30 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C14
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: nao reinterpretacao
+DATA/HORA: 2026-09-18T22:04:31-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/consultar.py --id RN-100 --campo frequencia
+EXIT CODE:
+[1] 0
+
+RESULTADO ESPERADO:
+quadro.py le r.get(...) direto do YAML; consultar.py retorna o valor literal curado (rotineira), sem chamada a modelo de linguagem em nenhum dos dois scripts
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+--- comando 1 ---
+{
+  "frequencia": "rotineira"
+}
+
+STDERR:
+--- comando 1 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T22:04:31", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-115.yaml", "id": "RN-115", "procedencia": "V", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

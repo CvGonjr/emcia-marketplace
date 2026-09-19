@@ -1,0 +1,27 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C16
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: percurso integrado da camada
+DATA/HORA: 2026-09-18T22:04:31-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+(nenhum comando)
+EXIT CODE:
+(n/a)
+
+RESULTADO ESPERADO:
+caso CTX-TEST-2.5.6-001: T-100, E-100, F-100 curados (P2); RN-100 levantada I (P3b) e confrontada para V versao 3 com DIV-100 (P3d); consumida por quadro.py (P4) e consultar.py (P5)
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+(vazio)
+
+STDERR:
+(vazio)
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T22:04:31", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-778.yaml", "erros": ["CTX-V05: referencia 'T-999888' em 'entradas' nao resolve — contexto/termos/T-999888.yaml nao existe"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

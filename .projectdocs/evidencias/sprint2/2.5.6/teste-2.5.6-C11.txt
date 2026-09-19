@@ -1,0 +1,38 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C11
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: P3 -> CTX (P3b e P3d)
+DATA/HORA: 2026-09-18T22:04:31-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-115.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo divergencia --arquivo contexto/divergencias/DIV-115.yaml --registrado-por Rafael Nogueira --schema registro/p3d.schema.json
+[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-115.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 0
+[2] 0
+[3] 0
+
+RESULTADO ESPERADO:
+regra levantada em P3b (I) curada; confronto P3d atualiza para V preservando historico
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+--- comando 1 ---
+regra curado: contexto/regras/RN-115.yaml
+--- comando 2 ---
+divergencia curado: contexto/divergencias/DIV-115.yaml
+--- comando 3 ---
+regra curado: contexto/regras/RN-115.yaml
+
+STDERR:
+--- comando 1 ---
+--- comando 2 ---
+--- comando 3 ---
+
+EVENTOS:
+{"evento": "ObjetoContextoCurado", "data": "2026-09-18T22:04:31", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-115.yaml", "id": "RN-115", "procedencia": "V", "versao": 2, "registrado_por": "Rafael Nogueira", "versao_anterior": 1}
+
+RESULTADO FINAL: PASS

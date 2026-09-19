@@ -1,0 +1,63 @@
+PACOTE: 2.5.6
+TESTE: 2.5.6-C08
+CASO DE CONTROLE: CTX-TEST-2.5.6-001
+REQUISITO: CTX-V01-CTX-V11 (reexecucao)
+DATA/HORA: 2026-09-18T22:04:31-03:00
+HEAD INICIAL: 96d1886580b6a638ed3deff24d5328ca5ad964d1
+COMANDO:
+[1] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-103.yaml --registrado-por Rafael Nogueira
+[2] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-104.yaml --registrado-por Rafael Nogueira
+[3] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-105.yaml --registrado-por Rafael Nogueira
+[4] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-106.yaml --registrado-por Rafael Nogueira
+[5] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-107.yaml --registrado-por Rafael Nogueira
+[6] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-108.yaml --registrado-por Rafael Nogueira
+[7] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-109.yaml --registrado-por Rafael Nogueira
+[8] python3 /home/netiv-ai/Projetos/AI/PLUGINS/emcia-marketplace/eiac-nucleo/scripts/curar.py --tipo regra --arquivo contexto/regras/RN-110.yaml --registrado-por Rafael Nogueira
+EXIT CODE:
+[1] 1
+[2] 1
+[3] 1
+[4] 1
+[5] 1
+[6] 1
+[7] 1
+[8] 1
+
+RESULTADO ESPERADO:
+8 cenarios de violacao (V01, V02, V03, V05, V06, V07, V09, V11) todos recusados neste caso novo
+
+RESULTADO OBTIDO:
+ver STDOUT/STDERR
+
+STDOUT:
+--- comando 1 ---
+--- comando 2 ---
+--- comando 3 ---
+--- comando 4 ---
+--- comando 5 ---
+--- comando 6 ---
+--- comando 7 ---
+--- comando 8 ---
+
+STDERR:
+--- comando 1 ---
+campo obrigatorio ausente: estabilidade
+--- comando 2 ---
+procedencia I exige campo preenchido: premissa
+--- comando 3 ---
+procedencia V exige campo preenchido: evidencia
+--- comando 4 ---
+CTX-V05: referencia 'T-999999' em 'entradas' nao resolve — contexto/termos/T-999999.yaml nao existe
+--- comando 5 ---
+CTX-V06: referencia 'E-999999' em 'entradas' nao resolve — contexto/entidades/E-999999.yaml nao existe
+--- comando 6 ---
+CTX-V07: referencia 'F-999999' em 'entradas' nao resolve — contexto/fontes/F-999999.yaml nao existe
+--- comando 7 ---
+CTX-V09: autoria_conteudo nao pode ser agente: 'AG-02'
+--- comando 8 ---
+CTX-V11: referencia_p3d 'DIV-999999' nao resolve para registro existente em contexto/divergencias/
+
+EVENTOS:
+{"evento": "CuradoriaRecusada", "data": "2026-09-18T22:04:31", "tipo_objeto": "regra", "arquivo": "contexto/regras/RN-110.yaml", "erros": ["CTX-V11: referencia_p3d 'DIV-999999' nao resolve para registro existente em contexto/divergencias/"], "registrado_por": "Rafael Nogueira"}
+
+RESULTADO FINAL: PASS

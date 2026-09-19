@@ -1,0 +1,96 @@
+--- /tmp/claude-1000/-home-netiv-ai-Projetos-AI-PLUGINS-emcia-marketplace/fe141b79-971a-42ab-a29f-19c18bcc9d14/scratchpad/rte01-before-2.5.6.md	2026-09-18 22:08:35.503041630 -0300
++++ "/home/netiv-ai/Documentos/MBA/Projeto Final/artefatos/solucao/metodo S1/docs md/EMCIA-RTE-01-registro-tecnico-de-evidencias-da-implementacao.md"	2026-09-18 22:09:46.092441138 -0300
+@@ -2,11 +2,11 @@
+ 
+ *Rastreabilidade entre baseline, requisito, teste, defeito, correção e reteste da Sprint 2*
+ 
+-> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0 a 2.5.5, com evidências contemporâneas no 2.5.1 ao 2.5.5.
++> Atualizado em: 18/09/2026 — registro efetivo dos pacotes 2.5.0 a 2.5.6. Ação 2.5 (Camada de Contexto e Dados) encerrada CONFORME.
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-RTE-01 | **Versão** | 0.7 |
++| **Código** | EMCIA-RTE-01 | **Versão** | 0.8 |
+ | **Data** | 18/09/2026 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Sprint 2 | **Passo** | Ações 2.5–2.6 |
+@@ -248,7 +248,7 @@
+ | **2.5.3** | Contexto e Dados | Classificação de confronto e `referencia_p3d`. | Concluído |
+ | **2.5.4** | Contexto e Dados | Implementar CTX-V01–V11 e referências. | Concluído |
+ | **2.5.5** | Contexto e Dados | Integrar P2/P3 → CTX → P4/P5 e eventos. | Concluído |
+-| **2.5.6** | Contexto e Dados | Verificação consolidada da camada. | Não iniciado |
++| **2.5.6** | Contexto e Dados | Verificação consolidada da camada. | Concluído |
+ | **2.6.0** | Agentes e Protocolos | Congelar contrato executável F0–P10. | Não iniciado |
+ | **2.6.1** | Agentes e Protocolos | Fortalecer núcleo, máquina de estados, guardas e eventos. | Não iniciado |
+ | **2.6.2** | Agentes e Protocolos | Implementar P6/P7 e decisão humana de autonomia. | Não iniciado |
+@@ -408,6 +408,65 @@
+ nem qualquer item da ação 2.6 (contrato F0–P10, P6–P10, 18 HB, 4 AG,
+ portões E4/E5, geração de entregáveis).
+ 
++#### 3.10.7 Pacote 2.5.6 — verificação consolidada (encerramento da Ação 2.5)
++
++| Campo | Registro |
++|---|---|
++| **Pacote** | `2.5.6` |
++| **Ação** | `2.5 — Camada de Contexto e Dados` |
++| **Tipo** | Verificação consolidada — não introduz capacidade metodológica nova |
++| **Objetivo** | Verificar de forma integrada e regressiva a camada implementada em 2.5.0–2.5.5. |
++| **Baseline** | S2-BL |
++| **Estado inicial** | `HEAD_INICIAL_2.5.6 = 96d1886580b6a638ed3deff24d5328ca5ad964d1`, working tree limpa. Todos os seis commits registrados nos pacotes anteriores (`acf35f9`, `9217925`, `c9df31f`, `323d153`, `e3d0bea`, `8420451`) confirmados presentes em `git log`, na ordem correta. Suíte geral no início: 113/113 PASS. |
++| **Caso de controle** | `CTX-TEST-2.5.6-001` — ver `.projectdocs/evidencias/sprint2/2.5.6/caso-controle.md`. Construído do zero, sem reaproveitar estado residual; uma Regra central atravessa `D` → tentativa de sobrescrita recusada → `V` (v2) → `V` (v3, divergente, referenciando P3d), junto com reexecução de 8 das 11 CTX-V, referências a Termo/Entidade/Fonte, e o percurso P2→CTX→P3→P4→P5 completo. |
++| **Testes** | `2.5.6-C01` a `2.5.6-C16`, todos PASS. |
++| **Defeitos** | Nenhum em código de produção. Dois problemas identificados e corrigidos nas próprias fixtures do teste novo (`testes/consolidado.py`) antes da execução registrada como evidência — não afetam `eiac-nucleo/` nem `eiac-campo/`. |
++| **Correções** | Nenhuma correção funcional necessária. |
++| **Reteste** | 129/129 verificações aprovadas, 0 falhas, 0 skips: 113 da suíte anterior (sem regressão) + 16 novas de `consolidado.py`. |
++| **Evidência** | `.projectdocs/evidencias/sprint2/2.5.6/resultado.md` |
++| **Matriz** | `.projectdocs/evidencias/sprint2/2.5.6/matriz-consolidada.md` |
++| **Caso** | `.projectdocs/evidencias/sprint2/2.5.6/caso-controle.md` |
++| **Commit** | `fc5fd2f` — `test(context): verify Sprint 2 context and data layer` |
++| **Estado final da Ação 2.5** | **CONFORME** |
++
++**Indicadores finais da Ação 2.5:** Procedência D/I/V **CONFORME** ·
++Objetos CTX **4/4** · CTX-V **11/11** · Curadoria protegida **SIM** ·
++I→V versionado **SIM** · P3d rastreável **SIM** · P2/P3→CTX
++**IMPLEMENTADO** · CTX→P4 **IMPLEMENTADO** · CTX→P5 **IMPLEMENTADO** ·
++Eventos de recusa **CONFORME**.
++
++**Comparação S2-BL → final da Ação 2.5:**
++
++| Indicador | S2-BL | Final Ação 2.5 |
++|---|---|---|
++| D/I/V | divergente | conforme, contrato único |
++| Objetos CTX conformes | 0/4 plenamente alinhados | 4/4 |
++| `autoria_conteudo` × `registrado_por` | ausente | conforme (CTX-V09) |
++| Histórico I→V imposto | parcial | conforme (CTX-V04/V10) |
++| `referencia_p3d` | ausente | conforme, resolvível (CTX-V11) |
++| CTX-V | 0/11 | 11/11 |
++| P2/P3 → CTX | parcial | implementado |
++| CTX → P4/P5 | parcial | implementado |
++| Eventos CTX | ausente | conforme |
++
++**Situação dos defeitos do baseline relativos à Ação 2.5:**
++
++| ID | Síntese | Pacote | Estado |
++|---|---|---|---|
++| D-01 | Procedência multidimensional antiga | 2.5.0 | RESOLVIDO |
++| D-02 | Quatro objetos CTX no schema anterior | 2.5.1 | RESOLVIDO |
++| D-03 | Curadoria e versionamento não impostos | 2.5.2 | RESOLVIDO |
++| D-04 | P3d sem `referencia_p3d` | 2.5.3 | RESOLVIDO |
++| D-05 | CTX-V01–V11 ausentes | 2.5.4 | RESOLVIDO |
++| D-06 | P2/P3 não alimentam e P4/P5 não consomem CTX | 2.5.5 | RESOLVIDO |
++
++Nenhum defeito foi apagado do histórico — cada um mantém sua entrada em
++§3.11, com a resolução registrada aqui como evidência adicional.
++
++**Este pacote não iniciou nenhum item da ação 2.6** (contrato executável
++F0–P10, P6–P10, 18 HB, 4 AG, portões restantes, E4/E5). Aguarda revisão
++humana e aprovação formal antes de 2.6.0.
++
+ ### 3.11 Dívidas registradas no baseline
+ 
+ | ID | Tipo | Síntese | Pacote previsto |
+@@ -481,3 +540,4 @@
+ | 0.5 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.3: taxonomia oficial de confronto (EMCIA-ROT-01 3.9), registro estruturado `contexto/divergencias/` para P3d, resolução mínima de `referencia_p3d` (CTX-V11 mínimo), versionamento estendido a mudança de `classificacao_confronto`, cobertura T01–T13, regressão acumulada 61→73. | — |
+ | 0.6 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.4: formalização das onze CTX-V01–CTX-V11 (oito já implementadas, três novas — resolução de referência a Termo/Entidade/Fonte), indicador CTX-V 0/11→11/11, cobertura de 23 verificações, regressão acumulada 73→96. | — |
+ | 0.7 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.5: P2/P3 alimentando contexto real (não só prosa), P4 instruído a consumir `quadro.py`, novo `consultar.py` para P5 com distinção D/I/V preservada, correção de defeito real em `quadro.py` (campos legitimamente vazios tratados como ausentes), indicadores P2/P3→CTX e CTX→P4/P5 todos IMPLEMENTADO, cobertura de 17 verificações, regressão acumulada 96→113. | — |
++| 0.8 | 18/09/2026 | Celso do Vale | Registro efetivo do pacote 2.5.6: verificação consolidada da Ação 2.5 com caso de controle único (`CTX-TEST-2.5.6-001`), reexecução de 8/11 CTX-V sobre objetos novos, percurso integrado P2→CTX→P3→P4→P5 com objeto rastreável do início ao fim, nenhum defeito de produção encontrado, cobertura de 16 verificações, regressão acumulada 113→129. **Ação 2.5 encerrada CONFORME**; D-01 a D-06 todos RESOLVIDOS. | — |

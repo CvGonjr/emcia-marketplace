@@ -1,0 +1,45 @@
+{
+  "T-100": true,
+  "E-100": true,
+  "F-100": true,
+  "RN-100": {
+    "id": "RN-100",
+    "enunciado": "quando a autorizacao do convenio chega, a guia e enviada no mesmo dia",
+    "gatilho": "recebimento_da_autorizacao",
+    "procedencia": "V",
+    "autoria_conteudo": "Claudia Ferreira",
+    "registrado_por": "Rafael Nogueira",
+    "data": "2026-09-18",
+    "origem_do_conhecimento": "experiencia_propria",
+    "premissa": "",
+    "evidencia": {
+      "tipo": "observacao",
+      "referencia": "sessao-P3b-2.5.6"
+    },
+    "classificacao_confronto": {
+      "classe": "divergente",
+      "referencia_p3d": "DIV-100"
+    },
+    "documento_de_origem": null,
+    "determinismo": "admite_julgamento",
+    "frequencia": "rotineira",
+    "consequencia_do_erro": "alta",
+    "decisor_quando_nao_cobre": "Claudia Ferreira",
+    "entradas": [
+      "T-100",
+      "E-100",
+      "F-100"
+    ],
+    "excecoes_conhecidas": [],
+    "estabilidade": "muda quando o convenio revisa o contrato",
+    "versao": 3,
+    "historico": [
+      {
+        "versao": 2,
+        "data": "2026-09-18",
+        "procedencia": "V",
+        "registrado_por": "Rafael Nogueira"
+      }
+    ]
+  }
+}
