@@ -38,7 +38,14 @@ Os 17 testes de integração P2/P3 → CTX → P4/P5 rodam separadamente:
 python3 testes/integracao.py
 ```
 
-O total acumulado é de 113 verificações.
+As 16 verificações consolidadas da Ação 2.5 (caso de controle único,
+percurso ponta a ponta) rodam separadamente:
+
+```bash
+python3 testes/consolidado.py
+```
+
+O total acumulado é de 129 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
@@ -205,6 +212,34 @@ mesmo quando o schema já os considera válidos sem conteúdo (`required` sem
 `nonempty`) — o mesmo tratamento que o script já dava a
 `decisor_quando_nao_cobre`. Corrigido para usar a mesma semântica de
 presença do schema, em vez de uma regra própria e mais restritiva.
+
+## Verificação consolidada da Ação 2.5 — pacote 2.5.6
+
+| ID | Prova |
+|---|---|
+| 2.5.6-C01 | D/I/V integrados: D aceita, I sem/com premissa, V sem/com evidência, X recusado |
+| 2.5.6-C02 | Termo, Entidade, Regra e Fonte válidos aceitos; Termo inválido recusado |
+| 2.5.6-C03 | `autoria_conteudo` ≠ `registrado_por` aceito; agente como autor recusado |
+| 2.5.6-C04 | `rascunho/` isolado não é contexto; curado, materializa objeto |
+| 2.5.6-C05 | Escrita direta em `contexto/` negada; curadoria autorizada aceita |
+| 2.5.6-C06 | Sobrescrita de versão recusada; nova versão com histórico aceita |
+| 2.5.6-C07 | P3d referenciado sem duplicar `documento_diz`/`observado`/`justificativa` |
+| 2.5.6-C08 | 8 cenários de violação CTX-V (V01,V02,V03,V05,V06,V07,V09,V11) recusados neste caso novo |
+| 2.5.6-C09 | Referência válida a Termo/Entidade/Fonte aceita; cada tipo inexistente recusado |
+| 2.5.6-C10 | P2 → CTX: candidato em `rascunho/` não é contexto; curado, materializa |
+| 2.5.6-C11 | P3 → CTX: Regra levantada (I) e confrontada (V) preservando histórico |
+| 2.5.6-C12 | CTX → P4: `quadro.py` consome `contexto/regras/` do caso de controle |
+| 2.5.6-C13 | CTX → P5: `consultar.py` retorna sete campos centrais e `procedencia` |
+| 2.5.6-C14 | Não reinterpretação: valor lido literal do YAML, sem chamada a LLM |
+| 2.5.6-C15 | Eventos: violação D/I/V, agente como autor, bypass e referência quebrada geram trilha |
+| 2.5.6-C16 | Percurso integrado: T-100/E-100/F-100/RN-100/DIV-100, do P2 ao P5, um único objeto rastreável |
+
+Diferença em relação às suítes anteriores: `testes/consolidado.py`
+constrói **um caso de controle único** (`CTX-TEST-2.5.6-001`) e faz a
+Regra central (`RN-100`) atravessar D → tentativa de sobrescrita
+recusada → V (v2) → V (v3, divergente, referenciando P3d) dentro do
+mesmo teste, em vez de objetos isolados por cenário — é a prova de que a
+camada funciona como sistema, não como travas independentes.
 
 ## Deslocamento da fronteira por nível
 
