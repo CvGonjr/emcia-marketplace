@@ -1,0 +1,42 @@
+== testes 2.6.2 -- P6 e P7
+  ok    2.6.2-T01 P6 com entradas validas: PASS
+  ok    2.6.2-T02 P6 sem campo obrigatorio (responsavel_operacional) recusado (campo obrigatorio ausente: responsavel_operacional)
+  ok    2.6.2-T03 P6 nao reexecuta P4/P5 (operacional.py nao invoca outros scripts)
+  ok    2.6.2-T04 P6 gera desenho operacional estruturado com os campos exigidos
+  ok    2.6.2-T05 saida de P6 marcada 'proposta', sem validado_por (nao confundida com aprovacao)
+  ok    2.6.2-T06 P6 produz especificacao (schema so com string/integer/list), nao aciona deployment
+  ok    2.6.2-T07 P7 recebe P6 validado: PASS
+  ok    2.6.2-T08 P7 sem P6 (operacional_ref nao resolve) recusado (operacional_ref 'OP-001' nao resolve — registro/operacional/OP-001.yaml nao existe)
+  ok    2.6.2-T09 agente prepara minuta (rascunho -> proposto): PASS
+  ok    2.6.2-T10 agente tenta decidir autonomia: RECUSA (decisor nao pode ser agente: 'AG-03')
+  ok    2.6.2-T10b tentativa de agente decidir gera evento TermoAutonomiaRecusado
+  ok    2.6.2-T11 humano autorizado decide autonomia: PASS + trilha
+  ok    2.6.2-T11b evento AutonomiaDecidida presente
+  ok    2.6.2-T12 decisao sem pessoa nominal ('equipe') recusada (decisao de autonomia exige pessoa nomeada; 'equipe' nao satisfaz (agente, vazio ou coletivo generico nao substitui pessoa).)
+  ok    2.6.2-T13 decisao com pessoa nominal aceita
+  ok    2.6.2-T14 decisao sem justificativa recusada (estado 'decidido' exige ['justificativa_decisao'] preenchidos)
+  ok    2.6.2-T15 decisao completa (com justificativa) aceita
+  ok    2.6.2-T16 termo possui estrutura minima (tres listas + gatilhos + escopo)
+  ok    2.6.2-T17 agente nao aparece como autor da decisao final (decisor: 'Marina Prado')
+  ok    2.6.2-T18 escrita direta em registro/governanca/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.2-T19 alteracao pelo caminho autorizado (governanca.py via Bash) funcional
+  ok    2.6.2-T20 acao classificada como autonoma (estado decidido) so apos decisao humana registrada
+  ok    2.6.2-T21 minuta nao equivale a autorizacao (T09 aceita preparo, T10 recusa decisao pelo agente)
+  ok    2.6.2-T22 acao proibida (nunca_faz) permanece registrada e distinta de faz_sozinha
+  ok    2.6.2-T23 gatilho de escalonamento preservado no termo gravado
+  ok    2.6.2-T24 excecao e fallback presentes na especificacao operacional
+  ok    2.6.2-T25 P7 sem termo decidido: E4 nao emite (E4 exige as etapas ['P7'] encerradas)
+  ok    2.6.2-T26 termo decidido por humano: artefato/evidencia disponivel para o inegociavel 2
+  ok    2.6.2-T27 nota: mero booleano nao e o padrao de evidencia deste pacote (2.6.1-T19 ja recusa evidencia vazia; este pacote sempre referencia arquivo AUT-*/OP-* real como evidencia, nunca um literal solto)
+  ok    2.6.2-T28 tentativa de agente decidir autonomia gera evento (reafirma T10b, caso3)
+  ok    2.6.2-T29 decisao invalida (sem justificativa) gera evento
+  ok    2.6.2-T30 decisao valida deixa trilha (AutonomiaDecidida)
+  ok    2.6.2-T31 ausencia de hard-code comportamental no nucleo (1 ocorrencia(s) nao-comportamental(is): [('avancar.py', 147, 'baseline, termo de autonomia etc.) — isso e decisao humana/metodologica')])
+  2.6.2-T32/T33: ver teste-regressao-final.txt (suites completas de 2.5 e 2.6.1 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.2-T32 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.2-T33 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.2-G1a EX3 (P5) sem sessao: skill bloqueada (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.2-G1b EX3 (P5) com sessao valida da mesma etapa: skill carrega
+  ok    2.6.2-G1c sessao de OUTRA etapa nao libera EX3 corrente (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+
+38 verificacoes do pacote 2.6.2, 0 falhas

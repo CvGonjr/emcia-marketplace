@@ -1,0 +1,22 @@
+{"evento": "NivelApurado", "data": "2026-09-19T00:17:27", "nivel": "N1", "anterior": null, "autor": "Celso do Vale", "eixos": "DAD 3, GOV 3, CRI 3"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "F0", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P1", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P2", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P3a", "autor": "Celso do Vale"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T00:17:27", "etapa": "P3b", "autor": "Celso do Vale", "participantes": "Claudia Ferreira, Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P3b", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P3d", "autor": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P4", "autor": "Celso do Vale"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T00:17:27", "etapa": "P5", "autor": "Celso do Vale", "participantes": "Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:27", "etapa": "P5", "autor": "Celso do Vale"}
+{"evento": "EspecificacaoOperacionalRegistrada", "data": "2026-09-19T00:17:43", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "proposta", "versao": 1, "ator": "AG-02", "validado_por": null}
+{"evento": "EspecificacaoOperacionalValidada", "data": "2026-09-19T00:17:43", "arquivo": "registro/operacional/OP-001.yaml", "id": "OP-001", "estado": "validado", "versao": 2, "ator": "Rafael Nogueira", "validado_por": "Rafael Nogueira"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:17:43", "etapa": "P6", "autor": "Celso do Vale"}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T00:18:00", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "rascunho", "versao": 1, "ator": "AG-03", "decisor": null}
+{"evento": "TermoAutonomiaRegistrado", "data": "2026-09-19T00:18:00", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "proposto", "versao": 2, "ator": "AG-03", "decisor": null}
+{"evento": "TermoAutonomiaRecusado", "data": "2026-09-19T00:18:00", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "erros": ["decisor nao pode ser agente: 'AG-03'", "agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1)."], "ator": "AG-03", "estado_tentado": "decidido"}
+{"evento": "AutonomiaDecidida", "data": "2026-09-19T00:18:14", "arquivo": "registro/governanca/autonomia/AUT-001.yaml", "id": "AUT-001", "estado": "decidido", "versao": 3, "ator": "Marina Prado", "decisor": "Marina Prado"}
+{"evento": "SessaoDeCampoRegistrada", "data": "2026-09-19T00:18:14", "etapa": "P7", "autor": "Celso do Vale", "participantes": "Marina Prado, Celso do Vale"}
+{"evento": "EtapaEncerrada", "data": "2026-09-19T00:18:14", "etapa": "P7", "autor": "Celso do Vale"}
+{"evento": "InegociavelSatisfeito", "data": "2026-09-19T00:18:14", "n": "2", "item": "Termo de autonomia escrito", "autor": "Marina Prado", "evidencia": "registro/governanca/autonomia/AUT-001.yaml (estado: decidido, versao: 3, decisor: Marina Prado, data_decisao: 2026-09-19)"}
+{"evento": "EntregavelEmitido", "data": "2026-09-19T00:18:14", "entregavel": "E4", "autor": "Celso do Vale"}

@@ -1,0 +1,30 @@
+PACOTE: 2.6.2
+TESTE: 2.6.2-T04
+REQUISITO: P6 gera desenho operacional estruturado
+DATA/HORA: 2026-09-19 00:20:17 -0300
+HEAD INICIAL: 3f7fb2a1926619a27ba009e0fc07637ecaf18b74
+COMANDO: python3 testes/campo_2_6_2.py
+
+PRECONDICAO: caso temporario isolado (tempfile.mkdtemp), copia de
+eiac-campo/template-caso. Objetos OP-*/AUT-* gerados via helpers op_yaml/
+aut_yaml (versao/estado sempre consistentes).
+
+ATOR:
+tipo: ver linha do resultado (agente AG-0x ou pessoa nomeada)
+id: ver linha do resultado
+
+ENTRADA: ver corpo do script testes/campo_2_6_2.py, bloco correspondente
+a este ID.
+
+RESULTADO ESPERADO: ver requisito acima.
+
+RESULTADO OBTIDO (linha da suite):
+  ok    2.6.2-T04 P6 gera desenho operacional estruturado com os campos exigidos
+
+ARTEFATO GERADO: quando aplicavel, registro/operacional/OP-001.yaml ou
+registro/governanca/autonomia/AUT-001.yaml do caso temporario.
+
+EVENTO: quando aplicavel, verificado via leitura de registro/eventos.jsonl
+do caso temporario.
+
+RESULTADO FINAL: PASS

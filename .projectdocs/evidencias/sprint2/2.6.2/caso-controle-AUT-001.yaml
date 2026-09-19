@@ -1,0 +1,23 @@
+id: AUT-001
+estado: decidido
+operacional_ref: OP-001
+escopo: envio automatico de guia de autorizacao apos recebimento, conforme OP-001
+faz_sozinha:
+  - "consultar status da guia no sistema do convenio"
+  - "enviar guia ao faturamento quando dentro do limite de valor"
+exige_aprovacao:
+  - "emitir guia com valor acima de R$ 5.000"
+nunca_faz:
+  - "alterar dados cadastrais do beneficiario"
+  - "aprovar excecao regulatoria sem revisao humana"
+gatilhos_escalonamento:
+  - "guia sem correspondencia na camada de contexto (RN-100)"
+  - "valor acima de R$ 5.000"
+procedencia: D
+declarado_por: Claudia Ferreira
+registrado_por: Celso do Vale
+data: "2026-09-19"
+versao: 3
+decisor: Marina Prado
+data_decisao: "2026-09-19"
+justificativa_decisao: "termo revisado com a area juridica e com Claudia Ferreira; autonomia liberada para o escopo descrito em OP-001, respeitando o limite de valor e os gatilhos de escalonamento"

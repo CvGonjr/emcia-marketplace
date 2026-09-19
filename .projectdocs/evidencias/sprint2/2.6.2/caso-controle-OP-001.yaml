@@ -1,0 +1,18 @@
+id: OP-001
+estado: validado
+ponto_insercao: recebimento da autorizacao do convenio no sistema de gestao de guias
+momento: imediatamente apos confirmacao da autorizacao pelo convenio
+sistema: sistema de gestao de guias, modulo de faturamento
+entrada: numero da guia, status de autorizacao e valor
+saida: guia enviada ao setor de faturamento, pronta para emissao
+ator_humano: Claudia Ferreira, analista de faturamento
+excecao: guia sem correspondencia na camada de contexto (RN-100) ou valor acima de R$ 5.000
+fallback: encaminhar para fila manual de Claudia Ferreira, com motivo registrado
+responsavel_operacional: Claudia Ferreira
+procedencia: D
+declarado_por: Claudia Ferreira
+registrado_por: Celso do Vale
+data: "2026-09-19"
+versao: 2
+validado_por: Rafael Nogueira
+data_validacao: "2026-09-19"

@@ -1,0 +1,71 @@
+{
+  "caso": "ALTERE-ME",
+  "nivel": "N1",
+  "etapa_atual": "P8",
+  "camada_atual": "EX3",
+  "modalidade_atual": "conforme_nivel",
+  "cumprimentos": {
+    "F0": {
+      "eixos": "DAD 3, GOV 3, CRI 3",
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P1": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P2": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3a": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3b": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Claudia Ferreira, Celso do Vale"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P3d": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P4": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P5": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Celso do Vale"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P6": {
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    },
+    "P7": {
+      "sessao": {
+        "autor": "Celso do Vale",
+        "participantes": "Marina Prado, Celso do Vale"
+      },
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    }
+  },
+  "inegociaveis": {
+    "2": {
+      "satisfeito": true,
+      "evidencia": "registro/governanca/autonomia/AUT-001.yaml (estado: decidido, versao: 3, decisor: Marina Prado, data_decisao: 2026-09-19)",
+      "autor": "Marina Prado",
+      "data": "2026-09-19T00:18:14"
+    }
+  },
+  "selo": null
+}
