@@ -22,3 +22,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 014 | Execução de contraste roda fora do caso de campo, em repositório e plugin próprios, antes do F0 | firme |
 | 015 | Isolamento, esforço comparável e cálculo compartilhado | firme |
 | 016 | O contraste substitui a identidade de runtime do núcleo | firme |
+| 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | firme |

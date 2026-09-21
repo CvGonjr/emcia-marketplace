@@ -1,0 +1,23 @@
+{
+  "versao": 1,
+  "origem_controlada": "artefatos/solucao/metodo S1/docs md",
+  "empacotado_em": "2026-09-21",
+  "documentos": {
+    "EMCIA-CAM-01-protocolo-de-campo-por-passo.md": "e267faafda2091d0312241dd4f206e840bf4942058815d65e22c91623cbecd5b",
+    "EMCIA-CAT-01-fronteira-de-delegacao.md": "91847fb8d23d4962e4db7ef65a817c425ac18cefebf6847b200979d9b4e9a3db",
+    "EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md": "9353393b6946a906f08b32108d1eef25d1b4d81c96720b0ffeafcbb7fe6c5dce",
+    "EMCIA-E1-ficha-de-enquadramento.md": "ca3160c76bdcd20a9288a5459df3ad64570a07dbdf8d57c21173a7225858d1f2",
+    "EMCIA-E2-diagnostico-e-oportunidade.md": "db72e34d2937765b535b1fc565180ae37ede42eb01af1a81199f340f41891fe0",
+    "EMCIA-E3-blueprint-da-solucao.md": "312304c5b9e63915ccf1b7180298e916124ee9f851754120ba9fd2a77ccfeb21",
+    "EMCIA-E4-guia-operacional.md": "4cd5dfcb5523a01c910056d6b0ed197285b9e752a0290b49149326d2a93f9c52",
+    "EMCIA-E5-relatorio-de-piloto.md": "1a9fcfbbc3936ea2de45972972dbad9f1d3da5f985fa4e2535df1d1753b67e54",
+    "EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md": "82d4f1db36283f264ed3b25eb8597d9f89d8eb137350b597e38e721ea2784cee",
+    "EMCIA-FER-01-quadro-de-ferramentas.md": "5c95d581fcb28f8b12a402a94b3fda7d9b1e44bc56fdf13bf9c0b385d3b92726",
+    "EMCIA-GLO-01-glossario-do-metodo.md": "36af4a2496e63c2eb1b6488de75782f7cd6f587eebad3855ecd916d687e46504",
+    "EMCIA-MET-01-documento-do-metodo.md": "3c4dd1e127d8cd2497aab22b8fc128eb094118e2dbe470a256f5e9bee9358172",
+    "EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md": "db7d0ab05ecf4d28f263819305c1ae7a194b5cf404182446d5c2366e9f4cf2e3",
+    "EMCIA-TRA-01-procedimentos-transversais-do-metodo.md": "0de0379d023bae35d72410ee2d16d3b616c8bc176788556472cb57f37127a649",
+    "EMCIA-TRI-01-instrumento-de-triagem.md": "df679a195d14160e308c6ce65988d63241f62e0fd31f39b0fc8eacc1df406dae",
+    "EMCIA-VER-01-plano-de-verificacao.md": "3961c15b9d349ad9f993404081a0a002fe59a14664aad35c472f620e82e11771"
+  }
+}
