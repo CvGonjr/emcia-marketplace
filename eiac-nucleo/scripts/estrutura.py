@@ -16,6 +16,23 @@ try:
     import yaml
 except ImportError:
     yaml = None
+else:
+    class _LoaderSemTimestamp(yaml.SafeLoader):
+        """SafeLoader sem o resolvedor implicito de timestamp.
+
+        Sem isso, 'data: 2026-09-19' vira datetime.date com PyYAML e str
+        sem PyYAML — mesmo texto, dois tipos, dependendo de dependencia
+        opcional instalada. O parser proprio (usado quando yaml esta
+        ausente) sempre devolve str; aqui replicamos esse contrato.
+        """
+
+    _LoaderSemTimestamp.yaml_implicit_resolvers = {
+        letra: [
+            (tag, regexp) for tag, regexp in resolvedores
+            if tag != "tag:yaml.org,2002:timestamp"
+        ]
+        for letra, resolvedores in yaml.SafeLoader.yaml_implicit_resolvers.items()
+    }
 
 
 class ErroYaml(ValueError):
@@ -171,7 +188,7 @@ def _bloco(tokens, indice, indentacao):
 def carregar_yaml(texto):
     """Carrega YAML com PyYAML ou com parser determinístico sem dependência."""
     if yaml:
-        dados = yaml.safe_load(texto)
+        dados = yaml.load(texto, Loader=_LoaderSemTimestamp)
         return dados or {}
     tokens = _tokens(texto)
     if not tokens:

@@ -10,18 +10,106 @@ Regras, sem ordem fixa exigida entre si:
       (avancar.py, curar.py, validar.py, selar.py) gravam ali, via
       estado.gravar()/estado.evento(), nunca por Write/Edit/redirecionamento
       de shell
+  G6  escrita, edicao ou remocao em fontes/ por agente e negada; fontes/
+      e so leitura, documento novo entra pelo operador, fora da sessao
+      do agente
 """
-import json, sys, pathlib
+import json, os, pathlib, re, shlex, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
 
 
+META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
+LEITORES_FONTES = {
+    "cat", "file", "grep", "head", "ls", "rg", "sha256sum",
+    "stat", "tail", "wc",
+}
+MARCADOR_CONTRASTE = re.compile(
+    r'(?:"execucao"\s*:\s*"contraste"|(?:^|\n)\s*execucao\s*:\s*["\']?contraste["\']?\s*(?:\n|$))'
+)
+
+
 def negar(motivo, **ctx):
     E.evento("TentativaNegada", motivo=motivo, **ctx)
     print(motivo, file=sys.stderr)
     sys.exit(2)
+
+
+def _em_fontes(alvo):
+    if not alvo:
+        return False
+    if "fontes" in pathlib.PurePath(alvo).parts:
+        return True
+    caminho = pathlib.Path(alvo)
+    resolvido = caminho.resolve() if caminho.is_absolute() else (pathlib.Path.cwd() / caminho).resolve()
+    return "fontes" in resolvido.parts
+
+
+def _bash_menciona_fontes(comando):
+    if "fontes/" in comando or "/fontes/" in comando:
+        return True
+    try:
+        partes = shlex.split(comando)
+    except ValueError:
+        partes = comando.split()
+    return any(
+        parte == "fontes" or parte.startswith("fontes/") or "/fontes/" in parte
+        for parte in partes
+    )
+
+
+def _bash_leitura_fontes(comando):
+    """Reconhece somente comandos simples e explicitamente de leitura."""
+    if not comando.strip() or META_SHELL.search(comando):
+        return False
+    try:
+        partes = shlex.split(comando)
+    except ValueError:
+        return False
+    return bool(partes) and pathlib.Path(partes[0]).name in LEITORES_FONTES
+
+
+def _settings_contraste_habilitado():
+    """Detecta o plugin de contraste nas configuracoes efetivas conhecidas."""
+    candidatos = []
+    for raiz in (pathlib.Path.cwd(), *pathlib.Path.cwd().parents):
+        candidatos.extend((
+            raiz / ".claude" / "settings.json",
+            raiz / ".claude" / "settings.local.json",
+        ))
+    config_home = pathlib.Path(os.environ.get("CLAUDE_CONFIG_DIR", pathlib.Path.home() / ".claude"))
+    candidatos.append(config_home / "settings.json")
+    for caminho in candidatos:
+        try:
+            dados = json.loads(caminho.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        habilitados = dados.get("enabledPlugins", {})
+        if any(
+            ativo is True and (nome == "eiac-contraste" or nome.startswith("eiac-contraste@"))
+            for nome, ativo in habilitados.items()
+        ):
+            return str(caminho)
+    return None
+
+
+def _registro_contraste():
+    """Localiza marcador duravel de contraste sem interpretar o metodo."""
+    raiz = pathlib.Path("registro")
+    if not raiz.is_dir():
+        return None
+    for caminho in raiz.rglob("*"):
+        if not caminho.is_file() or caminho.stat().st_size > 5_000_000:
+            continue
+        try:
+            texto = caminho.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if MARCADOR_CONTRASTE.search(texto):
+            return str(caminho)
+    return None
 
 
 def main():
@@ -33,6 +121,17 @@ def main():
     st = E.ler()
     if not st:
         sys.exit(0)          # fora de caso, o nucleo nao opina
+
+    plugin_contraste = _settings_contraste_habilitado()
+    registro_contraste = _registro_contraste()
+    if plugin_contraste or registro_contraste:
+        negar(
+            "Isolamento de execuções: eiac-nucleo não opera em caso com "
+            "eiac-contraste habilitado ou com registro marcado como "
+            "execucao: contraste.",
+            plugin_contraste=plugin_contraste,
+            registro_contraste=registro_contraste,
+        )
 
     pb, erro = P.carregar()
     if erro:
@@ -99,6 +198,27 @@ def main():
             "Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. "
             "Toda regra, termo, entidade ou fonte curada exige procedencia, "
             "autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).",
+            etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
+        )
+
+    # G6 — fontes/ e so leitura (fontes/README.md ja declara isso; sem
+    # esta regra, nada impedia a escrita antes da guarda existir — so o
+    # SHA-256 gravado por validar.py detectava alteracao depois da
+    # citacao, nunca antes dela). Cobre qualquer segmento "fontes/" na
+    # arvore do caso (raiz e contexto/fontes/, esta ultima ja coberta
+    # tambem por G2b). Entrada de documento novo e feita pelo operador,
+    # fora da sessao do agente.
+    escrita_fontes = ferramenta in ("Write", "Edit") and _em_fontes(alvo)
+    escrita_fontes_bash = (
+        ferramenta == "Bash"
+        and _bash_menciona_fontes(comando)
+        and not _bash_leitura_fontes(comando)
+    )
+    if escrita_fontes or escrita_fontes_bash:
+        negar(
+            "Escrita, edicao ou remocao em fontes/ nao e permitida a agente. "
+            "fontes/ e somente leitura (fontes/README.md): documento novo "
+            "entra pelo operador, fora da sessao do agente.",
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 

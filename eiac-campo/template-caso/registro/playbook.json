@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.0",
+  "versao": "0.4.1",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -138,10 +138,5 @@
     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
     { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
-  ],
-
-  "pendencias": [
-    "P6 a P10 declarados neste playbook (2.6.0), mas ainda sem habilidade (HB) implementada: hb-operacionalizar, hb-governar, hb-pilotar, hb-medir-valor e hb-recalibrar sao instrumentos ausentes ate 2.6.2/2.6.3.",
-    "Motor do nucleo ainda nao interpreta semanticamente a condicao declarativa de E3-E, a recorrencia de P10 nem a verificacao dos cinco inegociaveis; capacidade declarativa esta pronta, validador pertence a 2.6.1."
   ]
 }

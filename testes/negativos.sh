@@ -240,6 +240,91 @@ rastro=$?
   && ok "25 documento presente grava com hash na trilha" \
   || falha "25 documento presente NAO gravou ou NAO registrou hash"
 
+# G6 — fontes/ e so leitura: escrita, edicao ou remocao por agente e negada
+# fontes/README.md ja declara "so leitura", mas antes de G6 nada impedia a
+# escrita — so o SHA-256 do validar.py detectava alteracao depois da
+# citacao. G6 nega antes, com evento, tanto por Write/Edit quanto por Bash.
+
+# G6a Write em fontes/ e negado
+echo '{"tool_name":"Write","tool_input":{"file_path":"fontes/novo.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6a Write em fontes/ negado" || falha "G6a Write em fontes/ NAO foi negado"
+
+# G6b Edit em fontes/ e negado
+echo '{"tool_name":"Edit","tool_input":{"file_path":"fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6b Edit em fontes/ negado" || falha "G6b Edit em fontes/ NAO foi negado"
+
+# G6c Bash escrevendo em fontes/ (redirecionamento) e negado
+echo '{"tool_name":"Bash","tool_input":{"command":"echo oi > fontes/novo.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6c bash redirecionando para fontes/ negado" || falha "G6c bash para fontes/ NAO foi negado"
+
+# G6d Bash removendo arquivo de fontes/ e negado
+echo '{"tool_name":"Bash","tool_input":{"command":"rm fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6d bash removendo de fontes/ negado" || falha "G6d bash rm em fontes/ NAO foi negado"
+
+# G6e Bash movendo/copiando por cima de arquivo em fontes/ e negado
+echo '{"tool_name":"Bash","tool_input":{"command":"mv rascunho/x.xlsx fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6e bash mv para fontes/ negado" || falha "G6e bash mv para fontes/ NAO foi negado"
+
+# G6f escrita em contexto/fontes/ (fonte curada) tambem e negada por caminho direto
+echo '{"tool_name":"Write","tool_input":{"file_path":"contexto/fontes/F-100.yaml"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6f Write em contexto/fontes/ negado" || falha "G6f Write em contexto/fontes/ NAO foi negado"
+
+# G6g evento de recusa e registrado (controle positivo da trilha)
+grep -q '"motivo": ".*fontes/' registro/eventos.jsonl 2>/dev/null
+[ $? -eq 0 ] && ok "G6g tentativa negada em fontes/ gera evento" || falha "G6g tentativa negada em fontes/ SEM evento"
+
+# G6h leitura em fontes/ continua permitida (controle positivo)
+echo '{"tool_name":"Read","tool_input":{"file_path":"fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "G6h leitura em fontes/ permanece permitida" || falha "G6h leitura em fontes/ foi negada indevidamente"
+
+# G6i-k: contornos que nao usam os verbos literais da primeira implementacao.
+echo '{"tool_name":"Bash","tool_input":{"command":"cd fontes && rm ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6i cd seguido de rm em fontes/ negado" || falha "G6i cd+rm em fontes/ NAO foi negado"
+
+echo '{"tool_name":"Bash","tool_input":{"command":"sed -i s/conteudo/alterado/ fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6j sed -i em fontes/ negado" || falha "G6j sed -i em fontes/ NAO foi negado"
+
+echo '{"tool_name":"Bash","tool_input":{"command":"python3 -c \"from pathlib import Path; Path('fontes/ausente.xlsx').unlink()\""}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "G6k remocao indireta por Python negada" || falha "G6k remocao indireta por Python NAO foi negada"
+
+# G6l: o par positivo de Bash continua permitindo leitura simples.
+echo '{"tool_name":"Bash","tool_input":{"command":"cat fontes/ausente.xlsx"}}' \
+  | python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "G6l leitura simples por Bash permanece permitida" || falha "G6l leitura por Bash foi negada indevidamente"
+
+# Isolamento núcleo x contraste. O núcleo não pode operar no mesmo caso,
+# seja pelo plugin habilitado, seja por marcador durável já presente.
+mkdir -p .claude
+printf '%s\n' '{"enabledPlugins":{"eiac-contraste@pesquisa":true}}' > .claude/settings.json
+echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
+  | CLAUDE_CONFIG_DIR="$TMP/config-sem-plugins" python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "ISO1 núcleo recusa caso com eiac-contraste habilitado" \
+  || falha "ISO1 núcleo operou com eiac-contraste habilitado"
+rm .claude/settings.json
+
+cp registro/estado.json registro/estado-campo.json
+python3 -c "import json; p='registro/estado.json'; d=json.load(open(p)); d['execucao']='contraste'; open(p,'w').write(json.dumps(d))"
+echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
+  | CLAUDE_CONFIG_DIR="$TMP/config-sem-plugins" python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 2 ] && ok "ISO2 núcleo recusa registro de execução de contraste" \
+  || falha "ISO2 núcleo operou sobre registro de contraste"
+mv registro/estado-campo.json registro/estado.json
+
+echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
+  | CLAUDE_CONFIG_DIR="$TMP/config-sem-plugins" python3 "$S/guarda.py" >/dev/null 2>&1
+[ $? -eq 0 ] && ok "ISO-controle núcleo opera em caso de campo isolado" \
+  || falha "ISO-controle caso de campo isolado foi recusado"
+
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'
 import json, pathlib

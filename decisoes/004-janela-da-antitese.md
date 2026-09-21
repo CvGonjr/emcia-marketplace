@@ -1,6 +1,6 @@
 # 004 — A antítese roda entre P2 e P3a
 
-**Data:** setembro de 2026 · **Estado:** firme
+**Data:** setembro de 2026 · **Estado:** substituída por [[014-execucao-de-contraste]] — mantida apenas como registro histórico
 
 ## Contexto
 

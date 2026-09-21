@@ -30,7 +30,8 @@ import datetime
 import pathlib
 import sys
 
-RAIZ_NUCLEO = pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
+import os
+RAIZ_NUCLEO = pathlib.Path(os.environ["EIAC_NUCLEO_SCRIPTS"]) if os.environ.get("EIAC_NUCLEO_SCRIPTS") else pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
 sys.path.insert(0, str(RAIZ_NUCLEO))
 import estado as E  # noqa: E402
 import estrutura as X  # noqa: E402
