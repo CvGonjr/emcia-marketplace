@@ -1,6 +1,6 @@
 # 015 — Isolamento, esforço comparável e cálculo compartilhado
 
-**Data:** setembro de 2026 · **Estado:** firme
+**Data:** setembro de 2026 · **Estado:** parcialmente superada por [[018-isolamento-por-carimbo-no-selo]] — a checagem de isolamento por "eiac-contraste habilitado nas configurações efetivas" não podia funcionar (a decisão 016 faz o manifesto do contraste colidir de propósito com `eiac-nucleo`, então essa chave nunca aparece); substituída por carimbo de componente verificado no selo. Esforço comparável e cálculo compartilhado desta decisão continuam firmes, sem mudança.
 
 ## Contexto
 

@@ -71,30 +71,6 @@ def _bash_leitura_fontes(comando):
     return bool(partes) and pathlib.Path(partes[0]).name in LEITORES_FONTES
 
 
-def _settings_contraste_habilitado():
-    """Detecta o plugin de contraste nas configuracoes efetivas conhecidas."""
-    candidatos = []
-    for raiz in (pathlib.Path.cwd(), *pathlib.Path.cwd().parents):
-        candidatos.extend((
-            raiz / ".claude" / "settings.json",
-            raiz / ".claude" / "settings.local.json",
-        ))
-    config_home = pathlib.Path(os.environ.get("CLAUDE_CONFIG_DIR", pathlib.Path.home() / ".claude"))
-    candidatos.append(config_home / "settings.json")
-    for caminho in candidatos:
-        try:
-            dados = json.loads(caminho.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            continue
-        habilitados = dados.get("enabledPlugins", {})
-        if any(
-            ativo is True and (nome == "eiac-contraste" or nome.startswith("eiac-contraste@"))
-            for nome, ativo in habilitados.items()
-        ):
-            return str(caminho)
-    return None
-
-
 def _registro_contraste():
     """Localiza marcador duravel de contraste sem interpretar o metodo."""
     raiz = pathlib.Path("registro")
@@ -122,14 +98,15 @@ def main():
     if not st:
         sys.exit(0)          # fora de caso, o nucleo nao opina
 
-    plugin_contraste = _settings_contraste_habilitado()
     registro_contraste = _registro_contraste()
-    if plugin_contraste or registro_contraste:
+    if registro_contraste:
         negar(
             "Isolamento de execuções: eiac-nucleo não opera em caso com "
-            "eiac-contraste habilitado ou com registro marcado como "
-            "execucao: contraste.",
-            plugin_contraste=plugin_contraste,
+            "registro marcado como execucao: contraste. A identidade de "
+            "plugin não distingue campo de contraste (colisão deliberada, "
+            "ver decisão 008 do emcia-contraste) — a verificação de "
+            "identidade completa (variante + commit por evento) é feita "
+            "no selo, não aqui.",
             registro_contraste=registro_contraste,
         )
 

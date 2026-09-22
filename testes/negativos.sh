@@ -302,16 +302,19 @@ echo '{"tool_name":"Bash","tool_input":{"command":"cat fontes/ausente.xlsx"}}' \
   | python3 "$S/guarda.py" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "G6l leitura simples por Bash permanece permitida" || falha "G6l leitura por Bash foi negada indevidamente"
 
-# Isolamento núcleo x contraste. O núcleo não pode operar no mesmo caso,
-# seja pelo plugin habilitado, seja por marcador durável já presente.
-mkdir -p .claude
-printf '%s\n' '{"enabledPlugins":{"eiac-contraste@pesquisa":true}}' > .claude/settings.json
-echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
-  | CLAUDE_CONFIG_DIR="$TMP/config-sem-plugins" python3 "$S/guarda.py" >/dev/null 2>&1
-[ $? -eq 2 ] && ok "ISO1 núcleo recusa caso com eiac-contraste habilitado" \
-  || falha "ISO1 núcleo operou com eiac-contraste habilitado"
-rm .claude/settings.json
+# Isolamento núcleo x contraste. eiac-nucleo e eiac-contraste colidem de
+# proposito no nome do manifesto (as habilidades chamam /eiac-nucleo:*
+# literalmente; ver decisao 008 do emcia-contraste) -- checar por
+# nome de plugin nao protege nada, os dois se chamam "eiac-nucleo". A
+# identidade real e verificada no SELO, pelo carimbo `componente` que
+# cada evento carrega (variante + commit, lido em tempo de execucao pelos
+# plugin.json REAIS dos dois repositorios -- nenhum settings.json fabricado
+# aqui). Achado registrado: o teste anterior (ISO1) validava uma
+# configuracao fabricada com o nome que o plugin de contraste deveria ter,
+# nao o nome que ele de fato declara -- passava sem proteger nada.
 
+# ISO2 continua: marcador execucao:contraste no proprio estado.json e
+# recusado pela guarda em tempo real (nao depende de selar).
 cp registro/estado.json registro/estado-campo.json
 python3 -c "import json; p='registro/estado.json'; d=json.load(open(p)); d['execucao']='contraste'; open(p,'w').write(json.dumps(d))"
 echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
@@ -324,6 +327,51 @@ echo '{"tool_name":"Read","tool_input":{"file_path":"caso/F0.md"}}' \
   | CLAUDE_CONFIG_DIR="$TMP/config-sem-plugins" python3 "$S/guarda.py" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "ISO-controle núcleo opera em caso de campo isolado" \
   || falha "ISO-controle caso de campo isolado foi recusado"
+
+# ISO-selo: identidade de execucao verificada no selo, via carimbo real
+# gravado por estado.evento() dos dois plugin.json reais (nao fabricados).
+git config user.name "Identidade Da Maquina" 2>/dev/null
+git config user.email "maquina@exemplo.com" 2>/dev/null
+git add -A >/dev/null 2>&1; git commit -qm "estado antes dos testes de selo" >/dev/null 2>&1 || true
+
+# ISO-selo-1: evento carimbado variante 'contraste' num caso de campo -> selo recusa
+python3 -c "
+import json
+with open('registro/eventos.jsonl', 'a') as f:
+    f.write(json.dumps({'evento': 'TesteFabricado', 'componente': {'variante': 'contraste', 'commit': 'deadbeef'}}) + '\n')
+"
+echo "x" > marcador-iso-selo-1.txt
+saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "tentativa com evento de contraste" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "variante 'contraste'" \
+  && ok "ISO-selo-1 selo recusa evento carimbado variante contraste" \
+  || falha "ISO-selo-1 selo NAO recusou evento de variante contraste (saida: $saida)"
+git checkout -- registro/eventos.jsonl 2>/dev/null
+rm -f marcador-iso-selo-1.txt
+
+# ISO-selo-2: evento sem carimbo de componente num caso de campo -> selo recusa
+python3 -c "
+import json
+with open('registro/eventos.jsonl', 'a') as f:
+    f.write(json.dumps({'evento': 'TesteFabricado', 'autor': 'Celso'}) + '\n')
+"
+echo "x" > marcador-iso-selo-2.txt
+saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "tentativa sem carimbo" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "sem carimbo de componente" \
+  && ok "ISO-selo-2 selo recusa evento sem carimbo de componente" \
+  || falha "ISO-selo-2 selo NAO recusou evento sem carimbo (saida: $saida)"
+git checkout -- registro/eventos.jsonl 2>/dev/null
+rm -f marcador-iso-selo-2.txt
+
+# ISO-selo-controle: trilha só com eventos reais (plugin.json real do
+# eiac-nucleo, variante "campo") sela normalmente.
+echo "x" > marcador-iso-selo-controle.txt
+saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "trilha homogenea de campo" 2>&1)"
+[ $? -eq 0 ] \
+  && ok "ISO-selo-controle trilha homogênea de campo sela normalmente" \
+  || falha "ISO-selo-controle trilha de campo real foi recusada (saida: $saida)"
+grep -q '"variante": "campo"' registro/eventos.jsonl \
+  && ok "ISO-selo-controle eventos reais carregam componente.variante=campo (plugin.json real)" \
+  || falha "ISO-selo-controle eventos NAO carregam variante campo do plugin.json real"
 
 # 8 playbook incompleto nao carrega
 python3 - <<'PY'

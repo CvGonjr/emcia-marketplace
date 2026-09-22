@@ -20,6 +20,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 012 | E3 dividido; termo de autonomia no E4 | firme (pendência de correspondência superada por 013) |
 | 013 | E4 = P6/P7, E5 = P8/P9/P10, fixado por EMCIA-CAM-01/ESP-01 | firme |
 | 014 | Execução de contraste roda fora do caso de campo, em repositório e plugin próprios, antes do F0 | firme |
-| 015 | Isolamento, esforço comparável e cálculo compartilhado | firme |
+| 015 | Isolamento, esforço comparável e cálculo compartilhado | parcialmente superada por 018 (checagem por plugin habilitado) |
 | 016 | O contraste substitui a identidade de runtime do núcleo | firme |
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | firme |
+| 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | firme |

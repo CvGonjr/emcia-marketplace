@@ -1,7 +1,35 @@
 """Le e escreve o Registro do Caso. Unico caminho de mudanca de etapa."""
-import json, pathlib, re, sys, datetime
+import json, pathlib, re, subprocess, sys, datetime
 
 CAMINHO = pathlib.Path("registro/estado.json")
+RAIZ_COMPONENTE = pathlib.Path(__file__).resolve().parents[2]
+_MANIFESTO = pathlib.Path(__file__).resolve().parents[1] / ".claude-plugin" / "plugin.json"
+
+
+def _commit_componente():
+    """SHA do commit do repositorio deste componente (eiac-nucleo/campo),
+    lido em tempo de execucao -- nunca digitado. 'desconhecido' fora de um
+    repositorio git (ex.: plugin copiado sem historico); isso ainda carimba
+    a variante, so nao a rastreabilidade de commit."""
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(RAIZ_COMPONENTE), "rev-parse", "HEAD"],
+            capture_output=True, text=True, timeout=5,
+        )
+        return r.stdout.strip() if r.returncode == 0 else "desconhecido"
+    except (OSError, subprocess.SubprocessError):
+        return "desconhecido"
+
+
+def _variante_componente():
+    try:
+        return json.loads(_MANIFESTO.read_text(encoding="utf-8")).get("variante", "desconhecida")
+    except (OSError, json.JSONDecodeError):
+        return "desconhecida"
+
+
+def _componente():
+    return {"variante": _variante_componente(), "commit": _commit_componente()}
 
 
 def ler():
@@ -18,7 +46,11 @@ def gravar(e):
 def evento(tipo, **campos):
     log = pathlib.Path("registro/eventos.jsonl")
     log.parent.mkdir(parents=True, exist_ok=True)
-    reg = {"evento": tipo, "data": datetime.datetime.now().isoformat(timespec="seconds")}
+    reg = {
+        "evento": tipo,
+        "data": datetime.datetime.now().isoformat(timespec="seconds"),
+        "componente": _componente(),
+    }
     reg.update(campos)
     with log.open("a", encoding="utf-8") as f:
         f.write(json.dumps(reg, ensure_ascii=False) + "\n")
