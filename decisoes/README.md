@@ -25,3 +25,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | firme |
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | firme |
 | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme |
+| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método |
