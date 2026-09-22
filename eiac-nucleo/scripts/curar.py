@@ -1,7 +1,14 @@
 """Curadoria dos objetos CTX. Unico caminho de escrita em contexto/.
 
-Uso:  python3 curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml \
-          --registrado-por "Nome"
+Uso:  python3 curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml
+
+O ato de curadoria (quem executou este comando, gravado como
+`registrado_por` no evento) nao vem de --registrado-por: e sempre
+`responsavel` de registro/estado.json, fixado pelo operador em
+novo-caso.sh, fora da sessao do agente. Isso e distinto de
+`autoria_conteudo`/`declarado_por` DENTRO do objeto YAML curado, que
+continuam vindo do candidato e sao checados por checar_autoria() —
+representam quem declarou o fato, nao quem executa este comando.
 
 Le o candidato de rascunho/<mesmo-nome>, valida a estrutura pelo schema do
 caso (estrutura.py), confere autoria e procedencia, e so grava em
@@ -229,8 +236,6 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
     erros += checar_autoria(candidato)
     erros += checar_confronto(candidato)
     erros += checar_referencias(candidato, schema, tipo)
-    if E.autor_e_agente(registrado_por):
-        erros.append(f"CTX-V09: quem cura precisa ser pessoa nomeada, recebido '{registrado_por}'")
 
     anterior = None
     if destino.exists():
@@ -263,7 +268,8 @@ def main():
     ap.add_argument("--tipo", required=True)
     ap.add_argument("--arquivo", required=True,
                      help="destino em contexto/<tipo>s/<id>.yaml")
-    ap.add_argument("--registrado-por", required=True)
+    ap.add_argument("--registrado-por", default=None,
+                     help="ignorado para fins de autoria -- ver docstring do modulo")
     ap.add_argument("--schema", default="registro/contexto.schema.json",
                      help="schema declarativo que contem o tipo curado")
     a = ap.parse_args()
@@ -273,7 +279,17 @@ def main():
         print("curadoria so grava dentro de contexto/", file=sys.stderr)
         sys.exit(1)
 
-    erro = curar(a.tipo, destino, a.registrado_por, schema_caminho=a.schema)
+    estado = E.ler()
+    responsavel = (estado or {}).get("responsavel")
+    if not responsavel:
+        print("caso sem responsavel definido em registro/estado.json "
+              "(fixado por novo-caso.sh --responsavel). Nenhuma curadoria "
+              "e aceita sem isso.", file=sys.stderr)
+        E.evento("CuradoriaRecusada", tipo_objeto=a.tipo, arquivo=a.arquivo,
+                 erros=["responsavel nao definido"], registrado_por_informado=a.registrado_por)
+        sys.exit(1)
+
+    erro = curar(a.tipo, destino, responsavel, schema_caminho=a.schema)
     if erro:
         print(erro, file=sys.stderr)
         sys.exit(1)

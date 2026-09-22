@@ -1,26 +1,62 @@
 #!/usr/bin/env bash
 # Cria o repositorio de um caso a partir do template do playbook.
 #
-#   ./novo-caso.sh medic-plus
-#   ./novo-caso.sh medic-plus ~/trabalho/clientes
+#   ./novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
+#   ./novo-caso.sh medic-plus --responsavel "Nome Sobrenome" ~/trabalho/clientes
 #
 # Destino padrao: ~/casos/<nome>
+#
+# --responsavel e obrigatorio: e a pessoa cuja autoria valida validar.py,
+# curar.py e selar.py gravam daqui em diante -- fixada aqui, fora da sessao
+# do agente, precisamente para que nenhum comando do plugin possa definir
+# ou trocar quem e o responsavel do caso.
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE="$RAIZ/eiac-campo/template-caso"
 
-nome="${1:-}"
-base="${2:-$HOME/casos}"
+nome=""
+base="$HOME/casos"
+responsavel=""
 
-if [ -z "$nome" ]; then
-  echo "uso: $(basename "$0") <nome-do-caso> [diretorio-base]" >&2
+uso() {
+  echo "uso: $(basename "$0") <nome-do-caso> --responsavel \"Nome Sobrenome\" [diretorio-base]" >&2
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --responsavel) responsavel="${2:-}"; shift 2 ;;
+    -h|--help) uso; exit 0 ;;
+    *)
+      if [ -z "$nome" ]; then nome="$1";
+      else base="$1"; fi
+      shift ;;
+  esac
+done
+
+if [ -z "$nome" ] || [ -z "$responsavel" ]; then
+  uso
   exit 1
 fi
 
 case "$nome" in
   */*|.*|"") echo "nome invalido: use apenas o nome do caso, sem barras" >&2; exit 1 ;;
 esac
+
+python3 - "$responsavel" <<'PY'
+import re, sys
+nome = (sys.argv[1] or "").strip()
+if not nome:
+    sys.exit("responsavel vazio: informe pessoa nomeada")
+if re.search(r"[<>]", nome):
+    sys.exit(f"responsavel invalido (placeholder nao preenchido): '{nome}'")
+chave = re.sub(r"[\s\-_]", "", nome.lower())
+if chave.startswith(("ag0", "agente", "sistema")):
+    sys.exit(f"responsavel nao pode ser codigo de agente: '{nome}'")
+genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+if nome.lower() in genericos:
+    sys.exit(f"responsavel precisa ser pessoa nomeada, nao coletivo generico: '{nome}'")
+PY
 
 destino="$base/$nome"
 
@@ -38,14 +74,21 @@ mkdir -p "$base"
 cp -r "$TEMPLATE" "$destino"
 cd "$destino"
 
-# nome do caso no registro e no CLAUDE.md
-python3 - "$nome" <<'PY'
+# nome do caso e responsavel no registro; CLAUDE.md so recebe o nome
+python3 - "$nome" "$responsavel" "$RAIZ" <<'PY'
 import json, pathlib, sys
-nome = sys.argv[1]
+nome, responsavel, raiz = sys.argv[1], sys.argv[2], sys.argv[3]
+
+sys.path.insert(0, str(pathlib.Path(raiz) / "eiac-nucleo" / "scripts"))
+import estado as E
+
 p = pathlib.Path("registro/estado.json")
 d = json.loads(p.read_text(encoding="utf-8"))
 d["caso"] = nome
+d["responsavel"] = responsavel
 p.write_text(json.dumps(d, indent=2, ensure_ascii=False), encoding="utf-8")
+
+E.evento("CasoAberto", caso=nome, responsavel=responsavel)
 
 c = pathlib.Path("CLAUDE.md")
 c.write_text(c.read_text(encoding="utf-8").replace("ALTERE-ME", nome), encoding="utf-8")

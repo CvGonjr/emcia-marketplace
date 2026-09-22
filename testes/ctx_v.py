@@ -194,6 +194,13 @@ def preparar_caso(raiz_tmp):
     caso = raiz_tmp / "caso"
     shutil.copytree(TEMPLATE, caso)
     (caso / "rascunho").mkdir(exist_ok=True)
+    # Autoria de registro (validar.py/curar.py/selar.py) le responsavel do
+    # estado, fixado por novo-caso.sh fora da sessao do agente -- simula
+    # esse passo aqui, ja que o teste monta o caso direto do template.
+    estado_path = caso / "registro" / "estado.json"
+    estado = json.loads(estado_path.read_text(encoding="utf-8"))
+    estado["responsavel"] = "Celso do Vale"
+    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
     return caso
 
 

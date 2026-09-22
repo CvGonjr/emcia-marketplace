@@ -12,6 +12,14 @@ cp -r "$RAIZ/eiac-campo/template-caso" "$TMP/caso"
 cd "$TMP/caso"
 mkdir -p rascunho
 
+# Autoria de registro (validar.py/curar.py/selar.py) le responsavel do
+# estado, fixado por novo-caso.sh fora da sessao do agente -- simula esse
+# passo aqui, ja que o teste monta o caso direto do template.
+python3 -c "
+import json, pathlib
+p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+d['responsavel'] = 'Celso do Vale'; p.write_text(json.dumps(d))"
+
 falhas=0
 ok()   { printf '  ok    %s\n' "$1"; }
 falha(){ printf '  FALHA %s\n' "$1"; falhas=$((falhas+1)); }
@@ -169,12 +177,16 @@ rastro=$?
 python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
 
-# 18 selo por agente e recusado, e pelo motivo certo
-# (so o exit code nao serve: aqui varias travas recusam, e o teste passaria
-#  mesmo com a recusa de autor-agente removida)
-saida="$(python3 "$S/selar.py" --autor "AG05" --nota "teste" 2>&1)"
-[ $? -ne 0 ] && echo "$saida" | grep -q "pessoa nomeada" \
-  && ok "18 selo por agente recusado" || falha "18 selo por agente ACEITO ou recusado por outro motivo"
+# 18 selo por agente e recusado -- garantia estrutural: autoria de registro
+# (validar.py/curar.py/selar.py) vem sempre de responsavel do estado, e
+# novo-caso.sh recusa abrir um caso com responsavel agente/generico/
+# placeholder, fora da sessao do agente. --autor passado a selar.py e
+# ignorado (nenhuma habilidade o informa; so o comando /eiac-nucleo:selar).
+saida="$("$RAIZ/novo-caso.sh" "teste-18-$$" --responsavel "AG05" "$TMP" 2>&1)"
+[ $? -ne 0 ] && echo "$saida" | grep -q "codigo de agente" \
+  && ok "18 caso com responsavel agente recusado na abertura" \
+  || falha "18 caso com responsavel agente ACEITO ou recusado por outro motivo"
+rm -rf "${TMP:?}/teste-18-$$"
 
 # 19 selo fora de repositorio git e recusado, e pelo motivo certo
 saida="$(python3 "$S/selar.py" --autor "Celso" --nota "teste" 2>&1)"

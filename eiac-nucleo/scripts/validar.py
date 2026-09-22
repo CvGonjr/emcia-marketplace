@@ -1,7 +1,11 @@
 """Validador de procedencia documental. Unico caminho de escrita em caso/.
 
-Uso:  python3 validar.py --arquivo caso/P2-regras.md --autor "Nome"
-Le o conteudo proposto de rascunho/<mesmo-nome> e so grava se todas as
+Uso:  python3 validar.py --arquivo caso/P2-regras.md
+A autoria do registro nao vem de --autor: e sempre `responsavel` de
+registro/estado.json, fixado pelo operador em novo-caso.sh, fora da sessao
+do agente (nenhuma habilidade instrui a chamar validar.py diretamente, so
+via comando /eiac-nucleo:gravar). Caso sem responsavel definido nao grava
+nada. Le o conteudo proposto de rascunho/<mesmo-nome> e so grava se todas as
 assercoes passarem. Nove regras, nenhuma avaliada por modelo.
 """
 import argparse, hashlib, pathlib, re, sys
@@ -85,15 +89,23 @@ def validar_linha(marca, pb, n):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arquivo", required=True)
-    ap.add_argument("--autor", required=True)
+    ap.add_argument("--autor", default=None,
+                     help="ignorado para fins de autoria -- ver docstring do modulo")
     a = ap.parse_args()
 
     pb, erro = P.carregar()
     if erro:
         print(erro, file=sys.stderr); sys.exit(1)
 
-    if E.autor_e_agente(a.autor):
-        print("quem grava precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+    estado = E.ler()
+    responsavel = (estado or {}).get("responsavel")
+    if not responsavel:
+        print("caso sem responsavel definido em registro/estado.json "
+              "(fixado por novo-caso.sh --responsavel). Nenhuma gravacao "
+              "e aceita sem isso.", file=sys.stderr)
+        E.evento("AssercaoRecusada", arquivo=a.arquivo,
+                 motivo="responsavel nao definido", autor_informado=a.autor)
+        sys.exit(1)
 
     destino = pathlib.Path(a.arquivo)
     rascunho = pathlib.Path("rascunho") / destino.name
@@ -124,13 +136,14 @@ def main():
     if erros:
         for e in erros:
             print(e, file=sys.stderr)
-        E.evento("AssercaoRecusada", arquivo=a.arquivo, erros=len(erros), autor=a.autor)
+        E.evento("AssercaoRecusada", arquivo=a.arquivo, erros=len(erros),
+                 autor=responsavel, autor_informado=a.autor)
         sys.exit(1)
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
     E.evento("AssercaoRegistrada", arquivo=a.arquivo, assercoes=total,
-             autor=a.autor, documentos=docs or None)
+             autor=responsavel, autor_informado=a.autor, documentos=docs or None)
     print(f"{total} assercoes gravadas em {a.arquivo}"
           + (f" | documentos: {', '.join(docs)}" if docs else ""))
 

@@ -93,6 +93,13 @@ def preparar_caso(raiz_tmp):
     caso = raiz_tmp / "caso"
     shutil.copytree(TEMPLATE, caso)
     (caso / "rascunho").mkdir(exist_ok=True)
+    # Autoria de registro (validar.py/curar.py/selar.py) le responsavel do
+    # estado, fixado por novo-caso.sh fora da sessao do agente -- simula
+    # esse passo aqui, ja que o teste monta o caso direto do template.
+    estado_path = caso / "registro" / "estado.json"
+    estado = json.loads(estado_path.read_text(encoding="utf-8"))
+    estado["responsavel"] = "Celso do Vale"
+    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
     return caso
 
 
@@ -333,11 +340,25 @@ def main():
 
         # T-baseline — --autor/--registrado-por AG-01 nao passa como autor humano
         def t_baseline():
+            # Achado do baseline original: --registrado-por "AG-01" (com
+            # hifen) escapava da checagem lexica antiga e era aceito como
+            # autor humano. A garantia atual e mais forte e estrutural:
+            # --registrado-por deixou de determinar a autoria do registro
+            # (curar.py so le `responsavel` de registro/estado.json,
+            # fixado por novo-caso.sh fora da sessao do agente) -- entao
+            # nenhum valor passado por --registrado-por, nem "AG-01", vira
+            # o autor gravado no evento. Confere que o evento carrega o
+            # responsavel do estado, nunca o valor informado.
             e = curar(caso, "regra", "contexto/regras/RN-050.yaml",
                       regra(id="RN-050"), "AG-01")
-            return [e], e["codigo"] != 0 and "pessoa nomeada" in e["stderr"]
-        casos.append(("2.5.2-T-baseline", "registrado-por AG-01 (achado do baseline)", "RECUSA",
-                       "recusado: quem cura precisa ser pessoa nomeada", t_baseline))
+            if e["codigo"] != 0:
+                return [e], False
+            todos = eventos(caso)
+            ultimo = todos[-1] if todos else {}
+            autor_correto = ultimo.get("registrado_por") == "Celso do Vale"
+            return [e], autor_correto
+        casos.append(("2.5.2-T-baseline", "registrado-por AG-01 nao determina autoria (achado do baseline superado)", "PASS",
+                       "curado com autoria = responsavel do estado, nunca o valor informado", t_baseline))
 
         falhas = 0
         print("== curadoria, autoria e versionamento I->V — pacote 2.5.2")

@@ -1,11 +1,13 @@
 """Selo do caso. Unico caminho de commit no repositorio do caso.
 
-Uso:  python3 selar.py --autor "Nome" --nota "F0 encerrada, E1 emitido"
+Uso:  python3 selar.py --nota "F0 encerrada, E1 emitido"
 
-O selo e a terceira trava: o historico do repositorio do caso. O commit sai
-com o autor nomeado, o mesmo que a trilha registra — nao a identidade da
-maquina. Selar continua sendo ato deliberado; este script so tira do
-operador a necessidade de saber git.
+O autor do commit e do evento SeloAplicado nao vem de --autor: e sempre
+`responsavel` de registro/estado.json, fixado pelo operador em
+novo-caso.sh, fora da sessao do agente (nenhuma habilidade chama selar.py
+diretamente, so o comando /eiac-nucleo:selar). O selo e a terceira trava: o
+historico do repositorio do caso. Selar continua sendo ato deliberado; este
+script so tira do operador a necessidade de saber git.
 """
 import argparse, json, pathlib, subprocess, sys
 
@@ -111,16 +113,23 @@ def selar(autor, nota):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--autor", required=True)
+    ap.add_argument("--autor", default=None,
+                     help="ignorado para fins de autoria -- ver docstring do modulo")
     ap.add_argument("--nota", required=True)
     a = ap.parse_args()
 
-    if E.autor_e_agente(a.autor):
-        print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
-    if not E.ler():
+    estado = E.ler()
+    if not estado:
         print("nenhum caso aberto neste diretorio", file=sys.stderr); sys.exit(1)
 
-    err = selar(a.autor, a.nota)
+    responsavel = estado.get("responsavel")
+    if not responsavel:
+        print("caso sem responsavel definido em registro/estado.json "
+              "(fixado por novo-caso.sh --responsavel). Selo recusado.",
+              file=sys.stderr)
+        sys.exit(1)
+
+    err = selar(responsavel, a.nota)
     if err:
         print(err, file=sys.stderr); sys.exit(1)
 

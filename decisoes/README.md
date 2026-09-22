@@ -24,3 +24,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 016 | O contraste substitui a identidade de runtime do núcleo | firme |
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | firme |
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | firme |
+| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme |

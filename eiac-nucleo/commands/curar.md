@@ -5,10 +5,12 @@ argument-hint: <tipo> <arquivo de destino em contexto/>
 O candidato precisa estar em `rascunho/<nome>`, estruturado conforme o schema do caso.
 
 Execute:
-`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo <tipo> --arquivo contexto/<tipo>s/<id>.yaml --registrado-por "<nome da pessoa>"`
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo <tipo> --arquivo contexto/<tipo>s/<id>.yaml`
 
 Para um registro de confronto P3d (`divergencia`), o schema é outro:
-`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo divergencia --arquivo contexto/divergencias/DIV-001.yaml --registrado-por "<nome da pessoa>" --schema registro/p3d.schema.json`
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/curar.py" --tipo divergencia --arquivo contexto/divergencias/DIV-001.yaml --schema registro/p3d.schema.json`
+
+A autoria da curadoria não é escolhida aqui: é sempre o responsável do caso, fixado na abertura por `novo-caso.sh`, fora desta sessão.
 
 Se já existir um registro curado com o mesmo id e a `procedencia` ou a `classificacao_confronto` mudar, o candidato precisa trazer `versao` incrementada e uma entrada de `historico` que preserve a versão anterior — a curadoria recusa sobrescrita.
 

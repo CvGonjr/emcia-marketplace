@@ -7,6 +7,6 @@ O selo é a terceira trava: o histórico do repositório do caso. Sele depois de
 Antes de executar, confirme com o operador que o que está no caso é o que ele quer assinar. **Selar é ato dele, não seu.**
 
 Execute:
-`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/selar.py" --autor "<nome da pessoa>" --nota "<o que está sendo selado>"`
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/selar.py" --nota "<o que está sendo selado>"`
 
-O commit sai com o autor nomeado, o mesmo que a trilha registra — não a identidade da máquina. Se o script recusar, apresente o motivo sem contorná-lo.
+O commit sai com o responsável do caso (fixado na abertura por `novo-caso.sh`, fora desta sessão), o mesmo que a trilha registra — não a identidade da máquina, nem uma escolha feita aqui. Se o script recusar, apresente o motivo sem contorná-lo.
