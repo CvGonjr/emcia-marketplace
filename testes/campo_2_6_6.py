@@ -38,6 +38,7 @@ def X_estrutura_carregar(caminho):
 TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
 AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
 GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
+SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
 CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
 CONSULTOR = RAIZ / "eiac-nucleo" / "scripts" / "consultar.py"
 CATALOGO = RAIZ / "eiac-nucleo" / "scripts" / "catalogo.py"
@@ -77,7 +78,26 @@ def preparar_caso():
     caso = tmp / "caso"
     shutil.copytree(TEMPLATE, caso)
     (caso / "rascunho").mkdir(exist_ok=True)
+    estado_path = caso / "registro" / "estado.json"
+    estado = json.loads(estado_path.read_text(encoding="utf-8"))
+    estado["responsavel"] = "Celso do Vale"
+    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
+    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
+    # ao encerramento de P2).
+    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
+    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
+    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
     return caso
+
+
+def selar(caso, nota="selo de teste"):
+    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
+        "x", encoding="utf-8")
+    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
+                           cwd=caso, text=True, capture_output=True, check=False)
+    return proc.returncode, proc.stdout, proc.stderr
 
 
 def avancar(caso, **kwargs):
@@ -579,6 +599,7 @@ else:
 # ======================================================================
 codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
 codigo2, saida2, erro2 = avancar(caso, encerrar="P2", autor="Celso do Vale")
+selar(caso, "selo apos P2, exigido por P3b")
 preparar_bl(caso)
 codigo3, saida3, erro3 = avancar(caso, encerrar="P3a", autor="Celso do Vale")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
@@ -632,6 +653,7 @@ caso_p6 = preparar_caso()
 apurar_e_encerrar_f0(caso_p6, nivel="N2")
 for e in ["P1", "P2"]:
     avancar(caso_p6, encerrar=e, autor="Celso do Vale")
+selar(caso_p6, "selo apos P2, exigido por P3b")
 preparar_bl(caso_p6)
 avancar(caso_p6, encerrar="P3a", autor="Celso do Vale")
 inegociavel(caso_p6, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
@@ -832,6 +854,7 @@ else:
 
 avancar(caso_e1e3, encerrar="P1", autor="Celso do Vale")
 avancar(caso_e1e3, encerrar="P2", autor="Celso do Vale")
+selar(caso_e1e3, "selo apos P2, exigido por P3b")
 preparar_bl(caso_e1e3)
 avancar(caso_e1e3, encerrar="P3a", autor="Celso do Vale")
 inegociavel(caso_e1e3, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")

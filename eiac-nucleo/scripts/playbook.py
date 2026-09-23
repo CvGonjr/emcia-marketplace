@@ -158,6 +158,56 @@ def capacidade_valida(capacidade):
     return True, None
 
 
+def selo_apos_etapa(pb, etapa_id, trilha):
+    """Verifica a exigencia declarativa 'exige_selo_apos' de uma etapa.
+
+    Uma etapa pode declarar {"exige_selo_apos": "<outro-id-de-etapa>"} no
+    playbook. Quando declarada, essa etapa (abrir ou encerrar) exige um
+    evento SeloAplicado posterior ao EtapaEncerrada da etapa referenciada.
+    O nucleo nao sabe por que -- so compara a ORDEM de dois tipos de evento
+    genericos contra um campo declarativo do contrato, do mesmo jeito que
+    _avaliar_condicao() em avancar.py compara campo/etapa/valor sem saber
+    o que "P2" ou "P3b" significam.
+
+    "Posterior" e definido pela POSICAO do evento na trilha (a ordem em
+    que estado.evento() gravou cada linha), nao pelo campo `data`: dois
+    eventos podem cair no mesmo segundo (timespec="seconds" em
+    estado.evento()) quando o percurso e rapido -- um comando de teste ou
+    um script automatizado emite varios eventos no mesmo segundo com
+    frequencia. Comparar por timestamp ali produziria falso negativo
+    (selo real, no lugar certo, recusado por empate de relogio). A ordem
+    de gravacao e o unico ordenador confiavel dessa trilha.
+
+    Devolve (True, None) quando a exigencia nao existe ou esta satisfeita;
+    (False, motivo) quando a etapa referenciada ainda nao foi encerrada, ou
+    quando nao ha selo posterior a esse encerramento.
+
+    ``trilha`` e a lista de eventos ja lida (estado.eventos()) -- esta
+    funcao nao le arquivo, para permanecer pura e testavel sem tocar disco.
+    """
+    et = etapa(pb, etapa_id)
+    if not et:
+        return True, None
+    referencia = et.get("exige_selo_apos")
+    if not referencia:
+        return True, None
+
+    posicoes_encerramento = [i for i, e in enumerate(trilha)
+                              if e.get("evento") == "EtapaEncerrada" and e.get("etapa") == referencia]
+    if not posicoes_encerramento:
+        return False, (f"{etapa_id} exige selo posterior ao encerramento de "
+                        f"{referencia}, mas {referencia} ainda nao foi encerrada.")
+    ultima_posicao_encerramento = max(posicoes_encerramento)
+
+    posicoes_selo = [i for i, e in enumerate(trilha) if e.get("evento") == "SeloAplicado"]
+    selo_posterior = any(i > ultima_posicao_encerramento for i in posicoes_selo)
+    if not selo_posterior:
+        return False, (f"{etapa_id} exige selo posterior ao encerramento de "
+                        f"{referencia}. Nenhum SeloAplicado encontrado depois "
+                        f"desse encerramento -- sele o caso antes de prosseguir.")
+    return True, None
+
+
 def proxima_fronteira(pb, etapa_id, nivel):
     """Primeira etapa daqui em diante que exige pessoa. None se nao houver.
 

@@ -70,6 +70,9 @@ def encerrar(st, pb, etapa_id, autor):
     dep = et.get("depende_de")
     if dep and not st["cumprimentos"].get(dep, {}).get("cumprido"):
         return f"{etapa_id} depende de {dep}, ainda nao cumprida"
+    selo_ok, motivo_selo = P.selo_apos_etapa(pb, etapa_id, E.eventos())
+    if not selo_ok:
+        return motivo_selo
 
     st["cumprimentos"].setdefault(etapa_id, {})
     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})

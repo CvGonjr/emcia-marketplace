@@ -38,6 +38,26 @@ def ler():
     return json.loads(CAMINHO.read_text(encoding="utf-8"))
 
 
+def eventos():
+    """Le a trilha completa (registro/eventos.jsonl), na ordem em que foi
+    gravada. Linha ilegivel e pulada (nao interrompe a leitura) -- quem
+    precisar de trilha integra sabe onde procurar a falha; um leitor de
+    trava nao deve quebrar por uma linha antiga corrompida."""
+    log = pathlib.Path("registro/eventos.jsonl")
+    if not log.exists():
+        return []
+    lidos = []
+    for linha in log.read_text(encoding="utf-8").splitlines():
+        linha = linha.strip()
+        if not linha:
+            continue
+        try:
+            lidos.append(json.loads(linha))
+        except json.JSONDecodeError:
+            continue
+    return lidos
+
+
 def gravar(e):
     CAMINHO.parent.mkdir(parents=True, exist_ok=True)
     CAMINHO.write_text(json.dumps(e, indent=2, ensure_ascii=False), encoding="utf-8")

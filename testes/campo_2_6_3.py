@@ -36,6 +36,7 @@ import estado as E_check  # noqa: E402
 TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
 AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
 GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
+SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
 OPERACIONAL = RAIZ / "eiac-campo" / "scripts" / "operacional.py"
 GOVERNANCA = RAIZ / "eiac-campo" / "scripts" / "governanca.py"
 PILOTO = RAIZ / "eiac-campo" / "scripts" / "piloto.py"
@@ -66,7 +67,26 @@ def preparar_caso():
     caso = tmp / "caso"
     shutil.copytree(TEMPLATE, caso)
     (caso / "rascunho").mkdir(exist_ok=True)
+    estado_path = caso / "registro" / "estado.json"
+    estado = json.loads(estado_path.read_text(encoding="utf-8"))
+    estado["responsavel"] = "Celso do Vale"
+    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
+    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
+    # ao encerramento de P2, ver percorrer_ate).
+    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
+    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
+    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
     return caso
+
+
+def selar(caso, nota="selo de teste"):
+    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
+        "x", encoding="utf-8")
+    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
+                           cwd=caso, text=True, capture_output=True, check=False)
+    return proc.returncode, proc.stdout, proc.stderr
 
 
 def avancar(caso, **kwargs):
@@ -138,15 +158,29 @@ def apurar_e_encerrar_f0(caso):
 
 ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
 
+# Referencias de exige_selo_apos, invertidas (decisao 021): para cada
+# etapa-alvo, a lista de ids de etapa que exigem selo posterior a ela.
+ETAPAS_QUE_EXIGEM_SELO_DE = {}
+for _e in pb_oficial["etapas"]:
+    _ref = _e.get("exige_selo_apos")
+    if _ref:
+        ETAPAS_QUE_EXIGEM_SELO_DE.setdefault(_ref, []).append(_e["id"])
+
 
 def percorrer_ate(caso, ate_etapa_id):
     apurar_e_encerrar_f0(caso)
     ordem = [e["id"] for e in pb_oficial["etapas"]]
-    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
+    alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
+    restante = set(alvo)
+    for etapa_id in alvo:
         if etapa_id in ETAPAS_NAO_DELEGAVEIS:
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+        restante.discard(etapa_id)
+        exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+        if any(exigente in restante for exigente in exigentes):
+            selar(caso, f"selo apos {etapa_id}, exigido por etapa posterior do percurso")
 
 
 def op_yaml(estado, versao, **over):

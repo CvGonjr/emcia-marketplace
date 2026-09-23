@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.1",
+  "versao": "0.4.2",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -46,7 +46,7 @@
     {
       "id": "P3b", "nome": "Levantamento de regras nao documentadas",
       "modalidade": "presencial", "habilidade": "hb-levantar-regras",
-      "delegavel": false,
+      "delegavel": false, "exige_selo_apos": "P2",
       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
     },
     {

@@ -59,7 +59,22 @@ def preparar_caso():
     estado = json.loads(estado_path.read_text(encoding="utf-8"))
     estado["responsavel"] = "Celso do Vale"
     estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
+    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
+    # ao encerramento de P2) -- percorrer_ate() precisa poder selar.
+    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
+    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
+    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
+    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
     return caso
+
+
+def selar(caso, nota="selo de teste"):
+    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
+        "x", encoding="utf-8")
+    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
+                           cwd=caso, text=True, capture_output=True, check=False)
+    return proc.returncode, proc.stdout, proc.stderr
 
 
 def avancar(caso, **kwargs):
@@ -92,17 +107,38 @@ def apurar_e_encerrar_f0(caso):
 ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
 
 
+# Referencias de exige_selo_apos, invertidas: para cada etapa-alvo (valor),
+# a lista de ids de etapa que exigem selo posterior a ela. Generico -- nao
+# assume que so P3b declara a exigencia, nem que o alvo e sempre P2.
+ETAPAS_QUE_EXIGEM_SELO_DE = {}
+for _e in pb_oficial["etapas"]:
+    _ref = _e.get("exige_selo_apos")
+    if _ref:
+        ETAPAS_QUE_EXIGEM_SELO_DE.setdefault(_ref, []).append(_e["id"])
+
+
 def percorrer_ate(caso, ate_etapa_id):
     """Encerra F0 e todas as etapas ate (e incluindo) ate_etapa_id, em
-    ordem, registrando sessao para as etapas nao delegaveis do playbook.
+    ordem, registrando sessao para as etapas nao delegaveis do playbook e
+    selando o caso logo apos encerrar qualquer etapa que seja referenciada
+    por 'exige_selo_apos' de uma etapa AINDA POR VIR no percurso (decisao
+    021) -- nao depende de a etapa exigente ser a proxima imediata (pode
+    haver etapas intermediarias entre a etapa referenciada e a que exige
+    o selo, como P3a entre P2 e P3b).
     """
     apurar_e_encerrar_f0(caso)
     ordem = [e["id"] for e in pb_oficial["etapas"]]
-    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
+    alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
+    restante = set(alvo)
+    for etapa_id in alvo:
         if etapa_id in ETAPAS_NAO_DELEGAVEIS:
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+        restante.discard(etapa_id)
+        exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+        if any(exigente in restante for exigente in exigentes):
+            selar(caso, f"selo apos {etapa_id}, exigido por etapa posterior do percurso")
 
 
 print("== testes 2.6.1 -- nucleo generico de protocolos")
@@ -163,6 +199,7 @@ caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
 for e in ["P1", "P2", "P3a"]:
     avancar(caso, encerrar=e, autor="Celso do Vale")
+selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P3b", autor="Celso do Vale")
 if avancar(caso, encerrar="P3d", autor="Celso do Vale")[0] == 0:
@@ -181,6 +218,7 @@ else:
 
 for e in ["P2", "P3a"]:
     avancar(caso, encerrar=e, autor="Celso do Vale")
+selar(caso, "selo apos P2, exigido por P3b")
 # etapa corrente agora e P3b, delegavel:false
 codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
 if codigo == 2 and "delegavel" in erro:
@@ -311,6 +349,7 @@ caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
 for e in ["P1", "P2", "P3a"]:
     avancar(caso, encerrar=e, autor="Celso do Vale")
+selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P3b", autor="Celso do Vale")
 avancar(caso, encerrar="P3d", autor="Celso do Vale")
@@ -426,6 +465,7 @@ caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
 for e in ["P1", "P2", "P3a"]:
     avancar(caso, encerrar=e, autor="Celso do Vale")
+selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
 for e in ["P3b", "P3d"]:
     avancar(caso, encerrar=e, autor="Celso do Vale")

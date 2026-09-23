@@ -13,6 +13,8 @@ Regras, sem ordem fixa exigida entre si:
   G6  escrita, edicao ou remocao em fontes/ por agente e negada; fontes/
       e so leitura, documento novo entra pelo operador, fora da sessao
       do agente
+  G7  habilidade de etapa que declara "exige_selo_apos" nao carrega sem
+      selo posterior ao encerramento da etapa referenciada
 """
 import json, os, pathlib, re, shlex, sys
 
@@ -150,6 +152,20 @@ def main():
                 f"Registre a sessao com /eiac-nucleo:registrar-sessao.",
                 etapa=e["id"], camada_exigida=cam, nivel=nivel, ferramenta=ferramenta,
             )
+
+    # G7 — habilidade de etapa que exige selo posterior a outra etapa nao
+    # carrega sem esse selo. Generico: qualquer etapa pode declarar
+    # {"exige_selo_apos": "<id>"} no playbook; o nucleo nao sabe por que
+    # (nao cita nenhum id de etapa aqui) -- so compara eventos EtapaEncerrada
+    # e SeloAplicado via playbook.selo_apos_etapa(). Isto cobre a ABERTURA
+    # da etapa (carregamento da skill); o fechamento e recusado por
+    # avancar.encerrar() com a mesma checagem.
+    for e in pb["etapas"]:
+        if not e.get("habilidade") or e["habilidade"] not in alvo:
+            continue
+        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
+        if not selo_ok:
+            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
 
     # G2 — escrita direta no repositorio do caso
     escrita = ferramenta in ("Write", "Edit") and alvo.startswith("caso/")
