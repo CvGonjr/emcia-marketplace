@@ -2,18 +2,13 @@
 
 Gerado em: 2026-09-12 (docs-mapper, Pipeline A)
 
-> Atualizado em: 2026-09-18 — D/I/V normalizado no pacote 2.5.0; modelos
-> Termo, Entidade, Regra e Fonte alinhados ao CTX-01 v0.4 no pacote 2.5.1.
-
-## Atualização da Sprint 2
-
-- `eiac-nucleo` 0.2.7: validador estrutural genérico orientado por schema.
-- `eiac-campo` 0.3.4: quatro modelos CTX e
-  `registro/contexto.schema.json`.
-- Suíte acumulada: 44 verificações — 33 de regressão e 11 estruturais CTX.
-- Evidências: `.projectdocs/evidencias/sprint2/2.5.0/` e `2.5.1/`.
-- O conteúdo abaixo preserva o retrato original produzido em 12/09/2026;
-  esta atualização registra somente a evolução diretamente relacionada.
+> Atualizado em: 2026-09-23 — pacote 3.2 (decisão 021): retirada da
+> execução de contraste, verificação por estados do caso (selo de P2
+> exigido por P3b), documentação de etapa 0a e reescrita integral de
+> `README.md`/`INSTALACAO.md`. Substitui integralmente o retrato de
+> 2026-09-18 abaixo, que já estava defasado em relação ao estado real do
+> repositório (Ações 2.5 e 2.6 inteiras, decisões 007–021, Sprint 3 em
+> curso).
 
 ## O que é o projeto
 
@@ -22,94 +17,139 @@ de IA aplicado a organizações-cliente ("Engenharia de IA de Campo"). O reposit
 é a ferramenta; não contém caso nem dado de cliente — casos vivem em repositórios
 próprios, abertos via `novo-caso.sh` a partir de `eiac-campo/template-caso/`.
 
+Repositório público: `CvGonjr/emcia-marketplace` (GitHub).
+
 ## Separação estrutural
 
 | Plugin | Versão | Papel | Conhece o método? |
 |---|---|---|---|
-| `eiac-nucleo` | 0.2.0 | guarda de camada, validador de procedência, máquina de etapas, trilha | Não |
-| `eiac-campo` | 0.3.0 | habilidades por etapa, comandos, subagentes, template de caso | Sim |
+| `eiac-nucleo` | 0.2.21 | guarda de camada, validador de procedência, máquina de etapas, trilha | Não |
+| `eiac-campo` | 0.7.2 | habilidades por etapa, comandos, subagentes, template de caso | Sim |
 
 O núcleo lê `registro/playbook.json` do caso e aplica o que ele declara — trocar o
 playbook troca o método sem tocar em código. Nenhum vocabulário de base (preset,
 plugin, capability, assistant) atravessa para o núcleo.
 
-## Inventário de arquivos
+## O método declarado em dados — playbook v0.4.2
 
-### Raiz
-- `README.md` — visão de instalação, percurso de etapas, as três travas, testes negativos
-- `INSTALACAO.md` — guia passo a passo com verificação a cada etapa
-- `CLAUDE.md` — regras invioláveis para quem edita o repositório (não para o método)
-- `CTX-01-instrumento-camada-contexto.md` — instrumento de referência (camada de contexto)
-- `novo-caso.sh` — abre um caso a partir do template, commit inicial não-fatal
-- `.claude-plugin/marketplace.json` — registro dos dois plugins
-- `decisoes/` — 12 decisões registradas, uma por arquivo (`README.md` é o índice)
-- `testes/negativos.sh` — 7 testes negativos (hooks) + README
+`registro/playbook.json` declara:
 
-### eiac-nucleo/ (agnóstico de método)
-- `scripts/`: `avancar.py`, `estado.py`, `guarda.py`, `playbook.py`, `quadro.py`, `validar.py` (508 linhas ao todo)
-- `hooks/hooks.json` — registra as travas automaticamente com o plugin
-- `commands/`: `emitir`, `encerrar`, `estado`, `gravar`, `quadro`, `registrar-sessao`
-
-### eiac-campo/ (é o método)
-- `commands/`: `classificar`, `confrontar`, `enquadrar`, `mapear-contexto`, `mapear-fontes`, `medir`, `priorizar`
-- `agents/`: `classificador-tecnologico.md`, `extrator-documental.md`
-- `skills/hb-*`: 13 habilidades (enquadrar, mapear-contexto, extrair-regras, levantar-regras, medir, confrontar, priorizar, classificar, emitir-e1..e5)
-- `reference/`: `CTX-01-instrumento-camada-contexto.md`, `gates.md`, `procedencia.md`
-- `template-caso/`: `CLAUDE.md`, `registro/{estado.json,playbook.json}`, `contexto/{entidades,fontes,regras,termos}` (modelos YAML)
-
-## Playbook do caso (o método declarado em dados)
-
-`registro/playbook.json` (v0.3.0, ref. EMCIA-MET-01/CAT-01) declara:
-- Níveis N1–N3, três dimensões de procedência (contexto/origem/apuração)
-- 8 etapas com habilidade, camada por nível e modalidade: F0, P1, P2, P3a, P3b
-  (não delegável, EX4 por desenho), P3d (depende de P3b), P4, P5
-- Deslocamento por nível (CAT-01 §3.6): até onde a preparação é automatizada e a
-  partir de onde a verificação é obrigatória, varia por N1/N2/N3
-- 6 entregáveis (E1–E5, com E3 dividido em D/E) e 5 inegociáveis
-- 3 pendências abertas **por decisão**, não por falta de tempo: correspondência
-  entregável×passo, conflito de procedência com CAT-01/GLO-01, P6–P10 sem habilidade
+- Níveis N1–N3
+- Procedência em uma dimensão de três valores: `D` declarado, `I` inferido, `V`
+  verificado (conforme CAT-01/GLO-01 — a antiga divergência de três dimensões
+  independentes foi resolvida, decisão 006)
+- **13 etapas** (contrato completo, congelado em 2.6.0): F0, P1, P2, P3a, P3b
+  (não delegável, EX4 por desenho, exige selo posterior ao encerramento de
+  P2 — decisão 021), P3d (depende de P3b), P4, P5, P6 (depende de P5), P7
+  (depende de P6, não delegável), P8 (depende de P7), P9 (depende de P8),
+  P10 (depende de P9, não delegável, recorrente)
+- Deslocamento por nível (CAT-01 §3.6): a camada de execução de cada etapa varia
+  por N1/N2/N3
+- 6 autorizações de emissão (E1, E2, E3-D, E3-E, E4, E5) e 5 itens inegociáveis,
+  todos com portão fixo — a correspondência entregável×passo foi resolvida
+  (decisões 012/013): E4 = P6/P7, E5 = P8/P9/P10
+- Uma pendência de método aberta por decisão (020): cruzamento completo entre
+  CAT-01 Anexo A, `reference/habilidades.json` e o playbook
 
 ## As três travas (o que o núcleo aplica)
 
 | Trava | Mecanismo | Onde |
 |---|---|---|
 | T1 procedência | escrita direta em `caso/` negada; tudo passa pelo validador | `guarda.py` G2 + `validar.py` |
-| T2 camada | habilidade não delegável não carrega; etapa dependente não abre | `guarda.py` G1/G3 |
+| T2 camada | habilidade não delegável não carrega; etapa dependente não abre; etapa sem selo exigido não abre nem encerra | `guarda.py` G1/G3/G7 + `avancar.py` |
 | T3 selo | commits do repositório do caso | Git |
 
 Regra de ouro do repositório: nenhuma decisão de camada/procedência passa por
 modelo de linguagem — são funções determinísticas sobre dados estruturados.
 
-## Decisões registradas (decisoes/)
+## Verificação por estados do caso (decisão 021, pacote 3.2)
 
-12 decisões, formato contexto→decisão→consequência. Estado atual:
-- **Firmes (10):** 001 dois plugins, 002 playbook no caso, 003 chat sem
-  autoridade de escrita, 004 antítese entre P2/P3a, 005 camada por nível,
-  007 um repo Git por caso, 008 cliente nunca fala com agente, 009 habilidades
-  remetem (não reproduzem) o método, 011 testes negativos primeiro, 012 E3
-  dividido + termo de autonomia no E4
-- **Em conflito (1):** 006 procedência em três dimensões — conflita com CAT-01,
-  precisa de decisão humana
-- **Proposta (1):** 010 três zonas de escrita
+A execução de contraste (antes: `emcia-contraste`/`eiac-contraste`, uma
+execução completa e independente do playbook em repositório próprio,
+decisões 014–020) foi retirada do projeto por decisão metodológica. A
+comparação entre o que a organização declara e o que o levantamento
+presencial confirma passou a ser **interna ao mesmo caso de campo**: o
+estado declarado é selado ao fim de P2; P3b/P3d produzem o estado
+verificado.
+
+Mecanismo de código: `playbook.json` marca `{"exige_selo_apos": "P2"}`
+em P3b. O núcleo aplica isso genericamente, sem citar "P2" nem "P3b" em
+código — `playbook.selo_apos_etapa()` compara a ordem de eventos
+`EtapaEncerrada`/`SeloAplicado` na trilha (`estado.eventos()`), chamada
+por `guarda.py` (G7, bloqueia abertura da skill) e por
+`avancar.py::encerrar()` (bloqueia fechamento).
+
+O código de isolamento núcleo × contraste em `guarda.py` (marcador
+`execucao: contraste`) e `selar.py` (carimbo `componente.variante`) não
+foi removido nesta rodada — permanece funcional, mas passou a proteger
+contra uma execução que não é mais parte do fluxo declarado do projeto.
+Fica registrado como candidato a remoção em decisão futura.
+
+## Material público da etapa 0a (regra documental, sem trava de código)
+
+O levantamento público sobre a organização e o setor, feito na etapa 0a
+do protocolo de habilitação (EMCIA-HAB-01, anterior a F0), não entra no
+caso nesse momento — é coletado fora do repositório e só é gravado
+depois da abertura (etapa 0d), com marca `I · tipo_fonte: externa`, URL
+e limite da fonte. Documentado em `README.md` e `INSTALACAO.md`; não há
+mecanismo automatizado que force isso, por design (regra de processo,
+não de código).
+
+## Inventário de arquivos (atualizado)
+
+### Raiz
+
+- `README.md` — instalação, percurso de 13 etapas, verificação por estados do caso, as três travas, portões E1–E5, testes negativos
+- `INSTALACAO.md` — guia passo a passo com verificação a cada etapa, oito testes negativos
+- `CLAUDE.md` — regras invioláveis para quem edita o repositório
+- `CTX-01-instrumento-camada-contexto.md` — instrumento de referência (camada de contexto), idêntico à cópia em `eiac-campo/reference/`
+- `novo-caso.sh` — abre um caso a partir do template, exige `--responsavel`, commit inicial não-fatal
+- `.claude-plugin/marketplace.json` — registro dos dois plugins
+- `decisoes/` — 21 decisões registradas (README.md é o índice)
+- `testes/` — suíte acumulada (`negativos.sh` + ~18 módulos Python por pacote/frente), README com detalhamento
+
+### eiac-nucleo/ (agnóstico de método) — v0.2.21
+
+- `scripts/`: `avancar.py`, `estado.py`, `guarda.py`, `playbook.py`, `curar.py`, `validar.py`, `selar.py`, `consultar.py`, `catalogo.py`, `estrutura.py`, `fronteira.py`, `quadro.py`, `esforco.py`
+- `hooks/hooks.json` — registra as travas automaticamente com o plugin
+- `commands/`: `estado`, `apurar-nivel`, `gravar`, `curar`, `registrar-sessao`, `registrar-recorrencia`, `satisfazer-inegociavel`, `encerrar`, `emitir`, `selar`, `consultar`, `quadro`, `esforco`, `fronteira`
+
+### eiac-campo/ (é o método) — v0.7.2
+
+- `commands/`: `enquadrar`, `mapear-contexto`, `mapear-fontes`, `medir`, `confrontar`, `priorizar`, `classificar`, `operacionalizar`, `governar`, `pilotar`, `medir-valor`, `recalibrar`, `emitir`
+- `agents/`: `classificador-tecnologico.md`, `extrator-documental.md`
+- `skills/hb-*`: 18 habilidades (F0–P10 completo, incluindo `hb-emitir-e1..e5`)
+- `scripts/`: `operacional.py`, `governanca.py`, `piloto.py`, `metrica.py`, `calibragem.py`, `baseline.py`, `inegociaveis.py`, `entregaveis.py`
+- `reference/`: `CTX-01-instrumento-camada-contexto.md`, `gates.md`, `procedencia.md`, `habilidades.json`, `agentes.json`, `metodo/` (16 documentos controlados, pacote versionado com manifesto SHA-256)
+- `template-caso/`: `CLAUDE.md`, `registro/{estado.json,playbook.json,*.schema.json}`, `contexto/{entidades,fontes,regras,termos}` (modelos YAML)
+
+## Decisões registradas (decisoes/) — 21 decisões
+
+Estado atual (ver `decisoes/README.md` para o índice completo):
+
+- **Firmes:** 001 dois plugins, 002 playbook no caso, 003 chat sem autoridade
+  de escrita, 005 camada por nível, 007 um repo Git por caso, 008 cliente
+  nunca fala com agente, 009 habilidades remetem (não reproduzem) o método,
+  011 testes negativos primeiro, 012 E3 dividido, 013 correspondência
+  entregável×passo fixada, **021 retirada da execução de contraste e
+  verificação por estados do caso**
+- **Resolvida:** 006 procedência — D/I/V, conforme CAT-01
+- **Substituídas:** 004 (janela da antítese, por 021), 014–020 (execução de
+  contraste e seu aparato de isolamento, todas por 021)
+- **Proposta:** 010 três zonas de escrita
+- **Pendente de decisão de método:** 020 (pendência única de correspondência
+  CAT-01/catálogo/playbook)
 
 ## Testes
 
-`testes/negativos.sh` — 7 testes que prova que cada trava recusa (leitura de
-skill não-delegável durante caso, escrita direta em `caso/`, mesma coisa via
-Bash, asserção sem origem, `encerrar` sem sessão registrada, `emitir` com
-etapas pendentes, `--autor` de agente). Regra do projeto: falha na suíte é
-regressão de trava — conserta-se a trava, não o teste. Roda no CI a cada push.
-
-## Histórico (git log)
-
-1. `b83610b` marketplace emcia: núcleo e playbook de campo (inicial)
-2. `93ac18c` testes negativos, CI, correção do abrir-caso, aviso de diretório
-3. `b96a7e0` novo-caso.sh substitui abrir-caso; commit inicial não-fatal
-4. `60a69c1` camada resolvida por nível (CAT-01 3.6); núcleo 0.2.0, campo 0.3.0
-5. `26b06e4` marca scripts como executáveis
-6. `8df9d81` registro de decisões e CLAUDE.md da raiz (HEAD)
-
-Projeto jovem (6 commits), em consolidação da arquitetura de travas.
+`testes/negativos.sh` — suíte acumulada de travas e controles positivos
+(regressão completa desde o baseline, incluindo G1–G7, ISO-selo,
+verificação por estados do caso). Cada pacote/frente de trabalho também
+tem um módulo Python dedicado em `testes/` (`nucleo_2_6_1.py`,
+`campo_2_6_2.py` … `campo_2_6_6.py`, `autoria_responsavel.py`,
+`esforco.py`, `metodo_empacotado.py`, `verificacao_por_estados.py`
+entre outros). Regra do projeto: falha na suíte é regressão de trava —
+conserta-se a trava, não o teste. Roda no CI a cada push.
 
 ## Cobertura Diátaxis (avaliação)
 
@@ -120,71 +160,24 @@ Projeto jovem (6 commits), em consolidação da arquitetura de travas.
 | Referência | ✅ | `decisoes/`, `eiac-campo/reference/`, `playbook.json`, `plugin.json` |
 | Explicação | ⚠️ parcial | a razão de cada trava está espalhada entre README e decisões; não há um documento único de arquitetura/"por quê" |
 
-## Documentos canônicos do método (docs/)
+## Documentos canônicos do método
 
-Chegaram depois do primeiro mapeamento — não estão sob controle de versão ainda
-(`docs/` aparece como não rastreado no `git status`). São os documentos
-controlados que o playbook e as decisões do repositório citam por sigla; até
-agora só existiam como referência textual, sem o conteúdo presente no repo.
+`eiac-campo/reference/metodo/` contém o pacote operacional versionado dos
+16 documentos controlados usados na execução (decisão 017), com manifesto
+SHA-256 — cópia read-only consumida pelo campo; nenhum documento é
+duplicado para fora do marketplace.
 
-| Sigla | Arquivo | Fase/Passo | Estado |
-|---|---|---|---|
-| EMCIA-MET-01 | `EMCIA-MET-01-documento-do-metodo.md` | F0–F4, todos os passos | Em revisão |
-| EMCIA-CAT-01 | `EMCIA-CAT-01-fronteira-de-delegacao.md` | F0–F4, todos os passos | Em revisão |
-| EMCIA-GLO-01 | `EMCIA-GLO-01-glossario-do-metodo.md` | Todas | Em revisão |
-| EMCIA-HAB-01 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` | Anterior a F0 | Em revisão |
-| EMCIA-TRI-01 | `EMCIA-TRI-01-instrumento-de-triagem.md` | F0 — Triagem | Em revisão |
-| EMCIA-FER-01 | `EMCIA-FER-01-quadro-de-ferramentas.md` | F0–F4, todos | Em revisão |
-| EMCIA-VER-01 | `EMCIA-VER-01-plano-de-verificacao.md` | N/A (verificação do método em si) | Em revisão |
-| EMCIA-E1 | `EMCIA-E1-ficha-de-enquadramento.md` | F0 | Em revisão |
-| EMCIA-E2 | `EMCIA-E2-diagnostico-e-oportunidade.md` | F1, passos 1–3 | Em revisão |
-| EMCIA-E3 | `EMCIA-E3-blueprint-da-solucao.md` | F2, passos 4–5 | Em revisão |
-| EMCIA-E4 | `EMCIA-E4-guia-operacional.md` | F3, passos 6–7 | Em revisão |
-| EMCIA-E5 | `EMCIA-E5-relatorio-de-piloto.md` | F4, passos 8–10 | Em revisão |
+## Lacunas identificadas (revisão 2026-09-23)
 
-Todos os 12 têm responsável único (Celso do Vale) e aprovação pendente.
-
-### O que esses documentos confirmam sobre as pendências abertas
-
-- **CAT-01 §3.6 "Deslocamento da fronteira por nível"** é a fonte que o
-  `playbook.json` cita (`deslocamento_por_nivel.referencia`). Conteúdo real:
-  N1 automatiza até o passo 4 (verificação a partir do 5), N2 até o passo 2
-  (verificação a partir do 3), N3 só na fase F0 (verificação a partir do
-  passo 1). Isso bate com o que o playbook implementa — a referência é válida.
-- **decisoes/006 (procedência) está mesmo em conflito, agora confirmado com
-  texto em mãos:** CAT-01 §3.5.4 e GLO-01 §3.4 fixam procedência como
-  **uma** dimensão de três valores — `[D]` declarado, `[I]` inferido, `[V]`
-  verificado. O `playbook.json` deste repo implementa **três dimensões
-  independentes** (contexto/origem/apuração), cada uma com seu próprio
-  vocabulário, incluindo valores que não existem em CAT-01/GLO-01 (`externo`,
-  `antitese`, `campo`, `livre`, `medido/calculado/estimado`). Não é
-  divergência cosmética — são dois modelos de dados incompatíveis para o
-  mesmo conceito. Continua exigindo decisão humana, como já registrado; o
-  código não deve resolver isso silenciosamente.
-- **CAT-01 Anexo A (catálogo de agentes e habilidades)** é candidato a
-  conferir contra as 13 skills `hb-*` e os 2 agentes de `eiac-campo/` —
-  não conferido neste mapeamento, ver lacunas abaixo.
-- O método canônico tem **5 fases (F0–F4) e 10 passos**; o playbook do
-  template de caso só declara **8 etapas (F0, P1, P2, P3a, P3b, P3d, P4,
-  P5)** — isso é exatamente a pendência já registrada no `playbook.json`
-  ("P6 a P10 sem habilidade: instrumentos ausentes") e agora tem contraparte
-  documental: E4 e E5 (guia operacional e relatório de piloto) descrevem os
-  passos 6–10 que ainda não têm habilidade no plugin.
-
-## Lacunas identificadas
-
-- Não há doc de arquitetura consolidada ligando guarda→validador→playbook num
-  só lugar (hoje é preciso ler `guarda.py`, `validar.py` e o README juntos).
-- `eiac-nucleo/README.md` e `testes/README.md` existem mas não foram lidos
-  neste mapeamento — candidatos a checar na próxima passada.
-- Duas pendências de método seguem abertas por decisão (não é lacuna de doc,
-  é lacuna de método aguardando decisão humana — ver decisoes/006 e README).
-- `docs/` (os 12 documentos canônicos EMCIA-*) ainda não está sob controle de
-  versão (`git status` mostra como não rastreado) — vale decidir se entra no
-  repositório do marketplace ou fica fora dele por design (o README diz "este
-  repositório é a ferramenta, não contém caso nem dado de cliente"; os
-  documentos do método não são dado de cliente, então a exclusão não parece
-  intencional, mas não commitei nada — decisão do usuário).
-- CAT-01 Anexo A (catálogo de agentes/habilidades) não foi conferido contra
-  as 13 skills `hb-*` reais de `eiac-campo/skills/` — checar se cobertura
-  bate 1:1 ou se há desvio.
+- Não há doc de arquitetura consolidada ligando guarda→validador→playbook→selo
+  num só lugar (hoje é preciso ler `guarda.py`, `avancar.py`, `selar.py` e o
+  README juntos).
+- Decisão 020 (cruzamento CAT-01 Anexo A × catálogo × playbook) segue aberta,
+  aguardando decisão humana de método.
+- O aparato de isolamento núcleo×contraste (`guarda.py`, `selar.py`) não foi
+  removido nesta rodada apesar de a execução de contraste ter sido retirada
+  do projeto — candidato explícito a decisão de remoção futura (ver seção
+  acima).
+- 4/18 HB (HB-04, HB-05, HB-06, HB-13) seguem sem implementação física
+  própria — catálogo completo e resolvível, mas sem skill dedicada; nenhuma
+  é exigida pelo contrato F0–P10 congelado.

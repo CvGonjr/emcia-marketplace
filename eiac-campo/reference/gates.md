@@ -42,7 +42,7 @@ Não são entregues ao cliente e não têm condição de emissão.
 | Registro de sessão de campo | P3b | Abertura de P3d |
 | Log de divergência | P3d | Calibragem da triagem |
 | Log de tentativas negadas | Todas | Lição aprendida |
-| Quadro de Contraste | Sprint 4 | Anexo do relatório |
+| Quadro de Confronto (declarado × verificado) | P2 (selo) → P3b/P3d | Anexo do relatório |
 
 ## Correspondência entregável × passo (resolvida)
 

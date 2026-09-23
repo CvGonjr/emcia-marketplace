@@ -8,15 +8,18 @@ Guia completo. Cada passo tem uma verificação; não avance sem ela.
 
 ## 1 · Preparar o repositório do marketplace
 
-Descompacte `emcia-marketplace.zip` onde você guarda seus repositórios.
+Clone o repositório público onde você guarda seus repositórios:
 
 ```bash
 cd ~/projetos
-unzip emcia-marketplace.zip
+git clone https://github.com/CvGonjr/emcia-marketplace.git
 cd emcia-marketplace
-git init -q
-git add -A
-git commit -qm "marketplace emcia: nucleo e playbook de campo"
+```
+
+Para trabalhar em uma versão congelada, use a tag correspondente em vez do branch `master`:
+
+```bash
+git checkout v-sprint3-freeze
 ```
 
 **Verificar:**
@@ -34,10 +37,10 @@ Deve imprimir `['eiac-nucleo', 'eiac-campo']`.
 No Claude Code, dentro de qualquer projeto:
 
 ```
-/plugin marketplace add <seu-usuario>/emcia-marketplace
+/plugin marketplace add CvGonjr/emcia-marketplace
 ```
 
-Para repositório privado, o Claude Code usa as credenciais do seu Git. Se preferir apontar para a cópia local durante o desenvolvimento, use o caminho em vez do nome — mas quem for aplicar o método deve usar o repositório.
+Se preferir apontar para a cópia local durante o desenvolvimento, use o caminho em vez do nome — mas quem for aplicar o método deve usar o repositório do GitHub, para receber atualizações.
 
 **Verificar:**
 
@@ -58,18 +61,19 @@ Os dois plugins devem aparecer na listagem, ainda não instalados.
 
 A ordem importa pouco, mas o núcleo é quem traz as hooks.
 
-**Verificar:** reinicie o Claude Code e digite `/`. Devem aparecer:
+**Verificar:** reinicie o Claude Code e digite `/`. Devem aparecer, entre outros:
 
 | Comando | Origem |
 |---|---|
 | `/eiac-nucleo:estado` | núcleo |
 | `/eiac-nucleo:gravar` | núcleo |
+| `/eiac-nucleo:curar` | núcleo |
 | `/eiac-nucleo:registrar-sessao` | núcleo |
 | `/eiac-nucleo:encerrar` | núcleo |
 | `/eiac-nucleo:emitir` | núcleo |
+| `/eiac-nucleo:selar` | núcleo |
 | `/eiac-nucleo:quadro` | núcleo |
-| `/eiac-campo:abrir-caso` | playbook |
-| `/eiac-campo:enquadrar` … `/eiac-campo:classificar` | playbook |
+| `/eiac-campo:enquadrar` … `/eiac-campo:recalibrar` | playbook |
 
 Se os comandos não aparecerem, o plugin não carregou. Confira `/plugin` e o log de inicialização.
 
@@ -92,18 +96,20 @@ Deve responder *nenhum caso aberto neste diretório*. Isso confirma que o script
 Fora do Claude Code, no terminal:
 
 ```bash
-~/projetos/emcia-marketplace/novo-caso.sh medic-plus
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
 ```
 
-O script cria `~/casos/medic-plus`, preenche o nome no registro e no `CLAUDE.md`, e faz o commit inicial. Ele recusa se o destino já existir ou se o diretório base estiver dentro de um repositório Git — um repositório por caso.
+O script cria `~/casos/medic-plus`, fixa `responsavel` (a única identidade que os scripts do núcleo usam como autor de registro — decisão 019), preenche o nome no registro e no `CLAUDE.md`, e faz o commit inicial. Ele recusa se o destino já existir, se o diretório base estiver dentro de um repositório Git (um repositório por caso), ou se `--responsavel` estiver vazio, for placeholder, código de agente ou coletivo genérico.
 
-Para outro lugar, passe a base como segundo argumento:
+Para outro lugar, passe a base como terceiro argumento:
 
 ```bash
-~/projetos/emcia-marketplace/novo-caso.sh medic-plus ~/trabalho/clientes
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome" ~/trabalho/clientes
 ```
 
-Copie os documentos do método para `metodo/` — documento do método, glossário, catálogo de delegação, quadro de ferramentas, instrumento de triagem, modelos E1–E5, plano de verificação, CTX-01.
+Copie os documentos do método para `metodo/` — o pacote controlado (16 documentos, manifesto SHA-256) vive em `eiac-campo/reference/metodo/` dentro do marketplace.
+
+**Material público da etapa 0a:** o levantamento público sobre a organização e o setor, feito antes da abertura do caso (etapa 0a do protocolo de habilitação, EMCIA-HAB-01), não entra automaticamente aqui. Ele é coletado fora do caso e só é gravado depois da abertura (0d), pelo caminho normal de curadoria, com marca `I · tipo_fonte: externa`, URL e limite da fonte — ver `eiac-campo/reference/procedencia.md`.
 
 ### Abra a sessão dentro do caso
 
@@ -124,7 +130,7 @@ Deve mostrar: caso medic-plus, etapa F0, camada EX1, modalidade assíncrono.
 
 Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está no diretório errado.
 
-## 6 · Os seis testes negativos
+## 6 · Os sete testes negativos
 
 **Esta é a parte que não pode ser pulada.** Se algum falhar, a trava correspondente não existe no seu ambiente.
 
@@ -170,7 +176,18 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
 
 **Esperado:** recusa, exigindo registro de sessão.
 
-### Teste 6 — autor agente
+### Teste 6 — P3b sem selo posterior ao encerramento de P2
+
+Percorra F0 → P1 → P2 → P3a normalmente, registre a sessão de P3b, mas **não sele o caso**:
+
+```
+/eiac-nucleo:registrar-sessao P3b
+/eiac-nucleo:encerrar P3b
+```
+
+**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 e antes de tentar novamente resolve.
+
+### Teste 7 — autor agente
 
 ```bash
 python3 ~/.claude/plugins/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor "AG05"
@@ -178,7 +195,7 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor "
 
 **Esperado:** *autor precisa ser pessoa nomeada*.
 
-### Teste 7 — emitir com portão fechado
+### Teste 8 — emitir com portão fechado
 
 ```
 /eiac-nucleo:emitir E2
@@ -217,7 +234,7 @@ Os testes negativos são evidência de sprint. Guarde:
 cat registro/eventos.jsonl
 ```
 
-Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `AssercaoRecusada` são a prova de que as travas operam — e um print disso vale mais que qualquer descrição.
+Cada linha é um evento de domínio com data e componente (variante campo/contraste, commit — decisão 018). `TentativaNegada`, `AssercaoRecusada` e `RecusaMaquina` são a prova de que as travas operam — e um print disso vale mais que qualquer descrição.
 
 ---
 
@@ -231,6 +248,8 @@ Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `Asser
 | Frontmatter das habilidades rejeitado | Campos extras não tolerados | Remova `etapa`, `camada`, `modalidade`, `delegavel` do frontmatter — a informação já vive no `playbook.json` |
 | `playbook invalido` em toda ação | `registro/playbook.json` ausente ou incompleto | Confira que você está dentro do diretório do caso |
 | Guarda bloqueia tudo | Você está dentro de um caso e a etapa corrente é restritiva | `/eiac-nucleo:estado` para ver onde está |
+| P3b recusa mesmo com sessão registrada | Falta selar o caso depois de encerrar P2 | `/eiac-nucleo:selar` antes de tentar abrir/encerrar P3b (ver Teste 6) |
+| `novo-caso.sh` recusa `--responsavel` | Nome vazio, placeholder, código de agente ou coletivo genérico | Informe pessoa nomeada real |
 
 ---
 
@@ -238,12 +257,10 @@ Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `Asser
 
 | Item | Estado |
 |---|---|
-| Habilidades de P6 a P10 | Ausentes — instrumentos ainda não escritos |
-| Portão de E4 e E5 | Pendente — divergência entre o PFC e os documentos internos |
 | Base de referência curada | Ausente — esforço de curadoria |
 | Servidores MCP | Ausentes — decisão entre MCP e sistema de arquivos em aberto |
-| Geração de documento dos entregáveis | Ausente — `--emitir` autoriza, não gera |
 | Zona `sugestoes/` para copilotagem | Ausente |
 | Formulário F0 para o cliente | Ausente |
+| 4/18 HB sem implementação física própria (HB-04, HB-05, HB-06, HB-13) | Catálogo formal completo; nenhuma é exigida pelo contrato F0–P10 congelado — ver `decisoes/020` |
 
-Nenhum deles impede o percurso F0 a P5, que é o que a ação 1.9 exercita.
+Nenhum deles impede o percurso F0 a P10, que é executável e verificado de ponta a ponta (ver `.projectdocs/evidencias/sprint2/2.6.6/`).

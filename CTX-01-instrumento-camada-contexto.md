@@ -181,7 +181,7 @@ A célula crítica é o achado empírico do método: regras de baixa frequência
 
 **Consequência de uso:** se a célula crítica estiver vazia ao fim do P3, ou a organização é excepcionalmente regular, ou o levantamento não aconteceu. As duas hipóteses precisam ser confrontadas antes de encerrar o passo — e a segunda é a mais provável.
 
-O mesmo quadro serve ao Quadro de Contraste: **a previsão é que o braço da antítese produza a célula crítica vazia.**
+O mesmo quadro serve ao Quadro de Confronto: **a previsão é que a célula crítica esteja vazia no estado declarado selado**, ao fim de P2 — antes do levantamento presencial de P3b confirmar (ou não) as regras de baixa frequência e alta consequência que os documentos não registram.
 
 ---
 

@@ -9,10 +9,12 @@ Dois plugins, e a separação entre eles é o argumento arquitetural do projeto.
 
 O núcleo lê o playbook do caso e aplica o que ele declara. Trocar o playbook troca o método sem tocar em uma linha de código — é o que sustenta a afirmação de que o método é independente da ferramenta.
 
+Repositório: [github.com/CvGonjr/emcia-marketplace](https://github.com/CvGonjr/emcia-marketplace)
+
 ## Instalação
 
 ```
-/plugin marketplace add <url-do-repositorio>
+/plugin marketplace add CvGonjr/emcia-marketplace
 /plugin install eiac-nucleo@emcia
 /plugin install eiac-campo@emcia
 ```
@@ -22,11 +24,13 @@ As hooks do núcleo registram automaticamente. A trava viaja com o plugin, não 
 ## Abrir um caso
 
 ```bash
-~/projetos/emcia-marketplace/novo-caso.sh medic-plus
+~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
 cd ~/casos/medic-plus && claude
 ```
 
-O script copia o template, preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento muda a base.
+O script copia o template, fixa `responsavel` em `registro/estado.json` (a autoria de todo registro do caso vem daqui, nunca de um argumento informado durante a sessão — ver decisão 019), preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento posicional muda a base.
+
+`--responsavel` é obrigatório e recusa nome vazio, placeholder, código de agente ou coletivo genérico ("equipe", "área" etc.). É a única identidade humana que os scripts do núcleo (`validar.py`, `curar.py`, `selar.py`) usam como autor — mesmo que outro valor seja informado a cada chamada.
 
 Um alias deixa mais curto:
 
@@ -34,26 +38,45 @@ Um alias deixa mais curto:
 alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
 ```
 
-Antes de começar, copie os documentos do método para `metodo/`.
+Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
 
 **A sessão precisa estar dentro do caso.** O núcleo lê `registro/estado.json` do diretório corrente — de fora, não há guarda nem validador.
 
-## Percurso
+## Percurso — 13 etapas, F0 a P10
 
-| Comando | Etapa | Camada |
-|---|---|---|
-| `/eiac-campo:enquadrar` | F0 | EX1 |
-| `/eiac-campo:mapear-contexto` | P1 | EX2 |
-| `/eiac-campo:mapear-fontes` | P2 | EX2 |
-| `/eiac-campo:medir` | P3a | EX3 |
-| — | P3b | **EX4 · sem comando, por desenho** |
-| `/eiac-campo:confrontar` | P3d | EX3 |
-| `/eiac-campo:priorizar` | P4 | EX2 |
-| `/eiac-campo:classificar` | P5 | EX2 |
+| Comando | Etapa | Camada (N2) | Modalidade | Depende de |
+|---|---|---|---|---|
+| `/eiac-campo:enquadrar` | F0 | EX1 | assíncrono | — |
+| `/eiac-campo:mapear-contexto` | P1 | EX2 | vídeo | — |
+| `/eiac-campo:mapear-fontes` | P2 | EX2 | assíncrono | — |
+| `/eiac-campo:medir` | P3a | EX3 | remoto | — |
+| — | P3b | **EX4 · sem comando, por desenho** | presencial | selo posterior ao encerramento de P2* |
+| `/eiac-campo:confrontar` | P3d | EX3 | remoto | P3b |
+| `/eiac-campo:priorizar` | P4 | EX3 | vídeo | — |
+| `/eiac-campo:classificar` | P5 | EX3 | vídeo | — |
+| `/eiac-campo:operacionalizar` | P6 | EX3 | presencial ou remoto | P5 |
+| `/eiac-campo:governar` | P7 | **EX4 · decisão humana registrada** | — | P6 |
+| `/eiac-campo:pilotar` | P8 | EX3 | conforme nível | P7 |
+| `/eiac-campo:medir-valor` | P9 | EX3 | conforme nível | P8 |
+| `/eiac-campo:recalibrar` | P10 | **EX4 · decisão humana registrada, recorrente** | conforme nível | P9 |
+
+\* P3b não abre nem encerra sem um evento `SeloAplicado` posterior ao encerramento de P2 — declarado no playbook (`"exige_selo_apos": "P2"` em P3b), aplicado genericamente pelo núcleo (`playbook.selo_apos_etapa()`, usado por `guarda.py` na abertura e por `avancar.py` no encerramento). Ver "Verificação por estados do caso" abaixo.
+
+A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela acima mostra N2; `/eiac-nucleo:fronteira` mostra a camada real do caso aberto.
 
 E os comandos de núcleo, que valem em qualquer playbook:
 
-`/eiac-nucleo:estado` · `/eiac-nucleo:gravar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir`
+`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
+
+## Verificação por estados do caso
+
+A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
+
+A trava de código dessa comparação é única: P3b não abre, nem encerra, sem o selo de P2. Sem selo, `/eiac-nucleo:estado` mostra a etapa presa em P3b e a mensagem nomeia exatamente qual selo falta.
+
+## Material público da etapa 0a
+
+O levantamento público sobre a organização e o setor, feito na etapa 0a do protocolo de habilitação (EMCIA-HAB-01, anterior a F0), **não entra no caso nesse momento**. Ele é coletado fora do repositório do caso e só é gravado depois da abertura (etapa 0d — caso aberto e selado), pelo caminho normal de curadoria (`/eiac-nucleo:curar` ou `/eiac-nucleo:gravar`, conforme o tipo de objeto), com marca `I · tipo_fonte: externa`, URL e limite da fonte explícitos — o mesmo formato que `eiac-campo/reference/procedencia.md` já define para qualquer inferência apoiada em fonte externa. Não há automatismo que grave esse material antes da abertura; é regra documental, não trava de código.
 
 ## As três travas
 
@@ -69,20 +92,29 @@ Antes de confiar em qualquer coisa, prove que ela recusa.
 
 | # | Tente | Esperado |
 |---|---|---|
-| 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso | Bloqueio, `TentativaNegada` no log |
+| 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso, sem sessão registrada | Bloqueio, `TentativaNegada` no log |
 | 2 | Escrever direto em `caso/qualquer.md` | Bloqueio, com instrução de usar o validador |
 | 3 | Gravar rascunho com asserção sem procedência D/I/V | Recusa, `AssercaoRecusada` no log |
 | 4 | `/eiac-nucleo:encerrar P3b` sem sessão registrada | Recusa |
-| 5 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
-| 6 | `--autor AG05` em qualquer script | Recusa |
+| 5 | `/eiac-nucleo:encerrar P3b` (ou ler `hb-levantar-regras/SKILL.md`) antes de selar após P2 | Recusa, nomeando o selo que falta |
+| 6 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
+| 7 | `--autor AG05` em qualquer script | Recusa (autoria efetiva vem de `responsavel`, não do argumento) |
 
 **Se algum passar, a trava não existe.** Há relatos públicos de que o bloqueio por `exit 2` nem sempre funciona para `Write` e `Edit`, apenas para `Bash`. O teste 2 é o que confirma se isso afeta você — e se afetar, a regra G2 precisa ser reforçada por permissão `deny` além da hook.
 
-## Pendências que o playbook declara e o núcleo respeita
+## Portões de emissão — E1 a E5
 
-O `registro/playbook.json` marca `E4` e `E5` com `portao_pendente: true`, porque a correspondência entre entregáveis e passos ainda diverge entre o relatório do PFC e os documentos internos. A emissão recusa até a decisão. **O agente não deve resolver isso.**
+Os cinco entregáveis ao cliente têm portão fixo, sem pendência aberta de correspondência:
 
-P6 a P10 não têm habilidade: os instrumentos que elas exigem — roteiro de levantamento, instrumento da camada de contexto, protocolo de campo — ainda não existem.
+| Entregável | Etapas exigidas |
+|---|---|
+| E1 — Ficha de enquadramento | F0 |
+| E2 — Diagnóstico e oportunidade | P1, P2, P3a, P3b, P3d |
+| E3 — Blueprint da solução (consolida E3-D + E3-E) | P4, P5 |
+| E4 — Guia operacional | P6, P7 |
+| E5 — Relatório de piloto e calibragem | P8, P9, P10 |
+
+Cinco itens inegociáveis (um por entregável a partir de E2) bloqueiam emissão até estarem semanticamente satisfeitos — nunca por flag manual. Ver `eiac-campo/reference/gates.md` para o detalhamento completo, incluindo a distinção interna E3-D/E3-E.
 
 ---
 
@@ -101,7 +133,7 @@ Depois de instalar os dois plugins, rode em um caso recém-aberto:
 /eiac-nucleo:quadro          deve avisar que a célula crítica está vazia
 ```
 
-E os seis testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
+E os sete testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
 
 ---
 
@@ -110,7 +142,7 @@ E os seis testes negativos da seção anterior. **Se o teste 2 passar — escrit
 Com o marketplace no GitHub:
 
 ```bash
-git commit -am "hb-medir: exige amostra e periodo"
+git commit -am "mensagem da mudança"
 git push
 ```
 
@@ -140,4 +172,4 @@ O `playbook.json` vive no repositório do **caso**, copiado na abertura, não no
 bash testes/negativos.sh
 ```
 
-Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste.
+Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste. A suíte acumulada (regressão + pacotes por ação) soma centenas de verificações; ver `testes/README.md` para o detalhamento por pacote.
