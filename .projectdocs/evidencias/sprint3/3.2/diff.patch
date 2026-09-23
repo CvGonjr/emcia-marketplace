@@ -1,0 +1,1465 @@
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index e93958b..2abdd14 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -2,18 +2,13 @@
+ 
+ Gerado em: 2026-09-12 (docs-mapper, Pipeline A)
+ 
+-> Atualizado em: 2026-09-18 — D/I/V normalizado no pacote 2.5.0; modelos
+-> Termo, Entidade, Regra e Fonte alinhados ao CTX-01 v0.4 no pacote 2.5.1.
+-
+-## Atualização da Sprint 2
+-
+-- `eiac-nucleo` 0.2.7: validador estrutural genérico orientado por schema.
+-- `eiac-campo` 0.3.4: quatro modelos CTX e
+-  `registro/contexto.schema.json`.
+-- Suíte acumulada: 44 verificações — 33 de regressão e 11 estruturais CTX.
+-- Evidências: `.projectdocs/evidencias/sprint2/2.5.0/` e `2.5.1/`.
+-- O conteúdo abaixo preserva o retrato original produzido em 12/09/2026;
+-  esta atualização registra somente a evolução diretamente relacionada.
++> Atualizado em: 2026-09-23 — pacote 3.2 (decisão 021): retirada da
++> execução de contraste, verificação por estados do caso (selo de P2
++> exigido por P3b), documentação de etapa 0a e reescrita integral de
++> `README.md`/`INSTALACAO.md`. Substitui integralmente o retrato de
++> 2026-09-18 abaixo, que já estava defasado em relação ao estado real do
++> repositório (Ações 2.5 e 2.6 inteiras, decisões 007–021, Sprint 3 em
++> curso).
+ 
+ ## O que é o projeto
+ 
+@@ -22,94 +17,139 @@ de IA aplicado a organizações-cliente ("Engenharia de IA de Campo"). O reposit
+ é a ferramenta; não contém caso nem dado de cliente — casos vivem em repositórios
+ próprios, abertos via `novo-caso.sh` a partir de `eiac-campo/template-caso/`.
+ 
++Repositório público: `CvGonjr/emcia-marketplace` (GitHub).
++
+ ## Separação estrutural
+ 
+ | Plugin | Versão | Papel | Conhece o método? |
+ |---|---|---|---|
+-| `eiac-nucleo` | 0.2.0 | guarda de camada, validador de procedência, máquina de etapas, trilha | Não |
+-| `eiac-campo` | 0.3.0 | habilidades por etapa, comandos, subagentes, template de caso | Sim |
++| `eiac-nucleo` | 0.2.21 | guarda de camada, validador de procedência, máquina de etapas, trilha | Não |
++| `eiac-campo` | 0.7.2 | habilidades por etapa, comandos, subagentes, template de caso | Sim |
+ 
+ O núcleo lê `registro/playbook.json` do caso e aplica o que ele declara — trocar o
+ playbook troca o método sem tocar em código. Nenhum vocabulário de base (preset,
+ plugin, capability, assistant) atravessa para o núcleo.
+ 
+-## Inventário de arquivos
+-
+-### Raiz
+-- `README.md` — visão de instalação, percurso de etapas, as três travas, testes negativos
+-- `INSTALACAO.md` — guia passo a passo com verificação a cada etapa
+-- `CLAUDE.md` — regras invioláveis para quem edita o repositório (não para o método)
+-- `CTX-01-instrumento-camada-contexto.md` — instrumento de referência (camada de contexto)
+-- `novo-caso.sh` — abre um caso a partir do template, commit inicial não-fatal
+-- `.claude-plugin/marketplace.json` — registro dos dois plugins
+-- `decisoes/` — 12 decisões registradas, uma por arquivo (`README.md` é o índice)
+-- `testes/negativos.sh` — 7 testes negativos (hooks) + README
+-
+-### eiac-nucleo/ (agnóstico de método)
+-- `scripts/`: `avancar.py`, `estado.py`, `guarda.py`, `playbook.py`, `quadro.py`, `validar.py` (508 linhas ao todo)
+-- `hooks/hooks.json` — registra as travas automaticamente com o plugin
+-- `commands/`: `emitir`, `encerrar`, `estado`, `gravar`, `quadro`, `registrar-sessao`
+-
+-### eiac-campo/ (é o método)
+-- `commands/`: `classificar`, `confrontar`, `enquadrar`, `mapear-contexto`, `mapear-fontes`, `medir`, `priorizar`
+-- `agents/`: `classificador-tecnologico.md`, `extrator-documental.md`
+-- `skills/hb-*`: 13 habilidades (enquadrar, mapear-contexto, extrair-regras, levantar-regras, medir, confrontar, priorizar, classificar, emitir-e1..e5)
+-- `reference/`: `CTX-01-instrumento-camada-contexto.md`, `gates.md`, `procedencia.md`
+-- `template-caso/`: `CLAUDE.md`, `registro/{estado.json,playbook.json}`, `contexto/{entidades,fontes,regras,termos}` (modelos YAML)
+-
+-## Playbook do caso (o método declarado em dados)
+-
+-`registro/playbook.json` (v0.3.0, ref. EMCIA-MET-01/CAT-01) declara:
+-- Níveis N1–N3, três dimensões de procedência (contexto/origem/apuração)
+-- 8 etapas com habilidade, camada por nível e modalidade: F0, P1, P2, P3a, P3b
+-  (não delegável, EX4 por desenho), P3d (depende de P3b), P4, P5
+-- Deslocamento por nível (CAT-01 §3.6): até onde a preparação é automatizada e a
+-  partir de onde a verificação é obrigatória, varia por N1/N2/N3
+-- 6 entregáveis (E1–E5, com E3 dividido em D/E) e 5 inegociáveis
+-- 3 pendências abertas **por decisão**, não por falta de tempo: correspondência
+-  entregável×passo, conflito de procedência com CAT-01/GLO-01, P6–P10 sem habilidade
++## O método declarado em dados — playbook v0.4.2
++
++`registro/playbook.json` declara:
++
++- Níveis N1–N3
++- Procedência em uma dimensão de três valores: `D` declarado, `I` inferido, `V`
++  verificado (conforme CAT-01/GLO-01 — a antiga divergência de três dimensões
++  independentes foi resolvida, decisão 006)
++- **13 etapas** (contrato completo, congelado em 2.6.0): F0, P1, P2, P3a, P3b
++  (não delegável, EX4 por desenho, exige selo posterior ao encerramento de
++  P2 — decisão 021), P3d (depende de P3b), P4, P5, P6 (depende de P5), P7
++  (depende de P6, não delegável), P8 (depende de P7), P9 (depende de P8),
++  P10 (depende de P9, não delegável, recorrente)
++- Deslocamento por nível (CAT-01 §3.6): a camada de execução de cada etapa varia
++  por N1/N2/N3
++- 6 autorizações de emissão (E1, E2, E3-D, E3-E, E4, E5) e 5 itens inegociáveis,
++  todos com portão fixo — a correspondência entregável×passo foi resolvida
++  (decisões 012/013): E4 = P6/P7, E5 = P8/P9/P10
++- Uma pendência de método aberta por decisão (020): cruzamento completo entre
++  CAT-01 Anexo A, `reference/habilidades.json` e o playbook
+ 
+ ## As três travas (o que o núcleo aplica)
+ 
+ | Trava | Mecanismo | Onde |
+ |---|---|---|
+ | T1 procedência | escrita direta em `caso/` negada; tudo passa pelo validador | `guarda.py` G2 + `validar.py` |
+-| T2 camada | habilidade não delegável não carrega; etapa dependente não abre | `guarda.py` G1/G3 |
++| T2 camada | habilidade não delegável não carrega; etapa dependente não abre; etapa sem selo exigido não abre nem encerra | `guarda.py` G1/G3/G7 + `avancar.py` |
+ | T3 selo | commits do repositório do caso | Git |
+ 
+ Regra de ouro do repositório: nenhuma decisão de camada/procedência passa por
+ modelo de linguagem — são funções determinísticas sobre dados estruturados.
+ 
+-## Decisões registradas (decisoes/)
++## Verificação por estados do caso (decisão 021, pacote 3.2)
++
++A execução de contraste (antes: `emcia-contraste`/`eiac-contraste`, uma
++execução completa e independente do playbook em repositório próprio,
++decisões 014–020) foi retirada do projeto por decisão metodológica. A
++comparação entre o que a organização declara e o que o levantamento
++presencial confirma passou a ser **interna ao mesmo caso de campo**: o
++estado declarado é selado ao fim de P2; P3b/P3d produzem o estado
++verificado.
++
++Mecanismo de código: `playbook.json` marca `{"exige_selo_apos": "P2"}`
++em P3b. O núcleo aplica isso genericamente, sem citar "P2" nem "P3b" em
++código — `playbook.selo_apos_etapa()` compara a ordem de eventos
++`EtapaEncerrada`/`SeloAplicado` na trilha (`estado.eventos()`), chamada
++por `guarda.py` (G7, bloqueia abertura da skill) e por
++`avancar.py::encerrar()` (bloqueia fechamento).
++
++O código de isolamento núcleo × contraste em `guarda.py` (marcador
++`execucao: contraste`) e `selar.py` (carimbo `componente.variante`) não
++foi removido nesta rodada — permanece funcional, mas passou a proteger
++contra uma execução que não é mais parte do fluxo declarado do projeto.
++Fica registrado como candidato a remoção em decisão futura.
++
++## Material público da etapa 0a (regra documental, sem trava de código)
++
++O levantamento público sobre a organização e o setor, feito na etapa 0a
++do protocolo de habilitação (EMCIA-HAB-01, anterior a F0), não entra no
++caso nesse momento — é coletado fora do repositório e só é gravado
++depois da abertura (etapa 0d), com marca `I · tipo_fonte: externa`, URL
++e limite da fonte. Documentado em `README.md` e `INSTALACAO.md`; não há
++mecanismo automatizado que force isso, por design (regra de processo,
++não de código).
++
++## Inventário de arquivos (atualizado)
+ 
+-12 decisões, formato contexto→decisão→consequência. Estado atual:
+-- **Firmes (10):** 001 dois plugins, 002 playbook no caso, 003 chat sem
+-  autoridade de escrita, 004 antítese entre P2/P3a, 005 camada por nível,
+-  007 um repo Git por caso, 008 cliente nunca fala com agente, 009 habilidades
+-  remetem (não reproduzem) o método, 011 testes negativos primeiro, 012 E3
+-  dividido + termo de autonomia no E4
+-- **Em conflito (1):** 006 procedência em três dimensões — conflita com CAT-01,
+-  precisa de decisão humana
+-- **Proposta (1):** 010 três zonas de escrita
++### Raiz
+ 
+-## Testes
++- `README.md` — instalação, percurso de 13 etapas, verificação por estados do caso, as três travas, portões E1–E5, testes negativos
++- `INSTALACAO.md` — guia passo a passo com verificação a cada etapa, oito testes negativos
++- `CLAUDE.md` — regras invioláveis para quem edita o repositório
++- `CTX-01-instrumento-camada-contexto.md` — instrumento de referência (camada de contexto), idêntico à cópia em `eiac-campo/reference/`
++- `novo-caso.sh` — abre um caso a partir do template, exige `--responsavel`, commit inicial não-fatal
++- `.claude-plugin/marketplace.json` — registro dos dois plugins
++- `decisoes/` — 21 decisões registradas (README.md é o índice)
++- `testes/` — suíte acumulada (`negativos.sh` + ~18 módulos Python por pacote/frente), README com detalhamento
++
++### eiac-nucleo/ (agnóstico de método) — v0.2.21
++
++- `scripts/`: `avancar.py`, `estado.py`, `guarda.py`, `playbook.py`, `curar.py`, `validar.py`, `selar.py`, `consultar.py`, `catalogo.py`, `estrutura.py`, `fronteira.py`, `quadro.py`, `esforco.py`
++- `hooks/hooks.json` — registra as travas automaticamente com o plugin
++- `commands/`: `estado`, `apurar-nivel`, `gravar`, `curar`, `registrar-sessao`, `registrar-recorrencia`, `satisfazer-inegociavel`, `encerrar`, `emitir`, `selar`, `consultar`, `quadro`, `esforco`, `fronteira`
+ 
+-`testes/negativos.sh` — 7 testes que prova que cada trava recusa (leitura de
+-skill não-delegável durante caso, escrita direta em `caso/`, mesma coisa via
+-Bash, asserção sem origem, `encerrar` sem sessão registrada, `emitir` com
+-etapas pendentes, `--autor` de agente). Regra do projeto: falha na suíte é
+-regressão de trava — conserta-se a trava, não o teste. Roda no CI a cada push.
++### eiac-campo/ (é o método) — v0.7.2
+ 
+-## Histórico (git log)
++- `commands/`: `enquadrar`, `mapear-contexto`, `mapear-fontes`, `medir`, `confrontar`, `priorizar`, `classificar`, `operacionalizar`, `governar`, `pilotar`, `medir-valor`, `recalibrar`, `emitir`
++- `agents/`: `classificador-tecnologico.md`, `extrator-documental.md`
++- `skills/hb-*`: 18 habilidades (F0–P10 completo, incluindo `hb-emitir-e1..e5`)
++- `scripts/`: `operacional.py`, `governanca.py`, `piloto.py`, `metrica.py`, `calibragem.py`, `baseline.py`, `inegociaveis.py`, `entregaveis.py`
++- `reference/`: `CTX-01-instrumento-camada-contexto.md`, `gates.md`, `procedencia.md`, `habilidades.json`, `agentes.json`, `metodo/` (16 documentos controlados, pacote versionado com manifesto SHA-256)
++- `template-caso/`: `CLAUDE.md`, `registro/{estado.json,playbook.json,*.schema.json}`, `contexto/{entidades,fontes,regras,termos}` (modelos YAML)
++
++## Decisões registradas (decisoes/) — 21 decisões
++
++Estado atual (ver `decisoes/README.md` para o índice completo):
++
++- **Firmes:** 001 dois plugins, 002 playbook no caso, 003 chat sem autoridade
++  de escrita, 005 camada por nível, 007 um repo Git por caso, 008 cliente
++  nunca fala com agente, 009 habilidades remetem (não reproduzem) o método,
++  011 testes negativos primeiro, 012 E3 dividido, 013 correspondência
++  entregável×passo fixada, **021 retirada da execução de contraste e
++  verificação por estados do caso**
++- **Resolvida:** 006 procedência — D/I/V, conforme CAT-01
++- **Substituídas:** 004 (janela da antítese, por 021), 014–020 (execução de
++  contraste e seu aparato de isolamento, todas por 021)
++- **Proposta:** 010 três zonas de escrita
++- **Pendente de decisão de método:** 020 (pendência única de correspondência
++  CAT-01/catálogo/playbook)
+ 
+-1. `b83610b` marketplace emcia: núcleo e playbook de campo (inicial)
+-2. `93ac18c` testes negativos, CI, correção do abrir-caso, aviso de diretório
+-3. `b96a7e0` novo-caso.sh substitui abrir-caso; commit inicial não-fatal
+-4. `60a69c1` camada resolvida por nível (CAT-01 3.6); núcleo 0.2.0, campo 0.3.0
+-5. `26b06e4` marca scripts como executáveis
+-6. `8df9d81` registro de decisões e CLAUDE.md da raiz (HEAD)
++## Testes
+ 
+-Projeto jovem (6 commits), em consolidação da arquitetura de travas.
++`testes/negativos.sh` — suíte acumulada de travas e controles positivos
++(regressão completa desde o baseline, incluindo G1–G7, ISO-selo,
++verificação por estados do caso). Cada pacote/frente de trabalho também
++tem um módulo Python dedicado em `testes/` (`nucleo_2_6_1.py`,
++`campo_2_6_2.py` … `campo_2_6_6.py`, `autoria_responsavel.py`,
++`esforco.py`, `metodo_empacotado.py`, `verificacao_por_estados.py`
++entre outros). Regra do projeto: falha na suíte é regressão de trava —
++conserta-se a trava, não o teste. Roda no CI a cada push.
+ 
+ ## Cobertura Diátaxis (avaliação)
+ 
+@@ -120,71 +160,24 @@ Projeto jovem (6 commits), em consolidação da arquitetura de travas.
+ | Referência | ✅ | `decisoes/`, `eiac-campo/reference/`, `playbook.json`, `plugin.json` |
+ | Explicação | ⚠️ parcial | a razão de cada trava está espalhada entre README e decisões; não há um documento único de arquitetura/"por quê" |
+ 
+-## Documentos canônicos do método (docs/)
+-
+-Chegaram depois do primeiro mapeamento — não estão sob controle de versão ainda
+-(`docs/` aparece como não rastreado no `git status`). São os documentos
+-controlados que o playbook e as decisões do repositório citam por sigla; até
+-agora só existiam como referência textual, sem o conteúdo presente no repo.
+-
+-| Sigla | Arquivo | Fase/Passo | Estado |
+-|---|---|---|---|
+-| EMCIA-MET-01 | `EMCIA-MET-01-documento-do-metodo.md` | F0–F4, todos os passos | Em revisão |
+-| EMCIA-CAT-01 | `EMCIA-CAT-01-fronteira-de-delegacao.md` | F0–F4, todos os passos | Em revisão |
+-| EMCIA-GLO-01 | `EMCIA-GLO-01-glossario-do-metodo.md` | Todas | Em revisão |
+-| EMCIA-HAB-01 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` | Anterior a F0 | Em revisão |
+-| EMCIA-TRI-01 | `EMCIA-TRI-01-instrumento-de-triagem.md` | F0 — Triagem | Em revisão |
+-| EMCIA-FER-01 | `EMCIA-FER-01-quadro-de-ferramentas.md` | F0–F4, todos | Em revisão |
+-| EMCIA-VER-01 | `EMCIA-VER-01-plano-de-verificacao.md` | N/A (verificação do método em si) | Em revisão |
+-| EMCIA-E1 | `EMCIA-E1-ficha-de-enquadramento.md` | F0 | Em revisão |
+-| EMCIA-E2 | `EMCIA-E2-diagnostico-e-oportunidade.md` | F1, passos 1–3 | Em revisão |
+-| EMCIA-E3 | `EMCIA-E3-blueprint-da-solucao.md` | F2, passos 4–5 | Em revisão |
+-| EMCIA-E4 | `EMCIA-E4-guia-operacional.md` | F3, passos 6–7 | Em revisão |
+-| EMCIA-E5 | `EMCIA-E5-relatorio-de-piloto.md` | F4, passos 8–10 | Em revisão |
+-
+-Todos os 12 têm responsável único (Celso do Vale) e aprovação pendente.
+-
+-### O que esses documentos confirmam sobre as pendências abertas
+-
+-- **CAT-01 §3.6 "Deslocamento da fronteira por nível"** é a fonte que o
+-  `playbook.json` cita (`deslocamento_por_nivel.referencia`). Conteúdo real:
+-  N1 automatiza até o passo 4 (verificação a partir do 5), N2 até o passo 2
+-  (verificação a partir do 3), N3 só na fase F0 (verificação a partir do
+-  passo 1). Isso bate com o que o playbook implementa — a referência é válida.
+-- **decisoes/006 (procedência) está mesmo em conflito, agora confirmado com
+-  texto em mãos:** CAT-01 §3.5.4 e GLO-01 §3.4 fixam procedência como
+-  **uma** dimensão de três valores — `[D]` declarado, `[I]` inferido, `[V]`
+-  verificado. O `playbook.json` deste repo implementa **três dimensões
+-  independentes** (contexto/origem/apuração), cada uma com seu próprio
+-  vocabulário, incluindo valores que não existem em CAT-01/GLO-01 (`externo`,
+-  `antitese`, `campo`, `livre`, `medido/calculado/estimado`). Não é
+-  divergência cosmética — são dois modelos de dados incompatíveis para o
+-  mesmo conceito. Continua exigindo decisão humana, como já registrado; o
+-  código não deve resolver isso silenciosamente.
+-- **CAT-01 Anexo A (catálogo de agentes e habilidades)** é candidato a
+-  conferir contra as 13 skills `hb-*` e os 2 agentes de `eiac-campo/` —
+-  não conferido neste mapeamento, ver lacunas abaixo.
+-- O método canônico tem **5 fases (F0–F4) e 10 passos**; o playbook do
+-  template de caso só declara **8 etapas (F0, P1, P2, P3a, P3b, P3d, P4,
+-  P5)** — isso é exatamente a pendência já registrada no `playbook.json`
+-  ("P6 a P10 sem habilidade: instrumentos ausentes") e agora tem contraparte
+-  documental: E4 e E5 (guia operacional e relatório de piloto) descrevem os
+-  passos 6–10 que ainda não têm habilidade no plugin.
+-
+-## Lacunas identificadas
+-
+-- Não há doc de arquitetura consolidada ligando guarda→validador→playbook num
+-  só lugar (hoje é preciso ler `guarda.py`, `validar.py` e o README juntos).
+-- `eiac-nucleo/README.md` e `testes/README.md` existem mas não foram lidos
+-  neste mapeamento — candidatos a checar na próxima passada.
+-- Duas pendências de método seguem abertas por decisão (não é lacuna de doc,
+-  é lacuna de método aguardando decisão humana — ver decisoes/006 e README).
+-- `docs/` (os 12 documentos canônicos EMCIA-*) ainda não está sob controle de
+-  versão (`git status` mostra como não rastreado) — vale decidir se entra no
+-  repositório do marketplace ou fica fora dele por design (o README diz "este
+-  repositório é a ferramenta, não contém caso nem dado de cliente"; os
+-  documentos do método não são dado de cliente, então a exclusão não parece
+-  intencional, mas não commitei nada — decisão do usuário).
+-- CAT-01 Anexo A (catálogo de agentes/habilidades) não foi conferido contra
+-  as 13 skills `hb-*` reais de `eiac-campo/skills/` — checar se cobertura
+-  bate 1:1 ou se há desvio.
++## Documentos canônicos do método
++
++`eiac-campo/reference/metodo/` contém o pacote operacional versionado dos
++16 documentos controlados usados na execução (decisão 017), com manifesto
++SHA-256 — cópia read-only consumida pelo campo; nenhum documento é
++duplicado para fora do marketplace.
++
++## Lacunas identificadas (revisão 2026-09-23)
++
++- Não há doc de arquitetura consolidada ligando guarda→validador→playbook→selo
++  num só lugar (hoje é preciso ler `guarda.py`, `avancar.py`, `selar.py` e o
++  README juntos).
++- Decisão 020 (cruzamento CAT-01 Anexo A × catálogo × playbook) segue aberta,
++  aguardando decisão humana de método.
++- O aparato de isolamento núcleo×contraste (`guarda.py`, `selar.py`) não foi
++  removido nesta rodada apesar de a execução de contraste ter sido retirada
++  do projeto — candidato explícito a decisão de remoção futura (ver seção
++  acima).
++- 4/18 HB (HB-04, HB-05, HB-06, HB-13) seguem sem implementação física
++  própria — catálogo completo e resolvível, mas sem skill dedicada; nenhuma
++  é exigida pelo contrato F0–P10 congelado.
+diff --git a/CTX-01-instrumento-camada-contexto.md b/CTX-01-instrumento-camada-contexto.md
+index 764fb03..fa85366 100644
+--- a/CTX-01-instrumento-camada-contexto.md
++++ b/CTX-01-instrumento-camada-contexto.md
+@@ -181,7 +181,7 @@ A célula crítica é o achado empírico do método: regras de baixa frequência
+ 
+ **Consequência de uso:** se a célula crítica estiver vazia ao fim do P3, ou a organização é excepcionalmente regular, ou o levantamento não aconteceu. As duas hipóteses precisam ser confrontadas antes de encerrar o passo — e a segunda é a mais provável.
+ 
+-O mesmo quadro serve ao Quadro de Contraste: **a previsão é que o braço da antítese produza a célula crítica vazia.**
++O mesmo quadro serve ao Quadro de Confronto: **a previsão é que a célula crítica esteja vazia no estado declarado selado**, ao fim de P2 — antes do levantamento presencial de P3b confirmar (ou não) as regras de baixa frequência e alta consequência que os documentos não registram.
+ 
+ ---
+ 
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index fcf7c57..7fbc2f9 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -8,15 +8,18 @@ Guia completo. Cada passo tem uma verificação; não avance sem ela.
+ 
+ ## 1 · Preparar o repositório do marketplace
+ 
+-Descompacte `emcia-marketplace.zip` onde você guarda seus repositórios.
++Clone o repositório público onde você guarda seus repositórios:
+ 
+ ```bash
+ cd ~/projetos
+-unzip emcia-marketplace.zip
++git clone https://github.com/CvGonjr/emcia-marketplace.git
+ cd emcia-marketplace
+-git init -q
+-git add -A
+-git commit -qm "marketplace emcia: nucleo e playbook de campo"
++```
++
++Para trabalhar em uma versão congelada, use a tag correspondente em vez do branch `master`:
++
++```bash
++git checkout v-sprint3-freeze
+ ```
+ 
+ **Verificar:**
+@@ -34,10 +37,10 @@ Deve imprimir `['eiac-nucleo', 'eiac-campo']`.
+ No Claude Code, dentro de qualquer projeto:
+ 
+ ```
+-/plugin marketplace add <seu-usuario>/emcia-marketplace
++/plugin marketplace add CvGonjr/emcia-marketplace
+ ```
+ 
+-Para repositório privado, o Claude Code usa as credenciais do seu Git. Se preferir apontar para a cópia local durante o desenvolvimento, use o caminho em vez do nome — mas quem for aplicar o método deve usar o repositório.
++Se preferir apontar para a cópia local durante o desenvolvimento, use o caminho em vez do nome — mas quem for aplicar o método deve usar o repositório do GitHub, para receber atualizações.
+ 
+ **Verificar:**
+ 
+@@ -58,18 +61,19 @@ Os dois plugins devem aparecer na listagem, ainda não instalados.
+ 
+ A ordem importa pouco, mas o núcleo é quem traz as hooks.
+ 
+-**Verificar:** reinicie o Claude Code e digite `/`. Devem aparecer:
++**Verificar:** reinicie o Claude Code e digite `/`. Devem aparecer, entre outros:
+ 
+ | Comando | Origem |
+ |---|---|
+ | `/eiac-nucleo:estado` | núcleo |
+ | `/eiac-nucleo:gravar` | núcleo |
++| `/eiac-nucleo:curar` | núcleo |
+ | `/eiac-nucleo:registrar-sessao` | núcleo |
+ | `/eiac-nucleo:encerrar` | núcleo |
+ | `/eiac-nucleo:emitir` | núcleo |
++| `/eiac-nucleo:selar` | núcleo |
+ | `/eiac-nucleo:quadro` | núcleo |
+-| `/eiac-campo:abrir-caso` | playbook |
+-| `/eiac-campo:enquadrar` … `/eiac-campo:classificar` | playbook |
++| `/eiac-campo:enquadrar` … `/eiac-campo:recalibrar` | playbook |
+ 
+ Se os comandos não aparecerem, o plugin não carregou. Confira `/plugin` e o log de inicialização.
+ 
+@@ -92,18 +96,20 @@ Deve responder *nenhum caso aberto neste diretório*. Isso confirma que o script
+ Fora do Claude Code, no terminal:
+ 
+ ```bash
+-~/projetos/emcia-marketplace/novo-caso.sh medic-plus
++~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
+ ```
+ 
+-O script cria `~/casos/medic-plus`, preenche o nome no registro e no `CLAUDE.md`, e faz o commit inicial. Ele recusa se o destino já existir ou se o diretório base estiver dentro de um repositório Git — um repositório por caso.
++O script cria `~/casos/medic-plus`, fixa `responsavel` (a única identidade que os scripts do núcleo usam como autor de registro — decisão 019), preenche o nome no registro e no `CLAUDE.md`, e faz o commit inicial. Ele recusa se o destino já existir, se o diretório base estiver dentro de um repositório Git (um repositório por caso), ou se `--responsavel` estiver vazio, for placeholder, código de agente ou coletivo genérico.
+ 
+-Para outro lugar, passe a base como segundo argumento:
++Para outro lugar, passe a base como terceiro argumento:
+ 
+ ```bash
+-~/projetos/emcia-marketplace/novo-caso.sh medic-plus ~/trabalho/clientes
++~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome" ~/trabalho/clientes
+ ```
+ 
+-Copie os documentos do método para `metodo/` — documento do método, glossário, catálogo de delegação, quadro de ferramentas, instrumento de triagem, modelos E1–E5, plano de verificação, CTX-01.
++Copie os documentos do método para `metodo/` — o pacote controlado (16 documentos, manifesto SHA-256) vive em `eiac-campo/reference/metodo/` dentro do marketplace.
++
++**Material público da etapa 0a:** o levantamento público sobre a organização e o setor, feito antes da abertura do caso (etapa 0a do protocolo de habilitação, EMCIA-HAB-01), não entra automaticamente aqui. Ele é coletado fora do caso e só é gravado depois da abertura (0d), pelo caminho normal de curadoria, com marca `I · tipo_fonte: externa`, URL e limite da fonte — ver `eiac-campo/reference/procedencia.md`.
+ 
+ ### Abra a sessão dentro do caso
+ 
+@@ -124,7 +130,7 @@ Deve mostrar: caso medic-plus, etapa F0, camada EX1, modalidade assíncrono.
+ 
+ Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está no diretório errado.
+ 
+-## 6 · Os seis testes negativos
++## 6 · Os sete testes negativos
+ 
+ **Esta é a parte que não pode ser pulada.** Se algum falhar, a trava correspondente não existe no seu ambiente.
+ 
+@@ -170,7 +176,18 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
+ 
+ **Esperado:** recusa, exigindo registro de sessão.
+ 
+-### Teste 6 — autor agente
++### Teste 6 — P3b sem selo posterior ao encerramento de P2
++
++Percorra F0 → P1 → P2 → P3a normalmente, registre a sessão de P3b, mas **não sele o caso**:
++
++```
++/eiac-nucleo:registrar-sessao P3b
++/eiac-nucleo:encerrar P3b
++```
++
++**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 e antes de tentar novamente resolve.
++
++### Teste 7 — autor agente
+ 
+ ```bash
+ python3 ~/.claude/plugins/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor "AG05"
+@@ -178,7 +195,7 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor "
+ 
+ **Esperado:** *autor precisa ser pessoa nomeada*.
+ 
+-### Teste 7 — emitir com portão fechado
++### Teste 8 — emitir com portão fechado
+ 
+ ```
+ /eiac-nucleo:emitir E2
+@@ -217,7 +234,7 @@ Os testes negativos são evidência de sprint. Guarde:
+ cat registro/eventos.jsonl
+ ```
+ 
+-Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `AssercaoRecusada` são a prova de que as travas operam — e um print disso vale mais que qualquer descrição.
++Cada linha é um evento de domínio com data e componente (variante campo/contraste, commit — decisão 018). `TentativaNegada`, `AssercaoRecusada` e `RecusaMaquina` são a prova de que as travas operam — e um print disso vale mais que qualquer descrição.
+ 
+ ---
+ 
+@@ -231,6 +248,8 @@ Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `Asser
+ | Frontmatter das habilidades rejeitado | Campos extras não tolerados | Remova `etapa`, `camada`, `modalidade`, `delegavel` do frontmatter — a informação já vive no `playbook.json` |
+ | `playbook invalido` em toda ação | `registro/playbook.json` ausente ou incompleto | Confira que você está dentro do diretório do caso |
+ | Guarda bloqueia tudo | Você está dentro de um caso e a etapa corrente é restritiva | `/eiac-nucleo:estado` para ver onde está |
++| P3b recusa mesmo com sessão registrada | Falta selar o caso depois de encerrar P2 | `/eiac-nucleo:selar` antes de tentar abrir/encerrar P3b (ver Teste 6) |
++| `novo-caso.sh` recusa `--responsavel` | Nome vazio, placeholder, código de agente ou coletivo genérico | Informe pessoa nomeada real |
+ 
+ ---
+ 
+@@ -238,12 +257,10 @@ Cada linha é um evento de domínio com data e autor. `TentativaNegada` e `Asser
+ 
+ | Item | Estado |
+ |---|---|
+-| Habilidades de P6 a P10 | Ausentes — instrumentos ainda não escritos |
+-| Portão de E4 e E5 | Pendente — divergência entre o PFC e os documentos internos |
+ | Base de referência curada | Ausente — esforço de curadoria |
+ | Servidores MCP | Ausentes — decisão entre MCP e sistema de arquivos em aberto |
+-| Geração de documento dos entregáveis | Ausente — `--emitir` autoriza, não gera |
+ | Zona `sugestoes/` para copilotagem | Ausente |
+ | Formulário F0 para o cliente | Ausente |
++| 4/18 HB sem implementação física própria (HB-04, HB-05, HB-06, HB-13) | Catálogo formal completo; nenhuma é exigida pelo contrato F0–P10 congelado — ver `decisoes/020` |
+ 
+-Nenhum deles impede o percurso F0 a P5, que é o que a ação 1.9 exercita.
++Nenhum deles impede o percurso F0 a P10, que é executável e verificado de ponta a ponta (ver `.projectdocs/evidencias/sprint2/2.6.6/`).
+diff --git a/README.md b/README.md
+index 0c20394..d09ca75 100644
+--- a/README.md
++++ b/README.md
+@@ -9,10 +9,12 @@ Dois plugins, e a separação entre eles é o argumento arquitetural do projeto.
+ 
+ O núcleo lê o playbook do caso e aplica o que ele declara. Trocar o playbook troca o método sem tocar em uma linha de código — é o que sustenta a afirmação de que o método é independente da ferramenta.
+ 
++Repositório: [github.com/CvGonjr/emcia-marketplace](https://github.com/CvGonjr/emcia-marketplace)
++
+ ## Instalação
+ 
+ ```
+-/plugin marketplace add <url-do-repositorio>
++/plugin marketplace add CvGonjr/emcia-marketplace
+ /plugin install eiac-nucleo@emcia
+ /plugin install eiac-campo@emcia
+ ```
+@@ -22,11 +24,13 @@ As hooks do núcleo registram automaticamente. A trava viaja com o plugin, não
+ ## Abrir um caso
+ 
+ ```bash
+-~/projetos/emcia-marketplace/novo-caso.sh medic-plus
++~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
+ cd ~/casos/medic-plus && claude
+ ```
+ 
+-O script copia o template, preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento muda a base.
++O script copia o template, fixa `responsavel` em `registro/estado.json` (a autoria de todo registro do caso vem daqui, nunca de um argumento informado durante a sessão — ver decisão 019), preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento posicional muda a base.
++
++`--responsavel` é obrigatório e recusa nome vazio, placeholder, código de agente ou coletivo genérico ("equipe", "área" etc.). É a única identidade humana que os scripts do núcleo (`validar.py`, `curar.py`, `selar.py`) usam como autor — mesmo que outro valor seja informado a cada chamada.
+ 
+ Um alias deixa mais curto:
+ 
+@@ -34,26 +38,45 @@ Um alias deixa mais curto:
+ alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
+ ```
+ 
+-Antes de começar, copie os documentos do método para `metodo/`.
++Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
+ 
+ **A sessão precisa estar dentro do caso.** O núcleo lê `registro/estado.json` do diretório corrente — de fora, não há guarda nem validador.
+ 
+-## Percurso
++## Percurso — 13 etapas, F0 a P10
+ 
+-| Comando | Etapa | Camada |
+-|---|---|---|
+-| `/eiac-campo:enquadrar` | F0 | EX1 |
+-| `/eiac-campo:mapear-contexto` | P1 | EX2 |
+-| `/eiac-campo:mapear-fontes` | P2 | EX2 |
+-| `/eiac-campo:medir` | P3a | EX3 |
+-| — | P3b | **EX4 · sem comando, por desenho** |
+-| `/eiac-campo:confrontar` | P3d | EX3 |
+-| `/eiac-campo:priorizar` | P4 | EX2 |
+-| `/eiac-campo:classificar` | P5 | EX2 |
++| Comando | Etapa | Camada (N2) | Modalidade | Depende de |
++|---|---|---|---|---|
++| `/eiac-campo:enquadrar` | F0 | EX1 | assíncrono | — |
++| `/eiac-campo:mapear-contexto` | P1 | EX2 | vídeo | — |
++| `/eiac-campo:mapear-fontes` | P2 | EX2 | assíncrono | — |
++| `/eiac-campo:medir` | P3a | EX3 | remoto | — |
++| — | P3b | **EX4 · sem comando, por desenho** | presencial | selo posterior ao encerramento de P2* |
++| `/eiac-campo:confrontar` | P3d | EX3 | remoto | P3b |
++| `/eiac-campo:priorizar` | P4 | EX3 | vídeo | — |
++| `/eiac-campo:classificar` | P5 | EX3 | vídeo | — |
++| `/eiac-campo:operacionalizar` | P6 | EX3 | presencial ou remoto | P5 |
++| `/eiac-campo:governar` | P7 | **EX4 · decisão humana registrada** | — | P6 |
++| `/eiac-campo:pilotar` | P8 | EX3 | conforme nível | P7 |
++| `/eiac-campo:medir-valor` | P9 | EX3 | conforme nível | P8 |
++| `/eiac-campo:recalibrar` | P10 | **EX4 · decisão humana registrada, recorrente** | conforme nível | P9 |
++
++\* P3b não abre nem encerra sem um evento `SeloAplicado` posterior ao encerramento de P2 — declarado no playbook (`"exige_selo_apos": "P2"` em P3b), aplicado genericamente pelo núcleo (`playbook.selo_apos_etapa()`, usado por `guarda.py` na abertura e por `avancar.py` no encerramento). Ver "Verificação por estados do caso" abaixo.
++
++A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela acima mostra N2; `/eiac-nucleo:fronteira` mostra a camada real do caso aberto.
+ 
+ E os comandos de núcleo, que valem em qualquer playbook:
+ 
+-`/eiac-nucleo:estado` · `/eiac-nucleo:gravar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir`
++`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
++
++## Verificação por estados do caso
++
++A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
++
++A trava de código dessa comparação é única: P3b não abre, nem encerra, sem o selo de P2. Sem selo, `/eiac-nucleo:estado` mostra a etapa presa em P3b e a mensagem nomeia exatamente qual selo falta.
++
++## Material público da etapa 0a
++
++O levantamento público sobre a organização e o setor, feito na etapa 0a do protocolo de habilitação (EMCIA-HAB-01, anterior a F0), **não entra no caso nesse momento**. Ele é coletado fora do repositório do caso e só é gravado depois da abertura (etapa 0d — caso aberto e selado), pelo caminho normal de curadoria (`/eiac-nucleo:curar` ou `/eiac-nucleo:gravar`, conforme o tipo de objeto), com marca `I · tipo_fonte: externa`, URL e limite da fonte explícitos — o mesmo formato que `eiac-campo/reference/procedencia.md` já define para qualquer inferência apoiada em fonte externa. Não há automatismo que grave esse material antes da abertura; é regra documental, não trava de código.
+ 
+ ## As três travas
+ 
+@@ -69,20 +92,29 @@ Antes de confiar em qualquer coisa, prove que ela recusa.
+ 
+ | # | Tente | Esperado |
+ |---|---|---|
+-| 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso | Bloqueio, `TentativaNegada` no log |
++| 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso, sem sessão registrada | Bloqueio, `TentativaNegada` no log |
+ | 2 | Escrever direto em `caso/qualquer.md` | Bloqueio, com instrução de usar o validador |
+ | 3 | Gravar rascunho com asserção sem procedência D/I/V | Recusa, `AssercaoRecusada` no log |
+ | 4 | `/eiac-nucleo:encerrar P3b` sem sessão registrada | Recusa |
+-| 5 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
+-| 6 | `--autor AG05` em qualquer script | Recusa |
++| 5 | `/eiac-nucleo:encerrar P3b` (ou ler `hb-levantar-regras/SKILL.md`) antes de selar após P2 | Recusa, nomeando o selo que falta |
++| 6 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
++| 7 | `--autor AG05` em qualquer script | Recusa (autoria efetiva vem de `responsavel`, não do argumento) |
+ 
+ **Se algum passar, a trava não existe.** Há relatos públicos de que o bloqueio por `exit 2` nem sempre funciona para `Write` e `Edit`, apenas para `Bash`. O teste 2 é o que confirma se isso afeta você — e se afetar, a regra G2 precisa ser reforçada por permissão `deny` além da hook.
+ 
+-## Pendências que o playbook declara e o núcleo respeita
++## Portões de emissão — E1 a E5
++
++Os cinco entregáveis ao cliente têm portão fixo, sem pendência aberta de correspondência:
+ 
+-O `registro/playbook.json` marca `E4` e `E5` com `portao_pendente: true`, porque a correspondência entre entregáveis e passos ainda diverge entre o relatório do PFC e os documentos internos. A emissão recusa até a decisão. **O agente não deve resolver isso.**
++| Entregável | Etapas exigidas |
++|---|---|
++| E1 — Ficha de enquadramento | F0 |
++| E2 — Diagnóstico e oportunidade | P1, P2, P3a, P3b, P3d |
++| E3 — Blueprint da solução (consolida E3-D + E3-E) | P4, P5 |
++| E4 — Guia operacional | P6, P7 |
++| E5 — Relatório de piloto e calibragem | P8, P9, P10 |
+ 
+-P6 a P10 não têm habilidade: os instrumentos que elas exigem — roteiro de levantamento, instrumento da camada de contexto, protocolo de campo — ainda não existem.
++Cinco itens inegociáveis (um por entregável a partir de E2) bloqueiam emissão até estarem semanticamente satisfeitos — nunca por flag manual. Ver `eiac-campo/reference/gates.md` para o detalhamento completo, incluindo a distinção interna E3-D/E3-E.
+ 
+ ---
+ 
+@@ -101,7 +133,7 @@ Depois de instalar os dois plugins, rode em um caso recém-aberto:
+ /eiac-nucleo:quadro          deve avisar que a célula crítica está vazia
+ ```
+ 
+-E os seis testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
++E os sete testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
+ 
+ ---
+ 
+@@ -110,7 +142,7 @@ E os seis testes negativos da seção anterior. **Se o teste 2 passar — escrit
+ Com o marketplace no GitHub:
+ 
+ ```bash
+-git commit -am "hb-medir: exige amostra e periodo"
++git commit -am "mensagem da mudança"
+ git push
+ ```
+ 
+@@ -140,4 +172,4 @@ O `playbook.json` vive no repositório do **caso**, copiado na abertura, não no
+ bash testes/negativos.sh
+ ```
+ 
+-Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste.
++Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste. A suíte acumulada (regressão + pacotes por ação) soma centenas de verificações; ver `testes/README.md` para o detalhamento por pacote.
+diff --git a/decisoes/021-verificacao-por-estados-do-caso.md b/decisoes/021-verificacao-por-estados-do-caso.md
+new file mode 100644
+index 0000000..4650b8e
+--- /dev/null
++++ b/decisoes/021-verificacao-por-estados-do-caso.md
+@@ -0,0 +1,29 @@
++# 021 — Retirada da execução de contraste e verificação por estados do caso
++
++**Data:** 23/09/2026 · **Estado:** firme · **Substitui:** [[004-janela-da-antitese]], [[014-execucao-de-contraste]], [[015-isolamento-esforco-calculo-compartilhado]], [[016-identidade-runtime-do-contraste]], [[017-pacote-controlado-e-pendencias-no-contraste]], [[018-isolamento-por-carimbo-no-selo]], [[019-autoria-atribuida-pelo-responsavel]] (só a parte específica de execução de contraste — a regra geral de autoria por responsável, aplicável a todo o núcleo, permanece válida e não é revertida por esta decisão), [[020-pendencia-cruzamento-cat01]] (só na parte que menciona a execução de contraste; a pendência de cruzamento CAT-01 em si continua aberta)
++
++## Contexto
++
++A execução de contraste (`emcia-contraste`/`eiac-contraste`, decisões 014–020) foi uma execução completa e independente do mesmo playbook em repositório e plugin próprios, comparável à execução de campo, com um aparato de isolamento (marcador `execucao: contraste`, carimbo `componente.variante` no selo) construído especificamente para impedir que as duas execuções se misturassem no mesmo caso.
++
++Essa arquitetura foi retirada do projeto por decisão metodológica: a comparação entre o que a organização declara e o que o levantamento presencial confirma não precisa de uma segunda execução autônoma do método. Ela pode ser interna ao próprio caso de campo, comparando dois **estados** do mesmo caso — o estado declarado, fechado (selado) ao fim de P2, e o estado verificado, que P3b/P3d produzem depois do levantamento presencial.
++
++## Decisão
++
++A verificação por estados do caso substitui a execução de contraste:
++
++- **Não há segunda execução.** Um único caso de campo, um único playbook, um único núcleo. Não há repositório irmão, não há plugin alternativo, não há colisão de identidade a resolver no selo.
++- **P2 fecha o estado declarado.** O selo aplicado depois do encerramento de P2 (`SeloAplicado`, via `/eiac-nucleo:selar`) é o ponto de corte: tudo que o caso sabe sobre o processo até ali é declarado, ainda não confrontado com o levantamento presencial.
++- **P3b abre o estado verificado.** P3b (levantamento de regras não documentadas, presencial, não delegável) e P3d (confronto declarado × observado) produzem o segundo estado. A trava de código é única: **P3b não abre, nem encerra, sem um selo posterior ao encerramento de P2.**
++- **A trava é declarativa, não hard-coded.** O playbook marca `{"exige_selo_apos": "P2"}` em P3b. O núcleo não sabe o que "P2" ou "P3b" significam — `eiac-nucleo/scripts/playbook.py::selo_apos_etapa()` só compara a posição de eventos `EtapaEncerrada`/`SeloAplicado` na trilha (`estado.eventos()`) contra o campo declarativo, do mesmo jeito que a checagem de condições de emissão (`avancar._avaliar_condicao()`, 2.6.0) já compara campo/etapa/valor sem interpretar seu significado. Aplicada em dois pontos: `guarda.py` (G7, bloqueia a abertura — carregamento da skill) e `avancar.py::encerrar()` (bloqueia o fechamento).
++- **"Posterior" é definido por ordem de evento, não por timestamp.** Dois eventos podem cair no mesmo segundo (`estado.evento()` usa precisão de segundo); comparar por `data` produziria falso negativo em qualquer percurso rápido. A posição na lista de eventos é o único ordenador confiável.
++- **O Quadro de Confronto lê os dois estados e não escreve em nenhum** — mesma regra de leitura-sem-escrita que já valia para o Quadro de Contraste em 004/014.
++
++O aparato de isolamento núcleo × contraste em `guarda.py` (busca por marcador `execucao: contraste`) e `selar.py` (carimbo `componente.variante`/`componente.commit` em todo evento, recusa de selo sobre trilha com variante diferente de `campo`) **não foi removido nesta decisão**. Ele permanece funcional — não conflita com a nova trava de selo, que opera sobre um par de tipos de evento diferente (`EtapaEncerrada`/`SeloAplicado`) — mas passou a proteger contra uma execução que não é mais parte do fluxo declarado do projeto. Fica registrado como candidato explícito a remoção em decisão futura; até lá, manter é mais seguro do que apagar sob incerteza sobre dependências residuais.
++
++## Consequência
++
++- Não existe mais repositório irmão, plugin de contraste, nem identidade de execução a distinguir. A garantia de que o estado declarado não se confunde com o estado verificado vive inteiramente dentro do caso de campo, como propriedade do próprio percurso F0–P10.
++- Toda suíte de teste que constrói um percurso F0→P3b (ou além) precisa selar o caso depois de encerrar P2 — os módulos `testes/nucleo_2_6_1.py`, `testes/campo_2_6_3.py`, `testes/campo_2_6_5.py` e `testes/campo_2_6_6.py` foram ajustados nesta mesma frente para refletir isso; nenhum resultado que eles verificam mudou de sentido, só a sequência de comandos que os produz.
++- `README.md`, `INSTALACAO.md`, `eiac-campo/reference/gates.md`, `CTX-01-instrumento-camada-contexto.md` (as duas cópias) e `.projectdocs/map.md` deixam de mencionar antítese/contraste como parte do método executável — a terminologia "Quadro de Contraste" vira "Quadro de Confronto (declarado × verificado)".
++- Esta decisão não resolve a pendência 020 (cruzamento CAT-01 Anexo A × catálogo × playbook), que permanece aberta por seu próprio mérito.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 0e00025..7c7bae8 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -9,7 +9,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 001 | Dois plugins: núcleo e playbook | firme |
+ | 002 | O playbook vive no caso, não no plugin | firme |
+ | 003 | Chat não tem autoridade de escrita | firme |
+-| 004 | A antítese roda entre P2 e P3a | substituída por 014 |
++| 004 | A antítese roda entre P2 e P3a | substituída por 021 |
+ | 005 | Camada resolvida por nível | firme |
+ | 006 | Procedência em três dimensões | resolvida — D/I/V, conforme CAT-01 |
+ | 007 | Um repositório Git por caso | firme |
+@@ -19,10 +19,11 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 011 | Testes negativos antes do caminho feliz | firme |
+ | 012 | E3 dividido; termo de autonomia no E4 | firme (pendência de correspondência superada por 013) |
+ | 013 | E4 = P6/P7, E5 = P8/P9/P10, fixado por EMCIA-CAM-01/ESP-01 | firme |
+-| 014 | Execução de contraste roda fora do caso de campo, em repositório e plugin próprios, antes do F0 | firme |
+-| 015 | Isolamento, esforço comparável e cálculo compartilhado | parcialmente superada por 018 (checagem por plugin habilitado) |
+-| 016 | O contraste substitui a identidade de runtime do núcleo | firme |
+-| 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | firme |
+-| 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | firme |
+-| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme |
+-| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método |
++| 014 | Execução de contraste roda fora do caso de campo, em repositório e plugin próprios, antes do F0 | substituída por 021 |
++| 015 | Isolamento, esforço comparável e cálculo compartilhado | parcialmente superada por 018 (checagem por plugin habilitado); a parte de execução de contraste substituída por 021 |
++| 016 | O contraste substitui a identidade de runtime do núcleo | substituída por 021 |
++| 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
++| 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
++| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme (regra geral de autoria; a parte específica de execução de contraste substituída por 021) |
++| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
++| 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
+diff --git a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+index 764fb03..fa85366 100644
+--- a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
++++ b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+@@ -181,7 +181,7 @@ A célula crítica é o achado empírico do método: regras de baixa frequência
+ 
+ **Consequência de uso:** se a célula crítica estiver vazia ao fim do P3, ou a organização é excepcionalmente regular, ou o levantamento não aconteceu. As duas hipóteses precisam ser confrontadas antes de encerrar o passo — e a segunda é a mais provável.
+ 
+-O mesmo quadro serve ao Quadro de Contraste: **a previsão é que o braço da antítese produza a célula crítica vazia.**
++O mesmo quadro serve ao Quadro de Confronto: **a previsão é que a célula crítica esteja vazia no estado declarado selado**, ao fim de P2 — antes do levantamento presencial de P3b confirmar (ou não) as regras de baixa frequência e alta consequência que os documentos não registram.
+ 
+ ---
+ 
+diff --git a/eiac-campo/reference/gates.md b/eiac-campo/reference/gates.md
+index 29762ca..39c8488 100644
+--- a/eiac-campo/reference/gates.md
++++ b/eiac-campo/reference/gates.md
+@@ -42,7 +42,7 @@ Não são entregues ao cliente e não têm condição de emissão.
+ | Registro de sessão de campo | P3b | Abertura de P3d |
+ | Log de divergência | P3d | Calibragem da triagem |
+ | Log de tentativas negadas | Todas | Lição aprendida |
+-| Quadro de Contraste | Sprint 4 | Anexo do relatório |
++| Quadro de Confronto (declarado × verificado) | P2 (selo) → P3b/P3d | Anexo do relatório |
+ 
+ ## Correspondência entregável × passo (resolvida)
+ 
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 8577103..2b9f1cf 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.1",
++  "versao": "0.4.2",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+@@ -46,7 +46,7 @@
+     {
+       "id": "P3b", "nome": "Levantamento de regras nao documentadas",
+       "modalidade": "presencial", "habilidade": "hb-levantar-regras",
+-      "delegavel": false,
++      "delegavel": false, "exige_selo_apos": "P2",
+       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
+     },
+     {
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 3de4817..8c6a8bb 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.20",
++  "version": "0.2.21",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 17b8f24..258362a 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -70,6 +70,9 @@ def encerrar(st, pb, etapa_id, autor):
+     dep = et.get("depende_de")
+     if dep and not st["cumprimentos"].get(dep, {}).get("cumprido"):
+         return f"{etapa_id} depende de {dep}, ainda nao cumprida"
++    selo_ok, motivo_selo = P.selo_apos_etapa(pb, etapa_id, E.eventos())
++    if not selo_ok:
++        return motivo_selo
+ 
+     st["cumprimentos"].setdefault(etapa_id, {})
+     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})
+diff --git a/eiac-nucleo/scripts/estado.py b/eiac-nucleo/scripts/estado.py
+index e8e6cd0..731a8b6 100644
+--- a/eiac-nucleo/scripts/estado.py
++++ b/eiac-nucleo/scripts/estado.py
+@@ -38,6 +38,26 @@ def ler():
+     return json.loads(CAMINHO.read_text(encoding="utf-8"))
+ 
+ 
++def eventos():
++    """Le a trilha completa (registro/eventos.jsonl), na ordem em que foi
++    gravada. Linha ilegivel e pulada (nao interrompe a leitura) -- quem
++    precisar de trilha integra sabe onde procurar a falha; um leitor de
++    trava nao deve quebrar por uma linha antiga corrompida."""
++    log = pathlib.Path("registro/eventos.jsonl")
++    if not log.exists():
++        return []
++    lidos = []
++    for linha in log.read_text(encoding="utf-8").splitlines():
++        linha = linha.strip()
++        if not linha:
++            continue
++        try:
++            lidos.append(json.loads(linha))
++        except json.JSONDecodeError:
++            continue
++    return lidos
++
++
+ def gravar(e):
+     CAMINHO.parent.mkdir(parents=True, exist_ok=True)
+     CAMINHO.write_text(json.dumps(e, indent=2, ensure_ascii=False), encoding="utf-8")
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 2909e0c..8729e23 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -13,6 +13,8 @@ Regras, sem ordem fixa exigida entre si:
+   G6  escrita, edicao ou remocao em fontes/ por agente e negada; fontes/
+       e so leitura, documento novo entra pelo operador, fora da sessao
+       do agente
++  G7  habilidade de etapa que declara "exige_selo_apos" nao carrega sem
++      selo posterior ao encerramento da etapa referenciada
+ """
+ import json, os, pathlib, re, shlex, sys
+ 
+@@ -151,6 +153,20 @@ def main():
+                 etapa=e["id"], camada_exigida=cam, nivel=nivel, ferramenta=ferramenta,
+             )
+ 
++    # G7 — habilidade de etapa que exige selo posterior a outra etapa nao
++    # carrega sem esse selo. Generico: qualquer etapa pode declarar
++    # {"exige_selo_apos": "<id>"} no playbook; o nucleo nao sabe por que
++    # (nao cita nenhum id de etapa aqui) -- so compara eventos EtapaEncerrada
++    # e SeloAplicado via playbook.selo_apos_etapa(). Isto cobre a ABERTURA
++    # da etapa (carregamento da skill); o fechamento e recusado por
++    # avancar.encerrar() com a mesma checagem.
++    for e in pb["etapas"]:
++        if not e.get("habilidade") or e["habilidade"] not in alvo:
++            continue
++        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
++        if not selo_ok:
++            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
++
+     # G2 — escrita direta no repositorio do caso
+     escrita = ferramenta in ("Write", "Edit") and alvo.startswith("caso/")
+     escrita_bash = ferramenta == "Bash" and " caso/" in comando and any(
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 185a2ff..481f559 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -158,6 +158,56 @@ def capacidade_valida(capacidade):
+     return True, None
+ 
+ 
++def selo_apos_etapa(pb, etapa_id, trilha):
++    """Verifica a exigencia declarativa 'exige_selo_apos' de uma etapa.
++
++    Uma etapa pode declarar {"exige_selo_apos": "<outro-id-de-etapa>"} no
++    playbook. Quando declarada, essa etapa (abrir ou encerrar) exige um
++    evento SeloAplicado posterior ao EtapaEncerrada da etapa referenciada.
++    O nucleo nao sabe por que -- so compara a ORDEM de dois tipos de evento
++    genericos contra um campo declarativo do contrato, do mesmo jeito que
++    _avaliar_condicao() em avancar.py compara campo/etapa/valor sem saber
++    o que "P2" ou "P3b" significam.
++
++    "Posterior" e definido pela POSICAO do evento na trilha (a ordem em
++    que estado.evento() gravou cada linha), nao pelo campo `data`: dois
++    eventos podem cair no mesmo segundo (timespec="seconds" em
++    estado.evento()) quando o percurso e rapido -- um comando de teste ou
++    um script automatizado emite varios eventos no mesmo segundo com
++    frequencia. Comparar por timestamp ali produziria falso negativo
++    (selo real, no lugar certo, recusado por empate de relogio). A ordem
++    de gravacao e o unico ordenador confiavel dessa trilha.
++
++    Devolve (True, None) quando a exigencia nao existe ou esta satisfeita;
++    (False, motivo) quando a etapa referenciada ainda nao foi encerrada, ou
++    quando nao ha selo posterior a esse encerramento.
++
++    ``trilha`` e a lista de eventos ja lida (estado.eventos()) -- esta
++    funcao nao le arquivo, para permanecer pura e testavel sem tocar disco.
++    """
++    et = etapa(pb, etapa_id)
++    if not et:
++        return True, None
++    referencia = et.get("exige_selo_apos")
++    if not referencia:
++        return True, None
++
++    posicoes_encerramento = [i for i, e in enumerate(trilha)
++                              if e.get("evento") == "EtapaEncerrada" and e.get("etapa") == referencia]
++    if not posicoes_encerramento:
++        return False, (f"{etapa_id} exige selo posterior ao encerramento de "
++                        f"{referencia}, mas {referencia} ainda nao foi encerrada.")
++    ultima_posicao_encerramento = max(posicoes_encerramento)
++
++    posicoes_selo = [i for i, e in enumerate(trilha) if e.get("evento") == "SeloAplicado"]
++    selo_posterior = any(i > ultima_posicao_encerramento for i in posicoes_selo)
++    if not selo_posterior:
++        return False, (f"{etapa_id} exige selo posterior ao encerramento de "
++                        f"{referencia}. Nenhum SeloAplicado encontrado depois "
++                        f"desse encerramento -- sele o caso antes de prosseguir.")
++    return True, None
++
++
+ def proxima_fronteira(pb, etapa_id, nivel):
+     """Primeira etapa daqui em diante que exige pessoa. None se nao houver.
+ 
+diff --git a/testes/campo_2_6_3.py b/testes/campo_2_6_3.py
+index 7009b56..c9af158 100644
+--- a/testes/campo_2_6_3.py
++++ b/testes/campo_2_6_3.py
+@@ -36,6 +36,7 @@ import estado as E_check  # noqa: E402
+ TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
+ AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
+ GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
+ OPERACIONAL = RAIZ / "eiac-campo" / "scripts" / "operacional.py"
+ GOVERNANCA = RAIZ / "eiac-campo" / "scripts" / "governanca.py"
+ PILOTO = RAIZ / "eiac-campo" / "scripts" / "piloto.py"
+@@ -66,9 +67,28 @@ def preparar_caso():
+     caso = tmp / "caso"
+     shutil.copytree(TEMPLATE, caso)
+     (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro" / "estado.json"
++    estado = json.loads(estado_path.read_text(encoding="utf-8"))
++    estado["responsavel"] = "Celso do Vale"
++    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
++    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
++    # ao encerramento de P2, ver percorrer_ate).
++    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
++    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
++    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
+     return caso
+ 
+ 
++def selar(caso, nota="selo de teste"):
++    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
++        "x", encoding="utf-8")
++    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
++                           cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
+ def avancar(caso, **kwargs):
+     comando = ["python3", str(AVANCAR)]
+     for chave, valor in kwargs.items():
+@@ -138,15 +158,29 @@ def apurar_e_encerrar_f0(caso):
+ 
+ ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
+ 
++# Referencias de exige_selo_apos, invertidas (decisao 021): para cada
++# etapa-alvo, a lista de ids de etapa que exigem selo posterior a ela.
++ETAPAS_QUE_EXIGEM_SELO_DE = {}
++for _e in pb_oficial["etapas"]:
++    _ref = _e.get("exige_selo_apos")
++    if _ref:
++        ETAPAS_QUE_EXIGEM_SELO_DE.setdefault(_ref, []).append(_e["id"])
++
+ 
+ def percorrer_ate(caso, ate_etapa_id):
+     apurar_e_encerrar_f0(caso)
+     ordem = [e["id"] for e in pb_oficial["etapas"]]
+-    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++    alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
++    restante = set(alvo)
++    for etapa_id in alvo:
+         if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++        restante.discard(etapa_id)
++        exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
++        if any(exigente in restante for exigente in exigentes):
++            selar(caso, f"selo apos {etapa_id}, exigido por etapa posterior do percurso")
+ 
+ 
+ def op_yaml(estado, versao, **over):
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index 1f81e71..a9e60d2 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -34,6 +34,7 @@ import estado as E_check  # noqa: E402
+ TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
+ AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
+ GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
+ OPERACIONAL = RAIZ / "eiac-campo" / "scripts" / "operacional.py"
+ GOVERNANCA = RAIZ / "eiac-campo" / "scripts" / "governanca.py"
+ PILOTO = RAIZ / "eiac-campo" / "scripts" / "piloto.py"
+@@ -67,9 +68,28 @@ def preparar_caso():
+     caso = tmp / "caso"
+     shutil.copytree(TEMPLATE, caso)
+     (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro" / "estado.json"
++    estado = json.loads(estado_path.read_text(encoding="utf-8"))
++    estado["responsavel"] = "Celso do Vale"
++    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
++    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
++    # ao encerramento de P2, ver percorrer_ate).
++    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
++    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
++    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
+     return caso
+ 
+ 
++def selar(caso, nota="selo de teste"):
++    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
++        "x", encoding="utf-8")
++    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
++                           cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
+ def avancar(caso, **kwargs):
+     comando = ["python3", str(AVANCAR)]
+     for chave, valor in kwargs.items():
+@@ -146,15 +166,29 @@ def apurar_e_encerrar_f0(caso, nivel="N2"):
+ 
+ ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
+ 
++# Referencias de exige_selo_apos, invertidas (decisao 021): para cada
++# etapa-alvo, a lista de ids de etapa que exigem selo posterior a ela.
++ETAPAS_QUE_EXIGEM_SELO_DE = {}
++for _e in pb_oficial["etapas"]:
++    _ref = _e.get("exige_selo_apos")
++    if _ref:
++        ETAPAS_QUE_EXIGEM_SELO_DE.setdefault(_ref, []).append(_e["id"])
++
+ 
+ def percorrer_ate(caso, ate_etapa_id, nivel="N2"):
+     apurar_e_encerrar_f0(caso, nivel=nivel)
+     ordem = [e["id"] for e in pb_oficial["etapas"]]
+-    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++    alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
++    restante = set(alvo)
++    for etapa_id in alvo:
+         if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++        restante.discard(etapa_id)
++        exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
++        if any(exigente in restante for exigente in exigentes):
++            selar(caso, f"selo apos {etapa_id}, exigido por etapa posterior do percurso")
+ 
+ 
+ def _yaml_dump(dados, indent=0):
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index 76d199b..1968924 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -38,6 +38,7 @@ def X_estrutura_carregar(caminho):
+ TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
+ AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
+ GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
+ CURADOR = RAIZ / "eiac-nucleo" / "scripts" / "curar.py"
+ CONSULTOR = RAIZ / "eiac-nucleo" / "scripts" / "consultar.py"
+ CATALOGO = RAIZ / "eiac-nucleo" / "scripts" / "catalogo.py"
+@@ -77,9 +78,28 @@ def preparar_caso():
+     caso = tmp / "caso"
+     shutil.copytree(TEMPLATE, caso)
+     (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro" / "estado.json"
++    estado = json.loads(estado_path.read_text(encoding="utf-8"))
++    estado["responsavel"] = "Celso do Vale"
++    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
++    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
++    # ao encerramento de P2).
++    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
++    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
++    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
+     return caso
+ 
+ 
++def selar(caso, nota="selo de teste"):
++    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
++        "x", encoding="utf-8")
++    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
++                           cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
+ def avancar(caso, **kwargs):
+     comando = ["python3", str(AVANCAR)]
+     for chave, valor in kwargs.items():
+@@ -579,6 +599,7 @@ else:
+ # ======================================================================
+ codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
+ codigo2, saida2, erro2 = avancar(caso, encerrar="P2", autor="Celso do Vale")
++selar(caso, "selo apos P2, exigido por P3b")
+ preparar_bl(caso)
+ codigo3, saida3, erro3 = avancar(caso, encerrar="P3a", autor="Celso do Vale")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
+@@ -632,6 +653,7 @@ caso_p6 = preparar_caso()
+ apurar_e_encerrar_f0(caso_p6, nivel="N2")
+ for e in ["P1", "P2"]:
+     avancar(caso_p6, encerrar=e, autor="Celso do Vale")
++selar(caso_p6, "selo apos P2, exigido por P3b")
+ preparar_bl(caso_p6)
+ avancar(caso_p6, encerrar="P3a", autor="Celso do Vale")
+ inegociavel(caso_p6, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
+@@ -832,6 +854,7 @@ else:
+ 
+ avancar(caso_e1e3, encerrar="P1", autor="Celso do Vale")
+ avancar(caso_e1e3, encerrar="P2", autor="Celso do Vale")
++selar(caso_e1e3, "selo apos P2, exigido por P3b")
+ preparar_bl(caso_e1e3)
+ avancar(caso_e1e3, encerrar="P3a", autor="Celso do Vale")
+ inegociavel(caso_e1e3, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 43b4413..d7d5fe2 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -59,9 +59,24 @@ def preparar_caso():
+     estado = json.loads(estado_path.read_text(encoding="utf-8"))
+     estado["responsavel"] = "Celso do Vale"
+     estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
++    # selar.py exige repositorio git (decisao 021: P3b exige selo posterior
++    # ao encerramento de P2) -- percorrer_ate() precisa poder selar.
++    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
++    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
++    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
+     return caso
+ 
+ 
++def selar(caso, nota="selo de teste"):
++    (caso / f"marcador-selo-{len(list(caso.glob('marcador-selo-*')))}.txt").write_text(
++        "x", encoding="utf-8")
++    proc = subprocess.run(["python3", str(SELAR), "--autor", "Celso do Vale", "--nota", nota],
++                           cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
+ def avancar(caso, **kwargs):
+     comando = ["python3", str(AVANCAR)]
+     for chave, valor in kwargs.items():
+@@ -92,17 +107,38 @@ def apurar_e_encerrar_f0(caso):
+ ETAPAS_NAO_DELEGAVEIS = {e["id"] for e in pb_oficial["etapas"] if e.get("delegavel") is False}
+ 
+ 
++# Referencias de exige_selo_apos, invertidas: para cada etapa-alvo (valor),
++# a lista de ids de etapa que exigem selo posterior a ela. Generico -- nao
++# assume que so P3b declara a exigencia, nem que o alvo e sempre P2.
++ETAPAS_QUE_EXIGEM_SELO_DE = {}
++for _e in pb_oficial["etapas"]:
++    _ref = _e.get("exige_selo_apos")
++    if _ref:
++        ETAPAS_QUE_EXIGEM_SELO_DE.setdefault(_ref, []).append(_e["id"])
++
++
+ def percorrer_ate(caso, ate_etapa_id):
+     """Encerra F0 e todas as etapas ate (e incluindo) ate_etapa_id, em
+-    ordem, registrando sessao para as etapas nao delegaveis do playbook.
++    ordem, registrando sessao para as etapas nao delegaveis do playbook e
++    selando o caso logo apos encerrar qualquer etapa que seja referenciada
++    por 'exige_selo_apos' de uma etapa AINDA POR VIR no percurso (decisao
++    021) -- nao depende de a etapa exigente ser a proxima imediata (pode
++    haver etapas intermediarias entre a etapa referenciada e a que exige
++    o selo, como P3a entre P2 e P3b).
+     """
+     apurar_e_encerrar_f0(caso)
+     ordem = [e["id"] for e in pb_oficial["etapas"]]
+-    for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
++    alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
++    restante = set(alvo)
++    for etapa_id in alvo:
+         if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++        restante.discard(etapa_id)
++        exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
++        if any(exigente in restante for exigente in exigentes):
++            selar(caso, f"selo apos {etapa_id}, exigido por etapa posterior do percurso")
+ 
+ 
+ print("== testes 2.6.1 -- nucleo generico de protocolos")
+@@ -163,6 +199,7 @@ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
+ for e in ["P1", "P2", "P3a"]:
+     avancar(caso, encerrar=e, autor="Celso do Vale")
++selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P3b", autor="Celso do Vale")
+ if avancar(caso, encerrar="P3d", autor="Celso do Vale")[0] == 0:
+@@ -181,6 +218,7 @@ else:
+ 
+ for e in ["P2", "P3a"]:
+     avancar(caso, encerrar=e, autor="Celso do Vale")
++selar(caso, "selo apos P2, exigido por P3b")
+ # etapa corrente agora e P3b, delegavel:false
+ codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
+ if codigo == 2 and "delegavel" in erro:
+@@ -311,6 +349,7 @@ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
+ for e in ["P1", "P2", "P3a"]:
+     avancar(caso, encerrar=e, autor="Celso do Vale")
++selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P3b", autor="Celso do Vale")
+ avancar(caso, encerrar="P3d", autor="Celso do Vale")
+@@ -426,6 +465,7 @@ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
+ for e in ["P1", "P2", "P3a"]:
+     avancar(caso, encerrar=e, autor="Celso do Vale")
++selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+ for e in ["P3b", "P3d"]:
+     avancar(caso, encerrar=e, autor="Celso do Vale")
+diff --git a/testes/verificacao_por_estados.py b/testes/verificacao_por_estados.py
+new file mode 100644
+index 0000000..51df0d1
+--- /dev/null
++++ b/testes/verificacao_por_estados.py
+@@ -0,0 +1,230 @@
++#!/usr/bin/env python3
++"""Verificacao por estados do caso (decisao 021, substitui 004/014-020).
++
++A execucao de contraste foi retirada do projeto por decisao metodologica.
++A comparacao passou a ser interna ao mesmo caso de campo: o estado
++declarado (selado ao fim de P2) e comparado ao estado verificado em campo
++(apos P3b/P3d). Este arquivo cobre a unica trava de codigo dessa mudanca:
++P3b nao abre nem encerra sem um selo (SeloAplicado) posterior ao
++encerramento de P2.
++
++A exigencia e declarativa: o playbook marca
++{"exige_selo_apos": "P2"} em P3b; o nucleo (playbook.selo_apos_etapa,
++usado por guarda.py G7 e avancar.py encerrar()) nao cita "P2" nem "P3b"
++em codigo -- so compara eventos EtapaEncerrada/SeloAplicado contra o
++campo declarativo, do mesmo jeito que avancar._avaliar_condicao() ja fazia
++para os portoes de emissao (2.6.0).
++
++Negativos primeiro (decisao 011): sem selo, e com selo anterior ao
++encerramento de P2, ambos recusam -- abrir (guarda.py, TentativaNegada) e
++encerrar (avancar.py, RecusaMaquina). Depois o controle positivo: selo
++posterior abre e encerra normalmente.
++"""
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
++GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
++AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
++SELAR = RAIZ / "eiac-nucleo" / "scripts" / "selar.py"
++
++falhas = 0
++total = 0
++
++
++def ok(msg):
++    global total
++    total += 1
++    print(f"  ok    {msg}")
++
++
++def falha(msg):
++    global total, falhas
++    total += 1
++    falhas += 1
++    print(f"  FALHA {msg}")
++
++
++def preparar_caso(tmp, responsavel="Celso do Vale"):
++    caso = tmp / "caso"
++    shutil.copytree(TEMPLATE, caso)
++    (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro" / "estado.json"
++    estado = json.loads(estado_path.read_text(encoding="utf-8"))
++    if responsavel is not None:
++        estado["responsavel"] = responsavel
++    estado_path.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
++    subprocess.run(["git", "init", "-q", "."], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.name", "Identidade Da Maquina"], cwd=caso, check=False)
++    subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
++    subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
++    subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
++    return caso
++
++
++def avancar(caso, **kwargs):
++    comando = ["python3", str(AVANCAR)]
++    for chave, valor in kwargs.items():
++        comando += [f"--{chave.replace('_', '-')}", str(valor)]
++    proc = subprocess.run(comando, cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def guarda(caso, tool_name, tool_input):
++    entrada = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
++    proc = subprocess.run(["python3", str(GUARDA)], cwd=caso, input=entrada,
++                           text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def selar(caso, nota, autor="Celso do Vale"):
++    proc = subprocess.run(["python3", str(SELAR), "--autor", autor, "--nota", nota],
++                           cwd=caso, text=True, capture_output=True, check=False)
++    return proc.returncode, proc.stdout, proc.stderr
++
++
++def eventos(caso):
++    log = caso / "registro" / "eventos.jsonl"
++    if not log.exists():
++        return []
++    return [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()]
++
++
++def levar_ate_p3b(caso):
++    """F0 -> P1 -> P2 -> P3a, sem selar. Etapa corrente fica P3b, com a
++    sessao humana ja registrada (P3b e nao delegavel -- G1 recusaria antes
++    de G7 sequer ser avaliado, sem a sessao)."""
++    avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    avancar(caso, encerrar="F0", autor="Celso do Vale")
++    avancar(caso, encerrar="P1", autor="Celso do Vale")
++    codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
++    if codigo != 0:
++        return codigo, saida, erro
++    codigo, saida, erro = avancar(caso, encerrar="P3a", autor="Celso do Vale")
++    if codigo != 0:
++        return codigo, saida, erro
++    return avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++
++
++print("== verificacao por estados do caso (decisao 021) -- selo apos P2 exigido por P3b")
++
++# =====================================================================
++# T01 (negativo) -- P3b nao ABRE sem selo algum apos P2
++# =====================================================================
++with tempfile.TemporaryDirectory() as tmp:
++    caso = preparar_caso(pathlib.Path(tmp))
++    codigo, saida, erro = levar_ate_p3b(caso)
++    if codigo != 0:
++        falha(f"T01 pre-condicao falhou ao chegar em P3b: {erro}")
++    else:
++        codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
++        evs = eventos(caso)
++        tem_evento = any(
++            e.get("evento") == "TentativaNegada" and "exige selo posterior" in (e.get("motivo") or "")
++            for e in evs
++        )
++        if codigo == 2 and tem_evento:
++            ok("T01 P3b nao abre sem selo apos P2 (guarda recusa, TentativaNegada registrada)")
++        else:
++            falha(f"T01 P3b abriu sem selo apos P2: exit={codigo} evento_presente={tem_evento} saida={erro}")
++
++# =====================================================================
++# T02 (negativo) -- P3b nao ENCERRA sem selo algum apos P2
++# =====================================================================
++with tempfile.TemporaryDirectory() as tmp:
++    caso = preparar_caso(pathlib.Path(tmp))
++    levar_ate_p3b(caso)
++    codigo, saida, erro = avancar(caso, encerrar="P3b", autor="Celso do Vale")
++    if codigo != 0 and "exige selo posterior" in erro:
++        ok(f"T02 P3b nao encerra sem selo apos P2 ({erro.strip().splitlines()[0]})")
++    else:
++        falha(f"T02 P3b encerrou sem selo apos P2: exit={codigo} erro={erro}")
++
++# =====================================================================
++# T03 (negativo) -- selo ANTERIOR ao encerramento de P2 nao satisfaz
++# (sela antes de encerrar P2; o selo existe, mas e anterior)
++# =====================================================================
++with tempfile.TemporaryDirectory() as tmp:
++    caso = preparar_caso(pathlib.Path(tmp))
++    avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    avancar(caso, encerrar="F0", autor="Celso do Vale")
++    avancar(caso, encerrar="P1", autor="Celso do Vale")
++    # sela ANTES de encerrar P2 -- este selo e anterior ao EtapaEncerrada de P2
++    (caso / "marcador-selo-anterior.txt").write_text("x", encoding="utf-8")
++    codigo_selo, _, erro_selo = selar(caso, "selo anterior ao encerramento de P2")
++    if codigo_selo != 0:
++        falha(f"T03 pre-condicao: selo anterior falhou ao ser aplicado: {erro_selo}")
++    codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
++    if codigo != 0:
++        falha(f"T03 pre-condicao: P2 nao encerrou: {erro}")
++    else:
++        avancar(caso, encerrar="P3a", autor="Celso do Vale")
++        avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++        codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
++        if codigo == 2 and "exige selo posterior" in erro:
++            ok("T03 selo anterior ao encerramento de P2 nao satisfaz P3b (guarda recusa)")
++        else:
++            falha(f"T03 selo anterior foi aceito indevidamente: exit={codigo} erro={erro}")
++
++# =====================================================================
++# T04 (positivo, controle) -- selo POSTERIOR ao encerramento de P2 abre
++# e encerra P3b normalmente
++# =====================================================================
++with tempfile.TemporaryDirectory() as tmp:
++    caso = preparar_caso(pathlib.Path(tmp))
++    codigo, saida, erro = levar_ate_p3b(caso)
++    if codigo != 0:
++        falha(f"T04 pre-condicao falhou ao chegar em P3b: {erro}")
++    else:
++        (caso / "marcador-selo-posterior.txt").write_text("x", encoding="utf-8")
++        codigo_selo, _, erro_selo = selar(caso, "selo posterior ao encerramento de P2")
++        if codigo_selo != 0:
++            falha(f"T04 selo posterior falhou ao ser aplicado: {erro_selo}")
++        else:
++            codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
++            if codigo == 0:
++                ok("T04 P3b abre com selo posterior ao encerramento de P2")
++            else:
++                falha(f"T04 P3b nao abriu com selo posterior valido: exit={codigo} erro={erro}")
++
++            avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
++            codigo, saida, erro = avancar(caso, encerrar="P3b", autor="Celso do Vale")
++            if codigo == 0:
++                ok("T04 P3b encerra com selo posterior ao encerramento de P2")
++            else:
++                falha(f"T04 P3b nao encerrou com selo posterior valido: exit={codigo} erro={erro}")
++
++# =====================================================================
++# T05 (controle) -- etapa sem exige_selo_apos nao e afetada (P1, P2 em si)
++# =====================================================================
++with tempfile.TemporaryDirectory() as tmp:
++    caso = preparar_caso(pathlib.Path(tmp))
++    avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    avancar(caso, encerrar="F0", autor="Celso do Vale")
++    codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
++    if codigo == 0:
++        ok("T05 etapa sem exige_selo_apos (P1) encerra normalmente, sem exigir selo algum")
++    else:
++        falha(f"T05 etapa sem exige_selo_apos foi bloqueada indevidamente: {erro}")
++
++# =====================================================================
++# T06 -- nenhum vocabulario de contraste/antitese na implementacao nova
++# =====================================================================
++codigo = subprocess.run(
++    ["grep", "-rn", "-i", "-E", "antitese|contraste",
++     str(RAIZ / "eiac-nucleo" / "scripts" / "playbook.py")],
++    capture_output=True, text=True,
++).returncode
++if codigo != 0:
++    ok("T06 playbook.selo_apos_etapa() nao cita antitese/contraste (mecanismo generico)")
++else:
++    falha("T06 playbook.py cita antitese/contraste na nova trava")
++
++print(f"{total} verificacoes de verificacao por estados do caso, {falhas} falhas")
++if falhas:
++    sys.exit(1)

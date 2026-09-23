@@ -1,0 +1,92 @@
+commit f2aa2e1c0d76d13d3c35aadfb0b81be9ca477b0f
+Author: valejr <CvGonjr@github.com>
+Date:   Wed Sep 23 19:45:23 2026 -0300
+
+    feat(nucleo+campo): require case seal after P2 to open/close P3b
+    
+    Replaces the standalone contraste execution (decisions 014-020,
+    separate plugin/repo eiac-contraste running the full method
+    independently) with an in-case comparison: the declared state, sealed
+    at the end of P2, versus the verified state that P3b/P3d produce from
+    the in-person field walk. Registered as decision 021, superseding 004
+    and 014-020 (019's general componente-authorship rule stays firm; only
+    its contraste-specific part is superseded).
+    
+    The gate is declarative, not hard-coded: the playbook marks P3b with
+    {"exige_selo_apos": "P2"} (playbook v0.4.1 -> v0.4.2); the nucleus
+    never names "P2" or "P3b" in code. New estado.eventos() reads the full
+    trail; new playbook.selo_apos_etapa() compares EtapaEncerrada/
+    SeloAplicado by their POSITION in that trail, not by timestamp -- two
+    events can land in the same second (estado.evento() uses second
+    precision), and a fast percurso (including the test suite itself)
+    produced a false negative when compared by data. Position is the
+    reliable ordinator. Wired into guarda.py (new G7, blocks opening) and
+    avancar.py::encerrar() (blocks closing).
+    
+    The contraste isolation guard in guarda.py/selar.py is left in place
+    per explicit instruction -- it doesn't conflict with the new gate, but
+    now protects against an execution path that's no longer part of the
+    project; flagged in resultado.md as a candidate for future removal.
+    
+    New testes/verificacao_por_estados.py (7 checks, negatives first: no
+    seal, seal before P2's closure, then the positive control). Fixed
+    regression this gate caused in four pre-existing suites that build
+    F0->P3b percursos without sealing after P2 (nucleo_2_6_1.py,
+    campo_2_6_3.py, campo_2_6_5.py, campo_2_6_6.py) -- none of their
+    assertions changed meaning, only the command sequence that reaches the
+    state they check.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ decisoes/021-verificacao-por-estados-do-caso.md |  29 +++
+ decisoes/README.md                              |  17 +-
+ eiac-campo/template-caso/registro/playbook.json |   4 +-
+ eiac-nucleo/.claude-plugin/plugin.json          |   2 +-
+ eiac-nucleo/scripts/avancar.py                  |   3 +
+ eiac-nucleo/scripts/estado.py                   |  20 +++
+ eiac-nucleo/scripts/guarda.py                   |  16 ++
+ eiac-nucleo/scripts/playbook.py                 |  50 ++++++
+ testes/campo_2_6_3.py                           |  36 +++-
+ testes/campo_2_6_5.py                           |  36 +++-
+ testes/campo_2_6_6.py                           |  23 +++
+ testes/nucleo_2_6_1.py                          |  44 ++++-
+ testes/verificacao_por_estados.py               | 230 ++++++++++++++++++++++++
+ 13 files changed, 495 insertions(+), 15 deletions(-)
+commit a6ad0921ec53fe0d8e6fd3f13385ec5d5efa8351
+Author: valejr <CvGonjr@github.com>
+Date:   Wed Sep 23 19:46:22 2026 -0300
+
+    docs: rewrite stale docs, document 0a public material rule
+    
+    README.md and INSTALACAO.md described the pre-Sprint-2 repository: 8 of
+    13 steps, P6-P10 without habilidade, E4/E5 with portao_pendente,
+    zip-based install. Rewritten for the current state: all 13 F0-P10
+    steps, procedencia in the D/I/V format procedencia.md defines, E1-E5
+    fixed gates, GitHub install, the new "verificacao por estados do caso"
+    gate (seal after P2 required to open/close P3b), and a "material
+    publico da etapa 0a" section: public research gathered during 0a
+    (EMCIA-HAB-01) doesn't enter the case at that point -- it's collected
+    outside the repo and only recorded after opening (0d), via curation,
+    marked I / tipo_fonte: externa with URL and source limit. Documentary
+    rule only, no code.
+    
+    eiac-campo/reference/gates.md: "Quadro de Contraste" renamed to "Quadro
+    de Confronto (declarado x verificado)". CTX-01 line 184 (both copies,
+    kept identical): the prediction that "o braco da antitese produza a
+    celula critica vazia" becomes "a celula critica esteja vazia no estado
+    declarado selado" -- at the end of P2, before P3b's in-person walk
+    confirms or refutes it.
+    
+    .projectdocs/map.md rewritten in full; the previous version still
+    described the 12/09 baseline (6 commits, 8 steps, 13 skills), two full
+    Ações and 15 decisions out of date.
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+ .projectdocs/map.md                                | 277 ++++++++++-----------
+ CTX-01-instrumento-camada-contexto.md              |   2 +-
+ INSTALACAO.md                                      |  63 +++--
+ README.md                                          |  82 ++++--
+ .../CTX-01-instrumento-camada-contexto.md          |   2 +-
+ eiac-campo/reference/gates.md                      |   2 +-
+ 6 files changed, 235 insertions(+), 193 deletions(-)
