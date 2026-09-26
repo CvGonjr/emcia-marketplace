@@ -1,0 +1,28 @@
+test_00_ex3_sem_sessao (__main__.SessaoA8.test_00_ex3_sem_sessao) ... ok
+test_01_sessao_de_outra_etapa_nao_libera (__main__.SessaoA8.test_01_sessao_de_outra_etapa_nao_libera) ... ok
+test_02_sessao_futura (__main__.SessaoA8.test_02_sessao_futura) ... ok
+test_03_sessao_passada (__main__.SessaoA8.test_03_sessao_passada) ... ok
+test_04_sessao_etapa_final_ja_encerrada (__main__.SessaoA8.test_04_sessao_etapa_final_ja_encerrada) ... ok
+test_05_sessao_conferida_antes_do_selo (__main__.SessaoA8.test_05_sessao_conferida_antes_do_selo) ... ok
+test_06_sessao_nao_substitui_selo (__main__.SessaoA8.test_06_sessao_nao_substitui_selo) ... ok
+test_07_regra_ausente (__main__.SessaoA8.test_07_regra_ausente) ... ok
+test_08_camada_sem_declaracao (__main__.SessaoA8.test_08_camada_sem_declaracao) ... ok
+test_09_regra_nao_booleana (__main__.SessaoA8.test_09_regra_nao_booleana) ... ok
+test_10_outra_regra_exige_sessao_em_outra_camada (__main__.SessaoA8.test_10_outra_regra_exige_sessao_em_outra_camada) ... ok
+test_11_sessao_etapa_desconhecida (__main__.SessaoA8.test_11_sessao_etapa_desconhecida) ... ok
+test_12_ex2_sem_sessao (__main__.SessaoA8.test_12_ex2_sem_sessao) ... ok
+test_13_ex3_com_sessao_propria (__main__.SessaoA8.test_13_ex3_com_sessao_propria) ... ok
+test_14_mesma_etapa_ex2_em_n1 (__main__.SessaoA8.test_14_mesma_etapa_ex2_em_n1) ... ok
+test_15_ex4_sessao_e_selo (__main__.SessaoA8.test_15_ex4_sessao_e_selo) ... ok
+test_16_ex1_sem_sessao (__main__.SessaoA8.test_16_ex1_sem_sessao) ... ok
+test_17_regra_alternativa_lida_do_caso (__main__.SessaoA8.test_17_regra_alternativa_lida_do_caso) ... ok
+test_18_template_declara_regra (__main__.SessaoA8.test_18_template_declara_regra) ... ok
+test_19_camada_resolvida_nao_cache_do_estado (__main__.SessaoA8.test_19_camada_resolvida_nao_cache_do_estado) ... ok
+test_20_p3d_ex3 (__main__.SessaoA8.test_20_p3d_ex3) ... ok
+test_21_p4_ex3 (__main__.SessaoA8.test_21_p4_ex3) ... ok
+test_22_p5_ex3 (__main__.SessaoA8.test_22_p5_ex3) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.165s
+
+OK

@@ -1,0 +1,200 @@
+test_00_ex3_sem_sessao (__main__.SessaoA8.test_00_ex3_sem_sessao) ... FAIL
+test_01_sessao_de_outra_etapa_nao_libera (__main__.SessaoA8.test_01_sessao_de_outra_etapa_nao_libera) ... FAIL
+test_02_sessao_futura (__main__.SessaoA8.test_02_sessao_futura) ... FAIL
+test_03_sessao_passada (__main__.SessaoA8.test_03_sessao_passada) ... FAIL
+test_04_sessao_etapa_final_ja_encerrada (__main__.SessaoA8.test_04_sessao_etapa_final_ja_encerrada) ... FAIL
+test_05_sessao_conferida_antes_do_selo (__main__.SessaoA8.test_05_sessao_conferida_antes_do_selo) ... FAIL
+test_06_sessao_nao_substitui_selo (__main__.SessaoA8.test_06_sessao_nao_substitui_selo) ... ok
+test_07_regra_ausente (__main__.SessaoA8.test_07_regra_ausente) ... FAIL
+test_08_camada_sem_declaracao (__main__.SessaoA8.test_08_camada_sem_declaracao) ... FAIL
+test_09_regra_nao_booleana (__main__.SessaoA8.test_09_regra_nao_booleana) ... FAIL
+test_10_outra_regra_exige_sessao_em_outra_camada (__main__.SessaoA8.test_10_outra_regra_exige_sessao_em_outra_camada) ... FAIL
+test_11_sessao_etapa_desconhecida (__main__.SessaoA8.test_11_sessao_etapa_desconhecida) ... FAIL
+test_12_ex2_sem_sessao (__main__.SessaoA8.test_12_ex2_sem_sessao) ... ok
+test_13_ex3_com_sessao_propria (__main__.SessaoA8.test_13_ex3_com_sessao_propria) ... ok
+test_14_mesma_etapa_ex2_em_n1 (__main__.SessaoA8.test_14_mesma_etapa_ex2_em_n1) ... ok
+test_15_ex4_sessao_e_selo (__main__.SessaoA8.test_15_ex4_sessao_e_selo) ... ok
+test_16_ex1_sem_sessao (__main__.SessaoA8.test_16_ex1_sem_sessao) ... ok
+test_17_regra_alternativa_lida_do_caso (__main__.SessaoA8.test_17_regra_alternativa_lida_do_caso) ... ok
+test_18_template_declara_regra (__main__.SessaoA8.test_18_template_declara_regra) ... FAIL
+test_19_camada_resolvida_nao_cache_do_estado (__main__.SessaoA8.test_19_camada_resolvida_nao_cache_do_estado) ... FAIL
+test_20_p3d_ex3 (__main__.SessaoA8.test_20_p3d_ex3) ... FAIL
+test_21_p4_ex3 (__main__.SessaoA8.test_21_p4_ex3) ... FAIL
+test_22_p5_ex3 (__main__.SessaoA8.test_22_p5_ex3) ... FAIL
+
+======================================================================
+FAIL: test_00_ex3_sem_sessao (__main__.SessaoA8.test_00_ex3_sem_sessao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 82, in test_00_ex3_sem_sessao
+    self.recusa("--encerrar", "P3a", ["P3a", "EX3", "N2", "remoto", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_01_sessao_de_outra_etapa_nao_libera (__main__.SessaoA8.test_01_sessao_de_outra_etapa_nao_libera)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 87, in test_01_sessao_de_outra_etapa_nao_libera
+    self.recusa("--encerrar", "P3a", ["P3a", "EX3", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_02_sessao_futura (__main__.SessaoA8.test_02_sessao_futura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 90, in test_02_sessao_futura
+    self.recusa("--registrar-sessao", "P4", ["P4", "P3a", "etapa corrente"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3a | camada: EX3
+
+
+======================================================================
+FAIL: test_03_sessao_passada (__main__.SessaoA8.test_03_sessao_passada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 93, in test_03_sessao_passada
+    self.recusa("--registrar-sessao", "P2", ["P2", "P3a", "etapa corrente"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3a | camada: EX3
+
+
+======================================================================
+FAIL: test_04_sessao_etapa_final_ja_encerrada (__main__.SessaoA8.test_04_sessao_etapa_final_ja_encerrada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 98, in test_04_sessao_etapa_final_ja_encerrada
+    self.recusa("--registrar-sessao", "P10", ["P10", "ja encerrada"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: EX4
+
+
+======================================================================
+FAIL: test_05_sessao_conferida_antes_do_selo (__main__.SessaoA8.test_05_sessao_conferida_antes_do_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 102, in test_05_sessao_conferida_antes_do_selo
+    self.recusa("--encerrar", "P3b", ["P3b", "EX4", "N2", "presencial", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 62, in recusa
+    self.assertIn(parte, result.stderr)
+AssertionError: 'EX4' not found in 'P3b e presencial e nao delegavel. Registre a sessao antes de encerrar.\n'
+
+======================================================================
+FAIL: test_07_regra_ausente (__main__.SessaoA8.test_07_regra_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 111, in test_07_regra_ausente
+    self.recusa("--encerrar", "P3a", ["encerramento_por_camada"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_08_camada_sem_declaracao (__main__.SessaoA8.test_08_camada_sem_declaracao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 115, in test_08_camada_sem_declaracao
+    self.recusa("--encerrar", "P3a", ["encerramento_por_camada", "EX3"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_09_regra_nao_booleana (__main__.SessaoA8.test_09_regra_nao_booleana)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 119, in test_09_regra_nao_booleana
+    self.recusa("--encerrar", "P3a", ["encerramento_por_camada", "EX3"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_10_outra_regra_exige_sessao_em_outra_camada (__main__.SessaoA8.test_10_outra_regra_exige_sessao_em_outra_camada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 124, in test_10_outra_regra_exige_sessao_em_outra_camada
+    self.recusa("--encerrar", "P1", ["P1", "EX2", "N2", "video", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P2 | camada: EX2
+
+
+======================================================================
+FAIL: test_11_sessao_etapa_desconhecida (__main__.SessaoA8.test_11_sessao_etapa_desconhecida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 127, in test_11_sessao_etapa_desconhecida
+    self.recusa("--registrar-sessao", "OUTRA", ["OUTRA", "P3a", "etapa corrente"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3a | camada: EX3
+
+
+======================================================================
+FAIL: test_18_template_declara_regra (__main__.SessaoA8.test_18_template_declara_regra)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 162, in test_18_template_declara_regra
+    self.assertEqual(pb.get("encerramento_por_camada"), REGRAS)
+AssertionError: None != {'EX1': False, 'EX2': False, 'EX3': True, 'EX4': True}
+
+======================================================================
+FAIL: test_19_camada_resolvida_nao_cache_do_estado (__main__.SessaoA8.test_19_camada_resolvida_nao_cache_do_estado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 166, in test_19_camada_resolvida_nao_cache_do_estado
+    self.recusa("--encerrar", "P3a", ["P3a", "EX3", "N2", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_20_p3d_ex3 (__main__.SessaoA8.test_20_p3d_ex3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 170, in test_20_p3d_ex3
+    self.recusa("--encerrar", "P3d", ["P3d", "EX3", "N2", "remoto", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P4 | camada: EX3
+
+
+======================================================================
+FAIL: test_21_p4_ex3 (__main__.SessaoA8.test_21_p4_ex3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 174, in test_21_p4_ex3
+    self.recusa("--encerrar", "P4", ["P4", "EX3", "N2", "video", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P5 | camada: EX3
+
+
+======================================================================
+FAIL: test_22_p5_ex3 (__main__.SessaoA8.test_22_p5_ex3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 178, in test_22_p5_ex3
+    self.recusa("--encerrar", "P5", ["P5", "EX3", "N2", "video", "sessao"])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/sessao_a8.py", line 60, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: EX3
+
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.216s
+
+FAILED (failures=16)

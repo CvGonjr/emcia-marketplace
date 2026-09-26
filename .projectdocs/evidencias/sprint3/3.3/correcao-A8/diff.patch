@@ -1,0 +1,850 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index c7620fa..efe16c1 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -47,6 +47,9 @@ jobs:
+       - name: Apuração declarada do nível (A7)
+         run: python3 testes/triagem_a7.py
+ 
++      - name: Sessão no encerramento (A8)
++        run: python3 testes/sessao_a8.py
++
+       - name: Habilitação administrativa
+         run: python3 testes/habilitacao.py
+ 
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index 7fbc2f9..63990ea 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -168,17 +168,36 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
+ 
+ **Esperado:** *1 assercoes gravadas em caso/P2.md*.
+ 
+-### Teste 5 — encerrar etapa presencial sem sessão
++### Teste 5 — encerrar camada que exige sessão sem registrá-la
++
++Com P3b como etapa corrente, tente encerrar sem registrar sua sessão:
+ 
+ ```
+ /eiac-nucleo:encerrar P3b
+ ```
+ 
+-**Esperado:** recusa, exigindo registro de sessão.
++**Esperado:** recusa com etapa, camada, nível e modalidade exigida, e
++`TentativaNegada` na trilha. A exigência não depende de carregar uma skill.
++
++O mesmo vale para EX3: em N2, P3a, P3d, P4 e P5 exigem sessão humana
++registrada da própria etapa, conforme `encerramento_por_camada` no
++playbook. Quando P3a for a corrente, por exemplo:
++
++```
++/eiac-nucleo:registrar-sessao P3a <participantes>
++/eiac-nucleo:encerrar P3a
++```
++
++Registre a sessão na modalidade declarada. Sessão de outra etapa não
++libera o encerramento. Registro para etapa futura ou já encerrada é
++recusado. EX1 e EX2 não exigem sessão para encerrar: P1 em N2 e P3a em N1
++continuam sem essa exigência. Ver decisão 024.
+ 
+ ### Teste 6 — P3b sem selo posterior ao encerramento de P2
+ 
+-Percorra F0 → P1 → P2 → P3a normalmente, registre a sessão de P3b, mas **não sele o caso**:
++Percorra F0 → P1 → P2 → P3a, registrando a sessão de P3a antes de encerrá-la
++se a camada do nível exigir. Já em P3b, registre sua sessão, mas
++**não sele o caso**:
+ 
+ ```
+ /eiac-nucleo:registrar-sessao P3b
+diff --git a/README.md b/README.md
+index 9ecd7ff..6ab2171 100644
+--- a/README.md
++++ b/README.md
+@@ -85,6 +85,20 @@ Antes de começar, copie os documentos do método para `metodo/` (o pacote contr
+ 
+ A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela acima mostra N2; `/eiac-nucleo:fronteira` mostra a camada real do caso aberto.
+ 
++**Sessão antes de encerrar:** o playbook do caso declara a exigência por
++camada em `encerramento_por_camada`. EX3 e EX4 exigem sessão humana
++registrada da própria etapa; EX1 e EX2 não. Em N2, isso inclui P3a, P3d,
++P4 e P5. Registre a sessão enquanto a etapa for a corrente, com
++`/eiac-nucleo:registrar-sessao <etapa> <participantes>`, antes de chamar
++`/eiac-nucleo:encerrar <etapa>`. Etapa futura ou já encerrada não aceita
++sessão, e sessão de outra etapa não libera o encerramento.
++
++O núcleo resolve a camada pelo nível apurado e aplica essa declaração,
++mesmo se a habilidade nunca tiver sido carregada. A falta de sessão
++produz `TentativaNegada`, nomeando etapa, camada, nível e modalidade.
++Em P3b, a conferência da sessão vem antes da trava de selo de P2, que
++permanece exigida (decisões 024 e 021).
++
+ E os comandos de núcleo, que valem em qualquer playbook:
+ 
+ `/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
+@@ -104,7 +118,7 @@ O levantamento público sobre a organização e o setor, feito na etapa 0a do pr
+ | Trava | Mecanismo | Onde |
+ |---|---|---|
+ | **T1 procedência** | Escrita direta em `caso/` negada; todo conteúdo passa pelo validador | `guarda.py` G2 + `validar.py` |
+-| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre | `guarda.py` G1 e G3 |
++| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada | `guarda.py` G1 e G3 + `avancar.py` |
+ | **T3 selo** | Commits do repositório do caso | Git |
+ 
+ ## Testes negativos — faça no primeiro dia
+diff --git a/decisoes/024-sessao-encerramento-A8.md b/decisoes/024-sessao-encerramento-A8.md
+new file mode 100644
+index 0000000..e87e30c
+--- /dev/null
++++ b/decisoes/024-sessao-encerramento-A8.md
+@@ -0,0 +1,52 @@
++# 024 — Sessão exigida no encerramento das camadas EX3 e EX4 (A8)
++
++**Data:** 26/09/2026 · **Estado:** firme, por instrução do usuário
++
++## Contexto
++
++A verificação de F1 da Sprint 3 demonstrou A8: a camada era conferida ao
++carregar habilidades, mas etapas em EX3 podiam encerrar sem sessão
++registrada. Em N2, isso afetava P3a, P3d, P4 e P5. O comando de registro
++também aceitava sessão para etapa futura ou já encerrada.
++
++Foram lidos CLAUDE.md, o índice de decisões e a decisão 022. A decisão
++023 já registra A7. O usuário confirmou 024 para A8, preservando 022 e
++023. A exigência de selo da decisão 021 permanece vigente.
++
++## Decisão
++
++- O campo declara `encerramento_por_camada` no playbook do template:
++  EX1 e EX2 não exigem sessão; EX3 e EX4 exigem.
++- O núcleo resolve a camada da etapa pelo nível apurado e aplica o
++  booleano declarado. A nova condição não contém nomes de camada, etapa
++  ou nível no código; esses valores vêm do playbook do caso.
++- Encerramento sem a sessão exigida da própria etapa recusa antes de
++  alterar o estado, com etapa, camada, nível e modalidade na mensagem.
++  A negativa gera `TentativaNegada`, com autoria nominal.
++- Sessão só pode ser registrada para a etapa corrente ainda não
++  encerrada. Tentativa para etapa futura ou já encerrada recusa sem
++  alterar o estado e gera `TentativaNegada`.
++- Sessão de outra etapa não satisfaz a condição de encerramento.
++- A checagem de sessão precede a checagem do selo. A regra de selo e seu
++  algoritmo de ordem na trilha não são modificados.
++- Testes existentes recebem apenas preparação coerente de sessões e
++  percurso. Nenhum teste ou expectativa de recusa é removido.
++
++## Consequência
++
++O núcleo passa a 0.2.23, o campo a 0.8.2 e o playbook a 0.4.4.
++O comando de encerramento, o de registro de sessão e os guias refletem
++a exigência. O CI executa os testes específicos de A8.
++
++Casos existentes continuam lendo seu próprio playbook (decisão 002).
++Precisam atualizar explicitamente essa declaração; não há leitura do
++playbook do plugin nem atualização automática. Declaração ausente,
++camada não coberta ou valor não booleano recusam o carregamento.
++
++Recusas anteriores de dependência e selo mantêm seus eventos, permitindo
++que os testes continuem distinguindo essas travas. Esta decisão não
++introduz conferência por modelo de linguagem nem dispensa validação humana.
++
++As evidências ficam em `.projectdocs/evidencias/sprint3/3.3/correcao-A8/`.
++A versão corrigida recebe a tag anotada `v-sprint3-poc.2`, mantendo as
++tags anteriores como referências históricas.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 43635c1..cdb38fb 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -29,3 +29,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+ | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
++| 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 9d6d50a..56f9cff 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.1",
++  "version": "0.8.2",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index dc6ec2e..4803876 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,10 +1,17 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.3",
++  "versao": "0.4.4",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+ 
++  "encerramento_por_camada": {
++    "EX1": false,
++    "EX2": false,
++    "EX3": true,
++    "EX4": true
++  },
++
+   "apuracao_nivel": {
+     "eixos": {
+       "DAD": {"minimo": 3, "maximo": 9},
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 83133d9..bb54973 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.22",
++  "version": "0.2.23",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/encerrar.md b/eiac-nucleo/commands/encerrar.md
+index ce74bfc..bf89992 100644
+--- a/eiac-nucleo/commands/encerrar.md
++++ b/eiac-nucleo/commands/encerrar.md
+@@ -4,7 +4,22 @@ argument-hint: <etapa>
+ ---
+ Antes de executar, releia o critério de encerramento da etapa no documento do método e confirme com o operador que ele foi cumprido.
+ 
++Confira a etapa corrente e a camada resolvida para o nível do caso com
++`/eiac-nucleo:estado` e `/eiac-nucleo:fronteira`. O encerramento obedece à
++exigência de sessão declarada por camada no playbook do caso. No método
++atual, EX3 e EX4 exigem sessão humana registrada da própria etapa; EX1 e
++EX2 não exigem sessão para encerrar.
++
++Quando exigida, registre a sessão da etapa corrente, na modalidade
++declarada, com `/eiac-nucleo:registrar-sessao <etapa> <participantes>`.
++Sessão de outra etapa não libera o encerramento. Etapas futuras ou já
++encerradas não aceitam registro de sessão.
++
+ Depois execute:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --encerrar <etapa> --autor "<nome da pessoa>"`
+ 
+ Se o script recusar, apresente o motivo sem contorná-lo.
++
++A falta de sessão produz `TentativaNegada`, com etapa, camada, nível e
++modalidade na mensagem. Satisfeita a sessão, o núcleo confere as demais
++condições; a exigência de selo posterior declarada no playbook permanece.
+diff --git a/eiac-nucleo/commands/registrar-sessao.md b/eiac-nucleo/commands/registrar-sessao.md
+index 526632f..7fd86a5 100644
+--- a/eiac-nucleo/commands/registrar-sessao.md
++++ b/eiac-nucleo/commands/registrar-sessao.md
+@@ -1,9 +1,14 @@
+ ---
+-description: Registra uma sessão de campo presencial, liberando as etapas que dependem dela.
++description: Registra a sessão humana da etapa corrente, na modalidade declarada no caso.
+ argument-hint: <etapa> <participantes>
+ ---
+ Pergunte ao operador, se não vierem nos argumentos: etapa, participantes e instrumentos aplicados.
+ 
++Confirme com `/eiac-nucleo:estado` que a etapa é a corrente e ainda não
++foi encerrada. Não registre sessão antecipada para uma etapa futura nem
++retroativa para etapa já encerrada. A recusa fica na trilha como
++`TentativaNegada`. A sessão só satisfaz a exigência da própria etapa.
++
+ Depois execute:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-sessao <etapa> --autor "<nome da pessoa>" --participantes "<lista>"`
+ 
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 11cc8b9..77a0cca 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -8,7 +8,7 @@ Uso:
+   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
+   python3 avancar.py --emitir E2 --autor "Nome"
+ 
+-Recusas de apuração produzem TentativaNegada; as demais produzem
++Recusas de apuração e sessão produzem TentativaNegada; as demais produzem
+ RecusaMaquina ou RecusaEmissao,
+ com a acao tentada, o motivo e o estado relevante no momento da recusa —
+ recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
+@@ -21,6 +21,10 @@ import playbook as P
+ import apuracao as A
+ 
+ 
++class _RecusaSessao(str):
++    """Recusa de sessão que deve produzir TentativaNegada."""
++
++
+ def _ator_valido(nome):
+     """Pessoa nomeada: nao vazio, nao generico, nao agente.
+ 
+@@ -71,6 +75,13 @@ def encerrar(st, pb, etapa_id, autor):
+                 "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
+     if st.get("nivel") and st["nivel"] not in pb["niveis"]:
+         return f"nivel '{st['nivel']}' nao existe no playbook: {pb['niveis']}"
++    cam = P.camada(pb, etapa_id, st.get("nivel"))
++    if (pb["encerramento_por_camada"][cam]
++            and not st["cumprimentos"].get(etapa_id, {}).get("sessao")):
++        return _RecusaSessao(
++            f"{etapa_id} | camada {cam} | nivel {st.get('nivel')} | "
++            f"modalidade exigida: {et['modalidade']}; "
++            "encerramento exige sessao registrada da propria etapa.")
+     if et.get("delegavel") is False and not st["cumprimentos"].get(etapa_id, {}).get("sessao"):
+         return (f"{etapa_id} e {et['modalidade']} e nao delegavel. "
+                 f"Registre a sessao antes de encerrar.")
+@@ -94,6 +105,12 @@ def encerrar(st, pb, etapa_id, autor):
+ 
+ 
+ def registrar_sessao(st, etapa_id, autor, participantes):
++    if etapa_id != st["etapa_atual"]:
++        return _RecusaSessao(
++            f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
++            "So a etapa corrente pode receber sessao.")
++    if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
++        return _RecusaSessao(f"{etapa_id} ja encerrada; sessao nao pode ser registrada.")
+     st["cumprimentos"].setdefault(etapa_id, {})
+     st["cumprimentos"][etapa_id]["sessao"] = {
+         "autor": autor, "participantes": participantes
+@@ -277,14 +294,14 @@ def emitir(st, pb, ent_id, autor, materializar=None):
+     return None, None
+ 
+ 
+-def _recusar_apuracao(st, autor, motivo):
++def _recusar_operacao(st, autor, motivo, acao="apurar_nivel"):
+     # A tentativa de agente é atribuída ao responsável nominal do caso;
+     # identificadores de agente nunca entram como autor na trilha.
+     responsavel = (st or {}).get("responsavel")
+     pessoa = responsavel if _ator_valido(responsavel) else autor
+     if not _ator_valido(pessoa):
+         raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
+-    E.evento("TentativaNegada", acao_tentada="apurar_nivel", motivo=motivo,
++    E.evento("TentativaNegada", acao_tentada=acao, motivo=motivo,
+              autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
+ 
+ 
+@@ -313,10 +330,13 @@ def main():
+         pb, erro = None, f"playbook invalido: {exc}"
+     if not st or erro:
+         if a.apurar_nivel:
+-            _recusar_apuracao(st, a.autor, erro or "nenhum caso aberto")
++            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto")
++        elif a.encerrar or a.registrar_sessao:
++            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
++                             "encerrar" if a.encerrar else "registrar_sessao")
+         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
+     if a.apurar_nivel and not _ator_valido(a.autor):
+-        _recusar_apuracao(st, a.autor, "autor precisa ser pessoa nomeada")
++        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada")
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+     if E.autor_e_agente(a.autor):
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+@@ -350,8 +370,8 @@ def main():
+         print("nada a fazer", file=sys.stderr); sys.exit(1)
+ 
+     if err:
+-        if a.apurar_nivel:
+-            _recusar_apuracao(st, a.autor, err)
++        if a.apurar_nivel or isinstance(err, _RecusaSessao):
++            _recusar_operacao(st, a.autor, err, acao)
+             print(err, file=sys.stderr); sys.exit(1)
+         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
+         E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 481f559..5287b68 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -47,6 +47,14 @@ def carregar():
+             return None, (f"etapa {e['id']}: recorrente exige cadencia e responsavel "
+                           f"declarados, senao a etapa desaparece apos a primeira execucao.")
+ 
++    sessoes = pb.get("encerramento_por_camada")
++    if not isinstance(sessoes, dict):
++        return None, "playbook sem encerramento_por_camada valido"
++    for et in pb["etapas"]:
++        for cam in et["camada"].values():
++            if type(sessoes.get(cam)) is not bool:
++                return None, f"encerramento_por_camada: {cam} precisa declarar booleano"
++
+     for d in pb.get("entregaveis", []):
+         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
+         if faltando:
+diff --git a/testes/README.md b/testes/README.md
+index 83e86c7..3670ccf 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -133,6 +133,13 @@ elevando a suíte completa a 538 verificações:
+ python3 testes/triagem_a7.py
+ ```
+ 
++A correção A8 acrescenta 23 testes de sessão no encerramento, elevando a
++suíte completa a 561 verificações:
++
++```bash
++python3 testes/sessao_a8.py
++```
++
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+ | # | Prova |
+diff --git a/testes/campo_2_6_2.py b/testes/campo_2_6_2.py
+index 09329ad..5e5b504 100644
+--- a/testes/campo_2_6_2.py
++++ b/testes/campo_2_6_2.py
+@@ -58,6 +58,14 @@ def preparar_caso():
+     caso = tmp / "caso"
+     shutil.copytree(TEMPLATE, caso)
+     (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro/estado.json"
++    st = json.loads(estado_path.read_text())
++    st["responsavel"] = "Celso do Vale"
++    estado_path.write_text(json.dumps(st))
++    for comando in (["git", "init", "-q"],
++                    ["git", "config", "user.name", "Celso do Vale"],
++                    ["git", "config", "user.email", "caso-sintetico@exemplo.com"]):
++        subprocess.run(comando, cwd=caso, check=True, capture_output=True)
+     return caso
+ 
+ 
+@@ -111,10 +119,17 @@ def percorrer_ate(caso, ate_etapa_id):
+     apurar_e_encerrar_f0(caso)
+     ordem = [e["id"] for e in pb_oficial["etapas"]]
+     for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
+-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
++        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
++        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
++                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++        if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
++            subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),
++                            "--autor", "Celso do Vale", "--nota", f"selo apos {etapa_id}"],
++                           cwd=caso, check=True, capture_output=True)
+ 
+ 
+ def op_yaml(estado, versao, **over):
+diff --git a/testes/campo_2_6_3.py b/testes/campo_2_6_3.py
+index c9af158..4862715 100644
+--- a/testes/campo_2_6_3.py
++++ b/testes/campo_2_6_3.py
+@@ -173,7 +173,10 @@ def percorrer_ate(caso, ate_etapa_id):
+     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
+     restante = set(alvo)
+     for etapa_id in alvo:
+-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
++        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
++        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
++                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+@@ -581,6 +584,7 @@ else:
+     falha(f"2.6.3-T09 registrar evidencia do inegociavel 3 foi RECUSADO: {erro}")
+ 
+ # ============================================================ P9 =========
++avancar(caso, registrar_sessao="P8", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P8", autor="Celso do Vale")
+ 
+ # --- T10/T11: P9 com P8+baseline validos / sem baseline ----------------------
+@@ -671,6 +675,7 @@ else:
+     falha(f"2.6.3-T18b apuracao sem fatores externos foi ACEITA: exit={codigo}")
+ 
+ # ============================================================ P10 ========
++avancar(caso, registrar_sessao="P9", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P9", autor="Celso do Vale")
+ 
+ # --- T19/T20: P10 sem/com responsavel nominal ---------------------------------
+@@ -858,8 +863,10 @@ preparar_aut_decidido(caso_pendente)
+ avancar(caso_pendente, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso_pendente, encerrar="P7", autor="Celso do Vale")
+ preparar_ct_revisado(caso_pendente)
++avancar(caso_pendente, registrar_sessao="P8", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso_pendente, encerrar="P8", autor="Celso do Vale")
+ preparar_met_apurada(caso_pendente)
++avancar(caso_pendente, registrar_sessao="P9", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso_pendente, encerrar="P9", autor="Celso do Vale")
+ preparar_cal(caso_pendente)
+ (caso_pendente / "rascunho" / "CAL-001-C01.yaml").write_text(
+diff --git a/testes/campo_2_6_4.py b/testes/campo_2_6_4.py
+index 8ff0e8f..50a711d 100644
+--- a/testes/campo_2_6_4.py
++++ b/testes/campo_2_6_4.py
+@@ -65,6 +65,14 @@ def preparar_caso():
+     caso = tmp / "caso"
+     shutil.copytree(TEMPLATE, caso)
+     (caso / "rascunho").mkdir(exist_ok=True)
++    estado_path = caso / "registro/estado.json"
++    st = json.loads(estado_path.read_text())
++    st["responsavel"] = "Celso do Vale"
++    estado_path.write_text(json.dumps(st))
++    for comando in (["git", "init", "-q"],
++                    ["git", "config", "user.name", "Celso do Vale"],
++                    ["git", "config", "user.email", "caso-sintetico@exemplo.com"]):
++        subprocess.run(comando, cwd=caso, check=True, capture_output=True)
+     return caso
+ 
+ 
+@@ -108,10 +116,17 @@ def percorrer_ate(caso, ate_etapa_id):
+     apurar_e_encerrar_f0(caso)
+     ordem = [e["id"] for e in pb_oficial["etapas"]]
+     for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
+-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
++        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
++        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
++                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
++        if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
++            subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),
++                            "--autor", "Celso do Vale", "--nota", f"selo apos {etapa_id}"],
++                           cwd=caso, check=True, capture_output=True)
+ 
+ 
+ print("== testes 2.6.4 -- catalogo HB/AG")
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index d4c9e06..091c2f4 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -183,7 +183,10 @@ def percorrer_ate(caso, ate_etapa_id, nivel="N2"):
+     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
+     restante = set(alvo)
+     for etapa_id in alvo:
+-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
++        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
++        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
++                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index 42572e4..d9eea63 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -603,10 +603,13 @@ codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
+ codigo2, saida2, erro2 = avancar(caso, encerrar="P2", autor="Celso do Vale")
+ selar(caso, "selo apos P2, exigido por P3b")
+ preparar_bl(caso)
++avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo3, saida3, erro3 = avancar(caso, encerrar="P3a", autor="Celso do Vale")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo4, saida4, erro4 = avancar(caso, encerrar="P3b", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo5, saida5, erro5 = avancar(caso, encerrar="P3d", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo6, saida6, erro6 = avancar(caso, encerrar="P4", autor="Celso do Vale")
+ todos_ok = all(c == 0 for c in (codigo, codigo2, codigo3, codigo4, codigo5, codigo6))
+ if todos_ok and estado(caso)["etapa_atual"] == "P5":
+@@ -623,6 +626,7 @@ apurar_e_encerrar_f0(caso_p3b, nivel="N2")
+ avancar(caso_p3b, encerrar="P1", autor="Celso do Vale")
+ avancar(caso_p3b, encerrar="P2", autor="Celso do Vale")
+ preparar_bl(caso_p3b)
++avancar(caso_p3b, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p3b, encerrar="P3a", autor="Celso do Vale")
+ codigo, saida, erro = avancar(caso_p3b, encerrar="P3b", autor="AG-01")
+ if codigo != 0:
+@@ -657,14 +661,18 @@ for e in ["P1", "P2"]:
+     avancar(caso_p6, encerrar=e, autor="Celso do Vale")
+ selar(caso_p6, "selo apos P2, exigido por P3b")
+ preparar_bl(caso_p6)
++avancar(caso_p6, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P3a", autor="Celso do Vale")
+ inegociavel(caso_p6, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
+ avancar(caso_p6, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P3b", autor="Celso do Vale")
++avancar(caso_p6, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P3d", autor="Celso do Vale")
++avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
+ gravar_p5_agentico(caso_p6)
+ ajustar_etapa_atual(caso_p6, "P6")
++avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel")
+@@ -722,6 +730,7 @@ if codigo == 0 and tem_esperado:
+ else:
+     falha(f"2.6.6-C13 P8 sem saida esperada em todos os casos: {erro}")
+ 
++avancar(caso_p6, registrar_sessao="P8", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P8", autor="Celso do Vale")
+ inegociavel(caso_p6, 3, "registro/piloto/CT-101.yaml", satisfazer=True, autor="Marina Prado")
+ 
+@@ -736,6 +745,7 @@ if codigo == 0 and met_gravada.get("tipo") == "resultado" and met_gravada.get("e
+ else:
+     falha(f"2.6.6-C14 P9 nao produziu metrica de resultado apurada: {erro}")
+ 
++avancar(caso_p6, registrar_sessao="P9", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P9", autor="Celso do Vale")
+ inegociavel(caso_p6, 4, "registro/metricas/MET-101.yaml", satisfazer=True, autor="Marina Prado")
+ 
+@@ -858,10 +868,12 @@ avancar(caso_e1e3, encerrar="P1", autor="Celso do Vale")
+ avancar(caso_e1e3, encerrar="P2", autor="Celso do Vale")
+ selar(caso_e1e3, "selo apos P2, exigido por P3b")
+ preparar_bl(caso_e1e3)
++avancar(caso_e1e3, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_e1e3, encerrar="P3a", autor="Celso do Vale")
+ inegociavel(caso_e1e3, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
+ avancar(caso_e1e3, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_e1e3, encerrar="P3b", autor="Celso do Vale")
++avancar(caso_e1e3, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_e1e3, encerrar="P3d", autor="Celso do Vale")
+ codigo_e2, _, erro_e2 = entregavel(caso_e1e3, "E2", "Celso do Vale", emitir=True)
+ if codigo_e2 == 0 and (caso_e1e3 / "caso" / "entregaveis" / "E2.md").exists():
+@@ -869,6 +881,7 @@ if codigo_e2 == 0 and (caso_e1e3 / "caso" / "entregaveis" / "E2.md").exists():
+ else:
+     falha(f"2.6.6-C29 E2 nao autorizado/materializado: {erro_e2}")
+ 
++avancar(caso_e1e3, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_e1e3, encerrar="P4", autor="Celso do Vale")
+ gravar_p5_agentico(caso_e1e3)
+ codigo_e3d, _, erro_e3d = avancar(caso_e1e3, emitir="E3-D", autor="Celso do Vale")
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 2a17ed2..7491e3e 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -131,7 +131,10 @@ def percorrer_ate(caso, ate_etapa_id):
+     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
+     restante = set(alvo)
+     for etapa_id in alvo:
+-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
++        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
++        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
++        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
++                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+@@ -180,6 +183,7 @@ st = json.loads(estado_path.read_text(encoding="utf-8"))
+ st["etapa_atual"] = "P3d"
+ st["camada_atual"] = "EX3"
+ estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++avancar(caso_dep, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
+ codigo, saida, erro = avancar(caso_dep, encerrar="P3d", autor="Celso do Vale")
+ if codigo != 0 and "depende de" in erro:
+     ok(f"2.6.1-T03 dependencia nao satisfeita bloqueada ({erro.strip()})")
+@@ -202,6 +206,7 @@ for e in ["P1", "P2", "P3a"]:
+ selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P3b", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
+ if avancar(caso, encerrar="P3d", autor="Celso do Vale")[0] == 0:
+     ok("2.6.1-T04 dependencia satisfeita permite prosseguir")
+ else:
+@@ -352,6 +357,7 @@ for e in ["P1", "P2", "P3a"]:
+ selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P3b", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
+ avancar(caso, encerrar="P3d", autor="Celso do Vale")
+ codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
+ if codigo != 0 and "inegociavel" in erro:
+diff --git a/testes/sessao_a8.py b/testes/sessao_a8.py
+new file mode 100644
+index 0000000..7106a15
+--- /dev/null
++++ b/testes/sessao_a8.py
+@@ -0,0 +1,182 @@
++"""A8: sessão da etapa corrente conforme camada declarada no caso."""
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++SCRIPT = RAIZ / "eiac-nucleo/scripts/avancar.py"
++REGRAS = {"EX1": False, "EX2": False, "EX3": True, "EX4": True}
++
++
++class SessaoA8(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ / "eiac-campo/template-caso/registro", self.caso / "registro")
++        self.estado = self.caso / "registro/estado.json"
++        self.playbook = self.caso / "registro/playbook.json"
++        # A regra explícita na fixture permite exercitar o motor anterior,
++        # que a ignorava. O teste 18 confere também o template de produção.
++        self.configurar(lambda pb: pb.update(encerramento_por_camada=REGRAS.copy()))
++        self.posicionar("P3a", "N2")
++
++    def configurar(self, editar):
++        pb = json.loads(self.playbook.read_text())
++        editar(pb)
++        self.playbook.write_text(json.dumps(pb))
++
++    def posicionar(self, etapa, nivel):
++        pb = json.loads(self.playbook.read_text())
++        st = json.loads(self.estado.read_text())
++        st.update(responsavel="Celso do Vale", etapa_atual=etapa, nivel=nivel)
++        st["cumprimentos"] = {}
++        for et in pb["etapas"]:
++            if et["id"] == etapa:
++                st.update(camada_atual=et["camada"][nivel], modalidade_atual=et["modalidade"])
++                break
++            st["cumprimentos"][et["id"]] = {"cumprido": True}
++        self.estado.write_text(json.dumps(st))
++
++    def alterar_estado(self, editar):
++        st = json.loads(self.estado.read_text())
++        editar(st)
++        self.estado.write_text(json.dumps(st))
++
++    def executar(self, acao, etapa):
++        return subprocess.run(["python3", str(SCRIPT), acao, etapa, "--autor", "Celso do Vale",
++                               "--participantes", "Celso do Vale, Pessoa Cliente"],
++                              cwd=self.caso, text=True, capture_output=True)
++
++    def ultimo_evento(self):
++        return json.loads((self.caso / "registro/eventos.jsonl").read_text().splitlines()[-1])
++
++    def recusa(self, acao, etapa, partes, evento="TentativaNegada"):
++        antes = self.estado.read_bytes()
++        result = self.executar(acao, etapa)
++        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
++        for parte in partes:
++            self.assertIn(parte, result.stderr)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        registro = self.ultimo_evento()
++        self.assertEqual(registro["evento"], evento)
++        self.assertEqual(registro["autor"], "Celso do Vale")
++        for parte in partes:
++            self.assertIn(parte, registro["motivo"])
++
++    def sessao(self, etapa):
++        result = self.executar("--registrar-sessao", etapa)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(self.ultimo_evento()["evento"], "SessaoDeCampoRegistrada")
++
++    def encerramento(self, etapa):
++        result = self.executar("--encerrar", etapa)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertTrue(json.loads(self.estado.read_text())["cumprimentos"][etapa]["cumprido"])
++        self.assertEqual(self.ultimo_evento()["evento"], "EtapaEncerrada")
++
++    def test_00_ex3_sem_sessao(self):
++        self.recusa("--encerrar", "P3a", ["P3a", "EX3", "N2", "remoto", "sessao"])
++
++    def test_01_sessao_de_outra_etapa_nao_libera(self):
++        self.alterar_estado(lambda st: st["cumprimentos"]["P2"].update(
++            sessao={"autor": "Celso do Vale", "participantes": "Pessoa Cliente"}))
++        self.recusa("--encerrar", "P3a", ["P3a", "EX3", "sessao"])
++
++    def test_02_sessao_futura(self):
++        self.recusa("--registrar-sessao", "P4", ["P4", "P3a", "etapa corrente"])
++
++    def test_03_sessao_passada(self):
++        self.recusa("--registrar-sessao", "P2", ["P2", "P3a", "etapa corrente"])
++
++    def test_04_sessao_etapa_final_ja_encerrada(self):
++        self.posicionar("P10", "N2")
++        self.alterar_estado(lambda st: st["cumprimentos"].update(P10={"cumprido": True}))
++        self.recusa("--registrar-sessao", "P10", ["P10", "ja encerrada"])
++
++    def test_05_sessao_conferida_antes_do_selo(self):
++        self.posicionar("P3b", "N2")
++        self.recusa("--encerrar", "P3b", ["P3b", "EX4", "N2", "presencial", "sessao"])
++
++    def test_06_sessao_nao_substitui_selo(self):
++        self.posicionar("P3b", "N2")
++        self.sessao("P3b")
++        self.recusa("--encerrar", "P3b", ["exige selo posterior", "P2"], "RecusaMaquina")
++
++    def test_07_regra_ausente(self):
++        self.configurar(lambda pb: pb.pop("encerramento_por_camada"))
++        self.recusa("--encerrar", "P3a", ["encerramento_por_camada"])
++
++    def test_08_camada_sem_declaracao(self):
++        self.configurar(lambda pb: pb["encerramento_por_camada"].pop("EX3"))
++        self.recusa("--encerrar", "P3a", ["encerramento_por_camada", "EX3"])
++
++    def test_09_regra_nao_booleana(self):
++        self.configurar(lambda pb: pb["encerramento_por_camada"].update(EX3="sim"))
++        self.recusa("--encerrar", "P3a", ["encerramento_por_camada", "EX3"])
++
++    def test_10_outra_regra_exige_sessao_em_outra_camada(self):
++        self.posicionar("P1", "N2")
++        self.configurar(lambda pb: pb["encerramento_por_camada"].update(EX2=True))
++        self.recusa("--encerrar", "P1", ["P1", "EX2", "N2", "video", "sessao"])
++
++    def test_11_sessao_etapa_desconhecida(self):
++        self.recusa("--registrar-sessao", "OUTRA", ["OUTRA", "P3a", "etapa corrente"])
++
++    def test_12_ex2_sem_sessao(self):
++        self.posicionar("P1", "N2")
++        self.encerramento("P1")
++
++    def test_13_ex3_com_sessao_propria(self):
++        self.sessao("P3a")
++        self.encerramento("P3a")
++
++    def test_14_mesma_etapa_ex2_em_n1(self):
++        self.posicionar("P3a", "N1")
++        self.encerramento("P3a")
++
++    def test_15_ex4_sessao_e_selo(self):
++        self.posicionar("P3b", "N2")
++        self.sessao("P3b")
++        # Fixture da ordem da trilha; a suíte por estados exercita o selo real.
++        with (self.caso / "registro/eventos.jsonl").open("a") as log:
++            for evento in [{"evento": "EtapaEncerrada", "etapa": "P2"},
++                           {"evento": "SeloAplicado"}]:
++                evento["autor"] = "Celso do Vale"
++                log.write(json.dumps(evento) + "\n")
++        self.encerramento("P3b")
++
++    def test_16_ex1_sem_sessao(self):
++        self.posicionar("F0", "N2")
++        self.encerramento("F0")
++
++    def test_17_regra_alternativa_lida_do_caso(self):
++        self.configurar(lambda pb: pb["encerramento_por_camada"].update(EX3=False))
++        self.encerramento("P3a")
++
++    def test_18_template_declara_regra(self):
++        pb = json.loads((RAIZ / "eiac-campo/template-caso/registro/playbook.json").read_text())
++        self.assertEqual(pb.get("encerramento_por_camada"), REGRAS)
++
++    def test_19_camada_resolvida_nao_cache_do_estado(self):
++        self.alterar_estado(lambda st: st.update(camada_atual="EX2"))
++        self.recusa("--encerrar", "P3a", ["P3a", "EX3", "N2", "sessao"])
++
++    def test_20_p3d_ex3(self):
++        self.posicionar("P3d", "N2")
++        self.recusa("--encerrar", "P3d", ["P3d", "EX3", "N2", "remoto", "sessao"])
++
++    def test_21_p4_ex3(self):
++        self.posicionar("P4", "N2")
++        self.recusa("--encerrar", "P4", ["P4", "EX3", "N2", "video", "sessao"])
++
++    def test_22_p5_ex3(self):
++        self.posicionar("P5", "N2")
++        self.recusa("--encerrar", "P5", ["P5", "EX3", "N2", "video", "sessao"])
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=2)
+diff --git a/testes/verificacao_por_estados.py b/testes/verificacao_por_estados.py
+index 51df0d1..75a227f 100644
+--- a/testes/verificacao_por_estados.py
++++ b/testes/verificacao_por_estados.py
+@@ -105,6 +105,7 @@ def levar_ate_p3b(caso):
+     codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
+     if codigo != 0:
+         return codigo, saida, erro
++    avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
+     codigo, saida, erro = avancar(caso, encerrar="P3a", autor="Celso do Vale")
+     if codigo != 0:
+         return codigo, saida, erro
+@@ -163,6 +164,7 @@ with tempfile.TemporaryDirectory() as tmp:
+     if codigo != 0:
+         falha(f"T03 pre-condicao: P2 nao encerrou: {erro}")
+     else:
++        avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
+         avancar(caso, encerrar="P3a", autor="Celso do Vale")
+         avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+         codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
