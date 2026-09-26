@@ -85,6 +85,20 @@ Antes de começar, copie os documentos do método para `metodo/` (o pacote contr
 
 A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela acima mostra N2; `/eiac-nucleo:fronteira` mostra a camada real do caso aberto.
 
+**Sessão antes de encerrar:** o playbook do caso declara a exigência por
+camada em `encerramento_por_camada`. EX3 e EX4 exigem sessão humana
+registrada da própria etapa; EX1 e EX2 não. Em N2, isso inclui P3a, P3d,
+P4 e P5. Registre a sessão enquanto a etapa for a corrente, com
+`/eiac-nucleo:registrar-sessao <etapa> <participantes>`, antes de chamar
+`/eiac-nucleo:encerrar <etapa>`. Etapa futura ou já encerrada não aceita
+sessão, e sessão de outra etapa não libera o encerramento.
+
+O núcleo resolve a camada pelo nível apurado e aplica essa declaração,
+mesmo se a habilidade nunca tiver sido carregada. A falta de sessão
+produz `TentativaNegada`, nomeando etapa, camada, nível e modalidade.
+Em P3b, a conferência da sessão vem antes da trava de selo de P2, que
+permanece exigida (decisões 024 e 021).
+
 E os comandos de núcleo, que valem em qualquer playbook:
 
 `/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
@@ -104,7 +118,7 @@ O levantamento público sobre a organização e o setor, feito na etapa 0a do pr
 | Trava | Mecanismo | Onde |
 |---|---|---|
 | **T1 procedência** | Escrita direta em `caso/` negada; todo conteúdo passa pelo validador | `guarda.py` G2 + `validar.py` |
-| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre | `guarda.py` G1 e G3 |
+| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada | `guarda.py` G1 e G3 + `avancar.py` |
 | **T3 selo** | Commits do repositório do caso | Git |
 
 ## Testes negativos — faça no primeiro dia

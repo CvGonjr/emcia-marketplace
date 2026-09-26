@@ -29,3 +29,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
 | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
+| 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |

@@ -168,17 +168,36 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
 
 **Esperado:** *1 assercoes gravadas em caso/P2.md*.
 
-### Teste 5 — encerrar etapa presencial sem sessão
+### Teste 5 — encerrar camada que exige sessão sem registrá-la
+
+Com P3b como etapa corrente, tente encerrar sem registrar sua sessão:
 
 ```
 /eiac-nucleo:encerrar P3b
 ```
 
-**Esperado:** recusa, exigindo registro de sessão.
+**Esperado:** recusa com etapa, camada, nível e modalidade exigida, e
+`TentativaNegada` na trilha. A exigência não depende de carregar uma skill.
+
+O mesmo vale para EX3: em N2, P3a, P3d, P4 e P5 exigem sessão humana
+registrada da própria etapa, conforme `encerramento_por_camada` no
+playbook. Quando P3a for a corrente, por exemplo:
+
+```
+/eiac-nucleo:registrar-sessao P3a <participantes>
+/eiac-nucleo:encerrar P3a
+```
+
+Registre a sessão na modalidade declarada. Sessão de outra etapa não
+libera o encerramento. Registro para etapa futura ou já encerrada é
+recusado. EX1 e EX2 não exigem sessão para encerrar: P1 em N2 e P3a em N1
+continuam sem essa exigência. Ver decisão 024.
 
 ### Teste 6 — P3b sem selo posterior ao encerramento de P2
 
-Percorra F0 → P1 → P2 → P3a normalmente, registre a sessão de P3b, mas **não sele o caso**:
+Percorra F0 → P1 → P2 → P3a, registrando a sessão de P3a antes de encerrá-la
+se a camada do nível exigir. Já em P3b, registre sua sessão, mas
+**não sele o caso**:
 
 ```
 /eiac-nucleo:registrar-sessao P3b

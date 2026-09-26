@@ -133,6 +133,13 @@ elevando a suíte completa a 538 verificações:
 python3 testes/triagem_a7.py
 ```
 
+A correção A8 acrescenta 23 testes de sessão no encerramento, elevando a
+suíte completa a 561 verificações:
+
+```bash
+python3 testes/sessao_a8.py
+```
+
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
 | # | Prova |
