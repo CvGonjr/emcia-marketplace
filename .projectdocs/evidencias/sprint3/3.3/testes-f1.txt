@@ -1,0 +1,139 @@
+F1 — verificacoes sobre v-sprint3-poc
+
+1. Procedencia (D/I/V)                     9
+2. Fontes imutaveis                       14
+3. Camada de contexto e curadoria         51
+4. Camada por nivel                        2
+5. Levantamento presencial (P3b)          14
+6. Confronto (P3d)                        12
+7. Linha de base e E2                     12
+TOTAL                                    114
+falhas: 0
+
+== 1. Procedencia (D/I/V)
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+
+== 2. Fontes imutaveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    G6a Write em fontes/ negado
+  ok    G6b Edit em fontes/ negado
+  ok    G6c bash redirecionando para fontes/ negado
+  ok    G6d bash removendo de fontes/ negado
+  ok    G6e bash mv para fontes/ negado
+  ok    G6f Write em contexto/fontes/ negado
+  ok    G6g tentativa negada em fontes/ gera evento
+  ok    G6h leitura em fontes/ permanece permitida
+  ok    G6i cd seguido de rm em fontes/ negado
+  ok    G6j sed -i em fontes/ negado
+  ok    G6k remocao indireta por Python negada
+  ok    G6l leitura simples por Bash permanece permitida
+
+== 3. Camada de contexto e curadoria
+  ok    2.5.1-T01 Termo válido
+  ok    2.5.1-T02 Entidade válida
+  ok    2.5.1-T03 Regra válida
+  ok    2.5.1-T04 Fonte válida
+  ok    2.5.1-T05 Termo sem significado
+  ok    2.5.1-T06 Entidade sem nome
+  ok    2.5.1-T07 Regra sem estabilidade
+  ok    2.5.1-T08 Fonte sem contrato.significado
+  ok    2.5.1-T09 D/I/V nos quatro objetos
+  ok    2.5.1-T10 Taxonomias obsoletas
+  ok    2.5.1-T11 Sete campos centrais da Regra
+  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
+  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
+  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
+  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
+  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
+  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
+  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
+  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
+  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
+  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
+  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
+  ok    2.5.2-T01 D com autoria humana valida
+  ok    2.5.2-T02 I sem premissa
+  ok    2.5.2-T03 I com premissa
+  ok    2.5.2-T04 V sem evidencia
+  ok    2.5.2-T05 V com evidencia
+  ok    2.5.2-T06 agente como autoria_conteudo
+  ok    2.5.2-T07 pessoa como autoria_conteudo
+  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
+  ok    2.5.2-T09 sobrescrever I por V sem nova versao
+  ok    2.5.2-T10 I -> V com nova versao
+  ok    2.5.2-T11 historico preservado
+  ok    2.5.2-T12 escrita direta em contexto/
+  ok    2.5.2-T13 escrita autorizada em contexto/
+  ok    2.5.2-T14 rascunho nao e contexto curado
+  ok    2.5.2-T15 recusa gera evento
+  ok    2.5.2-T16 operacao valida gera trilha
+  ok    2.5.2-T-baseline registrado-por AG-01 nao determina autoria (achado do baseline superado)
+
+== 4. Camada por nivel
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+
+== 5. Levantamento presencial (P3b)
+  ok    1 habilidade EX4 negada
+  ok    5 encerramento sem sessao recusado
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    T01 P3b nao abre sem selo apos P2 (guarda recusa, TentativaNegada registrada)
+  ok    T02 P3b nao encerra sem selo apos P2 (P3b exige selo posterior ao encerramento de P2. Nenhum SeloAplicado encontrado depois desse encerramento -- sele o caso antes de prosseguir.)
+  ok    T03 selo anterior ao encerramento de P2 nao satisfaz P3b (guarda recusa)
+  ok    T04 P3b abre com selo posterior ao encerramento de P2
+  ok    T04 P3b encerra com selo posterior ao encerramento de P2
+  ok    T05 etapa sem exige_selo_apos (P1) encerra normalmente, sem exigir selo algum
+  ok    T06 playbook.selo_apos_etapa() nao cita antitese/contraste (mecanismo generico)
+  ok    2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b (hb-levantar-regras nao tem HB do catalogo associada e e explicitamente marcada 'NAO EXECUTAVEL POR AGENTE')
+  ok    2.6.6-C05 P3b permanece nao delegavel a agente (autor precisa ser pessoa nomeada)
+  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
+  ok    2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita (A etapa P3d depende de P3b, que nao foi cumprida. Modalidade de P3b: presencial.)
+
+== 6. Confronto (P3d)
+  ok    2.5.3-T01 classificacao oficial valida (alinhada)
+  ok    2.5.3-T02 classificacao fora da taxonomia oficial
+  ok    2.5.3-T03 divergencia sem referencia_p3d
+  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
+  ok    2.5.3-T05 divergencia com referencia_p3d valida
+  ok    2.5.3-T06 referencia resolve para o registro correto
+  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
+  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
+  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
+  ok    2.5.3-T10 atualizacao do confronto preserva historico
+  ok    2.5.3-T11 agente nao confirma confronto humano
+  ok    2.5.3-T12 controle humano valido
+
+== 7. Linha de base e E2
+  ok    2.6.5-T01 I1 sem baseline: RECUSA
+  ok    2.6.5-T02 I1 com baseline valido: PASS
+  ok    2.6.5-T02b baseline N2 com apuracao estimado recusada por baseline.py (nivel N2 exige apuracao calculada ou medida; 'estimado' so e admitido em N1 (MET-01 3.4.3))
+  ok    2.6.5-T16 E2 com etapa requerida incompleta (P3a/P3b/P3d ausentes): NEGADO
+  ok    2.6.5-T17 E2 com etapas completas mas I1 nao satisfeito no nucleo: NEGADO
+  ok    2.6.5-T18 E2 com requisitos completos (etapas + I1 verificado): AUTORIZADO
+  ok    2.6.5-T19 materializacao de E2: arquivo real existente (/tmp/tmpidfzq4w2/caso/caso/entregaveis/E2.md)
+  ok    2.6.5-T44 E2 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T49 dados presentes sao reproduzidos das fontes do caso (valor_atual/apuracao da baseline aparecem literalmente em E2)
+  ok    2.6.6-C23 I1 baseline: satisfeito
+  ok    2.6.6-C29 E2 autorizado e materializado (Diagnostico e Oportunidade)
+  ok    2.6.6-C41 materializacao sem evidencia (portao fechado) recusada, nao inventa conteudo (E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1)
