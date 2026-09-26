@@ -1,0 +1,208 @@
+test_00_eixo_ausente (__main__.TriagemA7.test_00_eixo_ausente) ... FAIL
+test_01_eixo_desconhecido (__main__.TriagemA7.test_01_eixo_desconhecido) ... FAIL
+test_02_fora_da_escala_A7 (__main__.TriagemA7.test_02_fora_da_escala_A7) ... FAIL
+test_03_nivel_divergente_maximo_nunca_media (__main__.TriagemA7.test_03_nivel_divergente_maximo_nunca_media) ... FAIL
+test_04_eixo_duplicado (__main__.TriagemA7.test_04_eixo_duplicado) ... FAIL
+test_05_formato (__main__.TriagemA7.test_05_formato) ... FAIL
+test_06_sem_eixos (__main__.TriagemA7.test_06_sem_eixos) ... FAIL
+test_07_sem_regra (__main__.TriagemA7.test_07_sem_regra) ... FAIL
+test_08_agregacao_desconhecida (__main__.TriagemA7.test_08_agregacao_desconhecida) ... ERROR
+test_09_faixas_sobrepostas (__main__.TriagemA7.test_09_faixas_sobrepostas) ... ERROR
+test_10_lacuna_entre_faixas (__main__.TriagemA7.test_10_lacuna_entre_faixas) ... ERROR
+test_11_autor_agente_recusa_com_evento_humano (__main__.TriagemA7.test_11_autor_agente_recusa_com_evento_humano) ... ERROR
+test_12_nivel_desconhecido (__main__.TriagemA7.test_12_nivel_desconhecido) ... FAIL
+test_13_acima_da_faixa (__main__.TriagemA7.test_13_acima_da_faixa) ... FAIL
+test_14_fracao_recusada (__main__.TriagemA7.test_14_fracao_recusada) ... FAIL
+test_90_n2 (__main__.TriagemA7.test_90_n2) ... ok
+test_91_n3 (__main__.TriagemA7.test_91_n3) ... ok
+test_92_limite_3 (__main__.TriagemA7.test_92_limite_3) ... ok
+test_93_limite_4 (__main__.TriagemA7.test_93_limite_4) ... ok
+test_94_limite_5 (__main__.TriagemA7.test_94_limite_5) ... ok
+test_95_limite_7 (__main__.TriagemA7.test_95_limite_7) ... ok
+test_96_limite_8 (__main__.TriagemA7.test_96_limite_8) ... ok
+test_97_limite_9 (__main__.TriagemA7.test_97_limite_9) ... ok
+test_98_regra_alternativa_sem_valores_do_metodo_no_nucleo (__main__.TriagemA7.test_98_regra_alternativa_sem_valores_do_metodo_no_nucleo) ... ok
+
+======================================================================
+ERROR: test_08_agregacao_desconhecida (__main__.TriagemA7.test_08_agregacao_desconhecida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 83, in test_08_agregacao_desconhecida
+    self.configurar(lambda pb: pb["apuracao_nivel"].update(agregacao="media"))
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 27, in configurar
+    editar(pb)
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 83, in <lambda>
+    self.configurar(lambda pb: pb["apuracao_nivel"].update(agregacao="media"))
+                               ~~^^^^^^^^^^^^^^^^^^
+KeyError: 'apuracao_nivel'
+
+======================================================================
+ERROR: test_09_faixas_sobrepostas (__main__.TriagemA7.test_09_faixas_sobrepostas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 87, in test_09_faixas_sobrepostas
+    self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=4))
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 27, in configurar
+    editar(pb)
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 87, in <lambda>
+    self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=4))
+                               ~~^^^^^^^^^^^^^^^^^^
+KeyError: 'apuracao_nivel'
+
+======================================================================
+ERROR: test_10_lacuna_entre_faixas (__main__.TriagemA7.test_10_lacuna_entre_faixas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 91, in test_10_lacuna_entre_faixas
+    self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=6))
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 27, in configurar
+    editar(pb)
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 91, in <lambda>
+    self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=6))
+                               ~~^^^^^^^^^^^^^^^^^^
+KeyError: 'apuracao_nivel'
+
+======================================================================
+ERROR: test_11_autor_agente_recusa_com_evento_humano (__main__.TriagemA7.test_11_autor_agente_recusa_com_evento_humano)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 95, in test_11_autor_agente_recusa_com_evento_humano
+    self.recusa("N2", "DAD 5, GOV 3, CRI 6", "autor precisa ser pessoa nomeada", "AG-01")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 42, in recusa
+    evento = json.loads((self.caso / "registro/eventos.jsonl").read_text().splitlines()[-1])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpbwnkd_fm/registro/eventos.jsonl'
+
+======================================================================
+FAIL: test_00_eixo_ausente (__main__.TriagemA7.test_00_eixo_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 58, in test_00_eixo_ausente
+    self.recusa("N2", "DAD 5, GOV 3", "eixos ausentes: CRI")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_01_eixo_desconhecido (__main__.TriagemA7.test_01_eixo_desconhecido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 61, in test_01_eixo_desconhecido
+    self.recusa("N2", "DAD 5, GOV 3, CRI 6, OUTRO 5", "eixo desconhecido: OUTRO")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_02_fora_da_escala_A7 (__main__.TriagemA7.test_02_fora_da_escala_A7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 64, in test_02_fora_da_escala_A7
+    self.recusa("N2", "DAD 2, GOV 1, CRI 2", "DAD 2 fora da faixa 3 a 9")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_03_nivel_divergente_maximo_nunca_media (__main__.TriagemA7.test_03_nivel_divergente_maximo_nunca_media)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 67, in test_03_nivel_divergente_maximo_nunca_media
+    self.recusa("N1", "DAD 5, GOV 3, CRI 6", "maior eixo CRI 6 -> N2; informado N1")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_04_eixo_duplicado (__main__.TriagemA7.test_04_eixo_duplicado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 70, in test_04_eixo_duplicado
+    self.recusa("N2", "DAD 5, GOV 3, CRI 6, DAD 5", "eixo duplicado: DAD")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_05_formato (__main__.TriagemA7.test_05_formato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 73, in test_05_formato
+    self.recusa("N2", "DAD=5, GOV=3, CRI=6", "formato dos eixos")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_06_sem_eixos (__main__.TriagemA7.test_06_sem_eixos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 76, in test_06_sem_eixos
+    self.recusa("N2", None, "eixos obrigatorios")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_07_sem_regra (__main__.TriagemA7.test_07_sem_regra)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 80, in test_07_sem_regra
+    self.recusa("N2", "DAD 5, GOV 3, CRI 6", "regra de apuracao_nivel ausente")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_12_nivel_desconhecido (__main__.TriagemA7.test_12_nivel_desconhecido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 98, in test_12_nivel_desconhecido
+    self.recusa("N9", "DAD 5, GOV 3, CRI 6", "nao existe no playbook")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 43, in recusa
+    self.assertEqual(evento["evento"], "TentativaNegada")
+AssertionError: 'RecusaMaquina' != 'TentativaNegada'
+- RecusaMaquina
++ TentativaNegada
+
+
+======================================================================
+FAIL: test_13_acima_da_faixa (__main__.TriagemA7.test_13_acima_da_faixa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 101, in test_13_acima_da_faixa
+    self.recusa("N3", "DAD 4, GOV 3, CRI 10", "CRI 10 fora da faixa 3 a 9")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+======================================================================
+FAIL: test_14_fracao_recusada (__main__.TriagemA7.test_14_fracao_recusada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 104, in test_14_fracao_recusada
+    self.recusa("N2", "DAD 5.5, GOV 3, CRI 6", "formato dos eixos")
+  File "/home/netiv-dn-1/.cache/emcia-a7-antes/testes/triagem_a7.py", line 39, in recusa
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: F0 | camada: EX1
+
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.967s
+
+FAILED (failures=11, errors=4)

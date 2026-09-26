@@ -1,0 +1,549 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 345d54b..c7620fa 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -44,6 +44,9 @@ jobs:
+       - name: Testes negativos
+         run: bash testes/negativos.sh
+ 
++      - name: Apuração declarada do nível (A7)
++        run: python3 testes/triagem_a7.py
++
+       - name: Habilitação administrativa
+         run: python3 testes/habilitacao.py
+ 
+diff --git a/decisoes/023-regra-leitura-triagem-A7.md b/decisoes/023-regra-leitura-triagem-A7.md
+new file mode 100644
+index 0000000..b661dd8
+--- /dev/null
++++ b/decisoes/023-regra-leitura-triagem-A7.md
+@@ -0,0 +1,50 @@
++# 023 — Regra de leitura da triagem declarada e conferida (A7)
++
++**Data:** 26/09/2026 · **Estado:** firme, por instrução do usuário
++
++## Contexto
++
++A verificação de F0 na Sprint 3 demonstrou A7: `avancar.py --apurar-nivel`
++aceitava eixos como texto livre e gravava o nível informado sem conferir
++a conta. N2 com `DAD 2, GOV 1, CRI 2` foi aceito, embora as somas estejam
++fora da escala de EMCIA-TRI-01 §3.4.
++
++O instrumento controlado define somas de 3 a 9 por eixo e nível pela maior
++soma: 3–4 → N1, 5–7 → N2, 8–9 → N3. Essa regra é determinística e deve
++ser conferida pelo sistema, preservando a separação núcleo × método.
++
++O usuário confirmou o número 023 para esta decisão, pois a decisão 022
++já registra a habilitação administrativa. A 022 permanece preservada.
++
++## Decisão
++
++- O campo declara a regra em `apuracao_nivel` no playbook do template:
++  siglas DAD/GOV/CRI, mínimos e máximos, agregação `maximo` e faixas de nível.
++- O núcleo interpreta os eixos, limites, operador e faixas do playbook
++  do caso. Nenhum valor da escala ou sigla do método entra em seu código.
++- A apuração exige todos os eixos declarados, como inteiros separados
++  por vírgula. Eixos ausentes, desconhecidos, duplicados, malformados ou
++  fora da faixa são recusados.
++- O nível é calculado pela regra declarada. Divergência com o nível
++  informado é recusada com a conta na mensagem, sem alterar o estado.
++- Regra ausente, operador não suportado ou faixas inválidas também
++  recusam. Não há modo de desativar essa conferência.
++- Recusas de apuração em caso aberto produzem `TentativaNegada` com
++  autoria nominal. Tentativa por agente é atribuída ao responsável do
++  caso, sem registrar identificador de agente como autor.
++- As expectativas dos testes anteriores são preservadas. Ajustes se
++  limitam à preparação de eixos completos e coerentes com o nível.
++
++## Consequência
++
++O template passa a playbook 0.4.3, o núcleo a 0.2.22 e o campo a 0.8.1.
++O comando de apuração e `hb-enquadrar` remetem à escala do instrumento e
++à conferência determinística, sem reproduzir o procedimento completo.
++
++Casos existentes continuam lendo sua própria declaração (decisão 002).
++Não recebem atualização automática nem leem o playbook do plugin. Sem
++`apuracao_nivel`, a reapuração recusa até atualização explícita do caso.
++
++As evidências ficam em `.projectdocs/evidencias/sprint3/3.2/correcao-A7/`.
++A versão verificada da correção recebe a tag anotada `v-sprint3-poc.1`;
++`v-sprint3-poc` permanece como referência do comportamento anterior.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 9b2d5b4..43635c1 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -28,3 +28,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
+ | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
++| 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 5658083..9d6d50a 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.0",
++  "version": "0.8.1",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/skills/hb-enquadrar/SKILL.md b/eiac-campo/skills/hb-enquadrar/SKILL.md
+index a8f6e77..228afc8 100644
+--- a/eiac-campo/skills/hb-enquadrar/SKILL.md
++++ b/eiac-campo/skills/hb-enquadrar/SKILL.md
+@@ -10,9 +10,13 @@ description: Estrutura a dor declarada e calcula o nivel de complexidade da orga
+ # Enquadramento e triagem — F0 · EX1
+ 
+ **Procedimento:** documento do método, Fase 0. Não reproduza aqui.
+-**Instrumento:** instrumento de triagem (ação 1.5). As nove perguntas têm redação fixa e não podem ser reformuladas.
++**Instrumento:** EMCIA-TRI-01, seção 3.4, no pacote controlado em `reference/metodo/`.
++As nove perguntas têm redação fixa e não podem ser reformuladas.
+ 
+-**O nível é o maior dos três eixos, nunca a média.** Escreva a conta antes do resultado.
++Registre as somas dos eixos na escala de 3 a 9 indicada pelo instrumento.
++Escreva a conta antes do resultado e use `/eiac-nucleo:apurar-nivel` para
++conferir a regra declarada no playbook. Se houver recusa, apresente o motivo
++ao operador; não edite o estado para contorná-la.
+ 
+ **Pare e pergunte** se o custo do problema exigir cálculo e a premissa admitir mais de uma base. Não escolha; registre quem escolheu.
+ 
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 2b9f1cf..dc6ec2e 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,10 +1,24 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.2",
++  "versao": "0.4.3",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+ 
++  "apuracao_nivel": {
++    "eixos": {
++      "DAD": {"minimo": 3, "maximo": 9},
++      "GOV": {"minimo": 3, "maximo": 9},
++      "CRI": {"minimo": 3, "maximo": 9}
++    },
++    "agregacao": "maximo",
++    "faixas": [
++      {"minimo": 3, "maximo": 4, "nivel": "N1"},
++      {"minimo": 5, "maximo": 7, "nivel": "N2"},
++      {"minimo": 8, "maximo": 9, "nivel": "N3"}
++    ]
++  },
++
+   "procedencia": {
+     "valores": ["D", "I", "V"],
+     "rotulos": {
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 8c6a8bb..83133d9 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.21",
++  "version": "0.2.22",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/apurar-nivel.md b/eiac-nucleo/commands/apurar-nivel.md
+index a92262d..ec09315 100644
+--- a/eiac-nucleo/commands/apurar-nivel.md
++++ b/eiac-nucleo/commands/apurar-nivel.md
+@@ -1,12 +1,20 @@
+ ---
+ description: Grava o nível de complexidade apurado pela triagem no Registro do caso.
+-argument-hint: <nível> [eixos]
++argument-hint: <nível> <eixos>
+ ---
+-O nível é apurado pelo instrumento de triagem, não por você. Antes de executar, confirme com o operador qual foi o resultado e a conta dos três eixos — **o nível é o maior dos três, nunca a média.**
++Confirme com o operador as somas dos eixos do instrumento de triagem
++(EMCIA-TRI-01, seção 3.4). Informe todos os eixos declarados no playbook:
++cada soma está na faixa de 3 a 9. O script calcula o nível pela regra
++declarada de máximo e confere o nível informado. Não use a média.
+ 
+ Execute:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --apurar-nivel <nivel> --autor "<nome da pessoa>" --eixos "<DAD n, GOV n, CRI n>"`
+ 
++Exemplo válido: nível `N2`, eixos `DAD 5, GOV 3, CRI 6`.
++O maior eixo é CRI 6, que corresponde a N2 segundo o playbook do caso.
++Eixos ausentes, desconhecidos, duplicados, fora da faixa ou em formato
++inválido e nível divergente são recusados com `TentativaNegada` na trilha.
++
+ Se o script recusar, apresente o motivo sem contorná-lo.
+ 
+ O nível decide a camada de todas as etapas seguintes (CAT-01 3.6). Reapuração é permitida e fica na trilha com o valor anterior — não edite `registro/estado.json` à mão para corrigir.
+diff --git a/eiac-nucleo/scripts/apuracao.py b/eiac-nucleo/scripts/apuracao.py
+new file mode 100644
+index 0000000..3f30fb4
+--- /dev/null
++++ b/eiac-nucleo/scripts/apuracao.py
+@@ -0,0 +1,61 @@
++"""Calcula um nível pelas faixas e eixos declarados no playbook do caso."""
++import re
++
++
++def _intervalo(obj):
++    return (isinstance(obj, dict)
++            and type(obj.get("minimo")) is int
++            and type(obj.get("maximo")) is int
++            and obj["minimo"] <= obj["maximo"])
++
++
++def calcular(pb, texto):
++    regra = pb.get("apuracao_nivel")
++    if not isinstance(regra, dict):
++        return None, None, "regra de apuracao_nivel ausente ou invalida"
++    eixos = regra.get("eixos")
++    if (not isinstance(eixos, dict) or not eixos
++            or any(not isinstance(e, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", e)
++                   or not _intervalo(faixa) for e, faixa in eixos.items())):
++        return None, None, "eixos declarados invalidos"
++    if regra.get("agregacao") != "maximo":
++        return None, None, "agregacao nao suportada"
++    faixas = regra.get("faixas")
++    if (not isinstance(faixas, list) or not faixas
++            or any(not _intervalo(f) or f.get("nivel") not in pb["niveis"] for f in faixas)):
++        return None, None, "faixas de nivel invalidas"
++    faixas = sorted(faixas, key=lambda f: f["minimo"])
++    inicio = max(f["minimo"] for f in eixos.values())
++    fim = max(f["maximo"] for f in eixos.values())
++    seguinte = inicio
++    for faixa in faixas:
++        if faixa["minimo"] != seguinte:
++            return None, None, "faixas sobrepostas ou incompletas"
++        seguinte = faixa["maximo"] + 1
++    if seguinte != fim + 1:
++        return None, None, "faixas sobrepostas ou incompletas"
++
++    if not texto.strip():
++        return None, None, "eixos obrigatorios"
++    valores = {}
++    for item in texto.split(","):
++        par = re.fullmatch(r"\s*([A-Za-z][A-Za-z0-9_-]*)\s+(-?\d+)\s*", item)
++        if not par:
++            return None, None, "formato dos eixos invalido: use SIGLA inteiro, separados por virgula"
++        eixo, valor = par.group(1), int(par.group(2))
++        if eixo not in eixos:
++            return None, None, f"eixo desconhecido: {eixo}"
++        if eixo in valores:
++            return None, None, f"eixo duplicado: {eixo}"
++        faixa = eixos[eixo]
++        if not faixa["minimo"] <= valor <= faixa["maximo"]:
++            return None, None, (f"{eixo} {valor} fora da faixa "
++                                f"{faixa['minimo']} a {faixa['maximo']}")
++        valores[eixo] = valor
++    ausentes = [e for e in eixos if e not in valores]
++    if ausentes:
++        return None, None, "eixos ausentes: " + ", ".join(ausentes)
++    maior = max(eixos, key=lambda e: valores[e])
++    soma = valores[maior]
++    nivel = next(f["nivel"] for f in faixas if f["minimo"] <= soma <= f["maximo"])
++    return nivel, f"maior eixo {maior} {soma} -> {nivel}", None
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 258362a..11cc8b9 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -1,14 +1,15 @@
+ """Maquina de etapas. Unico caminho de avanco.
+ 
+ Uso:
+-  python3 avancar.py --apurar-nivel N2 --autor "Nome" --eixos "DAD 4, GOV 5, CRI 7"
++  python3 avancar.py --apurar-nivel <nivel> --autor "Nome" --eixos "<eixos declarados>"
+   python3 avancar.py --encerrar P2 --autor "Nome"
+   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
+   python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
+   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
+   python3 avancar.py --emitir E2 --autor "Nome"
+ 
+-Toda recusa desta maquina produz evento RecusaMaquina ou RecusaEmissao,
++Recusas de apuração produzem TentativaNegada; as demais produzem
++RecusaMaquina ou RecusaEmissao,
+ com a acao tentada, o motivo e o estado relevante no momento da recusa —
+ recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
+ """
+@@ -17,6 +18,7 @@ import argparse, datetime, pathlib, sys
+ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
++import apuracao as A
+ 
+ 
+ def _ator_valido(nome):
+@@ -37,6 +39,11 @@ def _ator_valido(nome):
+ def apurar_nivel(st, pb, nivel, autor, eixos):
+     if nivel not in pb["niveis"]:
+         return f"nivel '{nivel}' nao existe no playbook: {pb['niveis']}"
++    calculado, conta, erro = A.calcular(pb, eixos)
++    if erro:
++        return erro
++    if nivel != calculado:
++        return f"{conta}; informado {nivel}"
+     anterior = st.get("nivel")
+     st["nivel"] = nivel
+     st["camada_atual"] = P.camada(pb, st["etapa_atual"], nivel)
+@@ -270,6 +277,17 @@ def emitir(st, pb, ent_id, autor, materializar=None):
+     return None, None
+ 
+ 
++def _recusar_apuracao(st, autor, motivo):
++    # A tentativa de agente é atribuída ao responsável nominal do caso;
++    # identificadores de agente nunca entram como autor na trilha.
++    responsavel = (st or {}).get("responsavel")
++    pessoa = responsavel if _ator_valido(responsavel) else autor
++    if not _ator_valido(pessoa):
++        raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
++    E.evento("TentativaNegada", acao_tentada="apurar_nivel", motivo=motivo,
++             autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
++
++
+ def main():
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--apurar-nivel")
+@@ -287,9 +305,19 @@ def main():
+     a = ap.parse_args()
+ 
+     st = E.ler()
+-    pb, erro = P.carregar()
++    try:
++        pb, erro = P.carregar()
++    except (ValueError, TypeError, KeyError) as exc:
++        if not a.apurar_nivel:
++            raise
++        pb, erro = None, f"playbook invalido: {exc}"
+     if not st or erro:
++        if a.apurar_nivel:
++            _recusar_apuracao(st, a.autor, erro or "nenhum caso aberto")
+         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
++    if a.apurar_nivel and not _ator_valido(a.autor):
++        _recusar_apuracao(st, a.autor, "autor precisa ser pessoa nomeada")
++        print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+     if E.autor_e_agente(a.autor):
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+ 
+@@ -322,6 +350,9 @@ def main():
+         print("nada a fazer", file=sys.stderr); sys.exit(1)
+ 
+     if err:
++        if a.apurar_nivel:
++            _recusar_apuracao(st, a.autor, err)
++            print(err, file=sys.stderr); sys.exit(1)
+         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
+         E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,
+                  autor=a.autor, etapa_corrente=st.get("etapa_atual"))
+diff --git a/testes/README.md b/testes/README.md
+index 1f54e0b..83e86c7 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -126,7 +126,12 @@ O total das suítes listadas de `negativos.sh` a `campo_2_6_6.py` é de 465
+ verificações. Com os módulos complementares (`autoria_responsavel.py`: 14,
+ `nucleo_yaml.py`: 7, `verificacao_por_estados.py`: 7, `esforco.py`: 1,
+ `metodo_empacotado.py`: 1) e `habilitacao.py` (19), a suíte completa soma
+-514 verificações.
++514 verificações. A correção A7 acrescenta 24 testes de apuração declarada,
++elevando a suíte completa a 538 verificações:
++
++```bash
++python3 testes/triagem_a7.py
++```
+ 
+ As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
+ 
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index a9e60d2..d4c9e06 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -160,7 +160,9 @@ def eventos(caso):
+ 
+ 
+ def apurar_e_encerrar_f0(caso, nivel="N2"):
+-    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
++             "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
++    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index 1968924..42572e4 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -188,7 +188,9 @@ def estado(caso):
+ 
+ 
+ def apurar_e_encerrar_f0(caso, nivel="N2"):
+-    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
++             "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
++    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index d7d5fe2..2a17ed2 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -398,7 +398,7 @@ else:
+     falha(f"2.6.1-T21 escrita direta em registro/ NAO foi bloqueada: exit={codigo} stderr={erro}")
+ 
+ codigo, saida, erro = guarda(caso, "Bash", {
+-    "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3'"
++    "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3, GOV 3, CRI 3'"
+ })
+ if codigo == 0:
+     ok("2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional")
+diff --git a/testes/triagem_a7.py b/testes/triagem_a7.py
+new file mode 100644
+index 0000000..32466b9
+--- /dev/null
++++ b/testes/triagem_a7.py
+@@ -0,0 +1,144 @@
++"""A7: recusas primeiro; regra de apuração declarada no playbook do caso."""
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++SCRIPT = RAIZ / "eiac-nucleo/scripts/avancar.py"
++
++
++class TriagemA7(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ / "eiac-campo/template-caso/registro", self.caso / "registro")
++        self.estado = self.caso / "registro/estado.json"
++        st = json.loads(self.estado.read_text())
++        st["responsavel"] = "Celso do Vale"
++        self.estado.write_text(json.dumps(st))
++        self.playbook = self.caso / "registro/playbook.json"
++
++    def configurar(self, editar):
++        pb = json.loads(self.playbook.read_text())
++        editar(pb)
++        self.playbook.write_text(json.dumps(pb))
++
++    def executar(self, nivel, eixos, autor="Celso do Vale"):
++        args = ["python3", str(SCRIPT), "--apurar-nivel", nivel, "--autor", autor]
++        if eixos is not None:
++            args += ["--eixos", eixos]
++        return subprocess.run(args, cwd=self.caso, text=True, capture_output=True)
++
++    def recusa(self, nivel, eixos, mensagem, autor="Celso do Vale"):
++        antes = self.estado.read_bytes()
++        result = self.executar(nivel, eixos, autor)
++        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
++        self.assertIn(mensagem, result.stderr)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        evento = json.loads((self.caso / "registro/eventos.jsonl").read_text().splitlines()[-1])
++        self.assertEqual(evento["evento"], "TentativaNegada")
++        self.assertEqual(evento["autor"], "Celso do Vale")
++        self.assertIn(mensagem, evento["motivo"])
++
++    def positivo(self, nivel, eixos):
++        result = self.executar(nivel, eixos)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        st = json.loads(self.estado.read_text())
++        self.assertEqual(st["nivel"], nivel)
++        self.assertEqual(st["cumprimentos"]["F0"]["eixos"], eixos)
++        evento = json.loads((self.caso / "registro/eventos.jsonl").read_text().splitlines()[-1])
++        self.assertEqual(evento["evento"], "NivelApurado")
++        self.assertEqual(evento["nivel"], nivel)
++
++    def test_00_eixo_ausente(self):
++        self.recusa("N2", "DAD 5, GOV 3", "eixos ausentes: CRI")
++
++    def test_01_eixo_desconhecido(self):
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6, OUTRO 5", "eixo desconhecido: OUTRO")
++
++    def test_02_fora_da_escala_A7(self):
++        self.recusa("N2", "DAD 2, GOV 1, CRI 2", "DAD 2 fora da faixa 3 a 9")
++
++    def test_03_nivel_divergente_maximo_nunca_media(self):
++        self.recusa("N1", "DAD 5, GOV 3, CRI 6", "maior eixo CRI 6 -> N2; informado N1")
++
++    def test_04_eixo_duplicado(self):
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6, DAD 5", "eixo duplicado: DAD")
++
++    def test_05_formato(self):
++        self.recusa("N2", "DAD=5, GOV=3, CRI=6", "formato dos eixos")
++
++    def test_06_sem_eixos(self):
++        self.recusa("N2", None, "eixos obrigatorios")
++
++    def test_07_sem_regra(self):
++        self.configurar(lambda pb: pb.pop("apuracao_nivel", None))
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6", "regra de apuracao_nivel ausente")
++
++    def test_08_agregacao_desconhecida(self):
++        self.configurar(lambda pb: pb["apuracao_nivel"].update(agregacao="media"))
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6", "agregacao nao suportada")
++
++    def test_09_faixas_sobrepostas(self):
++        self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=4))
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6", "faixas sobrepostas ou incompletas")
++
++    def test_10_lacuna_entre_faixas(self):
++        self.configurar(lambda pb: pb["apuracao_nivel"]["faixas"][1].update(minimo=6))
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6", "faixas sobrepostas ou incompletas")
++
++    def test_11_autor_agente_recusa_com_evento_humano(self):
++        self.recusa("N2", "DAD 5, GOV 3, CRI 6", "autor precisa ser pessoa nomeada", "AG-01")
++
++    def test_12_nivel_desconhecido(self):
++        self.recusa("N9", "DAD 5, GOV 3, CRI 6", "nao existe no playbook")
++
++    def test_13_acima_da_faixa(self):
++        self.recusa("N3", "DAD 4, GOV 3, CRI 10", "CRI 10 fora da faixa 3 a 9")
++
++    def test_14_fracao_recusada(self):
++        self.recusa("N2", "DAD 5.5, GOV 3, CRI 6", "formato dos eixos")
++
++    def test_90_n2(self):
++        self.positivo("N2", "DAD 5, GOV 3, CRI 6")
++
++    def test_91_n3(self):
++        self.positivo("N3", "DAD 4, GOV 3, CRI 8")
++
++    def test_92_limite_3(self):
++        self.positivo("N1", "DAD 3, GOV 3, CRI 3")
++
++    def test_93_limite_4(self):
++        self.positivo("N1", "DAD 4, GOV 3, CRI 3")
++
++    def test_94_limite_5(self):
++        self.positivo("N2", "DAD 5, GOV 3, CRI 3")
++
++    def test_95_limite_7(self):
++        self.positivo("N2", "DAD 3, GOV 7, CRI 3")
++
++    def test_96_limite_8(self):
++        self.positivo("N3", "DAD 3, GOV 3, CRI 8")
++
++    def test_97_limite_9(self):
++        self.positivo("N3", "DAD 9, GOV 3, CRI 3")
++
++    def test_98_regra_alternativa_sem_valores_do_metodo_no_nucleo(self):
++        def editar(pb):
++            pb["apuracao_nivel"] = {
++                "eixos": {e: {"minimo": 10, "maximo": 19} for e in ("X", "Y", "Z")},
++                "agregacao": "maximo",
++                "faixas": [{"minimo": 10, "maximo": 12, "nivel": "N1"},
++                           {"minimo": 13, "maximo": 15, "nivel": "N2"},
++                           {"minimo": 16, "maximo": 19, "nivel": "N3"}],
++            }
++        self.configurar(editar)
++        self.positivo("N2", "X 14, Y 10, Z 11")
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=2)
