@@ -1,14 +1,15 @@
 """Maquina de etapas. Unico caminho de avanco.
 
 Uso:
-  python3 avancar.py --apurar-nivel N2 --autor "Nome" --eixos "DAD 4, GOV 5, CRI 7"
+  python3 avancar.py --apurar-nivel <nivel> --autor "Nome" --eixos "<eixos declarados>"
   python3 avancar.py --encerrar P2 --autor "Nome"
   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
   python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
   python3 avancar.py --emitir E2 --autor "Nome"
 
-Toda recusa desta maquina produz evento RecusaMaquina ou RecusaEmissao,
+Recusas de apuração produzem TentativaNegada; as demais produzem
+RecusaMaquina ou RecusaEmissao,
 com a acao tentada, o motivo e o estado relevante no momento da recusa —
 recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
 """
@@ -17,6 +18,7 @@ import argparse, datetime, pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
+import apuracao as A
 
 
 def _ator_valido(nome):
@@ -37,6 +39,11 @@ def _ator_valido(nome):
 def apurar_nivel(st, pb, nivel, autor, eixos):
     if nivel not in pb["niveis"]:
         return f"nivel '{nivel}' nao existe no playbook: {pb['niveis']}"
+    calculado, conta, erro = A.calcular(pb, eixos)
+    if erro:
+        return erro
+    if nivel != calculado:
+        return f"{conta}; informado {nivel}"
     anterior = st.get("nivel")
     st["nivel"] = nivel
     st["camada_atual"] = P.camada(pb, st["etapa_atual"], nivel)
@@ -270,6 +277,17 @@ def emitir(st, pb, ent_id, autor, materializar=None):
     return None, None
 
 
+def _recusar_apuracao(st, autor, motivo):
+    # A tentativa de agente é atribuída ao responsável nominal do caso;
+    # identificadores de agente nunca entram como autor na trilha.
+    responsavel = (st or {}).get("responsavel")
+    pessoa = responsavel if _ator_valido(responsavel) else autor
+    if not _ator_valido(pessoa):
+        raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
+    E.evento("TentativaNegada", acao_tentada="apurar_nivel", motivo=motivo,
+             autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apurar-nivel")
@@ -287,9 +305,19 @@ def main():
     a = ap.parse_args()
 
     st = E.ler()
-    pb, erro = P.carregar()
+    try:
+        pb, erro = P.carregar()
+    except (ValueError, TypeError, KeyError) as exc:
+        if not a.apurar_nivel:
+            raise
+        pb, erro = None, f"playbook invalido: {exc}"
     if not st or erro:
+        if a.apurar_nivel:
+            _recusar_apuracao(st, a.autor, erro or "nenhum caso aberto")
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
+    if a.apurar_nivel and not _ator_valido(a.autor):
+        _recusar_apuracao(st, a.autor, "autor precisa ser pessoa nomeada")
+        print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
     if E.autor_e_agente(a.autor):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
@@ -322,6 +350,9 @@ def main():
         print("nada a fazer", file=sys.stderr); sys.exit(1)
 
     if err:
+        if a.apurar_nivel:
+            _recusar_apuracao(st, a.autor, err)
+            print(err, file=sys.stderr); sys.exit(1)
         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
         E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,
                  autor=a.autor, etapa_corrente=st.get("etapa_atual"))

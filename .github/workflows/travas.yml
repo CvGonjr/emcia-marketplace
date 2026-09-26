@@ -44,6 +44,9 @@ jobs:
       - name: Testes negativos
         run: bash testes/negativos.sh
 
+      - name: Apuração declarada do nível (A7)
+        run: python3 testes/triagem_a7.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 

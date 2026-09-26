@@ -188,7 +188,9 @@ def estado(caso):
 
 
 def apurar_e_encerrar_f0(caso, nivel="N2"):
-    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
+             "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
+    avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
     return avancar(caso, encerrar="F0", autor="Celso do Vale")
 
 

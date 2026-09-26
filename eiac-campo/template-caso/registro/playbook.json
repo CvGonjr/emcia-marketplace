@@ -1,9 +1,23 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.2",
+  "versao": "0.4.3",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
+
+  "apuracao_nivel": {
+    "eixos": {
+      "DAD": {"minimo": 3, "maximo": 9},
+      "GOV": {"minimo": 3, "maximo": 9},
+      "CRI": {"minimo": 3, "maximo": 9}
+    },
+    "agregacao": "maximo",
+    "faixas": [
+      {"minimo": 3, "maximo": 4, "nivel": "N1"},
+      {"minimo": 5, "maximo": 7, "nivel": "N2"},
+      {"minimo": 8, "maximo": 9, "nivel": "N3"}
+    ]
+  },
 
   "procedencia": {
     "valores": ["D", "I", "V"],

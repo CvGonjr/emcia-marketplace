@@ -398,7 +398,7 @@ else:
     falha(f"2.6.1-T21 escrita direta em registro/ NAO foi bloqueada: exit={codigo} stderr={erro}")
 
 codigo, saida, erro = guarda(caso, "Bash", {
-    "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3'"
+    "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3, GOV 3, CRI 3'"
 })
 if codigo == 0:
     ok("2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional")
