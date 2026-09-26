@@ -126,7 +126,12 @@ O total das suítes listadas de `negativos.sh` a `campo_2_6_6.py` é de 465
 verificações. Com os módulos complementares (`autoria_responsavel.py`: 14,
 `nucleo_yaml.py`: 7, `verificacao_por_estados.py`: 7, `esforco.py`: 1,
 `metodo_empacotado.py`: 1) e `habilitacao.py` (19), a suíte completa soma
-514 verificações.
+514 verificações. A correção A7 acrescenta 24 testes de apuração declarada,
+elevando a suíte completa a 538 verificações:
+
+```bash
+python3 testes/triagem_a7.py
+```
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 

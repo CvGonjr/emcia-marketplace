@@ -10,9 +10,13 @@ description: Estrutura a dor declarada e calcula o nivel de complexidade da orga
 # Enquadramento e triagem — F0 · EX1
 
 **Procedimento:** documento do método, Fase 0. Não reproduza aqui.
-**Instrumento:** instrumento de triagem (ação 1.5). As nove perguntas têm redação fixa e não podem ser reformuladas.
+**Instrumento:** EMCIA-TRI-01, seção 3.4, no pacote controlado em `reference/metodo/`.
+As nove perguntas têm redação fixa e não podem ser reformuladas.
 
-**O nível é o maior dos três eixos, nunca a média.** Escreva a conta antes do resultado.
+Registre as somas dos eixos na escala de 3 a 9 indicada pelo instrumento.
+Escreva a conta antes do resultado e use `/eiac-nucleo:apurar-nivel` para
+conferir a regra declarada no playbook. Se houver recusa, apresente o motivo
+ao operador; não edite o estado para contorná-la.
 
 **Pare e pergunte** se o custo do problema exigir cálculo e a premissa admitir mais de uma base. Não escolha; registre quem escolheu.
 

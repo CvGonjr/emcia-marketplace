@@ -28,3 +28,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
 | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+| 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
