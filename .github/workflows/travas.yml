@@ -22,7 +22,7 @@ jobs:
           done
 
       - name: Scripts compilam
-        run: python3 -m py_compile eiac-nucleo/scripts/*.py
+        run: python3 -m py_compile eiac-nucleo/scripts/*.py eiac-campo/scripts/*.py
 
       - name: Habilidades com name e description
         run: |
@@ -43,6 +43,9 @@ jobs:
 
       - name: Testes negativos
         run: bash testes/negativos.sh
+
+      - name: Habilitação administrativa
+        run: python3 testes/habilitacao.py
 
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'

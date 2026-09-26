@@ -21,6 +21,27 @@ Repositório: [github.com/CvGonjr/emcia-marketplace](https://github.com/CvGonjr/
 
 As hooks do núcleo registram automaticamente. A trava viaja com o plugin, não com o `settings.json` de cada operador.
 
+## Habilitação anterior ao caso
+
+O comando `/eiac-campo:habilitacao <expediente>` conduz a coleta administrativa
+via Tally, rodadas de esclarecimentos, preparação dos três documentos HAB e
+registro da conferência das assinaturas. A assinatura ocorre pelo painel da
+ferramenta escolhida pelo cliente, sem integração.
+
+Antes da sessão, o engenheiro inicializa o expediente fora de qualquer repositório:
+
+```bash
+python3 eiac-campo/scripts/habilitacao.py iniciar \
+  --expediente "$HOME/habilitacoes/HAB-0001" --id HAB-0001 \
+  --caso caso-0001 --responsavel "Nome Sobrenome"
+```
+
+A [referência de habilitação](eiac-campo/reference/habilitacao.md) descreve os
+formatos de entrada, as condições prévias ao MCP, a geração dos PDFs com
+Chrome/Chromium instalado e os registros de revisão humana. Os templates são
+lidos do checkout canônico de `emcia-artefatos` e preservados com hash.
+O expediente reserva o identificador do caso, mas não o abre nem libera F0.
+
 ## Abrir um caso
 
 ```bash

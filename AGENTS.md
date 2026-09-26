@@ -4,6 +4,14 @@ Dois plugins do Codex que instrumentam um método de engenharia de IA aplicado a
 
 **Este repositório é a ferramenta. Ele não contém caso nem dado de cliente.**
 
+## Documentos canônicos
+
+Todos os documentos canônicos do projeto estão no repositório
+[emcia-artefatos](https://github.com/CvGonjr/emcia-artefatos/).
+Consulte essa fonte ao implementar ou ajustar o método nos plugins, respeitando
+o estado e a aprovação de cada documento. A presença de uma proposta nesse
+repositório não a torna uma decisão aprovada.
+
 ---
 
 ## A separação que organiza tudo
