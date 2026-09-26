@@ -234,11 +234,10 @@ def emitir(st, pb, ent_id, autor, materializar=None):
     declarativa {campo, etapa, operador, valor} e os registros estruturados
     de inegociavel ja gravados por satisfazer_inegociavel().
 
-    ``materializar``, quando informado, e o caminho de um arquivo que o
-    chamador (eiac-campo) ja renderizou a partir do conteudo real do caso.
-    O nucleo nao sabe gerar esse conteudo -- so recusa registrar a emissao
-    se o arquivo nao existir ou estiver vazio, para que 'EntregavelEmitido'
-    nunca aponte para um documento que nao existe (2.6.5, D-12).
+    O artefato e o comando de materializacao sao declarados no playbook.
+    O arquivo esperado precisa existir e nao estar vazio. ``materializar``
+    pode confirmar esse caminho, mas nao substitui a declaracao do caso.
+    Toda emissao autorizada guarda arquivo, versao e autoria.
     """
     ent = next((d for d in pb.get("entregaveis", []) if d["id"] == ent_id), None)
     if not ent:
@@ -270,24 +269,29 @@ def emitir(st, pb, ent_id, autor, materializar=None):
             return (f"{ent_id} bloqueado: registro do inegociavel {n} "
                     f"nao possui evidencia/autor rastreaveis"), None
 
-    arquivo, versao = None, None
-    if materializar is not None:
-        caminho = pathlib.Path(materializar)
-        if not caminho.exists():
-            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
-                    f"nao existe. Emissao sem artefato real nao e emissao "
-                    f"conforme (2.6.5, D-12)."), None
+    esperado = pathlib.Path(ent["artefato"])
+    orientacao = (f"Artefato esperado: {ent['artefato']}. "
+                  f"Use {ent['comando_materializacao']}.")
+    caminho = pathlib.Path(materializar) if materializar is not None else esperado
+    if caminho.resolve() != esperado.resolve():
+        return f"{ent_id} bloqueado: materializacao diverge do playbook. {orientacao}", None
+    if not esperado.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
+        return f"{ent_id} bloqueado: artefato fora do caso. {orientacao}", None
+    if not caminho.is_file():
+        return f"{ent_id} bloqueado: artefato nao existe como arquivo. {orientacao}", None
+    try:
         conteudo = caminho.read_text(encoding="utf-8")
-        if not conteudo.strip():
-            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
-                    f"esta vazia."), None
-        arquivo = str(caminho)
-        registro_emissao = st.setdefault("entregaveis_emitidos", {})
-        anterior = registro_emissao.get(ent_id)
-        versao = (anterior.get("versao") + 1) if anterior else 1
-        registro_emissao[ent_id] = {
-            "arquivo": arquivo, "versao": versao, "autor": autor,
-        }
+    except (OSError, UnicodeError) as exc:
+        return f"{ent_id} bloqueado: artefato ilegivel ({exc}). {orientacao}", None
+    if not conteudo.strip():
+        return f"{ent_id} bloqueado: artefato esta vazio. {orientacao}", None
+    arquivo = str(caminho.resolve())
+    registro_emissao = st.setdefault("entregaveis_emitidos", {})
+    anterior = registro_emissao.get(ent_id)
+    versao = (anterior.get("versao") + 1) if anterior else 1
+    registro_emissao[ent_id] = {
+        "arquivo": arquivo, "versao": versao, "autor": autor,
+    }
 
     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor,
              arquivo=arquivo, versao=versao)
@@ -331,9 +335,9 @@ def main():
     if not st or erro:
         if a.apurar_nivel:
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto")
-        elif a.encerrar or a.registrar_sessao:
+        elif a.encerrar or a.registrar_sessao or a.emitir:
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
-                             "encerrar" if a.encerrar else "registrar_sessao")
+                             "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
     if a.apurar_nivel and not _ator_valido(a.autor):
         _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada")

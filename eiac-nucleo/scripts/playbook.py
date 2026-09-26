@@ -2,7 +2,7 @@
 import json, pathlib, sys
 
 OBRIGATORIO_ETAPA = {"id", "camada", "modalidade"}
-OBRIGATORIO_ENTREGAVEL = {"id", "portao"}
+OBRIGATORIO_ENTREGAVEL = {"id", "portao", "artefato", "comando_materializacao"}
 
 # Operadores que o motor generico de condicoes declarativas (avancar.py)
 # sabe avaliar. Um portao com operador fora deste conjunto e contrato
@@ -59,6 +59,13 @@ def carregar():
         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
         if faltando:
             return None, f"entregavel {d.get('id','?')} sem {sorted(faltando)}"
+        artefato = d["artefato"]
+        if (not isinstance(artefato, str) or not artefato.strip()
+                or pathlib.Path(artefato).is_absolute()
+                or ".." in pathlib.Path(artefato).parts):
+            return None, f"entregavel {d['id']}: artefato precisa ser caminho relativo dentro do caso"
+        if not isinstance(d["comando_materializacao"], str) or not d["comando_materializacao"].strip():
+            return None, f"entregavel {d['id']}: comando_materializacao precisa ser declarado"
         orfas = [p for p in d["portao"] if p not in ids_etapa]
         if orfas:
             return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"

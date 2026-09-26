@@ -50,6 +50,9 @@ jobs:
       - name: Sessão no encerramento (A8)
         run: python3 testes/sessao_a8.py
 
+      - name: Emissão com artefato (A9)
+        run: python3 testes/emissao_a9.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 

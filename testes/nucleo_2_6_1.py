@@ -389,6 +389,8 @@ if any(e.get("evento") == "InegociavelSatisfeito" for e in evs):
 else:
     falha("2.6.1-T20b evento InegociavelSatisfeito AUSENTE")
 
+(caso / "caso/entregaveis").mkdir(parents=True, exist_ok=True)
+(caso / "caso/entregaveis/E2.md").write_text("# Artefato sintético para teste do portão\n")
 codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado")
@@ -484,6 +486,8 @@ st = json.loads(estado_path.read_text(encoding="utf-8"))
 st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
                              "classificacao_tecnologica": "agente"}
 estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+(caso / "caso/entregaveis").mkdir(parents=True, exist_ok=True)
+(caso / "caso/entregaveis/E3.md").write_text("# Artefato sintético para teste do portão\n")
 codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)")

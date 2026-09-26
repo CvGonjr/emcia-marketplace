@@ -884,6 +884,7 @@ else:
 avancar(caso_e1e3, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_e1e3, encerrar="P4", autor="Celso do Vale")
 gravar_p5_agentico(caso_e1e3)
+entregavel(caso_e1e3, "E3", "Celso do Vale", emitir=False)
 codigo_e3d, _, erro_e3d = avancar(caso_e1e3, emitir="E3-D", autor="Celso do Vale")
 if codigo_e3d == 0:
     ok("2.6.6-C30 E3-D autorizado")

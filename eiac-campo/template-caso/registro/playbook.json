@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.4",
+  "versao": "0.4.5",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -138,19 +138,19 @@
   },
 
   "entregaveis": [
-    { "id": "E1", "portao": ["F0"] },
-    { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
-    { "id": "E3-D", "portao": ["P4","P5"] },
+    { "id": "E1", "artefato": "caso/entregaveis/E1.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["F0"] },
+    { "id": "E2", "artefato": "caso/entregaveis/E2.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+    { "id": "E3-D", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P4","P5"] },
     {
-      "id": "E3-E", "portao": ["P5"],
+      "id": "E3-E", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P5"],
       "condicao": {
         "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
         "campo": "classificacao_tecnologica", "etapa": "P5",
         "operador": "contem", "valor": "agente"
       }
     },
-    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2] },
-    { "id": "E5", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
+    { "id": "E4", "artefato": "caso/entregaveis/E4.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P6","P7"], "inegociavel": [2] },
+    { "id": "E5", "artefato": "caso/entregaveis/E5.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
   ],
 
   "inegociaveis": [

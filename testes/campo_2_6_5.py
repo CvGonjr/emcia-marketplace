@@ -585,6 +585,7 @@ else:
 
 caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
+entregavel(caso, "E1", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E1", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.5-T14 E1 apos F0: AUTORIZADO")
@@ -622,6 +623,7 @@ percorrer_ate(caso, "P3d")
 preparar_bl(caso)
 codigo, saida, erro = inegociavel(caso, 1, "registro/baseline/BL-001.yaml",
                                    satisfazer=True, autor="Marina Prado")
+entregavel(caso, "E2", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.5-T18 E2 com requisitos completos (etapas + I1 verificado): AUTORIZADO")
@@ -651,6 +653,7 @@ st = json.loads(estado_path.read_text(encoding="utf-8"))
 st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
                              "classificacao_tecnologica": "isolado"}
 estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+entregavel(caso, "E3", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E3-D", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.5-T21 E3-D com P4/P5 validos: AUTORIZADO")
@@ -697,6 +700,7 @@ st = json.loads(estado_path.read_text(encoding="utf-8"))
 st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
                              "classificacao_tecnologica": "agente"}
 estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+entregavel(caso_agentico, "E3", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso_agentico, emitir="E3-E", autor="Celso do Vale")
 if codigo == 0 and "NAO_APLICAVEL" not in saida:
     ok("2.6.5-T24 solucao agentica com P5 completo: E3-E AUTORIZADO")
@@ -759,6 +763,7 @@ avancar(caso, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, 
 avancar(caso, encerrar="P7", autor="Celso do Vale")
 inegociavel(caso, 2, "registro/governanca/autonomia/AUT-001.yaml",
             satisfazer=True, autor="Marina Prado")
+entregavel(caso, "E4", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E4", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.5-T30 E4 com P6/P7 e termo DECIDIDO valido: AUTORIZADO")
@@ -824,6 +829,7 @@ avancar(caso, registrar_sessao="P10", autor="Celso do Vale", participantes="Ana,
 avancar(caso, encerrar="P10", autor="Celso do Vale")
 avancar(caso, registrar_recorrencia="P10", autor="Celso do Vale",
         cadencia="mensal", responsavel="Marina Prado")
+entregavel(caso, "E5", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E5", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.5-T36 E5 com P8/P9/P10 + I3/I4/I5: AUTORIZADO")
@@ -873,7 +879,8 @@ else:
 
 st_e5 = json.loads((caso_e5_completo / "registro" / "estado.json").read_text(encoding="utf-8"))
 reg_e5 = st_e5.get("entregaveis_emitidos", {}).get("E5", {})
-if reg_e5.get("versao") == 1 and reg_e5.get("arquivo"):
+# A9: ambas as emissões (núcleo e campo) agora registram versão.
+if reg_e5.get("versao") == 2 and reg_e5.get("arquivo"):
     ok(f"2.6.5-T41 entregavel possui versao/ID rastreavel: {reg_e5}")
 else:
     falha(f"2.6.5-T41 entregavel sem versao rastreavel: {reg_e5}")
@@ -881,7 +888,7 @@ else:
 codigo, saida, erro = entregavel(caso_e5_completo, "E5", "Celso do Vale", emitir=True)
 st_e5_v2 = json.loads((caso_e5_completo / "registro" / "estado.json").read_text(encoding="utf-8"))
 reg_e5_v2 = st_e5_v2.get("entregaveis_emitidos", {}).get("E5", {})
-if codigo == 0 and reg_e5_v2.get("versao") == 2:
+if codigo == 0 and reg_e5_v2.get("versao") == reg_e5["versao"] + 1:
     ok(f"2.6.5-T42 reemissao nao sobrescreve silenciosamente: versao incrementada para {reg_e5_v2.get('versao')}")
 else:
     falha(f"2.6.5-T42 reemissao nao incrementou versao corretamente: {reg_e5_v2}")
