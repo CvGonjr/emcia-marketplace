@@ -1,0 +1,1179 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index efe16c1..87f803c 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -50,6 +50,12 @@ jobs:
+       - name: Sessão no encerramento (A8)
+         run: python3 testes/sessao_a8.py
+ 
++      - name: Emissão com artefato (A9)
++        run: python3 testes/emissao_a9.py
++
++      - name: Campos declarados e E3 ponta a ponta (A10)
++        run: python3 testes/campos_a10.py
++
+       - name: Habilitação administrativa
+         run: python3 testes/habilitacao.py
+ 
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index 63990ea..5d05648 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -69,6 +69,7 @@ A ordem importa pouco, mas o núcleo é quem traz as hooks.
+ | `/eiac-nucleo:gravar` | núcleo |
+ | `/eiac-nucleo:curar` | núcleo |
+ | `/eiac-nucleo:registrar-sessao` | núcleo |
++| `/eiac-nucleo:registrar-campo` | núcleo |
+ | `/eiac-nucleo:encerrar` | núcleo |
+ | `/eiac-nucleo:emitir` | núcleo |
+ | `/eiac-nucleo:selar` | núcleo |
+@@ -283,3 +284,28 @@ Cada linha é um evento de domínio com data e componente (variante campo/contra
+ | 4/18 HB sem implementação física própria (HB-04, HB-05, HB-06, HB-13) | Catálogo formal completo; nenhuma é exigida pelo contrato F0–P10 congelado — ver `decisoes/020` |
+ 
+ Nenhum deles impede o percurso F0 a P10, que é executável e verificado de ponta a ponta (ver `.projectdocs/evidencias/sprint2/2.6.6/`).
++
++## Registro dos campos e emissão com arquivo
++
++Com P5 corrente, confirme a classificação com a pessoa e registre antes de
++encerrar:
++
++```text
++/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
++```
++
++Aceitos pelo playbook: `agente`, `caso isolado`, `habilitador acoplado`.
++Teste campo não declarado, categoria diferente, autor agente e etapa futura:
++recusa com `TentativaNegada`, sem mudar o estado. Registro válido produz
++`CampoRegistrado`. A sessão exigida por P5 continua obrigatória no encerramento.
++
++Com o portão aberto, tente `/eiac-nucleo:emitir E3-D` antes de gerar o arquivo:
++a recusa deve indicar `caso/entregaveis/E3.md` e `/eiac-campo:emitir`.
++Use `/eiac-campo:emitir E3` para materializar e emitir o documento a partir dos
++registros reais. `NAO_APLICAVEL` para E3-E continua registrável sem arquivo.
++`--materializar` não permite substituir o caminho declarado por outro arquivo.
++
++Ao atualizar caso já aberto, atualize seu `registro/playbook.json` com as
++declarações de artefato/comando de cada entregável e de campos por etapa.
++O núcleo recusa contrato incompleto e nunca lê o playbook do plugin como
++substituto do playbook do caso.
+diff --git a/README.md b/README.md
+index 6ab2171..d935090 100644
+--- a/README.md
++++ b/README.md
+@@ -101,7 +101,30 @@ permanece exigida (decisões 024 e 021).
+ 
+ E os comandos de núcleo, que valem em qualquer playbook:
+ 
+-`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
++`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-campo` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
++
++## Campos da etapa e artefatos de emissão
++
++Antes de encerrar P5, registre a classificação confirmada pela pessoa:
++
++```text
++/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
++```
++
++O playbook declara os campos aceitos por etapa em `campos_registraveis` e a
++taxonomia em `valores`. No passo 5: `agente`, `caso isolado` ou
++`habilitador acoplado`. O registro só aceita a etapa corrente ainda aberta e
++autor pessoa nomeada; produz `CampoRegistrado`. Campo não declarado, valor
++fora da taxonomia, autor agente ou etapa incorreta produzem `TentativaNegada`.
++
++Cada entregável declara `artefato` e `comando_materializacao`. O núcleo recusa
++emissão sem o arquivo esperado, indicando seu caminho e `/eiac-campo:emitir`.
++Esse comando materializa a partir dos registros reais do caso. E3-D/E3-E
++compartilham `caso/entregaveis/E3.md`; `NAO_APLICAVEL` dispensa arquivo e fica
++registrado. Toda emissão autorizada guarda arquivo, versão e pessoa autora.
++
++Casos existentes atualizam explicitamente seu próprio playbook; não recebem
++essas declarações do plugin automaticamente.
+ 
+ ## Verificação por estados do caso
+ 
+diff --git a/decisoes/025-emissao-artefato-A9.md b/decisoes/025-emissao-artefato-A9.md
+new file mode 100644
+index 0000000..a1b4417
+--- /dev/null
++++ b/decisoes/025-emissao-artefato-A9.md
+@@ -0,0 +1,44 @@
++# 025 — Emissão exige artefato declarado no playbook (A9)
++
++**Data:** 26/09/2026 · **Estado:** firme quanto à correção solicitada
++
++## Contexto
++
++A verificação de F2 demonstrou que o comando de emissão do núcleo autorizava
++E3-D apenas pelo cumprimento das etapas. A conferência de arquivo dependia
++de `--materializar` e podia ser omitida. A versão de base é v-sprint3-poc.2.
++
++Foram lidos CLAUDE.md, o índice e as decisões 022 e 023. A decisão 024 já
++registra A8, por confirmação humana anterior; permanece preservada. Usa-se
++o próximo número livre, 025 para A9, sem renumerar o histórico.
++
++## Decisão
++
++- Cada entregável declara `artefato` e `comando_materializacao` no playbook
++  do caso. No campo, E3-D e E3-E apontam para o mesmo E3.md.
++- O núcleo exige arquivo existente e não vazio no caminho declarado,
++  relativo e interno ao caso. Diretório, caminho fora do caso ou
++  materialização apontando para outro arquivo não satisfazem a regra.
++- A recusa indica o caminho esperado e o comando declarado para gerar o
++  artefato. O núcleo não contém o nome de comando do campo como regra.
++- Etapas, condições e inegociáveis continuam conferidos. `NAO_APLICAVEL`
++  continua registrável sem arquivo, como `EntregavelNaoAplicavel`.
++- Emissão autorizada sempre grava arquivo, pessoa autora e versão no
++  estado e em `EntregavelEmitido`; reemissão incrementa a versão. Emissão
++  negada continua deixando evento, sem mutação no estado.
++
++## Consequência
++
++A9 sobe o núcleo a 0.2.24, campo a 0.8.3 e playbook a 0.4.5; A10, no
++mesmo pacote de entrega, avança núcleo/playbook novamente.
++
++Casos existentes precisam atualizar seu playbook explicitamente; ausência
++de declaração de artefato/comando recusa o carregamento, sem ler o plugin.
++O núcleo confere existência e conteúdo não vazio, sem julgar a qualidade
++metodológica do documento. O campo mantém a materialização do conteúdo.
++
++Os testes negativos precederam a implementação. Preparações de testes de
++portão agora fornecem artefato; expectativas de versão contabilizam também
++a emissão pelo núcleo. Nenhum teste anterior é removido.
++
++Evidências: `.projectdocs/evidencias/sprint3/3.4/correcao-A9-A10/`.
+diff --git a/decisoes/026-registro-campos-A10.md b/decisoes/026-registro-campos-A10.md
+new file mode 100644
+index 0000000..01c4ecf
+--- /dev/null
++++ b/decisoes/026-registro-campos-A10.md
+@@ -0,0 +1,59 @@
++# 026 — Campos da etapa declarados e registrados pelo núcleo (A10)
++
++**Data:** 26/09/2026 · **Estado:** firme quanto à correção solicitada
++
++## Contexto
++
++O renderizador de E3 e sua condição de emissão liam a classificação de P5,
++mas nenhum comando a registrava. Testes injetavam o campo em estado.json.
++A10 fecha esse caminho ausente sobre a versão v-sprint3-poc.2, junto com A9.
++A decisão 024 permanece como A8; 025 registra A9 e 026 registra A10.
++
++## Decisão
++
++- Etapas declaram `campos_registraveis`: mapa de nomes para regras. Uma
++  regra pode declarar `valores`, lista de textos exatos aceitos; sem
++  taxonomia, aceita texto não vazio. Campos internos da máquina são
++  reservados e não podem ser declarados para escrita por esse mecanismo.
++- `avancar.py --registrar-campo <etapa> --campo <nome> --valor <valor>
++  --autor <pessoa>` e `/eiac-nucleo:registrar-campo` conferem etapa corrente
++  ainda aberta, campo declarado, valor e autoria nominal.
++- O registro produz `CampoRegistrado` com etapa, campo, valor, valor
++  anterior e autor. Cada recusa produz `TentativaNegada`, sem alterar
++  estado. Tentativa de agente é atribuída ao responsável nominal do caso.
++- O campo declara em P5 `classificacao_tecnologica` com `agente`,
++  `caso isolado` e `habilitador acoplado`, conforme passo 5 (§3.4.5) do
++  EMCIA-MET-01. A habilidade instrui registrar a conclusão confirmada
++  antes de encerrar P5. A justificativa escrita permanece no artefato.
++- Nomes da classificação, valores e etapa pertencem ao playbook de campo;
++  o código do núcleo aplica contrato genérico.
++
++## Auditoria
++
++Todos os campos lidos por entregaveis.py foram conferidos. Somente
++`cumprimentos.P5.classificacao_tecnologica` não tinha caminho de registro.
++`caso` vem da abertura, `nivel` e eixos de apuração, `cumprido`/autor do
++encerramento. E2, E4 e E5 usam arquivos estruturados com comandos de
++baseline, operacional, governança, piloto, métrica e calibragem.
++A tabela completa de campos e comandos está no resultado da evidência.
++Não se criam espelhos desses artefatos em estado.json.
++
++A fonte canônica local e a cópia empacotada do MET-01 foram conferidas e
++são idênticas. O documento conserva seu estado “Em revisão”, aprovação
++pendente. A taxonomia é aplicada por instrução expressa desta correção;
++essa implementação não declara aprovação integral do documento.
++
++## Consequência
++
++Núcleo 0.2.25, campo 0.8.3 e playbook 0.4.6. Casos existentes precisam
++atualizar explicitamente suas declarações. As recusas, inclusive contrato
++inválido, têm trilha; campo ausente não ganha valor presumido.
++
++Os testes negativos precederam a implementação. Fixtures de classificação
++passam pelo comando, sessão e encerramento reais. Um teste ponta a ponta
++abre caso com novo-caso.sh e materializa E3 Partes A/B sem escrita direta
++no estado pelo teste. O escopo é o caminho de registro e emissão, não a
++ampliação do conteúdo do renderizador de E3.
++
++Evidências: `.projectdocs/evidencias/sprint3/3.4/correcao-A9-A10/`.
++A entrega conjunta recebe a tag anotada v-sprint3-poc.3.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index cdb38fb..ad27376 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -30,3 +30,5 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+ | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
+ | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
++| 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
++| 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 56f9cff..3cf3b7c 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.2",
++  "version": "0.8.3",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/skills/hb-classificar/SKILL.md b/eiac-campo/skills/hb-classificar/SKILL.md
+index 07fe8d7..abbb34e 100644
+--- a/eiac-campo/skills/hb-classificar/SKILL.md
++++ b/eiac-campo/skills/hb-classificar/SKILL.md
+@@ -26,6 +26,20 @@ Para cada Regra que sustenta a classificação, consulte o objeto — não reint
+ 
+ **D, I e V não têm o mesmo peso na decisão.** Preserve o estatuto documental de cada Regra consultada — não trate `I` como se fosse `V`. Quando a classificação depender especificamente de conhecimento verificado (por exemplo, decidir a zona de contenção sobre uma exceção que só `V` sustenta), uma Regra `I` não substitui esse requisito; registre a lacuna em vez de decidir sobre premissa não confirmada. Regra `D` ou `I` seguem utilizáveis para tudo que o método não exigir verificação.
+ 
++## Registro da conclusão
++
++Consulte o passo 5 de `reference/metodo/EMCIA-MET-01-documento-do-metodo.md`
++e a declaração `campos_registraveis` de P5 no playbook do caso. Depois da
++confirmação humana, enquanto P5 ainda for a etapa corrente, registre:
++
++`/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "<categoria>"`
++
++As categorias declaradas são `agente`, `caso isolado` e `habilitador acoplado`.
++O comando grava o campo estruturado que o portão de E3 e seu renderizador leem,
++com evento e autoria nominal. Registre também a sessão de P5 e encerre a etapa
++pelo núcleo. A justificativa escrita continua no artefato deste passo, conforme
++o procedimento do método.
++
+ ## Efeito no entregável
+ 
+ A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates.md`.
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 4803876..ccfc7a2 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.4",
++  "versao": "0.4.6",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+@@ -84,6 +84,11 @@
+     },
+     {
+       "id": "P5", "nome": "Classificacao tecnologica",
++      "campos_registraveis": {
++        "classificacao_tecnologica": {
++          "valores": ["agente", "caso isolado", "habilitador acoplado"]
++        }
++      },
+       "modalidade": "video", "habilidade": "hb-classificar",
+       "hb": ["HB-11", "HB-12"],
+       "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+@@ -138,19 +143,19 @@
+   },
+ 
+   "entregaveis": [
+-    { "id": "E1", "portao": ["F0"] },
+-    { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+-    { "id": "E3-D", "portao": ["P4","P5"] },
++    { "id": "E1", "artefato": "caso/entregaveis/E1.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["F0"] },
++    { "id": "E2", "artefato": "caso/entregaveis/E2.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
++    { "id": "E3-D", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P4","P5"] },
+     {
+-      "id": "E3-E", "portao": ["P5"],
++      "id": "E3-E", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P5"],
+       "condicao": {
+         "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
+         "campo": "classificacao_tecnologica", "etapa": "P5",
+         "operador": "contem", "valor": "agente"
+       }
+     },
+-    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2] },
+-    { "id": "E5", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
++    { "id": "E4", "artefato": "caso/entregaveis/E4.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P6","P7"], "inegociavel": [2] },
++    { "id": "E5", "artefato": "caso/entregaveis/E5.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
+   ],
+ 
+   "inegociaveis": [
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index bb54973..33d588f 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.23",
++  "version": "0.2.25",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/emitir.md b/eiac-nucleo/commands/emitir.md
+index 55fb2de..e546935 100644
+--- a/eiac-nucleo/commands/emitir.md
++++ b/eiac-nucleo/commands/emitir.md
+@@ -1,8 +1,22 @@
+ ---
+-description: Emite um entregável, se o portão estiver aberto.
++description: Registra a emissão de um entregável com portão aberto e artefato existente.
+ argument-hint: <entregável>
+ ---
+-Execute:
++Execute no diretório do caso:
++
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --emitir <entregavel> --autor "<nome da pessoa>"`
+ 
+-Se o script recusar por item inegociável ou portão pendente, apresente o motivo e pare. Portão pendente é decisão do operador, não sua.
++O playbook do caso declara `artefato` e `comando_materializacao` para cada
++entregável. O núcleo confere etapas, condição, inegociáveis e o arquivo
++esperado; não produz o documento. Arquivo ausente, vazio ou caminho divergente
++recusa a emissão. A mensagem indica o caminho esperado e o comando declarado
++para materializar (no playbook de campo: `/eiac-campo:emitir`).
++
++Use esse comando de campo para gerar o artefato a partir dos registros reais;
++depois confira a emissão. `--materializar` precisa apontar para o mesmo caminho
++declarado no playbook. A emissão guarda arquivo, versão e pessoa autora na
++trilha e no estado. Nova emissão incrementa a versão.
++
++O resultado `NAO_APLICAVEL` registra `EntregavelNaoAplicavel` e dispensa arquivo.
++Se houver recusa por item inegociável ou portão pendente, apresente o motivo e
++pare. Portão pendente é decisão do operador.
+diff --git a/eiac-nucleo/commands/registrar-campo.md b/eiac-nucleo/commands/registrar-campo.md
+new file mode 100644
+index 0000000..a574c5f
+--- /dev/null
++++ b/eiac-nucleo/commands/registrar-campo.md
+@@ -0,0 +1,19 @@
++---
++description: Registra um campo declarado no playbook para a etapa corrente.
++argument-hint: <etapa> <campo> <valor>
++---
++Confira `/eiac-nucleo:estado` e a declaração `campos_registraveis` da etapa
++em `registro/playbook.json`. Use apenas campos declarados e, quando houver
++`valores`, um valor exato dessa taxonomia.
++
++Execute no diretório do caso:
++
++`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-campo <etapa> --campo <nome> --valor "<valor>" --autor "<nome da pessoa>"`
++
++A etapa precisa ser a corrente e ainda não encerrada. Autor é pessoa nomeada;
++identificador de agente ou coletivo genérico é recusado. Campos internos da
++máquina não podem ser declarados por esse mecanismo.
++
++O registro gera `CampoRegistrado`, com etapa, campo, valor, valor anterior e
++autor. A recusa preserva o estado e gera `TentativaNegada`. Apresente o motivo
++literal da recusa ao operador. Registre o campo antes de encerrar a etapa.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 77a0cca..5ae1d87 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -3,12 +3,13 @@
+ Uso:
+   python3 avancar.py --apurar-nivel <nivel> --autor "Nome" --eixos "<eixos declarados>"
+   python3 avancar.py --encerrar P2 --autor "Nome"
++  python3 avancar.py --registrar-campo <etapa> --campo <nome> --valor <valor> --autor "Nome"
+   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
+   python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
+   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
+   python3 avancar.py --emitir E2 --autor "Nome"
+ 
+-Recusas de apuração e sessão produzem TentativaNegada; as demais produzem
++Recusas de apuração, campo e sessão produzem TentativaNegada; as demais produzem
+ RecusaMaquina ou RecusaEmissao,
+ com a acao tentada, o motivo e o estado relevante no momento da recusa —
+ recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
+@@ -120,6 +121,30 @@ def registrar_sessao(st, etapa_id, autor, participantes):
+     return None
+ 
+ 
++def registrar_campo(st, pb, etapa_id, campo, valor, autor):
++    et = P.etapa(pb, etapa_id)
++    if not et:
++        return f"etapa {etapa_id} nao existe no playbook"
++    if etapa_id != st["etapa_atual"]:
++        return f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']})"
++    if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
++        return f"{etapa_id} ja encerrada; campo nao pode ser registrado"
++    campos = et.get("campos_registraveis", {})
++    if campo not in campos:
++        return f"campo '{campo}' nao declarado para etapa {etapa_id}"
++    if not isinstance(valor, str) or not valor.strip():
++        return f"campo {campo} exige valor nao vazio"
++    regra = campos[campo]
++    if "valores" in regra and valor not in regra["valores"]:
++        return f"campo {campo}: valor '{valor}' invalido; valores aceitos: {regra['valores']}"
++    registro = st["cumprimentos"].setdefault(etapa_id, {})
++    anterior = registro.get(campo)
++    registro[campo] = valor
++    E.evento("CampoRegistrado", etapa=etapa_id, campo=campo, valor=valor,
++             anterior=anterior, autor=autor)
++    return None
++
++
+ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+     """Etapa recorrente (playbook 'recorrente': true) nao desaparece apos o
+     primeiro encerramento — cada novo ciclo atualiza 'ultima_verificacao'
+@@ -234,11 +259,10 @@ def emitir(st, pb, ent_id, autor, materializar=None):
+     declarativa {campo, etapa, operador, valor} e os registros estruturados
+     de inegociavel ja gravados por satisfazer_inegociavel().
+ 
+-    ``materializar``, quando informado, e o caminho de um arquivo que o
+-    chamador (eiac-campo) ja renderizou a partir do conteudo real do caso.
+-    O nucleo nao sabe gerar esse conteudo -- so recusa registrar a emissao
+-    se o arquivo nao existir ou estiver vazio, para que 'EntregavelEmitido'
+-    nunca aponte para um documento que nao existe (2.6.5, D-12).
++    O artefato e o comando de materializacao sao declarados no playbook.
++    O arquivo esperado precisa existir e nao estar vazio. ``materializar``
++    pode confirmar esse caminho, mas nao substitui a declaracao do caso.
++    Toda emissao autorizada guarda arquivo, versao e autoria.
+     """
+     ent = next((d for d in pb.get("entregaveis", []) if d["id"] == ent_id), None)
+     if not ent:
+@@ -270,24 +294,29 @@ def emitir(st, pb, ent_id, autor, materializar=None):
+             return (f"{ent_id} bloqueado: registro do inegociavel {n} "
+                     f"nao possui evidencia/autor rastreaveis"), None
+ 
+-    arquivo, versao = None, None
+-    if materializar is not None:
+-        caminho = pathlib.Path(materializar)
+-        if not caminho.exists():
+-            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
+-                    f"nao existe. Emissao sem artefato real nao e emissao "
+-                    f"conforme (2.6.5, D-12)."), None
++    esperado = pathlib.Path(ent["artefato"])
++    orientacao = (f"Artefato esperado: {ent['artefato']}. "
++                  f"Use {ent['comando_materializacao']}.")
++    caminho = pathlib.Path(materializar) if materializar is not None else esperado
++    if caminho.resolve() != esperado.resolve():
++        return f"{ent_id} bloqueado: materializacao diverge do playbook. {orientacao}", None
++    if not esperado.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++        return f"{ent_id} bloqueado: artefato fora do caso. {orientacao}", None
++    if not caminho.is_file():
++        return f"{ent_id} bloqueado: artefato nao existe como arquivo. {orientacao}", None
++    try:
+         conteudo = caminho.read_text(encoding="utf-8")
+-        if not conteudo.strip():
+-            return (f"{ent_id} bloqueado: materializacao '{materializar}' "
+-                    f"esta vazia."), None
+-        arquivo = str(caminho)
+-        registro_emissao = st.setdefault("entregaveis_emitidos", {})
+-        anterior = registro_emissao.get(ent_id)
+-        versao = (anterior.get("versao") + 1) if anterior else 1
+-        registro_emissao[ent_id] = {
+-            "arquivo": arquivo, "versao": versao, "autor": autor,
+-        }
++    except (OSError, UnicodeError) as exc:
++        return f"{ent_id} bloqueado: artefato ilegivel ({exc}). {orientacao}", None
++    if not conteudo.strip():
++        return f"{ent_id} bloqueado: artefato esta vazio. {orientacao}", None
++    arquivo = str(caminho.resolve())
++    registro_emissao = st.setdefault("entregaveis_emitidos", {})
++    anterior = registro_emissao.get(ent_id)
++    versao = (anterior.get("versao") + 1) if anterior else 1
++    registro_emissao[ent_id] = {
++        "arquivo": arquivo, "versao": versao, "autor": autor,
++    }
+ 
+     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor,
+              arquivo=arquivo, versao=versao)
+@@ -310,6 +339,9 @@ def main():
+     ap.add_argument("--apurar-nivel")
+     ap.add_argument("--encerrar"); ap.add_argument("--registrar-sessao")
+     ap.add_argument("--registrar-recorrencia")
++    ap.add_argument("--registrar-campo")
++    ap.add_argument("--campo", default="")
++    ap.add_argument("--valor", default="")
+     ap.add_argument("--satisfazer-inegociavel")
+     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
+     ap.add_argument("--participantes", default="")
+@@ -325,18 +357,20 @@ def main():
+     try:
+         pb, erro = P.carregar()
+     except (ValueError, TypeError, KeyError) as exc:
+-        if not a.apurar_nivel:
++        if not (a.apurar_nivel or a.registrar_campo):
+             raise
+         pb, erro = None, f"playbook invalido: {exc}"
+     if not st or erro:
+-        if a.apurar_nivel:
+-            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto")
+-        elif a.encerrar or a.registrar_sessao:
++        if a.apurar_nivel or a.registrar_campo:
++            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
++                             "registrar_campo" if a.registrar_campo else "apurar_nivel")
++        elif a.encerrar or a.registrar_sessao or a.emitir:
+             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+-                             "encerrar" if a.encerrar else "registrar_sessao")
++                             "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
+         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
+-    if a.apurar_nivel and not _ator_valido(a.autor):
+-        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada")
++    if (a.apurar_nivel or a.registrar_campo) and not _ator_valido(a.autor):
++        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada",
++                         "registrar_campo" if a.registrar_campo else "apurar_nivel")
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+     if E.autor_e_agente(a.autor):
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+@@ -344,6 +378,9 @@ def main():
+     if a.apurar_nivel:
+         acao, alvo = "apurar_nivel", a.apurar_nivel
+         err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
++    elif a.registrar_campo:
++        acao, alvo = "registrar_campo", a.registrar_campo
++        err = registrar_campo(st, pb, a.registrar_campo, a.campo, a.valor, a.autor)
+     elif a.registrar_sessao:
+         acao, alvo = "registrar_sessao", a.registrar_sessao
+         err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
+@@ -370,7 +407,7 @@ def main():
+         print("nada a fazer", file=sys.stderr); sys.exit(1)
+ 
+     if err:
+-        if a.apurar_nivel or isinstance(err, _RecusaSessao):
++        if a.apurar_nivel or a.registrar_campo or isinstance(err, _RecusaSessao):
+             _recusar_operacao(st, a.autor, err, acao)
+             print(err, file=sys.stderr); sys.exit(1)
+         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 5287b68..710571c 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -2,11 +2,13 @@
+ import json, pathlib, sys
+ 
+ OBRIGATORIO_ETAPA = {"id", "camada", "modalidade"}
+-OBRIGATORIO_ENTREGAVEL = {"id", "portao"}
++OBRIGATORIO_ENTREGAVEL = {"id", "portao", "artefato", "comando_materializacao"}
+ 
+ # Operadores que o motor generico de condicoes declarativas (avancar.py)
+ # sabe avaliar. Um portao com operador fora deste conjunto e contrato
+ # invalido, nao condicao ignorada silenciosamente (2.6.0 secao 28).
++CAMPOS_RESERVADOS = {"cumprido", "autor", "sessao", "eixos", "estado_recorrente"}
++
+ CONDICAO_OPERADORES = {"contem", "igual", "diferente"}
+ 
+ 
+@@ -40,6 +42,22 @@ def carregar():
+         for cam in c.values():
+             if cam not in ("EX1", "EX2", "EX3", "EX4"):
+                 return None, f"etapa {e['id']}: camada '{cam}' fora de EX1-EX4"
++        campos = e.get("campos_registraveis", {})
++        if not isinstance(campos, dict):
++            return None, f"etapa {e['id']}: campos_registraveis precisa ser objeto"
++        for nome, regra in campos.items():
++            if nome in CAMPOS_RESERVADOS:
++                return None, f"etapa {e['id']}: campo reservado '{nome}'"
++            if not isinstance(nome, str) or not nome.strip() or not isinstance(regra, dict):
++                return None, f"etapa {e['id']}: declaracao de campo invalida"
++            if set(regra) - {"valores"}:
++                return None, f"etapa {e['id']}: regra de campo desconhecida em {nome}"
++            if "valores" in regra:
++                valores_campo = regra["valores"]
++                if (not isinstance(valores_campo, list) or not valores_campo
++                        or any(not isinstance(v, str) or not v.strip() for v in valores_campo)
++                        or len(valores_campo) != len(set(valores_campo))):
++                    return None, f"etapa {e['id']}: valores invalidos para campo {nome}"
+         dep = e.get("depende_de")
+         if dep and dep not in ids_etapa:
+             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
+@@ -59,6 +77,13 @@ def carregar():
+         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
+         if faltando:
+             return None, f"entregavel {d.get('id','?')} sem {sorted(faltando)}"
++        artefato = d["artefato"]
++        if (not isinstance(artefato, str) or not artefato.strip()
++                or pathlib.Path(artefato).is_absolute()
++                or ".." in pathlib.Path(artefato).parts):
++            return None, f"entregavel {d['id']}: artefato precisa ser caminho relativo dentro do caso"
++        if not isinstance(d["comando_materializacao"], str) or not d["comando_materializacao"].strip():
++            return None, f"entregavel {d['id']}: comando_materializacao precisa ser declarado"
+         orfas = [p for p in d["portao"] if p not in ids_etapa]
+         if orfas:
+             return None, f"entregavel {d['id']}: portao referencia etapa inexistente {orfas}"
+diff --git a/testes/README.md b/testes/README.md
+index 3670ccf..3c777e2 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -661,3 +661,16 @@ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa
+ | 13 | Playbook com camada plana, sem mapa por nível, é recusado |
+ 
+ O par 9 e 10 é o mais importante do conjunto: mesma etapa, mesma habilidade, resultado oposto conforme o nível. Se os dois passarem juntos, a fronteira desloca.
++
++A9 acrescenta 13 verificações de emissão com artefato declarado; A10 acrescenta
++18 de campos, autoria e E3 ponta a ponta sem escrita direta em estado.json.
++O total completo passa a **592 verificações em 24 módulos**:
++
++```bash
++python3 testes/emissao_a9.py
++python3 testes/campos_a10.py
++```
++
++A execução integral confere códigos de saída e mensagens de falha; preserva
++todos os testes anteriores. As contagens são por teste/método, sem somar
++subtestes ou os módulos reexecutados internamente pelos testes de regressão.
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index 091c2f4..6583bec 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -585,6 +585,7 @@ else:
+ 
+ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
++entregavel(caso, "E1", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso, emitir="E1", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.5-T14 E1 apos F0: AUTORIZADO")
+@@ -622,6 +623,7 @@ percorrer_ate(caso, "P3d")
+ preparar_bl(caso)
+ codigo, saida, erro = inegociavel(caso, 1, "registro/baseline/BL-001.yaml",
+                                    satisfazer=True, autor="Marina Prado")
++entregavel(caso, "E2", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.5-T18 E2 com requisitos completos (etapas + I1 verificado): AUTORIZADO")
+@@ -646,11 +648,10 @@ else:
+ 
+ caso = preparar_caso()
+ percorrer_ate(caso, "P4")
+-estado_path = caso / "registro" / "estado.json"
+-st = json.loads(estado_path.read_text(encoding="utf-8"))
+-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
+-                             "classificacao_tecnologica": "isolado"}
+-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="caso isolado", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso, encerrar="P5", autor="Celso do Vale")
++entregavel(caso, "E3", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso, emitir="E3-D", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.5-T21 E3-D com P4/P5 validos: AUTORIZADO")
+@@ -660,11 +661,9 @@ else:
+ # ============================================== E3-E =======================
+ caso_nao_agentico = preparar_caso()
+ percorrer_ate(caso_nao_agentico, "P4")
+-estado_path = caso_nao_agentico / "registro" / "estado.json"
+-st = json.loads(estado_path.read_text(encoding="utf-8"))
+-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
+-                             "classificacao_tecnologica": "isolado"}
+-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++avancar(caso_nao_agentico, registrar_campo="P5", campo="classificacao_tecnologica", valor="caso isolado", autor="Celso do Vale")
++avancar(caso_nao_agentico, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso_nao_agentico, encerrar="P5", autor="Celso do Vale")
+ codigo, saida, erro = avancar(caso_nao_agentico, emitir="E3-E", autor="Celso do Vale")
+ if codigo == 0 and "NAO_APLICAVEL" in saida:
+     ok("2.6.5-T22 E3-E sobre caso nao agentico: NAO_APLICAVEL (nao e falha)")
+@@ -692,17 +691,17 @@ else:
+ 
+ caso_agentico = preparar_caso()
+ percorrer_ate(caso_agentico, "P4")
+-estado_path = caso_agentico / "registro" / "estado.json"
+-st = json.loads(estado_path.read_text(encoding="utf-8"))
+-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
+-                             "classificacao_tecnologica": "agente"}
+-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++avancar(caso_agentico, registrar_campo="P5", campo="classificacao_tecnologica", valor="agente", autor="Celso do Vale")
++avancar(caso_agentico, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso_agentico, encerrar="P5", autor="Celso do Vale")
++entregavel(caso_agentico, "E3", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso_agentico, emitir="E3-E", autor="Celso do Vale")
+ if codigo == 0 and "NAO_APLICAVEL" not in saida:
+     ok("2.6.5-T24 solucao agentica com P5 completo: E3-E AUTORIZADO")
+ else:
+     falha(f"2.6.5-T24 E3-E agentico foi negado/nao_aplicavel indevidamente: {saida!r} {erro!r}")
+ 
++st = json.loads((caso_agentico / "registro/estado.json").read_text())
+ if "agente" in str(st["cumprimentos"]["P5"]["classificacao_tecnologica"]):
+     ok("2.6.5-T25 condicao declarativa {campo,etapa,operador,valor} avaliada "
+        "sem hard-code de 'E3-E' no nucleo (mesmo mecanismo generico do 2.6.1)")
+@@ -759,6 +758,7 @@ avancar(caso, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana,
+ avancar(caso, encerrar="P7", autor="Celso do Vale")
+ inegociavel(caso, 2, "registro/governanca/autonomia/AUT-001.yaml",
+             satisfazer=True, autor="Marina Prado")
++entregavel(caso, "E4", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso, emitir="E4", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.5-T30 E4 com P6/P7 e termo DECIDIDO valido: AUTORIZADO")
+@@ -824,6 +824,7 @@ avancar(caso, registrar_sessao="P10", autor="Celso do Vale", participantes="Ana,
+ avancar(caso, encerrar="P10", autor="Celso do Vale")
+ avancar(caso, registrar_recorrencia="P10", autor="Celso do Vale",
+         cadencia="mensal", responsavel="Marina Prado")
++entregavel(caso, "E5", "Celso do Vale", emitir=False)
+ codigo, saida, erro = avancar(caso, emitir="E5", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.5-T36 E5 com P8/P9/P10 + I3/I4/I5: AUTORIZADO")
+@@ -873,7 +874,8 @@ else:
+ 
+ st_e5 = json.loads((caso_e5_completo / "registro" / "estado.json").read_text(encoding="utf-8"))
+ reg_e5 = st_e5.get("entregaveis_emitidos", {}).get("E5", {})
+-if reg_e5.get("versao") == 1 and reg_e5.get("arquivo"):
++# A9: ambas as emissões (núcleo e campo) agora registram versão.
++if reg_e5.get("versao") == 2 and reg_e5.get("arquivo"):
+     ok(f"2.6.5-T41 entregavel possui versao/ID rastreavel: {reg_e5}")
+ else:
+     falha(f"2.6.5-T41 entregavel sem versao rastreavel: {reg_e5}")
+@@ -881,7 +883,7 @@ else:
+ codigo, saida, erro = entregavel(caso_e5_completo, "E5", "Celso do Vale", emitir=True)
+ st_e5_v2 = json.loads((caso_e5_completo / "registro" / "estado.json").read_text(encoding="utf-8"))
+ reg_e5_v2 = st_e5_v2.get("entregaveis_emitidos", {}).get("E5", {})
+-if codigo == 0 and reg_e5_v2.get("versao") == 2:
++if codigo == 0 and reg_e5_v2.get("versao") == reg_e5["versao"] + 1:
+     ok(f"2.6.5-T42 reemissao nao sobrescreve silenciosamente: versao incrementada para {reg_e5_v2.get('versao')}")
+ else:
+     falha(f"2.6.5-T42 reemissao nao incrementou versao corretamente: {reg_e5_v2}")
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index d9eea63..8b195a0 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -521,32 +521,11 @@ def preparar_bl(caso, **over):
+ 
+ 
+ def gravar_p5_agentico(caso):
+-    """Nao existe caminho executavel (script/CLI) para o conteudo semantico
+-    de P5 (classificacao_tecnologica) alem da escrita direta em
+-    st['cumprimentos']['P5'] -- mesma lacuna ja observada e documentada em
+-    2.6.5 (hb-classificar/SKILL.md so produz caso/P5-classificacao.md em
+-    texto livre; nao ha script eiac-campo/scripts/classificar.py). Este
+-    pacote e de verificacao, nao introduz o script ausente (secao 1: nao
+-    criar feature nova); registra o achado como defeito (ver resultado.md)
+-    e usa o mesmo caminho documentado do 2.6.5, com evidencia antes/depois
+-    preservada nos logs desta suite.
+-    """
+-    caminho = caso / "registro" / "estado.json"
+-    st = json.loads(caminho.read_text(encoding="utf-8"))
+-    st["cumprimentos"]["P5"] = {
+-        "cumprido": True, "autor": "Celso do Vale",
+-        "classificacao_tecnologica": "agente",
+-    }
+-    caminho.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+-
+-
+-def ajustar_etapa_atual(caso, etapa_id, camada="EX3", modalidade="presencial_ou_remoto"):
+-    caminho = caso / "registro" / "estado.json"
+-    st = json.loads(caminho.read_text(encoding="utf-8"))
+-    st["etapa_atual"] = etapa_id
+-    st["camada_atual"] = camada
+-    st["modalidade_atual"] = modalidade
+-    caminho.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++    """A10: registra a classificação e encerra P5 pelo caminho autorizado."""
++    avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica",
++            valor="agente", autor="Celso do Vale")
++    avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Fernanda, Celso")
++    avancar(caso, encerrar="P5", autor="Celso do Vale")
+ 
+ 
+ HABILIDADES_JSON = str(RAIZ / "eiac-campo" / "reference" / "habilidades.json")
+@@ -671,7 +650,6 @@ avancar(caso_p6, encerrar="P3d", autor="Celso do Vale")
+ avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
+ gravar_p5_agentico(caso_p6)
+-ajustar_etapa_atual(caso_p6, "P6")
+ avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
+ codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
+ if codigo == 0:
+@@ -884,6 +862,7 @@ else:
+ avancar(caso_e1e3, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
+ avancar(caso_e1e3, encerrar="P4", autor="Celso do Vale")
+ gravar_p5_agentico(caso_e1e3)
++entregavel(caso_e1e3, "E3", "Celso do Vale", emitir=False)
+ codigo_e3d, _, erro_e3d = avancar(caso_e1e3, emitir="E3-D", autor="Celso do Vale")
+ if codigo_e3d == 0:
+     ok("2.6.6-C30 E3-D autorizado")
+diff --git a/testes/campos_a10.py b/testes/campos_a10.py
+new file mode 100644
+index 0000000..18075e5
+--- /dev/null
++++ b/testes/campos_a10.py
+@@ -0,0 +1,184 @@
++"""A10: campos declarados, autoria nominal e E3 por comandos reais."""
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++SCRIPT = RAIZ / 'eiac-nucleo/scripts/avancar.py'
++VALORES = ['agente', 'caso isolado', 'habilitador acoplado']
++
++
++class CamposA10(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name) / 'caso'
++        shutil.copytree(RAIZ / 'eiac-campo/template-caso/registro', self.caso / 'registro')
++        self.estado = self.caso / 'registro/estado.json'
++        self.pbpath = self.caso / 'registro/playbook.json'
++        self.configurar(lambda pb: next(e for e in pb['etapas'] if e['id'] == 'P5').update(
++            campos_registraveis={'classificacao_tecnologica': {'valores': VALORES}}))
++        st = json.loads(self.estado.read_text())
++        st.update(responsavel='Celso do Vale', etapa_atual='P5', nivel='N2')
++        st['cumprimentos'] = {}
++        self.estado.write_text(json.dumps(st))
++
++    def configurar(self, fn):
++        pb = json.loads(self.pbpath.read_text())
++        fn(pb)
++        self.pbpath.write_text(json.dumps(pb))
++
++    def executar(self, *args, autor='Celso do Vale'):
++        return subprocess.run(['python3', str(SCRIPT), *args, '--autor', autor],
++                              cwd=self.caso, text=True, capture_output=True)
++
++    def eventos(self):
++        return [json.loads(l) for l in (self.caso / 'registro/eventos.jsonl').read_text().splitlines()]
++
++    def registrar(self, etapa='P5', campo='classificacao_tecnologica', valor='agente', **kwargs):
++        return self.executar('--registrar-campo', etapa, '--campo', campo, '--valor', valor, **kwargs)
++
++    def recusa(self, partes, **kwargs):
++        antes = self.estado.read_bytes()
++        r = self.registrar(**kwargs)
++        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
++        for parte in partes:
++            self.assertIn(parte, r.stderr)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        ev = self.eventos()[-1]
++        self.assertEqual(ev['evento'], 'TentativaNegada')
++        self.assertEqual(ev['autor'], 'Celso do Vale')
++        self.assertEqual(ev['acao_tentada'], 'registrar_campo')
++        self.assertIn(r.stderr.strip(), ev['motivo'])
++
++    def test_00_campo_nao_declarado(self):
++        self.recusa(['nao declarado'], campo='inventado')
++
++    def test_01_valor_fora_da_taxonomia(self):
++        self.recusa(['valores aceitos', *VALORES], valor='automacao')
++
++    def test_02_autor_agente(self):
++        self.recusa(['pessoa nomeada'], autor='AG-01')
++
++    def test_03_etapa_futura(self):
++        self.recusa(['etapa corrente'], etapa='P6')
++
++    def test_04_etapa_passada(self):
++        self.recusa(['etapa corrente'], etapa='P4')
++
++    def test_05_etapa_desconhecida(self):
++        self.recusa(['nao existe'], etapa='P99')
++
++    def test_06_etapa_corrente_encerrada(self):
++        st = json.loads(self.estado.read_text())
++        st['cumprimentos']['P5'] = {'cumprido': True}
++        self.estado.write_text(json.dumps(st))
++        self.recusa(['encerrada'])
++
++    def test_07_valor_vazio(self):
++        self.recusa(['valor'], valor='  ')
++
++    def test_08_autor_generico(self):
++        self.recusa(['pessoa nomeada'], autor='equipe')
++
++    def test_09_sem_campo(self):
++        antes = self.estado.read_bytes()
++        r = self.executar('--registrar-campo', 'P5', '--valor', 'agente')
++        self.assertEqual(r.returncode, 1)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++
++    def test_10_campo_reservado_nao_pode_ser_declarado(self):
++        self.configurar(lambda pb: next(e for e in pb['etapas'] if e['id'] == 'P5')[
++            'campos_registraveis'].update(cumprido={}))
++        self.recusa(['reservado'], campo='cumprido', valor='true')
++
++    def test_11_taxonomia_invalida(self):
++        self.configurar(lambda pb: next(e for e in pb['etapas'] if e['id'] == 'P5')[
++            'campos_registraveis']['classificacao_tecnologica'].update(valores='agente'))
++        self.recusa(['valores'])
++
++    def test_12_agente_com_playbook_invalido(self):
++        self.pbpath.write_text('{')
++        self.recusa(['playbook invalido'], autor='agente-teste')
++
++    def test_13_categorias_aceitas(self):
++        for valor in VALORES:
++            with self.subTest(valor=valor):
++                r = self.registrar(valor=valor)
++                self.assertEqual(r.returncode, 0, r.stderr)
++                self.assertEqual(json.loads(self.estado.read_text())['cumprimentos']['P5'][
++                    'classificacao_tecnologica'], valor)
++                ev = self.eventos()[-1]
++                self.assertEqual(ev['evento'], 'CampoRegistrado')
++                self.assertEqual((ev['etapa'], ev['campo'], ev['valor'], ev['autor']),
++                                 ('P5', 'classificacao_tecnologica', valor, 'Celso do Vale'))
++
++    def test_14_substituicao_tem_historico(self):
++        self.assertEqual(self.registrar().returncode, 0)
++        self.assertEqual(self.registrar(valor='caso isolado').returncode, 0)
++        ev = self.eventos()
++        self.assertEqual([e['valor'] for e in ev], ['agente', 'caso isolado'])
++        self.assertEqual(ev[-1]['anterior'], 'agente')
++
++    def test_15_campo_livre_de_outro_metodo(self):
++        self.configurar(lambda pb: next(e for e in pb['etapas'] if e['id'] == 'P5')[
++            'campos_registraveis'].update(observacao={}))
++        r = self.registrar(campo='observacao', valor='texto humano sem taxonomia')
++        self.assertEqual(r.returncode, 0, r.stderr)
++
++    def test_16_declaracao_do_template(self):
++        pb = json.loads((RAIZ / 'eiac-campo/template-caso/registro/playbook.json').read_text())
++        et = next(e for e in pb['etapas'] if e['id'] == 'P5')
++        self.assertEqual(et.get('campos_registraveis', {}).get('classificacao_tecnologica'),
++                         {'valores': VALORES})
++
++    def test_17_e3_partes_a_b_sem_escrita_direta_no_estado(self):
++        # Desde a abertura, este percurso apenas LÊ estado.json; toda escrita
++        # passa por novo-caso, avancar e selar. Nenhuma fixture de estado.
++        base = pathlib.Path(self.tmp.name) / 'ponta-a-ponta'
++        r = subprocess.run(['bash', str(RAIZ / 'novo-caso.sh'), 'controle', '--responsavel',
++                            'Celso do Vale', str(base)], text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.caso = base / 'controle'
++        self.estado = self.caso / 'registro/estado.json'
++        for key, value in [('user.name', 'Celso do Vale'), ('user.email', 'teste@exemplo.com')]:
++            subprocess.run(['git', 'config', key, value], cwd=self.caso, check=True)
++        r = self.executar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        pb = json.loads((self.caso / 'registro/playbook.json').read_text())
++        for et in pb['etapas']:
++            if et['id'] == 'P5':
++                r = self.registrar()
++                self.assertEqual(r.returncode, 0, r.stderr)
++            cam = et['camada']['N2']
++            if pb['encerramento_por_camada'][cam] or et.get('delegavel') is False:
++                r = self.executar('--registrar-sessao', et['id'], '--participantes',
++                                  'Celso do Vale, Pessoa Cliente')
++                self.assertEqual(r.returncode, 0, r.stderr)
++            r = self.executar('--encerrar', et['id'])
++            self.assertEqual(r.returncode, 0, r.stderr)
++            if any(e.get('exige_selo_apos') == et['id'] for e in pb['etapas']):
++                r = subprocess.run(['python3', str(RAIZ / 'eiac-nucleo/scripts/selar.py'),
++                                    '--autor', 'Celso do Vale', '--nota', 'controle E3'],
++                                   cwd=self.caso, text=True, capture_output=True)
++                self.assertEqual(r.returncode, 0, r.stderr)
++            if et['id'] == 'P5':
++                break
++        r = subprocess.run(['python3', str(RAIZ / 'eiac-campo/scripts/entregaveis.py'),
++                            '--renderizar', 'E3', '--autor', 'Celso do Vale', '--emitir'],
++                           cwd=self.caso, text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        texto = (self.caso / 'caso/entregaveis/E3.md').read_text()
++        self.assertIn('Parte A', texto)
++        self.assertIn('Parte B', texto)
++        emitidos = [e['entregavel'] for e in self.eventos() if e['evento'] == 'EntregavelEmitido']
++        self.assertEqual(emitidos, ['E3-D', 'E3-E'])
++        self.assertTrue(any(e['evento'] == 'CampoRegistrado' for e in self.eventos()))
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/testes/emissao_a9.py b/testes/emissao_a9.py
+new file mode 100644
+index 0000000..b6fd76d
+--- /dev/null
++++ b/testes/emissao_a9.py
+@@ -0,0 +1,140 @@
++"""A9: emissão exige o artefato declarado pelo playbook do caso."""
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++SCRIPT = RAIZ / 'eiac-nucleo/scripts/avancar.py'
++
++
++class EmissaoA9(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ / 'eiac-campo/template-caso/registro', self.caso / 'registro')
++        self.estado = self.caso / 'registro/estado.json'
++        self.pbpath = self.caso / 'registro/playbook.json'
++        pb = json.loads(self.pbpath.read_text())
++        for ent in pb['entregaveis']:
++            ent['artefato'] = 'caso/entregaveis/' + ('E3' if ent['id'].startswith('E3-') else ent['id']) + '.md'
++            ent['comando_materializacao'] = '/eiac-campo:emitir'
++        self.pbpath.write_text(json.dumps(pb))
++        st = json.loads(self.estado.read_text())
++        st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual='P6')
++        st['cumprimentos'] = {et['id']: {'cumprido': True} for et in pb['etapas']}
++        st['cumprimentos']['P5']['classificacao_tecnologica'] = 'agente'
++        st['inegociaveis'] = {str(i['n']): {'satisfeito': True, 'autor': 'Celso do Vale',
++                                          'evidencia': 'registro/evidencia.yaml'} for i in pb['inegociaveis']}
++        self.estado.write_text(json.dumps(st))
++
++    def executar(self, entregavel='E3-D', *args):
++        return subprocess.run(['python3', str(SCRIPT), '--emitir', entregavel,
++                               '--autor', 'Celso do Vale', *args], cwd=self.caso,
++                              text=True, capture_output=True)
++
++    def evento(self):
++        return json.loads((self.caso / 'registro/eventos.jsonl').read_text().splitlines()[-1])
++
++    def arquivo(self, caminho='caso/entregaveis/E3.md', conteudo='# Blueprint real\n'):
++        p = self.caso / caminho
++        p.parent.mkdir(parents=True, exist_ok=True)
++        p.write_text(conteudo)
++        return p
++
++    def configurar(self, fn):
++        pb = json.loads(self.pbpath.read_text())
++        fn(pb)
++        self.pbpath.write_text(json.dumps(pb))
++
++    def recusa(self, entregavel='E3-D', *args, partes=()):
++        antes = self.estado.read_bytes()
++        r = self.executar(entregavel, *args)
++        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
++        for parte in partes:
++            self.assertIn(parte, r.stderr)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        ev = self.evento()
++        self.assertIn(ev['evento'], ('RecusaEmissao', 'TentativaNegada'))
++        self.assertEqual(ev['autor'], 'Celso do Vale')
++        self.assertIn(r.stderr.strip(), ev['motivo'])
++
++    def test_00_sem_artefato(self):
++        self.recusa(partes=('caso/entregaveis/E3.md', '/eiac-campo:emitir'))
++
++    def test_01_arquivo_vazio(self):
++        self.arquivo(conteudo=' \n')
++        self.recusa(partes=('vazi',))
++
++    def test_02_diretorio_nao_e_arquivo(self):
++        (self.caso / 'caso/entregaveis/E3.md').mkdir(parents=True)
++        self.recusa(partes=('caso/entregaveis/E3.md',))
++
++    def test_03_materializar_nao_contorna_caminho(self):
++        outro = self.arquivo('rascunho/outro.md')
++        self.recusa('E3-D', '--materializar', str(outro), partes=('caso/entregaveis/E3.md',))
++
++    def test_04_caminho_nao_declarado(self):
++        self.configurar(lambda pb: pb['entregaveis'][2].pop('artefato'))
++        self.recusa(partes=('artefato',))
++
++    def test_05_caminho_fora_do_caso(self):
++        self.configurar(lambda pb: pb['entregaveis'][2].update(artefato='../fora.md'))
++        self.recusa(partes=('artefato',))
++
++    def test_06_todos_os_portoes_exigem_arquivo(self):
++        for ent in ('E1', 'E2', 'E3-E', 'E4', 'E5'):
++            with self.subTest(ent=ent):
++                self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
++
++    def test_07_arquivo_existente(self):
++        self.arquivo()
++        r = self.executar()
++        self.assertEqual(r.returncode, 0, r.stderr)
++        ev = self.evento()
++        self.assertEqual(ev['evento'], 'EntregavelEmitido')
++        self.assertTrue(pathlib.Path(ev['arquivo']).is_file())
++        self.assertEqual(ev['versao'], 1)
++        self.assertEqual(json.loads(self.estado.read_text())['entregaveis_emitidos']['E3-D']['versao'], 1)
++
++    def test_08_materializacao_explicita(self):
++        p = self.arquivo()
++        self.assertEqual(self.executar('E3-D', '--materializar', str(p)).returncode, 0)
++
++    def test_09_nao_aplicavel_sem_arquivo(self):
++        st = json.loads(self.estado.read_text())
++        st['cumprimentos']['P5']['classificacao_tecnologica'] = 'caso isolado'
++        self.estado.write_text(json.dumps(st))
++        antes = self.estado.read_bytes()
++        r = self.executar('E3-E')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertIn('NAO_APLICAVEL', r.stdout)
++        self.assertEqual(self.evento()['evento'], 'EntregavelNaoAplicavel')
++        self.assertEqual(self.estado.read_bytes(), antes)
++        self.assertFalse((self.caso / 'caso/entregaveis/E3.md').exists())
++
++    def test_10_regra_alternativa_do_caso(self):
++        self.configurar(lambda pb: pb['entregaveis'][2].update(
++            artefato='saida/decisao.txt', comando_materializacao='/outro:gerar'))
++        self.recusa(partes=('saida/decisao.txt', '/outro:gerar'))
++        self.arquivo('saida/decisao.txt')
++        self.assertEqual(self.executar().returncode, 0)
++
++    def test_11_reemissao_incrementa_versao(self):
++        self.arquivo()
++        self.assertEqual(self.executar().returncode, 0)
++        self.assertEqual(self.executar().returncode, 0)
++        self.assertEqual(self.evento()['versao'], 2)
++
++    def test_12_template_declara_todos(self):
++        pb = json.loads((RAIZ / 'eiac-campo/template-caso/registro/playbook.json').read_text())
++        for ent in pb['entregaveis']:
++            self.assertTrue(ent.get('artefato'))
++            self.assertEqual(ent.get('comando_materializacao'), '/eiac-campo:emitir')
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 7491e3e..2633d9d 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -389,6 +389,8 @@ if any(e.get("evento") == "InegociavelSatisfeito" for e in evs):
+ else:
+     falha("2.6.1-T20b evento InegociavelSatisfeito AUSENTE")
+ 
++(caso / "caso/entregaveis").mkdir(parents=True, exist_ok=True)
++(caso / "caso/entregaveis/E2.md").write_text("# Artefato sintético para teste do portão\n")
+ codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado")
+@@ -468,30 +470,24 @@ else:
+ 
+ # --- T27/T28: condicoes declarativas -----------------------------------------
+ caso = preparar_caso()
+-apurar_e_encerrar_f0(caso)
+-for e in ["P1", "P2", "P3a"]:
+-    avancar(caso, encerrar=e, autor="Celso do Vale")
+-selar(caso, "selo apos P2, exigido por P3b")
+-avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+-for e in ["P3b", "P3d"]:
+-    avancar(caso, encerrar=e, autor="Celso do Vale")
+-avancar(caso, encerrar="P4", autor="Celso do Vale")
+-# forca o cumprimento de P5 com o campo que a condicao declarativa de E3-E
+-# consulta (classificacao_tecnologica), simulando o que uma skill de P5
+-# gravaria -- o nucleo so le o campo, nao decide seu significado.
+-estado_path = caso / "registro" / "estado.json"
+-st = json.loads(estado_path.read_text(encoding="utf-8"))
+-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
+-                             "classificacao_tecnologica": "agente"}
+-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++percorrer_ate(caso, "P4")
++avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="agente", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso, encerrar="P5", autor="Celso do Vale")
++(caso / "caso/entregaveis").mkdir(parents=True, exist_ok=True)
++(caso / "caso/entregaveis/E3.md").write_text("# Artefato sintético para teste do portão\n")
+ codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)")
+ else:
+     falha(f"2.6.1-T27 condicao declarativa satisfeita foi RECUSADA: {erro}")
+ 
+-st["cumprimentos"]["P5"]["classificacao_tecnologica"] = "habilitador"
+-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
++# Outro caso permite classificar enquanto P5 ainda é corrente.
++caso = preparar_caso()
++percorrer_ate(caso, "P4")
++avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="habilitador acoplado", autor="Celso do Vale")
++avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
++avancar(caso, encerrar="P5", autor="Celso do Vale")
+ codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
+ # Desde 2.6.5 (secao 24 do pacote), condicao declarativa nao satisfeita e
+ # NAO_APLICAVEL (exit 0), nao RECUSA (exit != 0) -- "nao aplicavel" nao e

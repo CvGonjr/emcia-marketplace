@@ -1,0 +1,18 @@
+test_00_sem_artefato (__main__.EmissaoA9.test_00_sem_artefato) ... ok
+test_01_arquivo_vazio (__main__.EmissaoA9.test_01_arquivo_vazio) ... ok
+test_02_diretorio_nao_e_arquivo (__main__.EmissaoA9.test_02_diretorio_nao_e_arquivo) ... ok
+test_03_materializar_nao_contorna_caminho (__main__.EmissaoA9.test_03_materializar_nao_contorna_caminho) ... ok
+test_04_caminho_nao_declarado (__main__.EmissaoA9.test_04_caminho_nao_declarado) ... ok
+test_05_caminho_fora_do_caso (__main__.EmissaoA9.test_05_caminho_fora_do_caso) ... ok
+test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) ... ok
+test_07_arquivo_existente (__main__.EmissaoA9.test_07_arquivo_existente) ... ok
+test_08_materializacao_explicita (__main__.EmissaoA9.test_08_materializacao_explicita) ... ok
+test_09_nao_aplicavel_sem_arquivo (__main__.EmissaoA9.test_09_nao_aplicavel_sem_arquivo) ... ok
+test_10_regra_alternativa_do_caso (__main__.EmissaoA9.test_10_regra_alternativa_do_caso) ... ok
+test_11_reemissao_incrementa_versao (__main__.EmissaoA9.test_11_reemissao_incrementa_versao) ... ok
+test_12_template_declara_todos (__main__.EmissaoA9.test_12_template_declara_todos) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.871s
+
+OK

@@ -1,0 +1,184 @@
+test_00_sem_artefato (__main__.EmissaoA9.test_00_sem_artefato) ... FAIL
+test_01_arquivo_vazio (__main__.EmissaoA9.test_01_arquivo_vazio) ... FAIL
+test_02_diretorio_nao_e_arquivo (__main__.EmissaoA9.test_02_diretorio_nao_e_arquivo) ... FAIL
+test_03_materializar_nao_contorna_caminho (__main__.EmissaoA9.test_03_materializar_nao_contorna_caminho) ... FAIL
+test_04_caminho_nao_declarado (__main__.EmissaoA9.test_04_caminho_nao_declarado) ... FAIL
+test_05_caminho_fora_do_caso (__main__.EmissaoA9.test_05_caminho_fora_do_caso) ... FAIL
+test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) ... 
+  test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E1') ... FAIL
+  test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E2') ... FAIL
+  test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E3-E') ... FAIL
+  test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E4') ... FAIL
+  test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E5') ... FAIL
+test_07_arquivo_existente (__main__.EmissaoA9.test_07_arquivo_existente) ... ERROR
+test_08_materializacao_explicita (__main__.EmissaoA9.test_08_materializacao_explicita) ... ok
+test_09_nao_aplicavel_sem_arquivo (__main__.EmissaoA9.test_09_nao_aplicavel_sem_arquivo) ... ok
+test_10_regra_alternativa_do_caso (__main__.EmissaoA9.test_10_regra_alternativa_do_caso) ... FAIL
+test_11_reemissao_incrementa_versao (__main__.EmissaoA9.test_11_reemissao_incrementa_versao) ... FAIL
+test_12_template_declara_todos (__main__.EmissaoA9.test_12_template_declara_todos) ... FAIL
+
+======================================================================
+ERROR: test_07_arquivo_existente (__main__.EmissaoA9.test_07_arquivo_existente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 99, in test_07_arquivo_existente
+    self.assertTrue(pathlib.Path(ev['arquivo']).is_file())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1164, in __init__
+    super().__init__(*args)
+  File "/usr/lib/python3.12/pathlib.py", line 373, in __init__
+    raise TypeError(
+TypeError: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'NoneType'
+
+======================================================================
+FAIL: test_00_sem_artefato (__main__.EmissaoA9.test_00_sem_artefato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 66, in test_00_sem_artefato
+    self.recusa(partes=('caso/entregaveis/E3.md', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_01_arquivo_vazio (__main__.EmissaoA9.test_01_arquivo_vazio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 70, in test_01_arquivo_vazio
+    self.recusa(partes=('vazi',))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_02_diretorio_nao_e_arquivo (__main__.EmissaoA9.test_02_diretorio_nao_e_arquivo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 74, in test_02_diretorio_nao_e_arquivo
+    self.recusa(partes=('caso/entregaveis/E3.md',))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_03_materializar_nao_contorna_caminho (__main__.EmissaoA9.test_03_materializar_nao_contorna_caminho)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 78, in test_03_materializar_nao_contorna_caminho
+    self.recusa('E3-D', '--materializar', str(outro), partes=('caso/entregaveis/E3.md',))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_04_caminho_nao_declarado (__main__.EmissaoA9.test_04_caminho_nao_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 82, in test_04_caminho_nao_declarado
+    self.recusa(partes=('artefato',))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_05_caminho_fora_do_caso (__main__.EmissaoA9.test_05_caminho_fora_do_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 86, in test_05_caminho_fora_do_caso
+    self.recusa(partes=('artefato',))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 91, in test_06_todos_os_portoes_exigem_arquivo
+    self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 91, in test_06_todos_os_portoes_exigem_arquivo
+    self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E3-E')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 91, in test_06_todos_os_portoes_exigem_arquivo
+    self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E4')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 91, in test_06_todos_os_portoes_exigem_arquivo
+    self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) (ent='E5')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 91, in test_06_todos_os_portoes_exigem_arquivo
+    self.recusa(ent, partes=('artefato', '/eiac-campo:emitir'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_10_regra_alternativa_do_caso (__main__.EmissaoA9.test_10_regra_alternativa_do_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 122, in test_10_regra_alternativa_do_caso
+    self.recusa(partes=('saida/decisao.txt', '/outro:gerar'))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 56, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: None
+
+
+======================================================================
+FAIL: test_11_reemissao_incrementa_versao (__main__.EmissaoA9.test_11_reemissao_incrementa_versao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 130, in test_11_reemissao_incrementa_versao
+    self.assertEqual(self.evento()['versao'], 2)
+AssertionError: None != 2
+
+======================================================================
+FAIL: test_12_template_declara_todos (__main__.EmissaoA9.test_12_template_declara_todos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/emissao_a9.py", line 135, in test_12_template_declara_todos
+    self.assertTrue(ent.get('artefato'))
+AssertionError: None is not true
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.809s
+
+FAILED (failures=14, errors=1)

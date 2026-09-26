@@ -1,0 +1,740 @@
+A9/A10 — suíte completa
+Executada em: 2026-09-26T12:00:58.004705
+Base: v-sprint3-poc.2 / b53fb04bcf4d225080bfbd4a2c525d60fc60b6aa
+Conferência: códigos de saída e mensagens FALHA/FAILED/FAIL:.
+
+negativos.sh: 51 verificações; saída 0; falha False
+autoria_responsavel.py: 14 verificações; saída 0; falha False
+campo_2_6_2.py: 38 verificações; saída 0; falha False
+campo_2_6_3.py: 57 verificações; saída 0; falha False
+campo_2_6_4.py: 50 verificações; saída 0; falha False
+campo_2_6_5.py: 62 verificações; saída 0; falha False
+campo_2_6_6.py: 43 verificações; saída 0; falha False
+campos_a10.py: 18 verificações; saída 0; falha False
+consolidado.py: 16 verificações; saída 0; falha False
+contexto.py: 11 verificações; saída 0; falha False
+ctx_v.py: 23 verificações; saída 0; falha False
+curadoria.py: 17 verificações; saída 0; falha False
+emissao_a9.py: 13 verificações; saída 0; falha False
+esforco.py: 1 verificações; saída 0; falha False
+habilitacao.py: 19 verificações; saída 0; falha False
+integracao.py: 17 verificações; saída 0; falha False
+metodo_empacotado.py: 1 verificações; saída 0; falha False
+nucleo_2_6_1.py: 39 verificações; saída 0; falha False
+nucleo_yaml.py: 7 verificações; saída 0; falha False
+p3d.py: 12 verificações; saída 0; falha False
+playbook_2_6_0.py: 29 verificações; saída 0; falha False
+sessao_a8.py: 23 verificações; saída 0; falha False
+triagem_a7.py: 24 verificações; saída 0; falha False
+verificacao_por_estados.py: 7 verificações; saída 0; falha False
+TOTAL: 592 verificações em 24 módulos; módulos com falhas: 0
+
+Saída integral:
+
+$ bash testes/negativos.sh
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 caso com responsavel agente recusado na abertura
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    G6a Write em fontes/ negado
+  ok    G6b Edit em fontes/ negado
+  ok    G6c bash redirecionando para fontes/ negado
+  ok    G6d bash removendo de fontes/ negado
+  ok    G6e bash mv para fontes/ negado
+  ok    G6f Write em contexto/fontes/ negado
+  ok    G6g tentativa negada em fontes/ gera evento
+  ok    G6h leitura em fontes/ permanece permitida
+  ok    G6i cd seguido de rm em fontes/ negado
+  ok    G6j sed -i em fontes/ negado
+  ok    G6k remocao indireta por Python negada
+  ok    G6l leitura simples por Bash permanece permitida
+  ok    ISO2 núcleo recusa registro de execução de contraste
+  ok    ISO-controle núcleo opera em caso de campo isolado
+  ok    ISO-selo-1 selo recusa evento carimbado variante contraste
+  ok    ISO-selo-2 selo recusa evento sem carimbo de componente
+  ok    ISO-selo-controle trilha homogênea de campo sela normalmente
+  ok    ISO-selo-controle eventos reais carregam componente.variante=campo (plugin.json real)
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem
+
+$ python3 testes/autoria_responsavel.py
+== novo-caso.sh recusa responsavel invalido
+  ok    novo-caso.sh recusa responsavel codigo de agente ('AG-01')
+  ok    novo-caso.sh recusa responsavel codigo de agente ('agente')
+  ok    novo-caso.sh recusa responsavel placeholder ('<nome da pessoa>')
+  ok    novo-caso.sh recusa responsavel coletivo generico ('equipe')
+  ok    novo-caso.sh recusa responsavel vazio ('')
+  ok    novo-caso.sh grava responsavel valido em registro/estado.json
+  ok    novo-caso.sh emite CasoAberto com o responsavel
+
+== validar.py: autoria vem de responsavel, nao de --autor
+  ok    validar.py grava com autor=responsavel mesmo recebendo --autor AG-03
+  ok    validar.py preserva --autor informado em autor_informado, para auditoria
+  ok    validar.py recusa gravar em caso sem responsavel definido
+
+== curar.py: autoria vem de responsavel, nao de --registrado-por
+  ok    curar.py cura com registrado_por=responsavel mesmo recebendo --registrado-por AG-01
+  ok    curar.py recusa curar em caso sem responsavel definido
+
+== selar.py: autor do commit vem de responsavel, nao de --autor
+  ok    selar.py commita com autor=responsavel mesmo recebendo --autor AG-04
+  ok    selar.py recusa selar caso sem responsavel definido
+
+14 verificacoes de autoria por responsavel, 0 falhas
+
+$ python3 testes/campo_2_6_2.py
+== testes 2.6.2 -- P6 e P7
+  ok    2.6.2-T01 P6 com entradas validas: PASS
+  ok    2.6.2-T02 P6 sem campo obrigatorio (responsavel_operacional) recusado (campo obrigatorio ausente: responsavel_operacional)
+  ok    2.6.2-T03 P6 nao reexecuta P4/P5 (operacional.py nao invoca outros scripts)
+  ok    2.6.2-T04 P6 gera desenho operacional estruturado com os campos exigidos
+  ok    2.6.2-T05 saida de P6 marcada 'proposta', sem validado_por (nao confundida com aprovacao)
+  ok    2.6.2-T06 P6 produz especificacao (schema so com string/integer/list), nao aciona deployment
+  ok    2.6.2-T07 P7 recebe P6 validado: PASS
+  ok    2.6.2-T08 P7 sem P6 (operacional_ref nao resolve) recusado (operacional_ref 'OP-001' nao resolve — registro/operacional/OP-001.yaml nao existe)
+  ok    2.6.2-T09 agente prepara minuta (rascunho -> proposto): PASS
+  ok    2.6.2-T10 agente tenta decidir autonomia: RECUSA (decisor nao pode ser agente: 'AG-03')
+  ok    2.6.2-T10b tentativa de agente decidir gera evento TermoAutonomiaRecusado
+  ok    2.6.2-T11 humano autorizado decide autonomia: PASS + trilha
+  ok    2.6.2-T11b evento AutonomiaDecidida presente
+  ok    2.6.2-T12 decisao sem pessoa nominal ('equipe') recusada (decisao de autonomia exige pessoa nomeada; 'equipe' nao satisfaz (agente, vazio ou coletivo generico nao substitui pessoa).)
+  ok    2.6.2-T13 decisao com pessoa nominal aceita
+  ok    2.6.2-T14 decisao sem justificativa recusada (estado 'decidido' exige ['justificativa_decisao'] preenchidos)
+  ok    2.6.2-T15 decisao completa (com justificativa) aceita
+  ok    2.6.2-T16 termo possui estrutura minima (tres listas + gatilhos + escopo)
+  ok    2.6.2-T17 agente nao aparece como autor da decisao final (decisor: 'Marina Prado')
+  ok    2.6.2-T18 escrita direta em registro/governanca/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.2-T19 alteracao pelo caminho autorizado (governanca.py via Bash) funcional
+  ok    2.6.2-T20 acao classificada como autonoma (estado decidido) so apos decisao humana registrada
+  ok    2.6.2-T21 minuta nao equivale a autorizacao (T09 aceita preparo, T10 recusa decisao pelo agente)
+  ok    2.6.2-T22 acao proibida (nunca_faz) permanece registrada e distinta de faz_sozinha
+  ok    2.6.2-T23 gatilho de escalonamento preservado no termo gravado
+  ok    2.6.2-T24 excecao e fallback presentes na especificacao operacional
+  ok    2.6.2-T25 P7 sem termo decidido: E4 nao emite (E4 exige as etapas ['P7'] encerradas)
+  ok    2.6.2-T26 termo decidido por humano: artefato/evidencia disponivel para o inegociavel 2
+  ok    2.6.2-T27 nota: mero booleano nao e o padrao de evidencia deste pacote (2.6.1-T19 ja recusa evidencia vazia; este pacote sempre referencia arquivo AUT-*/OP-* real como evidencia, nunca um literal solto)
+  ok    2.6.2-T28 tentativa de agente decidir autonomia gera evento (reafirma T10b, caso3)
+  ok    2.6.2-T29 decisao invalida (sem justificativa) gera evento
+  ok    2.6.2-T30 decisao valida deixa trilha (AutonomiaDecidida)
+  ok    2.6.2-T31 ausencia de hard-code comportamental no nucleo (1 ocorrencia(s) nao-comportamental(is): [('avancar.py', 199, 'baseline, termo de autonomia etc.) — isso e decisao humana/metodologica')])
+  2.6.2-T32/T33: ver teste-regressao-final.txt (suites completas de 2.5 e 2.6.1 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.2-T32 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.2-T33 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.2-G1a EX3 (P5) sem sessao: skill bloqueada (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.2-G1b EX3 (P5) com sessao valida da mesma etapa: skill carrega
+  ok    2.6.2-G1c sessao de OUTRA etapa nao libera EX3 corrente (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+
+38 verificacoes do pacote 2.6.2, 0 falhas
+
+$ python3 testes/campo_2_6_3.py
+== testes 2.6.3 -- P8, P9 e P10
+  ok    2.6.3-T02 P8 sem P7 encerrado (sessao ausente) recusado (P7 | camada EX4 | nivel N2 | modalidade exigida: decisao_humana_registrada; encerramento exige sessao registrada da propria etapa.)
+  ok    2.6.3-T01 P8 com dependencias validas (P7 encerrado corretamente): PASS
+  ok    2.6.3-T03 caso de teste completo (Anexo B) aceito
+  ok    2.6.3-T04 caso sem saida esperada recusado (caso #0 (CT-001-01) sem campos obrigatorios: ['saida_esperada'])
+  ok    2.6.3-T05a saida obtida antes de esperado_definido_em recusada (caso CT-001-01: 'obtido_em' anterior a 'esperado_definido_em' -- saida esperada nao pode ter sido escrita depois da execucao)
+  ok    2.6.3-T05 saida esperada registrada antes da execucao (esperado_definido_em < obtido_em): PASS
+  ok    2.6.3-T06 comparacao esperado x obtido produz resultado deterministico
+  ok    2.6.3-T07 caso com resultado diferente do esperado: FAIL do caso, saida esperada preservada
+  ok    2.6.3-T08 tentativa de forjar 'resultado' aderente sem saida bater: RECUSA (caso CT-001-02: 'resultado' declarado ('aderente') nao corresponde a comparacao determinística esperado x obtido ('divergente'). O resultado e calculado, nunca escrito por decisao manual.)
+  ok    2.6.3-T09 casos com saida esperada produzem evidencia rastreavel para o inegociavel 3 (sem marcar booleano arbitrario)
+  ok    2.6.3-T10 P9 com P8 revisado e baseline validos: PASS
+  ok    2.6.3-T11 P9 sem linha de base recusado explicitamente (campo obrigatorio ausente: linha_base_data)
+  ok    2.6.3-T12 metrica de uso aceita como metrica (mas nao satisfaz sozinha o inegociavel 4)
+  ok    2.6.3-T13 metrica de resultado valida gravada com tipo='resultado': PASS
+  ok    2.6.3-T14 nota: 'somente metricas de uso' produz evidencia insuficiente para o inegociavel 4 -- verificacao semantica final do portao pertence ao 2.6.5; este pacote garante que o campo 'tipo' e preservado e distinguivel (T12/T13)
+  ok    2.6.3-T15 pelo menos uma metrica de resultado disponivel (MET-001, tipo=resultado, estado=apurada): evidencia disponivel para o inegociavel 4
+  ok    2.6.3-T16 calculo baseline x piloto presente: 45 minutos -> 32 minutos
+  ok    2.6.3-T17 baseline inventada apos o resultado (data posterior): RECUSA (linha_base_data e posterior a resultado_apurado_data -- a linha de base nao pode ter sido criada depois do resultado que ela deveria comparar)
+  ok    2.6.3-T18 resultado observado com fatores externos declarados explicitamente (sem inferencia causal automatica)
+  ok    2.6.3-T18b apuracao sem declaracao de fatores externos recusada (estado 'apurada' exige 'fatores_externos_declarados' preenchido (mesmo que seja 'nenhum identificado') -- separar efeito da solucao de fator externo e julgamento que precisa ficar registrado, nao implicito)
+  ok    2.6.3-T19 P10 sem responsavel nominal ('equipe') recusado ('equipe' nao e responsavel nominal aceitavel (area/equipe generica ou agente nao substitui pessoa nomeada))
+  ok    2.6.3-T20 P10 com responsavel nominal ('Marina Prado'): PASS
+  ok    2.6.3-T21 P10 sem cadencia recusado (campo obrigatorio ausente: cadencia)
+  ok    2.6.3-T22 P10 com cadencia valida ('mensal') aceito (reafirma T20)
+  ok    2.6.3-T23 primeiro ciclo de P10 (sem drift) persistido
+  ok    2.6.3-T24 segundo ciclo (com drift) nao sobrescreve o primeiro
+  ok    2.6.3-T25 historico de ciclos recuperavel (CAL-001-C01 e CAL-001-C02 preservados)
+  ok    2.6.3-T26 P10 permanece recorrente e nao aceita sobrescrever ciclo existente (ciclo CAL-001-C01.yaml ja registrado sem drift -- ciclos anteriores nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T27 ciclo sem drift e caminho positivo legitimo (manter estado atual)
+  ok    2.6.3-T28 agente detecta e descreve drift (ciclo 2)
+  ok    2.6.3-T29 agente registra recomendacao sem decidir (campo 'decisao' ausente)
+  ok    2.6.3-T29b ciclo pendente (drift sem decisao) complementado com a decisao humana no mesmo identificador: PASS
+  ok    2.6.3-T29c ciclo ja decidido nao aceita segunda decisao (sobrescrita) (ciclo CAL-001-C01.yaml ja possui decisao registrada -- ciclos decididos nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T30 agente tenta decidir recalibragem: RECUSA (agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar exige ator humano nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5).)
+  ok    2.6.3-T30b tentativa de agente decidir gera evento CicloCalibragemRecusado
+  ok    2.6.3-T31 humano decide recalibragem: PASS
+  ok    2.6.3-T31b evento DecisaoRecalibragemRegistrada presente
+  ok    2.6.3-T32 decisao 'manter' fora do enum documental (recalibrar/expandir/descontinuar) e recusada, nao inventada: RECUSA (valor invalido em decisao: esperado um de ['recalibrar', 'expandir', 'descontinuar'])
+  ok    2.6.3-T33 decisao humana possui justificativa, decisor e data (rastreavel)
+  ok    2.6.3-T34 drift sem decisao humana permanece pendente (nao tratado como resolvido)
+  ok    2.6.3-T35 booleano/evidencia vazia nao satisfaz o inegociavel 3 (inegociavel 3 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T36 casos com saida esperada (CT-001.yaml, estado revisado) produzem evidencia real para o inegociavel 3 (reafirma T09)
+  ok    2.6.3-T37 booleano/evidencia vazia nao satisfaz o inegociavel 4 (inegociavel 4 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T38 metrica de resultado apurada produz evidencia real para o inegociavel 4
+  ok    2.6.3-T39 booleano/evidencia vazia nao satisfaz o inegociavel 5 (inegociavel 5 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T40 responsavel nominal + cadencia produzem evidencia real para o inegociavel 5
+  ok    2.6.3-T41 P9 referencia resultados validos de P8 (piloto_ref: CT-001)
+  ok    2.6.3-T42 P10 consegue utilizar indicadores de P9 (metricas_ref: [MET-001])
+  ok    2.6.3-T43 P8/P9/P10 geram insumos rastreaveis para E5 (CT-001, MET-001, CAL-001 presentes)
+  ok    2.6.3-T44 E5 nao emite automaticamente neste pacote (E5 exige as etapas ['P10'] encerradas)
+  ok    2.6.3-G5a escrita direta em registro/piloto/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.3-G5b escrita direta em registro/metricas/ recusada pela guarda
+  ok    2.6.3-G5c escrita direta em registro/calibragem/ recusada pela guarda
+  ok    2.6.3-T45 ausencia de hard-code comportamental no nucleo (3 ocorrencia(s) nao-comportamental(is): [('avancar.py', 8, 'python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"'), ('avancar.py', 192, "O baseline mostrou que uma flag manual (estado['inegociaveis'][n] = true)"), ('avancar.py', 199, 'baseline, termo de autonomia etc.) — isso e decisao humana/metodologica')])
+  2.6.3-T46/T47/T48/T49: ver teste-regressao-final.txt (suites completas da Acao 2.5, do 2.6.1 e de P6/P7 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.3-T46 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.3-T47 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.3-T48 regressao de P6/P7 (ver teste-regressao-final.txt)
+
+57 verificacoes do pacote 2.6.3, 0 falhas
+
+$ python3 testes/campo_2_6_4.py
+== testes 2.6.4 -- catalogo HB/AG
+  ok    2.6.4-T01 catalogo de HB estruturalmente valido (ok | catalogo valido: 18 capacidades)
+  ok    2.6.4-T02 exatamente 18 IDs HB
+  ok    2.6.4-T03 conjunto HB-01..HB-18 completo
+  ok    2.6.4-T04 IDs HB unicos
+  ok    2.6.4-T05 nomes oficiais presentes em todas as HB
+  ok    2.6.4-T06 camada valida em todas as HB
+  ok    2.6.4-T07 referencia de skill resolve para as 14 HB com implementacao (['HB-01', 'HB-02', 'HB-03', 'HB-07', 'HB-08', 'HB-09', 'HB-10', 'HB-11', 'HB-12', 'HB-14', 'HB-15', 'HB-16', 'HB-17', 'HB-18'])
+  ok    2.6.4-T08 skill inexistente referenciada (fixture negativa: 'skills/hb-inexistente/SKILL.md' nao existe no repositorio, confirmando a base do teste de recusa)
+  ok    2.6.4-T09 HB automatizada sem criterio_de_verificacao recusada (HB-97: capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.4-T10 HB automatizada com criterio_de_verificacao aceita
+  ok    2.6.4-T11 criterios das 13 HB automatizadas nao sao vagos/genericos (extraidos literalmente de CAT-01 Anexo A)
+  ok    2.6.4-T12 toda HB declara estado_relacao_etapa (referencia documental de relacao com o playbook), nenhuma omissa
+  ok    2.6.4-T13 exatamente 4 AG
+  ok    2.6.4-T14 conjunto AG-01..AG-04 completo
+  ok    2.6.4-T15 IDs AG unicos
+  ok    2.6.4-T16 todo AG referencia somente HB existentes no catalogo
+  ok    2.6.4-T17 toda HB automatizada possui ao menos um AG autorizado (contrato CAT-01 Anexo A)
+  ok    2.6.4-T18 AG tenta executar HB nao autorizada: RECUSA (AG-01 x HB-17: papel 'AG-01' nao esta autorizado a executar 'HB-17')
+  ok    2.6.4-T19 AG executa HB autorizada (AG-04 x HB-17): PASS
+  ok    2.6.4-T20 nenhum AG do catalogo oficial recebe camada EX3/EX4 (fixture AG-98/EX4 confirma que o formato permitiria detectar a violacao, se existisse)
+  ok    2.6.4-T21 AG-01 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-01', 'HB-02', 'HB-03', 'HB-04', 'HB-05']
+  ok    2.6.4-T22 AG-02 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-06', 'HB-07', 'HB-08', 'HB-09', 'HB-10', 'HB-13']
+  ok    2.6.4-T23 AG-03 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-11', 'HB-12', 'HB-14']
+  ok    2.6.4-T24 AG-04 resolve conjunto oficial de HB (CAT-01 Anexo A): ['HB-15', 'HB-16', 'HB-17', 'HB-18']
+  ok    2.6.4-T25 todas as referencias HB do playbook oficial resolvem (ok | todas as referencias 'hb' do playbook resolvem)
+  ok    2.6.4-T26 playbook referencia HB inexistente: RECUSA (etapa PX referencia 'HB-999' (hb), que nao existe no catalogo)
+  ok    2.6.4-T27 HB do catalogo sem criterio de verificacao (quando automatizada) bloqueia a validacao antes mesmo de checar o playbook (HB-95: capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.4-T28 etapa P9 resolve HB-17 -> skill (eiac-campo/skills/hb-medir-valor/SKILL.md) -> AG (AG-04)
+  ok    2.6.4-T29 skill metodologica possui identidade HB rastreavel via frontmatter 'hb:' (9 skills: ['hb-classificar', 'hb-enquadrar', 'hb-extrair-regras', 'hb-governar', 'hb-mapear-contexto', 'hb-medir-valor', 'hb-pilotar', 'hb-priorizar', 'hb-recalibrar'])
+  ok    2.6.4-T30 toda skill sem 'hb:' esta classificada como infraestrutura/nao catalogada, com justificativa (emissao de entregavel, ou etapa humana nao delegavel sem HB atribuida por CAT-01): ['hb-confrontar', 'hb-emitir-e1', 'hb-emitir-e2', 'hb-emitir-e3', 'hb-emitir-e4', 'hb-emitir-e5', 'hb-levantar-regras', 'hb-medir', 'hb-operacionalizar']
+  ok    2.6.4-T31 skills que materializam mais de uma HB preservam identidade individual (criterio proprio por HB): {'eiac-campo/skills/hb-enquadrar/SKILL.md': ['HB-01', 'HB-02', 'HB-03'], 'eiac-campo/skills/hb-mapear-contexto/SKILL.md': ['HB-08', 'HB-09'], 'eiac-campo/skills/hb-classificar/SKILL.md': ['HB-11', 'HB-12'], 'eiac-campo/skills/hb-pilotar/SKILL.md': ['HB-15', 'HB-16']}
+  ok    2.6.4-T32 mecanismo generico do 2.6.1 (playbook.capacidade_valida) recebe HB real sem criterio: RECUSA
+  ok    2.6.4-T33 mecanismo recebe as 18 HB reais, todas com criterio quando automatizadas: PASS
+  ok    2.6.4-T34 criterio da HB e recuperavel em runtime (HB-18: 'Limiar definido antes do piloto, nao ajustado a posteriori')
+  ok    2.6.4-T35 criterio_de_verificacao nao esta duplicado na etapa do playbook -- a cadeia e etapa -> HB-ID -> catalogo -> criterio, nunca a etapa carregando o texto do criterio diretamente
+  ok    2.6.4-T36 nenhum AG possui autorizacao para a decisao humana de P7 (HB-14 e hibrida: prepara a minuta; o criterio exige 'decisao humana registrada' -- a decisao em si nunca e a HB automatizada)
+  ok    2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b (hb-levantar-regras nao tem HB do catalogo associada e e explicitamente marcada 'NAO EXECUTAVEL POR AGENTE')
+  ok    2.6.4-T38 nenhum AG possui autorizacao para a decisao humana de recalibragem em P10 (HB-18 e 'Monitoramento de desvio', so deteccao; a skill fisica declara explicitamente que nao decide)
+  ok    2.6.4-T39 skill EX3/EX4 sem sessao continua bloqueada (regressao G1, EX3: a etapa P5 esta em camada humana (EX3) para o nivel N2. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.4-T40 skill de apoio com sessao humana valida pode carregar (regressao G1)
+  ok    2.6.4-T41 os quatro AG logicos possuem entrada resolvivel no catalogo (nao exige quatro arquivos fisicos)
+  ok    2.6.4-T42 agentes fisicos existentes preservam identidade logica 1:1 neste pacote (nenhum arquivo fisico representa mais de um AG ainda): ['eiac-campo/agents/extrator-documental.md', 'eiac-campo/agents/classificador-tecnologico.md']
+  ok    2.6.4-T43 implementacao fisica declarada de cada AG resolve para arquivo existente (identificavel em trilha por caminho estavel)
+  ok    2.6.4-T44 catalogo.py nao expoe nenhum caminho de runtime para um AG ampliar sua propria lista de capacidades autorizadas (so leitura/resolucao, nunca escrita no catalogo)
+  ok    2.6.4-T45 catalogo alterado somente por caminho de configuracao/codigo (catalogo.py nao grava eiac-campo/reference/*.json; alteracao e edicao de arquivo versionado, nao acao em runtime de caso)
+  ok    2.6.4-T46 ausencia de hard-code HB/AG no nucleo (7 ocorrencia(s) nao-comportamental(is): [('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 137, 'exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 6, '--resolver-papel-capacidade AG-01 HB-03'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('catalogo.py', 28, 'O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")'), ('estado.py', 85, 'e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".')])
+  2.6.4-T47/T48/T49/T50/T51: ver teste-regressao-final.txt (suites completas da Acao 2.5, do 2.6.1, de P6/P7 e de P8/P9/P10 reexecutadas neste pacote sem alteracao de expectativa).
+  ok    2.6.4-T47 regressao da Acao 2.5 (ver teste-regressao-final.txt)
+  ok    2.6.4-T48 regressao do 2.6.1 (ver teste-regressao-final.txt)
+  ok    2.6.4-T49 regressao de P6/P7 (ver teste-regressao-final.txt)
+  ok    2.6.4-T50 regressao de P8/P9/P10 (ver teste-regressao-final.txt)
+
+50 verificacoes do pacote 2.6.4, 0 falhas
+
+$ python3 testes/campo_2_6_5.py
+== testes 2.6.5 -- inegociaveis, portoes e entregaveis
+  ok    2.6.5-T01 I1 sem baseline: RECUSA
+  ok    2.6.5-T02 I1 com baseline valido: PASS
+  ok    2.6.5-T02b baseline N2 com apuracao estimado recusada por baseline.py (nivel N2 exige apuracao calculada ou medida; 'estimado' so e admitido em N1 (MET-01 3.4.3))
+  ok    2.6.5-T03 I2 com termo apenas proposto: RECUSA (I2 | satisfeito=False | termo em estado 'proposto', nao 'decidido' -- minuta ou proposta nao satisfaz o inegociavel 2)
+  ok    2.6.5-T04 I2 com termo decidido por humano: PASS
+  ok    2.6.5-T05 I3 sem saida esperada (conjunto so em rascunho): RECUSA
+  ok    2.6.5-T06 I3 com casos validos e conjunto revisado: PASS
+  ok    2.6.5-T07 I4 so com metrica de uso: RECUSA
+  ok    2.6.5-T08 I4 com metrica de resultado: PASS
+  ok    2.6.5-T09 I5 sem pessoa nominal ('equipe'): RECUSA em calibragem.py
+  ok    2.6.5-T09b I5 com 'equipe de TI' gravado (frase composta, escapou da checagem lexica de calibragem.py): RECUSA no verificador semantico
+  ok    2.6.5-T10 I5 com pessoa nominal e demais requisitos: PASS
+  ok    2.6.5-T11 flags manuais sem artefato real: nenhum verificador de inegociaveis.py foi chamado -- a satisfacao nao deriva de evidencia real
+  ok    2.6.5-T12 evidencia real permite satisfacao, gravada com referencia ao verificador (nao booleano solto)
+== portoes E1-E5
+  ok    2.6.5-T13 E1 antes de F0 completo: NEGADO
+  ok    2.6.5-T14 E1 apos F0: AUTORIZADO
+  ok    2.6.5-T15 materializacao de E1: arquivo real existente (/tmp/tmptwjy8w9v/caso/caso/entregaveis/E1.md)
+  ok    2.6.5-T16 E2 com etapa requerida incompleta (P3a/P3b/P3d ausentes): NEGADO
+  ok    2.6.5-T17 E2 com etapas completas mas I1 nao satisfeito no nucleo: NEGADO
+  ok    2.6.5-T18 E2 com requisitos completos (etapas + I1 verificado): AUTORIZADO
+  ok    2.6.5-T19 materializacao de E2: arquivo real existente (/tmp/tmpnve09s7v/caso/caso/entregaveis/E2.md)
+  ok    2.6.5-T20 E3-D sem P5: NEGADO
+  ok    2.6.5-T21 E3-D com P4/P5 validos: AUTORIZADO
+  ok    2.6.5-T22 E3-E sobre caso nao agentico: NAO_APLICAVEL (nao e falha)
+  ok    2.6.5-T23 solucao agentica sem P5 encerrada (insumo insuficiente): materializacao NEGADA
+  ok    2.6.5-T24 solucao agentica com P5 completo: E3-E AUTORIZADO
+  ok    2.6.5-T25 condicao declarativa {campo,etapa,operador,valor} avaliada sem hard-code de 'E3-E' no nucleo (mesmo mecanismo generico do 2.6.1)
+  ok    2.6.5-T26 materializacao E3 nao agentico: E3 valido sem exigir E3-E
+  ok    2.6.5-T27 materializacao E3 agentico: E3 consolida E3-D + E3-E (Parte B presente no mesmo arquivo)
+  ok    2.6.5-T28 E4 sem P7: NEGADO
+  ok    2.6.5-T29 E4 com P6/P7 mas termo apenas PROPOSTO (I2 nao verificavel/nao satisfeito): NEGADO
+  ok    2.6.5-T30 E4 com P6/P7 e termo DECIDIDO valido: AUTORIZADO
+  ok    2.6.5-T31 materializacao de E4: Guia Operacional real e rastreavel (/tmp/tmp9ostonc2/caso/caso/entregaveis/E4.md)
+  ok    2.6.5-T32 E5 sem P8: NEGADO
+  ok    2.6.5-T33 E5 sem I3 (nao satisfeito no nucleo): NEGADO
+  ok    2.6.5-T34 E5 com I3 mas sem I4: NEGADO
+  ok    2.6.5-T35 E5 com I3/I4 mas sem I5: NEGADO
+  ok    2.6.5-T36 E5 com P8/P9/P10 + I3/I4/I5: AUTORIZADO
+  ok    2.6.5-T37 materializacao de E5: Relatorio de Piloto real e rastreavel (/tmp/tmpb_rgswf3/caso/caso/entregaveis/E5.md)
+  ok    2.6.5-T38 emissao gera arquivo: evento EntregavelEmitido presente na trilha
+  ok    2.6.5-T39 evento aponta para arquivo real (/tmp/tmpb_rgswf3/caso/caso/entregaveis/E5.md)
+  ok    2.6.5-T40 arquivo inexistente nao conta como emissao: RECUSA/INCONSISTENCIA
+  ok    2.6.5-T41 entregavel possui versao/ID rastreavel: {'arquivo': '/tmp/tmpb_rgswf3/caso/caso/entregaveis/E5.md', 'versao': 2, 'autor': 'Celso do Vale'}
+  ok    2.6.5-T42 reemissao nao sobrescreve silenciosamente: versao incrementada para 3
+  ok    2.6.5-T43 E1 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T44 E2 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T45 E3 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T46 E4 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T47 E5 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T48 campo obrigatorio sem evidencia: nao inventa valor, recusa materializacao
+  ok    2.6.5-T49 dados presentes sao reproduzidos das fontes do caso (valor_atual/apuracao da baseline aparecem literalmente em E2)
+  ok    2.6.5-T50 portao negado gera evento (RecusaEmissao)
+  ok    2.6.5-T51 portao autorizado gera trilha (3 eventos EntregavelEmitido)
+  ok    2.6.5-T52 emissao material gera evento com referencia (arquivo + versao)
+  ok    2.6.5-T53 E3-E nao aplicavel fica explicitamente registrado (evento EntregavelNaoAplicavel)
+  ok    2.6.5-T54 ausencia de hard-code de portao especifico no nucleo (4 ocorrencias, todas em docstring/comentario)
+  ok    2.6.5-T55 regressao Acao 2.5: PASS (ver teste-regressao-final.txt)
+  ok    2.6.5-T56 regressao 2.6.1: PASS
+  ok    2.6.5-T57 regressao P6/P7: PASS
+  ok    2.6.5-T58 regressao P8/P9/P10: PASS
+  ok    2.6.5-T59 regressao HB/AG: PASS
+  ok    2.6.5-T60 suite completa: sem regressoes inexplicadas
+62 verificacoes do pacote 2.6.5, 0 falhas
+
+$ python3 testes/campo_2_6_6.py
+== testes 2.6.6 -- verificacao integral F0-P10
+  ok    2.6.6-C01 contrato declara 13 etapas F0-P10
+  ok    2.6.6-C02 caso novo inicia em F0
+  ok    2.6.6-C03 F0 encerrada e etapa avanca para P1
+  ok    2.6.6-C04 percurso P1-P5 (via P2/P3a/P3b/P3d/P4) executa sem falha, etapa em P5
+  ok    2.6.6-C05 P3b permanece nao delegavel a agente (autor precisa ser pessoa nomeada)
+  ok    2.6.6-C06 escrita direta em contexto/ continua recusada (G2b)
+  ok    2.6.6-C07 escrita direta em registro/ continua recusada (G5)
+  ok    2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel
+  ok    2.6.6-C09 validacao de P6 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel
+  ok    2.6.6-C11 agente nao decide autonomia (agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).)
+  ok    2.6.6-C12 humano nominal decide autonomia
+  ok    2.6.6-C13 P8 produz casos de teste com saida esperada
+  ok    2.6.6-C14 P9 produz metrica de resultado apurada
+  ok    2.6.6-C15 P10 e etapa recorrente e registra recorrencia
+  ok    2.6.6-C16 dois ciclos de P10 preservados (nenhum sobrescrito)
+  ok    2.6.6-C17 agente (AG-04) detecta e registra drift no ciclo 2
+  ok    2.6.6-C18 decisao de recalibragem em P10 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis
+  ok    2.6.6-C20 4/4 AG declarados e estruturalmente resolviveis
+  ok    2.6.6-C21 AG-01 recusado para HB-17 (nao autorizada); AG-04 autorizado (par negativo/positivo)
+  ok    2.6.6-C22 13/13 HB automatizadas possuem criterio_de_verificacao
+  ok    2.6.6-C23 I1 baseline: satisfeito
+  ok    2.6.6-C24 I2 termo de autonomia: satisfeito
+  ok    2.6.6-C25 I3 casos com saida esperada: satisfeito
+  ok    2.6.6-C26 I4 metrica de resultado: satisfeito
+  ok    2.6.6-C27 I5 responsavel de calibragem: satisfeito
+  ok    2.6.6-C28 E1 autorizado e materializado (Ficha de Enquadramento)
+  ok    2.6.6-C29 E2 autorizado e materializado (Diagnostico e Oportunidade)
+  ok    2.6.6-C30 E3-D autorizado
+  ok    2.6.6-C31 E3-E corretamente avaliado como AUTORIZADO (caso agentico)
+  ok    2.6.6-C32 E3 materializado como arquivo unico (Parte A + Parte B consolidadas)
+  ok    2.6.6-C33 E4 autorizado e materializado (Guia Operacional)
+  ok    2.6.6-C34 E5 autorizado e materializado (Relatorio de Piloto)
+  ok    2.6.6-C35 cinco entregaveis materiais confirmados (E1-E5, entre os dois casos isolados)
+  ok    2.6.6-C36 recusa de etapa incorreta gera evento RecusaMaquina
+  ok    2.6.6-C37 recusa de escrita direta em registro/ gera evento TentativaNegada
+  ok    2.6.6-C38 AG-03 opera em camada EX2, nunca EX3/EX4 (decisao humana protegida)
+  ok    2.6.6-C39 trilha integral recuperavel (categorias minimas de evento presentes)
+  ok    2.6.6-C40 log do caso de controle preservado para auditoria de bypass (nenhuma chamada fora dos scripts oficiais)
+  ok    2.6.6-C41 materializacao sem evidencia (portao fechado) recusada, nao inventa conteudo (E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1)
+  ok    2.6.6-C42 rastreabilidade ponta a ponta: RN-101(P2)->P4->P5(agente)->E3->P6/P7->P8/P9(MET-101.baseline_ref=BL-101)->P10->E5, IDs preservados sem reinvencao
+  ok    2.6.6-C43 regressao completa: ver teste-regressao-final.txt (executada separadamente apos este modulo, mesmo padrao dos pacotes anteriores)
+43 verificacoes do pacote 2.6.6, 0 falhas
+
+$ python3 testes/campos_a10.py
+test_00_campo_nao_declarado (__main__.CamposA10.test_00_campo_nao_declarado) ... ok
+test_01_valor_fora_da_taxonomia (__main__.CamposA10.test_01_valor_fora_da_taxonomia) ... ok
+test_02_autor_agente (__main__.CamposA10.test_02_autor_agente) ... ok
+test_03_etapa_futura (__main__.CamposA10.test_03_etapa_futura) ... ok
+test_04_etapa_passada (__main__.CamposA10.test_04_etapa_passada) ... ok
+test_05_etapa_desconhecida (__main__.CamposA10.test_05_etapa_desconhecida) ... ok
+test_06_etapa_corrente_encerrada (__main__.CamposA10.test_06_etapa_corrente_encerrada) ... ok
+test_07_valor_vazio (__main__.CamposA10.test_07_valor_vazio) ... ok
+test_08_autor_generico (__main__.CamposA10.test_08_autor_generico) ... ok
+test_09_sem_campo (__main__.CamposA10.test_09_sem_campo) ... ok
+test_10_campo_reservado_nao_pode_ser_declarado (__main__.CamposA10.test_10_campo_reservado_nao_pode_ser_declarado) ... ok
+test_11_taxonomia_invalida (__main__.CamposA10.test_11_taxonomia_invalida) ... ok
+test_12_agente_com_playbook_invalido (__main__.CamposA10.test_12_agente_com_playbook_invalido) ... ok
+test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) ... ok
+test_14_substituicao_tem_historico (__main__.CamposA10.test_14_substituicao_tem_historico) ... ok
+test_15_campo_livre_de_outro_metodo (__main__.CamposA10.test_15_campo_livre_de_outro_metodo) ... ok
+test_16_declaracao_do_template (__main__.CamposA10.test_16_declaracao_do_template) ... ok
+test_17_e3_partes_a_b_sem_escrita_direta_no_estado (__main__.CamposA10.test_17_e3_partes_a_b_sem_escrita_direta_no_estado) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.998s
+
+OK
+
+$ python3 testes/consolidado.py
+== verificacao consolidada da Acao 2.5 — caso CTX-TEST-2.5.6-001
+  ok    2.5.6-C01 D/I/V integrados
+  ok    2.5.6-C02 quatro objetos CTX
+  ok    2.5.6-C03 autoria_conteudo != registrado_por, agente recusado como autor
+  ok    2.5.6-C04 curadoria rascunho -> contexto
+  ok    2.5.6-C05 bloqueio de escrita direta em contexto/
+  ok    2.5.6-C06 I -> V com historico (aqui, D -> V, mesma regra de versionamento)
+  ok    2.5.6-C07 integracao P3d
+  ok    2.5.6-C08 CTX-V01-CTX-V11 (reexecucao)
+  ok    2.5.6-C09 referencias Termo/Entidade/Fonte
+  ok    2.5.6-C10 P2 -> CTX
+  ok    2.5.6-C11 P3 -> CTX (P3b e P3d)
+  ok    2.5.6-C12 CTX -> P4
+  ok    2.5.6-C13 CTX -> P5
+  ok    2.5.6-C14 nao reinterpretacao
+  ok    2.5.6-C15 eventos
+  ok    2.5.6-C16 percurso integrado da camada
+
+16 verificacoes consolidadas aprovadas
+
+$ python3 testes/contexto.py
+== objetos CTX — pacote 2.5.1
+  ok    2.5.1-T01 Termo válido
+  ok    2.5.1-T02 Entidade válida
+  ok    2.5.1-T03 Regra válida
+  ok    2.5.1-T04 Fonte válida
+  ok    2.5.1-T05 Termo sem significado
+  ok    2.5.1-T06 Entidade sem nome
+  ok    2.5.1-T07 Regra sem estabilidade
+  ok    2.5.1-T08 Fonte sem contrato.significado
+  ok    2.5.1-T09 D/I/V nos quatro objetos
+  ok    2.5.1-T10 Taxonomias obsoletas
+  ok    2.5.1-T11 Sete campos centrais da Regra
+
+11 testes estruturais aprovados
+
+$ python3 testes/ctx_v.py
+== bateria CTX-V01-V11 — pacote 2.5.4
+  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
+  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
+  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
+  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
+  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
+  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
+  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
+  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
+  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
+  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
+  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
+
+23 verificacoes CTX-V01-V11 aprovadas
+
+$ python3 testes/curadoria.py
+== curadoria, autoria e versionamento I->V — pacote 2.5.2
+  ok    2.5.2-T01 D com autoria humana valida
+  ok    2.5.2-T02 I sem premissa
+  ok    2.5.2-T03 I com premissa
+  ok    2.5.2-T04 V sem evidencia
+  ok    2.5.2-T05 V com evidencia
+  ok    2.5.2-T06 agente como autoria_conteudo
+  ok    2.5.2-T07 pessoa como autoria_conteudo
+  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
+  ok    2.5.2-T09 sobrescrever I por V sem nova versao
+  ok    2.5.2-T10 I -> V com nova versao
+  ok    2.5.2-T11 historico preservado
+  ok    2.5.2-T12 escrita direta em contexto/
+  ok    2.5.2-T13 escrita autorizada em contexto/
+  ok    2.5.2-T14 rascunho nao e contexto curado
+  ok    2.5.2-T15 recusa gera evento
+  ok    2.5.2-T16 operacao valida gera trilha
+  ok    2.5.2-T-baseline registrado-por AG-01 nao determina autoria (achado do baseline superado)
+
+17 testes de curadoria aprovados
+
+$ python3 testes/emissao_a9.py
+test_00_sem_artefato (__main__.EmissaoA9.test_00_sem_artefato) ... ok
+test_01_arquivo_vazio (__main__.EmissaoA9.test_01_arquivo_vazio) ... ok
+test_02_diretorio_nao_e_arquivo (__main__.EmissaoA9.test_02_diretorio_nao_e_arquivo) ... ok
+test_03_materializar_nao_contorna_caminho (__main__.EmissaoA9.test_03_materializar_nao_contorna_caminho) ... ok
+test_04_caminho_nao_declarado (__main__.EmissaoA9.test_04_caminho_nao_declarado) ... ok
+test_05_caminho_fora_do_caso (__main__.EmissaoA9.test_05_caminho_fora_do_caso) ... ok
+test_06_todos_os_portoes_exigem_arquivo (__main__.EmissaoA9.test_06_todos_os_portoes_exigem_arquivo) ... ok
+test_07_arquivo_existente (__main__.EmissaoA9.test_07_arquivo_existente) ... ok
+test_08_materializacao_explicita (__main__.EmissaoA9.test_08_materializacao_explicita) ... ok
+test_09_nao_aplicavel_sem_arquivo (__main__.EmissaoA9.test_09_nao_aplicavel_sem_arquivo) ... ok
+test_10_regra_alternativa_do_caso (__main__.EmissaoA9.test_10_regra_alternativa_do_caso) ... ok
+test_11_reemissao_incrementa_versao (__main__.EmissaoA9.test_11_reemissao_incrementa_versao) ... ok
+test_12_template_declara_todos (__main__.EmissaoA9.test_12_template_declara_todos) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.921s
+
+OK
+
+$ python3 testes/esforco.py
+esforço de campo: recusa + caminho positivo + contrato comparável
+
+$ python3 testes/habilitacao.py
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 0.283s
+
+OK
+
+$ python3 testes/integracao.py
+== integracao P2/P3 -> CTX -> P4/P5 — pacote 2.5.5
+  ok    2.5.5-T01 P2 produz candidato CTX em rascunho/
+  ok    2.5.5-T02 candidato sem curadoria nao e consumido
+  ok    2.5.5-T03 candidato de P2 curado entra no CTX
+  ok    2.5.5-T04 P3b gera Regra candidata rastreavel
+  ok    2.5.5-T05 P3d atualiza vinculo de confronto (preserva versionamento)
+  ok    2.5.5-T05b P3d com historico correto entra (controle positivo)
+  ok    2.5.5-T06 P4 consome contexto valido via quadro.py
+  ok    2.5.5-T07 P4 com contexto/regras vazio (nenhuma regra curada)
+  ok    2.5.5-T08 P4 nao reinfere frequencia/consequencia (le do YAML)
+  ok    2.5.5-T09 P5 consome os sete campos centrais
+  ok    2.5.5-T10 P5 com Regra incompleta
+  ok    2.5.5-T11 P5 distingue I de V (I visivel, nao mascarada)
+  ok    2.5.5-T12 P5 com V valida
+  ok    2.5.5-T13 CTX invalido (CTX-V05) nao e consumido
+  ok    2.5.5-T14 evento de falha de consumo/curadoria
+  ok    2.5.5-T15 fluxo minimo P2 -> CTX -> P4
+  ok    2.5.5-T16 fluxo minimo P3 -> CTX -> P5
+
+17 testes de integracao aprovados
+
+$ python3 testes/metodo_empacotado.py
+metodo empacotado: 16 documentos, hashes validos, nenhuma copia no contraste
+
+$ python3 testes/nucleo_2_6_1.py
+== testes 2.6.1 -- nucleo generico de protocolos
+  ok    2.6.1-T01 encerrar etapa que NAO e corrente recusado (P5 nao e a etapa corrente (P1). So a etapa corrente pode ser encerrada.)
+  ok    2.6.1-T01b recusa de etapa fora de ordem gera evento RecusaMaquina
+  ok    2.6.1-T02 encerrar etapa corrente valida aceito
+  ok    2.6.1-T03 dependencia nao satisfeita bloqueada (P3d depende de P3b, ainda nao cumprida)
+  ok    2.6.1-T03b guarda (G3) tambem bloqueia dependencia nao satisfeita (A etapa P3d depende de P3b, que nao foi cumprida. Modalidade de P3b: presencial.)
+  ok    2.6.1-T04 dependencia satisfeita permite prosseguir
+  ok    2.6.1-T05 etapa delegavel executada por ator permitido: PASS
+  ok    2.6.1-T06 etapa nao delegavel tentada por agente recusada (EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.1-T07 etapa nao delegavel encerrada por humano autorizado apos sessao: PASS
+  ok    2.6.1-T08 camada invalida recusada pelo contrato (etapa P1: camada 'EX5' fora de EX1-EX4)
+  ok    2.6.1-T09 capacidade automatizada sem criterio_de_verificacao recusada (capacidade automatizada sem criterio_de_verificacao nao e valida para carregamento/execucao)
+  ok    2.6.1-T10 capacidade automatizada com criterio_de_verificacao aceita
+  ok    2.6.1-T10b capacidade nao automatizada nao exige criterio (controle)
+  INTEGRACAO COM HB/AG REAIS DO PLAYBOOK: PENDENTE 2.6.4 -- mecanismo generico testado isoladamente (T09/T10), sem bloco 'capacidades' no playbook oficial. Conforme decisao registrada no pacote.
+  ok    2.6.1-T11 responsavel obrigatorio ausente recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
+  ok    2.6.1-T12 responsavel nominal valido aceito
+  ok    2.6.1-T12b responsavel generico ('equipe') recusado (P10 exige responsavel nominal (pessoa nomeada, nao agente nem area/equipe generica) para registrar recorrencia)
+  ok    2.6.1-T13 cadencia obrigatoria ausente recusada (P10 exige cadencia declarada para registrar recorrencia)
+  ok    2.6.1-T14 cadencia valida aceita
+  ok    2.6.1-T15 recorrente sem contrato suficiente recusado no carregamento (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
+  ok    2.6.1-T16 recorrente com contrato suficiente aceito no carregamento
+  ok    2.6.1-T17 inegociavel sem satisfacao mantem portao fechado (E2 bloqueado pelo item inegociavel 1: Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3))
+  ok    2.6.1-T18 tentativa de satisfazer inegociavel por escrita direta em estado recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.1-T19 satisfazer inegociavel sem evidencia exigida recusado (inegociavel 1 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.1-T20 satisfazer inegociavel por caminho autorizado valido aceito
+  ok    2.6.1-T20b evento InegociavelSatisfeito presente
+  ok    2.6.1-T20c E2 emite apos inegociavel 1 satisfeito por caminho autorizado
+  ok    2.6.1-T21 escrita direta em registro/ recusada (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional
+  ok    2.6.1-T23 escrita direta em contexto/ continua recusada (Escrita direta em contexto/ nao e permitida. Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. Toda regra, termo, entidade ou fonte curada exige procedencia, autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).)
+  ok    2.6.1-T24 escrita autorizada em contexto/ (via curar.py) continua funcional
+  ok    2.6.1-T25 portao com etapa inexistente recusado (entregavel E1: portao referencia etapa inexistente ['P99'])
+  ok    2.6.1-T26 portao com inegociavel inexistente recusado (entregavel E4: referencia inegociavel inexistente 99)
+  ok    2.6.1-T27 condicao declarativa suportada avaliada corretamente (satisfeita)
+  ok    2.6.1-T27b condicao declarativa nao satisfeita e NAO_APLICAVEL, nao recusa (NAO_APLICAVEL | E3-E nao aplicavel a este caso: condicao declarativa nao satisfeita (Somente quando a classificacao tecnologica de P5 determinar solucao agentica))
+  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
+  ok    2.6.1-T29 recusa de avancar (fora de ordem) gera evento
+  ok    2.6.1-T30 recusa de emissao gera evento
+  ok    2.6.1-T31 protecao de caso/ continua ativa (Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>. Toda assercao exige procedencia D, I ou V.)
+  ok    2.6.1-T32 selo git continua funcional apos as mudancas do nucleo
+
+39 verificacoes do pacote 2.6.1, 0 falhas
+
+$ python3 testes/nucleo_yaml.py
+== determinismo de leitura YAML entre ambientes com/sem PyYAML
+  ok    estrutura.carregar_yaml com-PyYAML e sem-PyYAML produzem o mesmo dict
+  ok    estrutura.carregar_yaml data_validacao com PyYAML e str (nao datetime.date)
+  ok    estrutura.carregar_yaml tipo de data_validacao identico nos dois caminhos (str)
+  ok    quadro.ler_yaml com-PyYAML e sem-PyYAML produzem o mesmo dict
+  ok    quadro.ler_yaml data_validacao com PyYAML e str (nao datetime.date)
+  ok    quadro.ler_yaml tipo de data_validacao identico nos dois caminhos (str)
+  ok    checar_validacao aceita data_validacao vinda de carregar_yaml sem quebrar (controle positivo do achado 2026-09)
+
+7 verificacoes de determinismo YAML, 0 falhas
+
+$ python3 testes/p3d.py
+== integracao CTX <-> P3d — pacote 2.5.3
+  ok    2.5.3-T01 classificacao oficial valida (alinhada)
+  ok    2.5.3-T02 classificacao fora da taxonomia oficial
+  ok    2.5.3-T03 divergencia sem referencia_p3d
+  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
+  ok    2.5.3-T05 divergencia com referencia_p3d valida
+  ok    2.5.3-T06 referencia resolve para o registro correto
+  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
+  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
+  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
+  ok    2.5.3-T10 atualizacao do confronto preserva historico
+  ok    2.5.3-T11 agente nao confirma confronto humano
+  ok    2.5.3-T12 controle humano valido
+
+12 testes de integracao CTX<->P3d aprovados
+
+$ python3 testes/playbook_2_6_0.py
+== testes 2.6.0 -- contrato executavel F0-P10
+  ok    2.6.0-T01 playbook e JSON valido
+  ok    2.6.0-T02 exatamente 13 etapas canonicas
+  ok    2.6.0-T03 IDs de etapa unicos
+  ok    2.6.0-T04 conjunto esperado F0-P10 presente
+  ok    2.6.0-T05 P3b permanece nao delegavel
+  ok    2.6.0-T06 P7 declarada nao delegavel
+  ok    2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis
+  ok    2.6.0-T08 P10 e recorrente
+  ok    2.6.0-T09 P10 declara necessidade de cadencia
+  ok    2.6.0-T10 P10 declara necessidade de responsavel
+  ok    2.6.0-T11 cinco inegociaveis declarados
+  ok    2.6.0-T12 mapeamento dos cinco inegociaveis correto
+  ok    2.6.0-T13 seis autorizacoes presentes
+  ok    2.6.0-T14 E1 depende de F0
+  ok    2.6.0-T15 E2 depende de P1/P2/P3a/P3b/P3d
+  ok    2.6.0-T16 E3-D depende de P4/P5
+  ok    2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel
+  ok    2.6.0-T18 E4 = P6/P7 + inegociavel 2
+  ok    2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5
+  ok    2.6.0-T20 nenhuma referencia a etapa inexistente
+  ok    2.6.0-T21 nenhuma dependencia orfa entre inegociaveis/entregaveis
+  ok    2.6.0-T22 portao_pendente removido de E4/E5
+  ok    2.6.0-T23 D/I/V permanece inalterado
+  ok    2.6.0-T24 playbook.py aceita o contrato oficial com 13 etapas
+
+== testes negativos 2.6.0 -- fixtures temporarias, playbook oficial preservado
+  ok    2.6.0-N01 playbook sem P7 recusado (etapa P8: depende de etapa inexistente 'P7')
+  CAPACIDADE DECLARATIVA OK / VALIDADOR DO NUCLEO PENDENTE PARA 2.6.1: playbook.py verifica apenas se as etapas do portao existem, nao a composicao esperada do contrato do metodo (isso e regra semantica, nao estrutural, ver ESP-01 3.8).
+  ok    2.6.0-N02 registrado como pendencia de validacao semantica (2.6.1); estrutura oficial ja corrigida no playbook (T19)
+  ok    2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
+  ok    2.6.0-N04 inegociavel com etapa inexistente recusado (inegociavel 1: passo referencia etapa inexistente 'P99')
+  ok    2.6.0-N05 camada fora de EX1-EX4 recusada (etapa P7: camada 'EX9' fora de EX1-EX4)
+
+29 verificacoes do pacote 2.6.0, 0 falhas
+
+$ python3 testes/sessao_a8.py
+test_00_ex3_sem_sessao (__main__.SessaoA8.test_00_ex3_sem_sessao) ... ok
+test_01_sessao_de_outra_etapa_nao_libera (__main__.SessaoA8.test_01_sessao_de_outra_etapa_nao_libera) ... ok
+test_02_sessao_futura (__main__.SessaoA8.test_02_sessao_futura) ... ok
+test_03_sessao_passada (__main__.SessaoA8.test_03_sessao_passada) ... ok
+test_04_sessao_etapa_final_ja_encerrada (__main__.SessaoA8.test_04_sessao_etapa_final_ja_encerrada) ... ok
+test_05_sessao_conferida_antes_do_selo (__main__.SessaoA8.test_05_sessao_conferida_antes_do_selo) ... ok
+test_06_sessao_nao_substitui_selo (__main__.SessaoA8.test_06_sessao_nao_substitui_selo) ... ok
+test_07_regra_ausente (__main__.SessaoA8.test_07_regra_ausente) ... ok
+test_08_camada_sem_declaracao (__main__.SessaoA8.test_08_camada_sem_declaracao) ... ok
+test_09_regra_nao_booleana (__main__.SessaoA8.test_09_regra_nao_booleana) ... ok
+test_10_outra_regra_exige_sessao_em_outra_camada (__main__.SessaoA8.test_10_outra_regra_exige_sessao_em_outra_camada) ... ok
+test_11_sessao_etapa_desconhecida (__main__.SessaoA8.test_11_sessao_etapa_desconhecida) ... ok
+test_12_ex2_sem_sessao (__main__.SessaoA8.test_12_ex2_sem_sessao) ... ok
+test_13_ex3_com_sessao_propria (__main__.SessaoA8.test_13_ex3_com_sessao_propria) ... ok
+test_14_mesma_etapa_ex2_em_n1 (__main__.SessaoA8.test_14_mesma_etapa_ex2_em_n1) ... ok
+test_15_ex4_sessao_e_selo (__main__.SessaoA8.test_15_ex4_sessao_e_selo) ... ok
+test_16_ex1_sem_sessao (__main__.SessaoA8.test_16_ex1_sem_sessao) ... ok
+test_17_regra_alternativa_lida_do_caso (__main__.SessaoA8.test_17_regra_alternativa_lida_do_caso) ... ok
+test_18_template_declara_regra (__main__.SessaoA8.test_18_template_declara_regra) ... ok
+test_19_camada_resolvida_nao_cache_do_estado (__main__.SessaoA8.test_19_camada_resolvida_nao_cache_do_estado) ... ok
+test_20_p3d_ex3 (__main__.SessaoA8.test_20_p3d_ex3) ... ok
+test_21_p4_ex3 (__main__.SessaoA8.test_21_p4_ex3) ... ok
+test_22_p5_ex3 (__main__.SessaoA8.test_22_p5_ex3) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.302s
+
+OK
+
+$ python3 testes/triagem_a7.py
+test_00_eixo_ausente (__main__.TriagemA7.test_00_eixo_ausente) ... ok
+test_01_eixo_desconhecido (__main__.TriagemA7.test_01_eixo_desconhecido) ... ok
+test_02_fora_da_escala_A7 (__main__.TriagemA7.test_02_fora_da_escala_A7) ... ok
+test_03_nivel_divergente_maximo_nunca_media (__main__.TriagemA7.test_03_nivel_divergente_maximo_nunca_media) ... ok
+test_04_eixo_duplicado (__main__.TriagemA7.test_04_eixo_duplicado) ... ok
+test_05_formato (__main__.TriagemA7.test_05_formato) ... ok
+test_06_sem_eixos (__main__.TriagemA7.test_06_sem_eixos) ... ok
+test_07_sem_regra (__main__.TriagemA7.test_07_sem_regra) ... ok
+test_08_agregacao_desconhecida (__main__.TriagemA7.test_08_agregacao_desconhecida) ... ok
+test_09_faixas_sobrepostas (__main__.TriagemA7.test_09_faixas_sobrepostas) ... ok
+test_10_lacuna_entre_faixas (__main__.TriagemA7.test_10_lacuna_entre_faixas) ... ok
+test_11_autor_agente_recusa_com_evento_humano (__main__.TriagemA7.test_11_autor_agente_recusa_com_evento_humano) ... ok
+test_12_nivel_desconhecido (__main__.TriagemA7.test_12_nivel_desconhecido) ... ok
+test_13_acima_da_faixa (__main__.TriagemA7.test_13_acima_da_faixa) ... ok
+test_14_fracao_recusada (__main__.TriagemA7.test_14_fracao_recusada) ... ok
+test_90_n2 (__main__.TriagemA7.test_90_n2) ... ok
+test_91_n3 (__main__.TriagemA7.test_91_n3) ... ok
+test_92_limite_3 (__main__.TriagemA7.test_92_limite_3) ... ok
+test_93_limite_4 (__main__.TriagemA7.test_93_limite_4) ... ok
+test_94_limite_5 (__main__.TriagemA7.test_94_limite_5) ... ok
+test_95_limite_7 (__main__.TriagemA7.test_95_limite_7) ... ok
+test_96_limite_8 (__main__.TriagemA7.test_96_limite_8) ... ok
+test_97_limite_9 (__main__.TriagemA7.test_97_limite_9) ... ok
+test_98_regra_alternativa_sem_valores_do_metodo_no_nucleo (__main__.TriagemA7.test_98_regra_alternativa_sem_valores_do_metodo_no_nucleo) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 1.185s
+
+OK
+
+$ python3 testes/verificacao_por_estados.py
+== verificacao por estados do caso (decisao 021) -- selo apos P2 exigido por P3b
+  ok    T01 P3b nao abre sem selo apos P2 (guarda recusa, TentativaNegada registrada)
+  ok    T02 P3b nao encerra sem selo apos P2 (P3b exige selo posterior ao encerramento de P2. Nenhum SeloAplicado encontrado depois desse encerramento -- sele o caso antes de prosseguir.)
+  ok    T03 selo anterior ao encerramento de P2 nao satisfaz P3b (guarda recusa)
+  ok    T04 P3b abre com selo posterior ao encerramento de P2
+  ok    T04 P3b encerra com selo posterior ao encerramento de P2
+  ok    T05 etapa sem exige_selo_apos (P1) encerra normalmente, sem exigir selo algum
+  ok    T06 playbook.selo_apos_etapa() nao cita antitese/contraste (mecanismo generico)
+7 verificacoes de verificacao por estados do caso, 0 falhas

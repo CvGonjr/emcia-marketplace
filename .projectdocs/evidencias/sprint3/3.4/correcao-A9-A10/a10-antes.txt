@@ -1,0 +1,363 @@
+test_00_campo_nao_declarado (__main__.CamposA10.test_00_campo_nao_declarado) ... FAIL
+test_01_valor_fora_da_taxonomia (__main__.CamposA10.test_01_valor_fora_da_taxonomia) ... FAIL
+test_02_autor_agente (__main__.CamposA10.test_02_autor_agente) ... FAIL
+test_03_etapa_futura (__main__.CamposA10.test_03_etapa_futura) ... FAIL
+test_04_etapa_passada (__main__.CamposA10.test_04_etapa_passada) ... FAIL
+test_05_etapa_desconhecida (__main__.CamposA10.test_05_etapa_desconhecida) ... FAIL
+test_06_etapa_corrente_encerrada (__main__.CamposA10.test_06_etapa_corrente_encerrada) ... FAIL
+test_07_valor_vazio (__main__.CamposA10.test_07_valor_vazio) ... FAIL
+test_08_autor_generico (__main__.CamposA10.test_08_autor_generico) ... FAIL
+test_09_sem_campo (__main__.CamposA10.test_09_sem_campo) ... FAIL
+test_10_campo_reservado_nao_pode_ser_declarado (__main__.CamposA10.test_10_campo_reservado_nao_pode_ser_declarado) ... FAIL
+test_11_taxonomia_invalida (__main__.CamposA10.test_11_taxonomia_invalida) ... FAIL
+test_12_agente_com_playbook_invalido (__main__.CamposA10.test_12_agente_com_playbook_invalido) ... FAIL
+test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) ... 
+  test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='agente') ... FAIL
+  test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='caso isolado') ... FAIL
+  test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='habilitador acoplado') ... FAIL
+test_14_substituicao_tem_historico (__main__.CamposA10.test_14_substituicao_tem_historico) ... FAIL
+test_15_campo_livre_de_outro_metodo (__main__.CamposA10.test_15_campo_livre_de_outro_metodo) ... FAIL
+test_16_declaracao_do_template (__main__.CamposA10.test_16_declaracao_do_template) ... FAIL
+test_17_e3_partes_a_b_sem_escrita_direta_no_estado (__main__.CamposA10.test_17_e3_partes_a_b_sem_escrita_direta_no_estado) ... FAIL
+
+======================================================================
+FAIL: test_00_campo_nao_declarado (__main__.CamposA10.test_00_campo_nao_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 58, in test_00_campo_nao_declarado
+    self.recusa(['nao declarado'], campo='inventado')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo inventado --valor agente
+
+
+======================================================================
+FAIL: test_01_valor_fora_da_taxonomia (__main__.CamposA10.test_01_valor_fora_da_taxonomia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 61, in test_01_valor_fora_da_taxonomia
+    self.recusa(['valores aceitos', *VALORES], valor='automacao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor automacao
+
+
+======================================================================
+FAIL: test_02_autor_agente (__main__.CamposA10.test_02_autor_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 64, in test_02_autor_agente
+    self.recusa(['pessoa nomeada'], autor='AG-01')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_03_etapa_futura (__main__.CamposA10.test_03_etapa_futura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 67, in test_03_etapa_futura
+    self.recusa(['etapa corrente'], etapa='P6')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P6 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_04_etapa_passada (__main__.CamposA10.test_04_etapa_passada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 70, in test_04_etapa_passada
+    self.recusa(['etapa corrente'], etapa='P4')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P4 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_05_etapa_desconhecida (__main__.CamposA10.test_05_etapa_desconhecida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 73, in test_05_etapa_desconhecida
+    self.recusa(['nao existe'], etapa='P99')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P99 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_06_etapa_corrente_encerrada (__main__.CamposA10.test_06_etapa_corrente_encerrada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 79, in test_06_etapa_corrente_encerrada
+    self.recusa(['encerrada'])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_07_valor_vazio (__main__.CamposA10.test_07_valor_vazio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 82, in test_07_valor_vazio
+    self.recusa(['valor'], valor='  ')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor   
+
+
+======================================================================
+FAIL: test_08_autor_generico (__main__.CamposA10.test_08_autor_generico)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 85, in test_08_autor_generico
+    self.recusa(['pessoa nomeada'], autor='equipe')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_09_sem_campo (__main__.CamposA10.test_09_sem_campo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 90, in test_09_sem_campo
+    self.assertEqual(r.returncode, 1)
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_10_campo_reservado_nao_pode_ser_declarado (__main__.CamposA10.test_10_campo_reservado_nao_pode_ser_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 97, in test_10_campo_reservado_nao_pode_ser_declarado
+    self.recusa(['reservado'], campo='cumprido', valor='true')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo cumprido --valor true
+
+
+======================================================================
+FAIL: test_11_taxonomia_invalida (__main__.CamposA10.test_11_taxonomia_invalida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 102, in test_11_taxonomia_invalida
+    self.recusa(['valores'])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_12_agente_com_playbook_invalido (__main__.CamposA10.test_12_agente_com_playbook_invalido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 106, in test_12_agente_com_playbook_invalido
+    self.recusa(['playbook invalido'], autor='agente-teste')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 47, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+AssertionError: 2 != 1 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='agente')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 112, in test_13_categorias_aceitas
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 2 != 0 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+======================================================================
+FAIL: test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='caso isolado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 112, in test_13_categorias_aceitas
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 2 != 0 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor caso isolado
+
+
+======================================================================
+FAIL: test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) (valor='habilitador acoplado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 112, in test_13_categorias_aceitas
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 2 != 0 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor habilitador acoplado
+
+
+======================================================================
+FAIL: test_14_substituicao_tem_historico (__main__.CamposA10.test_14_substituicao_tem_historico)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 121, in test_14_substituicao_tem_historico
+    self.assertEqual(self.registrar().returncode, 0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_15_campo_livre_de_outro_metodo (__main__.CamposA10.test_15_campo_livre_de_outro_metodo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 131, in test_15_campo_livre_de_outro_metodo
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 2 != 0 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo observacao --valor texto humano sem taxonomia
+
+
+======================================================================
+FAIL: test_16_declaracao_do_template (__main__.CamposA10.test_16_declaracao_do_template)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 136, in test_16_declaracao_do_template
+    self.assertEqual(et.get('campos_registraveis', {}).get('classificacao_tecnologica'),
+AssertionError: None != {'valores': ['agente', 'caso isolado', 'habilitador acoplado']}
+
+======================================================================
+FAIL: test_17_e3_partes_a_b_sem_escrita_direta_no_estado (__main__.CamposA10.test_17_e3_partes_a_b_sem_escrita_direta_no_estado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/campos_a10.py", line 156, in test_17_e3_partes_a_b_sem_escrita_direta_no_estado
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 2 != 0 : usage: avancar.py [-h] [--apurar-nivel APURAR_NIVEL] [--encerrar ENCERRAR]
+                  [--registrar-sessao REGISTRAR_SESSAO]
+                  [--registrar-recorrencia REGISTRAR_RECORRENCIA]
+                  [--satisfazer-inegociavel SATISFAZER_INEGOCIAVEL]
+                  [--emitir EMITIR] --autor AUTOR
+                  [--participantes PARTICIPANTES] [--eixos EIXOS]
+                  [--cadencia CADENCIA] [--responsavel RESPONSAVEL]
+                  [--evidencia EVIDENCIA] [--materializar MATERIALIZAR]
+avancar.py: error: unrecognized arguments: --registrar-campo P5 --campo classificacao_tecnologica --valor agente
+
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.517s
+
+FAILED (failures=20)

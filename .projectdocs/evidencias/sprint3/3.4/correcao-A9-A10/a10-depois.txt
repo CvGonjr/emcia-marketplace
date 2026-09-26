@@ -1,0 +1,23 @@
+test_00_campo_nao_declarado (__main__.CamposA10.test_00_campo_nao_declarado) ... ok
+test_01_valor_fora_da_taxonomia (__main__.CamposA10.test_01_valor_fora_da_taxonomia) ... ok
+test_02_autor_agente (__main__.CamposA10.test_02_autor_agente) ... ok
+test_03_etapa_futura (__main__.CamposA10.test_03_etapa_futura) ... ok
+test_04_etapa_passada (__main__.CamposA10.test_04_etapa_passada) ... ok
+test_05_etapa_desconhecida (__main__.CamposA10.test_05_etapa_desconhecida) ... ok
+test_06_etapa_corrente_encerrada (__main__.CamposA10.test_06_etapa_corrente_encerrada) ... ok
+test_07_valor_vazio (__main__.CamposA10.test_07_valor_vazio) ... ok
+test_08_autor_generico (__main__.CamposA10.test_08_autor_generico) ... ok
+test_09_sem_campo (__main__.CamposA10.test_09_sem_campo) ... ok
+test_10_campo_reservado_nao_pode_ser_declarado (__main__.CamposA10.test_10_campo_reservado_nao_pode_ser_declarado) ... ok
+test_11_taxonomia_invalida (__main__.CamposA10.test_11_taxonomia_invalida) ... ok
+test_12_agente_com_playbook_invalido (__main__.CamposA10.test_12_agente_com_playbook_invalido) ... ok
+test_13_categorias_aceitas (__main__.CamposA10.test_13_categorias_aceitas) ... ok
+test_14_substituicao_tem_historico (__main__.CamposA10.test_14_substituicao_tem_historico) ... ok
+test_15_campo_livre_de_outro_metodo (__main__.CamposA10.test_15_campo_livre_de_outro_metodo) ... ok
+test_16_declaracao_do_template (__main__.CamposA10.test_16_declaracao_do_template) ... ok
+test_17_e3_partes_a_b_sem_escrita_direta_no_estado (__main__.CamposA10.test_17_e3_partes_a_b_sem_escrita_direta_no_estado) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.877s
+
+OK
