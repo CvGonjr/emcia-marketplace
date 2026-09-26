@@ -470,22 +470,10 @@ else:
 
 # --- T27/T28: condicoes declarativas -----------------------------------------
 caso = preparar_caso()
-apurar_e_encerrar_f0(caso)
-for e in ["P1", "P2", "P3a"]:
-    avancar(caso, encerrar=e, autor="Celso do Vale")
-selar(caso, "selo apos P2, exigido por P3b")
-avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
-for e in ["P3b", "P3d"]:
-    avancar(caso, encerrar=e, autor="Celso do Vale")
-avancar(caso, encerrar="P4", autor="Celso do Vale")
-# forca o cumprimento de P5 com o campo que a condicao declarativa de E3-E
-# consulta (classificacao_tecnologica), simulando o que uma skill de P5
-# gravaria -- o nucleo so le o campo, nao decide seu significado.
-estado_path = caso / "registro" / "estado.json"
-st = json.loads(estado_path.read_text(encoding="utf-8"))
-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
-                             "classificacao_tecnologica": "agente"}
-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+percorrer_ate(caso, "P4")
+avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="agente", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
+avancar(caso, encerrar="P5", autor="Celso do Vale")
 (caso / "caso/entregaveis").mkdir(parents=True, exist_ok=True)
 (caso / "caso/entregaveis/E3.md").write_text("# Artefato sintético para teste do portão\n")
 codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
@@ -494,8 +482,12 @@ if codigo == 0:
 else:
     falha(f"2.6.1-T27 condicao declarativa satisfeita foi RECUSADA: {erro}")
 
-st["cumprimentos"]["P5"]["classificacao_tecnologica"] = "habilitador"
-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+# Outro caso permite classificar enquanto P5 ainda é corrente.
+caso = preparar_caso()
+percorrer_ate(caso, "P4")
+avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="habilitador acoplado", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
+avancar(caso, encerrar="P5", autor="Celso do Vale")
 codigo, saida, erro = avancar(caso, emitir="E3-E", autor="Celso do Vale")
 # Desde 2.6.5 (secao 24 do pacote), condicao declarativa nao satisfeita e
 # NAO_APLICAVEL (exit 0), nao RECUSA (exit != 0) -- "nao aplicavel" nao e

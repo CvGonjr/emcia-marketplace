@@ -7,6 +7,8 @@ OBRIGATORIO_ENTREGAVEL = {"id", "portao", "artefato", "comando_materializacao"}
 # Operadores que o motor generico de condicoes declarativas (avancar.py)
 # sabe avaliar. Um portao com operador fora deste conjunto e contrato
 # invalido, nao condicao ignorada silenciosamente (2.6.0 secao 28).
+CAMPOS_RESERVADOS = {"cumprido", "autor", "sessao", "eixos", "estado_recorrente"}
+
 CONDICAO_OPERADORES = {"contem", "igual", "diferente"}
 
 
@@ -40,6 +42,22 @@ def carregar():
         for cam in c.values():
             if cam not in ("EX1", "EX2", "EX3", "EX4"):
                 return None, f"etapa {e['id']}: camada '{cam}' fora de EX1-EX4"
+        campos = e.get("campos_registraveis", {})
+        if not isinstance(campos, dict):
+            return None, f"etapa {e['id']}: campos_registraveis precisa ser objeto"
+        for nome, regra in campos.items():
+            if nome in CAMPOS_RESERVADOS:
+                return None, f"etapa {e['id']}: campo reservado '{nome}'"
+            if not isinstance(nome, str) or not nome.strip() or not isinstance(regra, dict):
+                return None, f"etapa {e['id']}: declaracao de campo invalida"
+            if set(regra) - {"valores"}:
+                return None, f"etapa {e['id']}: regra de campo desconhecida em {nome}"
+            if "valores" in regra:
+                valores_campo = regra["valores"]
+                if (not isinstance(valores_campo, list) or not valores_campo
+                        or any(not isinstance(v, str) or not v.strip() for v in valores_campo)
+                        or len(valores_campo) != len(set(valores_campo))):
+                    return None, f"etapa {e['id']}: valores invalidos para campo {nome}"
         dep = e.get("depende_de")
         if dep and dep not in ids_etapa:
             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"

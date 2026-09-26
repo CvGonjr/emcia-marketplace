@@ -53,6 +53,9 @@ jobs:
       - name: Emissão com artefato (A9)
         run: python3 testes/emissao_a9.py
 
+      - name: Campos declarados e E3 ponta a ponta (A10)
+        run: python3 testes/campos_a10.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 

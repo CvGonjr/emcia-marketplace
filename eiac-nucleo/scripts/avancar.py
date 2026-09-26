@@ -3,12 +3,13 @@
 Uso:
   python3 avancar.py --apurar-nivel <nivel> --autor "Nome" --eixos "<eixos declarados>"
   python3 avancar.py --encerrar P2 --autor "Nome"
+  python3 avancar.py --registrar-campo <etapa> --campo <nome> --valor <valor> --autor "Nome"
   python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
   python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
   python3 avancar.py --emitir E2 --autor "Nome"
 
-Recusas de apuração e sessão produzem TentativaNegada; as demais produzem
+Recusas de apuração, campo e sessão produzem TentativaNegada; as demais produzem
 RecusaMaquina ou RecusaEmissao,
 com a acao tentada, o motivo e o estado relevante no momento da recusa —
 recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
@@ -117,6 +118,30 @@ def registrar_sessao(st, etapa_id, autor, participantes):
     }
     E.evento("SessaoDeCampoRegistrada", etapa=etapa_id, autor=autor,
              participantes=participantes)
+    return None
+
+
+def registrar_campo(st, pb, etapa_id, campo, valor, autor):
+    et = P.etapa(pb, etapa_id)
+    if not et:
+        return f"etapa {etapa_id} nao existe no playbook"
+    if etapa_id != st["etapa_atual"]:
+        return f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']})"
+    if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
+        return f"{etapa_id} ja encerrada; campo nao pode ser registrado"
+    campos = et.get("campos_registraveis", {})
+    if campo not in campos:
+        return f"campo '{campo}' nao declarado para etapa {etapa_id}"
+    if not isinstance(valor, str) or not valor.strip():
+        return f"campo {campo} exige valor nao vazio"
+    regra = campos[campo]
+    if "valores" in regra and valor not in regra["valores"]:
+        return f"campo {campo}: valor '{valor}' invalido; valores aceitos: {regra['valores']}"
+    registro = st["cumprimentos"].setdefault(etapa_id, {})
+    anterior = registro.get(campo)
+    registro[campo] = valor
+    E.evento("CampoRegistrado", etapa=etapa_id, campo=campo, valor=valor,
+             anterior=anterior, autor=autor)
     return None
 
 
@@ -314,6 +339,9 @@ def main():
     ap.add_argument("--apurar-nivel")
     ap.add_argument("--encerrar"); ap.add_argument("--registrar-sessao")
     ap.add_argument("--registrar-recorrencia")
+    ap.add_argument("--registrar-campo")
+    ap.add_argument("--campo", default="")
+    ap.add_argument("--valor", default="")
     ap.add_argument("--satisfazer-inegociavel")
     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
     ap.add_argument("--participantes", default="")
@@ -329,18 +357,20 @@ def main():
     try:
         pb, erro = P.carregar()
     except (ValueError, TypeError, KeyError) as exc:
-        if not a.apurar_nivel:
+        if not (a.apurar_nivel or a.registrar_campo):
             raise
         pb, erro = None, f"playbook invalido: {exc}"
     if not st or erro:
-        if a.apurar_nivel:
-            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto")
+        if a.apurar_nivel or a.registrar_campo:
+            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+                             "registrar_campo" if a.registrar_campo else "apurar_nivel")
         elif a.encerrar or a.registrar_sessao or a.emitir:
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
                              "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
-    if a.apurar_nivel and not _ator_valido(a.autor):
-        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada")
+    if (a.apurar_nivel or a.registrar_campo) and not _ator_valido(a.autor):
+        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada",
+                         "registrar_campo" if a.registrar_campo else "apurar_nivel")
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
     if E.autor_e_agente(a.autor):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
@@ -348,6 +378,9 @@ def main():
     if a.apurar_nivel:
         acao, alvo = "apurar_nivel", a.apurar_nivel
         err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
+    elif a.registrar_campo:
+        acao, alvo = "registrar_campo", a.registrar_campo
+        err = registrar_campo(st, pb, a.registrar_campo, a.campo, a.valor, a.autor)
     elif a.registrar_sessao:
         acao, alvo = "registrar_sessao", a.registrar_sessao
         err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
@@ -374,7 +407,7 @@ def main():
         print("nada a fazer", file=sys.stderr); sys.exit(1)
 
     if err:
-        if a.apurar_nivel or isinstance(err, _RecusaSessao):
+        if a.apurar_nivel or a.registrar_campo or isinstance(err, _RecusaSessao):
             _recusar_operacao(st, a.autor, err, acao)
             print(err, file=sys.stderr); sys.exit(1)
         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"

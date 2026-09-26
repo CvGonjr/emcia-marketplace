@@ -521,32 +521,11 @@ def preparar_bl(caso, **over):
 
 
 def gravar_p5_agentico(caso):
-    """Nao existe caminho executavel (script/CLI) para o conteudo semantico
-    de P5 (classificacao_tecnologica) alem da escrita direta em
-    st['cumprimentos']['P5'] -- mesma lacuna ja observada e documentada em
-    2.6.5 (hb-classificar/SKILL.md so produz caso/P5-classificacao.md em
-    texto livre; nao ha script eiac-campo/scripts/classificar.py). Este
-    pacote e de verificacao, nao introduz o script ausente (secao 1: nao
-    criar feature nova); registra o achado como defeito (ver resultado.md)
-    e usa o mesmo caminho documentado do 2.6.5, com evidencia antes/depois
-    preservada nos logs desta suite.
-    """
-    caminho = caso / "registro" / "estado.json"
-    st = json.loads(caminho.read_text(encoding="utf-8"))
-    st["cumprimentos"]["P5"] = {
-        "cumprido": True, "autor": "Celso do Vale",
-        "classificacao_tecnologica": "agente",
-    }
-    caminho.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
-
-
-def ajustar_etapa_atual(caso, etapa_id, camada="EX3", modalidade="presencial_ou_remoto"):
-    caminho = caso / "registro" / "estado.json"
-    st = json.loads(caminho.read_text(encoding="utf-8"))
-    st["etapa_atual"] = etapa_id
-    st["camada_atual"] = camada
-    st["modalidade_atual"] = modalidade
-    caminho.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+    """A10: registra a classificação e encerra P5 pelo caminho autorizado."""
+    avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica",
+            valor="agente", autor="Celso do Vale")
+    avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Fernanda, Celso")
+    avancar(caso, encerrar="P5", autor="Celso do Vale")
 
 
 HABILIDADES_JSON = str(RAIZ / "eiac-campo" / "reference" / "habilidades.json")
@@ -671,7 +650,6 @@ avancar(caso_p6, encerrar="P3d", autor="Celso do Vale")
 avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
 gravar_p5_agentico(caso_p6)
-ajustar_etapa_atual(caso_p6, "P6")
 avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
 if codigo == 0:

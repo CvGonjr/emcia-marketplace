@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.5",
+  "versao": "0.4.6",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -84,6 +84,11 @@
     },
     {
       "id": "P5", "nome": "Classificacao tecnologica",
+      "campos_registraveis": {
+        "classificacao_tecnologica": {
+          "valores": ["agente", "caso isolado", "habilitador acoplado"]
+        }
+      },
       "modalidade": "video", "habilidade": "hb-classificar",
       "hb": ["HB-11", "HB-12"],
       "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }

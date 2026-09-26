@@ -648,11 +648,9 @@ else:
 
 caso = preparar_caso()
 percorrer_ate(caso, "P4")
-estado_path = caso / "registro" / "estado.json"
-st = json.loads(estado_path.read_text(encoding="utf-8"))
-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
-                             "classificacao_tecnologica": "isolado"}
-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+avancar(caso, registrar_campo="P5", campo="classificacao_tecnologica", valor="caso isolado", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
+avancar(caso, encerrar="P5", autor="Celso do Vale")
 entregavel(caso, "E3", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso, emitir="E3-D", autor="Celso do Vale")
 if codigo == 0:
@@ -663,11 +661,9 @@ else:
 # ============================================== E3-E =======================
 caso_nao_agentico = preparar_caso()
 percorrer_ate(caso_nao_agentico, "P4")
-estado_path = caso_nao_agentico / "registro" / "estado.json"
-st = json.loads(estado_path.read_text(encoding="utf-8"))
-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
-                             "classificacao_tecnologica": "isolado"}
-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+avancar(caso_nao_agentico, registrar_campo="P5", campo="classificacao_tecnologica", valor="caso isolado", autor="Celso do Vale")
+avancar(caso_nao_agentico, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
+avancar(caso_nao_agentico, encerrar="P5", autor="Celso do Vale")
 codigo, saida, erro = avancar(caso_nao_agentico, emitir="E3-E", autor="Celso do Vale")
 if codigo == 0 and "NAO_APLICAVEL" in saida:
     ok("2.6.5-T22 E3-E sobre caso nao agentico: NAO_APLICAVEL (nao e falha)")
@@ -695,11 +691,9 @@ else:
 
 caso_agentico = preparar_caso()
 percorrer_ate(caso_agentico, "P4")
-estado_path = caso_agentico / "registro" / "estado.json"
-st = json.loads(estado_path.read_text(encoding="utf-8"))
-st["cumprimentos"]["P5"] = {"cumprido": True, "autor": "Celso do Vale",
-                             "classificacao_tecnologica": "agente"}
-estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+avancar(caso_agentico, registrar_campo="P5", campo="classificacao_tecnologica", valor="agente", autor="Celso do Vale")
+avancar(caso_agentico, registrar_sessao="P5", autor="Celso do Vale", participantes="Ana, Celso")
+avancar(caso_agentico, encerrar="P5", autor="Celso do Vale")
 entregavel(caso_agentico, "E3", "Celso do Vale", emitir=False)
 codigo, saida, erro = avancar(caso_agentico, emitir="E3-E", autor="Celso do Vale")
 if codigo == 0 and "NAO_APLICAVEL" not in saida:
@@ -707,6 +701,7 @@ if codigo == 0 and "NAO_APLICAVEL" not in saida:
 else:
     falha(f"2.6.5-T24 E3-E agentico foi negado/nao_aplicavel indevidamente: {saida!r} {erro!r}")
 
+st = json.loads((caso_agentico / "registro/estado.json").read_text())
 if "agente" in str(st["cumprimentos"]["P5"]["classificacao_tecnologica"]):
     ok("2.6.5-T25 condicao declarativa {campo,etapa,operador,valor} avaliada "
        "sem hard-code de 'E3-E' no nucleo (mesmo mecanismo generico do 2.6.1)")
