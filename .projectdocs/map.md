@@ -2,7 +2,7 @@
 
 Gerado em: 2026-09-12 (docs-mapper, Pipeline A)
 
-> Atualizado em: 2026-09-23 — pacote 3.2 (decisão 021): retirada da
+> Atualizado em: 2026-09-23 — pacote 3.1 (decisão 021): retirada da
 > execução de contraste, verificação por estados do caso (selo de P2
 > exigido por P3b), documentação de etapa 0a e reescrita integral de
 > `README.md`/`INSTALACAO.md`. Substitui integralmente o retrato de
@@ -62,7 +62,7 @@ plugin, capability, assistant) atravessa para o núcleo.
 Regra de ouro do repositório: nenhuma decisão de camada/procedência passa por
 modelo de linguagem — são funções determinísticas sobre dados estruturados.
 
-## Verificação por estados do caso (decisão 021, pacote 3.2)
+## Verificação por estados do caso (decisão 021, pacote 3.1)
 
 A execução de contraste (antes: `emcia-contraste`/`eiac-contraste`, uma
 execução completa e independente do playbook em repositório próprio,

@@ -1,12 +1,20 @@
 # Testes
 
+O expediente administrativo de habilitação tem 19 testes próprios, com recusas
+de assinatura parcial, versão obsoleta, fonte alterada, rodada incorreta e
+coleta via MCP sem condições prévias, além do percurso de formalização e acessos:
+
+```bash
+python3 testes/habilitacao.py
+```
+
 ```bash
 bash testes/negativos.sh
 ```
 
-Trinta e três verificações: as 26 do baseline e sete verificações do contrato
-canônico D/I/V. Há negativas e controles positivos — o que é bem formado
-precisa passar, senão a trava está apenas quebrada.
+São 51 verificações, incluindo as 26 do baseline, sete do contrato canônico
+D/I/V e 18 acrescentadas posteriormente. Há negativas e controles positivos —
+o que é bem formado precisa passar, senão a trava está apenas quebrada.
 
 Os 11 testes estruturais dos quatro objetos CTX rodam separadamente:
 
@@ -114,7 +122,11 @@ separadamente:
 python3 testes/campo_2_6_6.py
 ```
 
-O total acumulado é de 447 verificações.
+O total das suítes listadas de `negativos.sh` a `campo_2_6_6.py` é de 465
+verificações. Com os módulos complementares (`autoria_responsavel.py`: 14,
+`nucleo_yaml.py`: 7, `verificacao_por_estados.py`: 7, `esforco.py`: 1,
+`metodo_empacotado.py`: 1) e `habilitacao.py` (19), a suíte completa soma
+514 verificações.
 
 As recusas são verificadas **pela mensagem**, não só pelo código de saída. Num ponto em que várias travas recusam, conferir apenas o `exit` deixa o teste passar mesmo com a trava certa removida — foi o que aconteceu com o 18 até a mensagem entrar na asserção.
 
