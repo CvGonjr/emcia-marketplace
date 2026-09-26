@@ -105,6 +105,7 @@ def levar_ate_p3b(caso):
     codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
     if codigo != 0:
         return codigo, saida, erro
+    avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
     codigo, saida, erro = avancar(caso, encerrar="P3a", autor="Celso do Vale")
     if codigo != 0:
         return codigo, saida, erro
@@ -163,6 +164,7 @@ with tempfile.TemporaryDirectory() as tmp:
     if codigo != 0:
         falha(f"T03 pre-condicao: P2 nao encerrou: {erro}")
     else:
+        avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
         avancar(caso, encerrar="P3a", autor="Celso do Vale")
         avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
         codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})

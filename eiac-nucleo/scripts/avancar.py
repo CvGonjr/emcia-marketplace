@@ -8,7 +8,7 @@ Uso:
   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
   python3 avancar.py --emitir E2 --autor "Nome"
 
-Recusas de apuração produzem TentativaNegada; as demais produzem
+Recusas de apuração e sessão produzem TentativaNegada; as demais produzem
 RecusaMaquina ou RecusaEmissao,
 com a acao tentada, o motivo e o estado relevante no momento da recusa —
 recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
@@ -19,6 +19,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
 import apuracao as A
+
+
+class _RecusaSessao(str):
+    """Recusa de sessão que deve produzir TentativaNegada."""
 
 
 def _ator_valido(nome):
@@ -71,6 +75,13 @@ def encerrar(st, pb, etapa_id, autor):
                 "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
     if st.get("nivel") and st["nivel"] not in pb["niveis"]:
         return f"nivel '{st['nivel']}' nao existe no playbook: {pb['niveis']}"
+    cam = P.camada(pb, etapa_id, st.get("nivel"))
+    if (pb["encerramento_por_camada"][cam]
+            and not st["cumprimentos"].get(etapa_id, {}).get("sessao")):
+        return _RecusaSessao(
+            f"{etapa_id} | camada {cam} | nivel {st.get('nivel')} | "
+            f"modalidade exigida: {et['modalidade']}; "
+            "encerramento exige sessao registrada da propria etapa.")
     if et.get("delegavel") is False and not st["cumprimentos"].get(etapa_id, {}).get("sessao"):
         return (f"{etapa_id} e {et['modalidade']} e nao delegavel. "
                 f"Registre a sessao antes de encerrar.")
@@ -94,6 +105,12 @@ def encerrar(st, pb, etapa_id, autor):
 
 
 def registrar_sessao(st, etapa_id, autor, participantes):
+    if etapa_id != st["etapa_atual"]:
+        return _RecusaSessao(
+            f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
+            "So a etapa corrente pode receber sessao.")
+    if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
+        return _RecusaSessao(f"{etapa_id} ja encerrada; sessao nao pode ser registrada.")
     st["cumprimentos"].setdefault(etapa_id, {})
     st["cumprimentos"][etapa_id]["sessao"] = {
         "autor": autor, "participantes": participantes
@@ -277,14 +294,14 @@ def emitir(st, pb, ent_id, autor, materializar=None):
     return None, None
 
 
-def _recusar_apuracao(st, autor, motivo):
+def _recusar_operacao(st, autor, motivo, acao="apurar_nivel"):
     # A tentativa de agente é atribuída ao responsável nominal do caso;
     # identificadores de agente nunca entram como autor na trilha.
     responsavel = (st or {}).get("responsavel")
     pessoa = responsavel if _ator_valido(responsavel) else autor
     if not _ator_valido(pessoa):
         raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
-    E.evento("TentativaNegada", acao_tentada="apurar_nivel", motivo=motivo,
+    E.evento("TentativaNegada", acao_tentada=acao, motivo=motivo,
              autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
 
 
@@ -313,10 +330,13 @@ def main():
         pb, erro = None, f"playbook invalido: {exc}"
     if not st or erro:
         if a.apurar_nivel:
-            _recusar_apuracao(st, a.autor, erro or "nenhum caso aberto")
+            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto")
+        elif a.encerrar or a.registrar_sessao:
+            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+                             "encerrar" if a.encerrar else "registrar_sessao")
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
     if a.apurar_nivel and not _ator_valido(a.autor):
-        _recusar_apuracao(st, a.autor, "autor precisa ser pessoa nomeada")
+        _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada")
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
     if E.autor_e_agente(a.autor):
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
@@ -350,8 +370,8 @@ def main():
         print("nada a fazer", file=sys.stderr); sys.exit(1)
 
     if err:
-        if a.apurar_nivel:
-            _recusar_apuracao(st, a.autor, err)
+        if a.apurar_nivel or isinstance(err, _RecusaSessao):
+            _recusar_operacao(st, a.autor, err, acao)
             print(err, file=sys.stderr); sys.exit(1)
         tipo_evento = "RecusaEmissao" if acao == "emitir" else "RecusaMaquina"
         E.evento(tipo_evento, acao_tentada=acao, alvo=alvo, motivo=err,

@@ -183,7 +183,10 @@ def percorrer_ate(caso, ate_etapa_id, nivel="N2"):
     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
     restante = set(alvo)
     for etapa_id in alvo:
-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
+        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
+        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
+                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")

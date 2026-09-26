@@ -131,7 +131,10 @@ def percorrer_ate(caso, ate_etapa_id):
     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
     restante = set(alvo)
     for etapa_id in alvo:
-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
+        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
+        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
+                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
@@ -180,6 +183,7 @@ st = json.loads(estado_path.read_text(encoding="utf-8"))
 st["etapa_atual"] = "P3d"
 st["camada_atual"] = "EX3"
 estado_path.write_text(json.dumps(st, indent=2, ensure_ascii=False), encoding="utf-8")
+avancar(caso_dep, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
 codigo, saida, erro = avancar(caso_dep, encerrar="P3d", autor="Celso do Vale")
 if codigo != 0 and "depende de" in erro:
     ok(f"2.6.1-T03 dependencia nao satisfeita bloqueada ({erro.strip()})")
@@ -202,6 +206,7 @@ for e in ["P1", "P2", "P3a"]:
 selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P3b", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
 if avancar(caso, encerrar="P3d", autor="Celso do Vale")[0] == 0:
     ok("2.6.1-T04 dependencia satisfeita permite prosseguir")
 else:
@@ -352,6 +357,7 @@ for e in ["P1", "P2", "P3a"]:
 selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P3b", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P3d", autor="Celso do Vale")
 codigo, saida, erro = avancar(caso, emitir="E2", autor="Celso do Vale")
 if codigo != 0 and "inegociavel" in erro:

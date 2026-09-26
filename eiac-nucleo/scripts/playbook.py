@@ -47,6 +47,14 @@ def carregar():
             return None, (f"etapa {e['id']}: recorrente exige cadencia e responsavel "
                           f"declarados, senao a etapa desaparece apos a primeira execucao.")
 
+    sessoes = pb.get("encerramento_por_camada")
+    if not isinstance(sessoes, dict):
+        return None, "playbook sem encerramento_por_camada valido"
+    for et in pb["etapas"]:
+        for cam in et["camada"].values():
+            if type(sessoes.get(cam)) is not bool:
+                return None, f"encerramento_por_camada: {cam} precisa declarar booleano"
+
     for d in pb.get("entregaveis", []):
         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
         if faltando:

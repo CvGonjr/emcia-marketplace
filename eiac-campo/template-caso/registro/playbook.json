@@ -1,9 +1,16 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.3",
+  "versao": "0.4.4",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
+
+  "encerramento_por_camada": {
+    "EX1": false,
+    "EX2": false,
+    "EX3": true,
+    "EX4": true
+  },
 
   "apuracao_nivel": {
     "eixos": {

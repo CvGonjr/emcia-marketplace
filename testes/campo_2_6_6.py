@@ -603,10 +603,13 @@ codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
 codigo2, saida2, erro2 = avancar(caso, encerrar="P2", autor="Celso do Vale")
 selar(caso, "selo apos P2, exigido por P3b")
 preparar_bl(caso)
+avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo3, saida3, erro3 = avancar(caso, encerrar="P3a", autor="Celso do Vale")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo4, saida4, erro4 = avancar(caso, encerrar="P3b", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo5, saida5, erro5 = avancar(caso, encerrar="P3d", autor="Celso do Vale")
+avancar(caso, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo6, saida6, erro6 = avancar(caso, encerrar="P4", autor="Celso do Vale")
 todos_ok = all(c == 0 for c in (codigo, codigo2, codigo3, codigo4, codigo5, codigo6))
 if todos_ok and estado(caso)["etapa_atual"] == "P5":
@@ -623,6 +626,7 @@ apurar_e_encerrar_f0(caso_p3b, nivel="N2")
 avancar(caso_p3b, encerrar="P1", autor="Celso do Vale")
 avancar(caso_p3b, encerrar="P2", autor="Celso do Vale")
 preparar_bl(caso_p3b)
+avancar(caso_p3b, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p3b, encerrar="P3a", autor="Celso do Vale")
 codigo, saida, erro = avancar(caso_p3b, encerrar="P3b", autor="AG-01")
 if codigo != 0:
@@ -657,14 +661,18 @@ for e in ["P1", "P2"]:
     avancar(caso_p6, encerrar=e, autor="Celso do Vale")
 selar(caso_p6, "selo apos P2, exigido por P3b")
 preparar_bl(caso_p6)
+avancar(caso_p6, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P3a", autor="Celso do Vale")
 inegociavel(caso_p6, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
 avancar(caso_p6, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P3b", autor="Celso do Vale")
+avancar(caso_p6, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P3d", autor="Celso do Vale")
+avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
 gravar_p5_agentico(caso_p6)
 ajustar_etapa_atual(caso_p6, "P6")
+avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
 codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel")
@@ -722,6 +730,7 @@ if codigo == 0 and tem_esperado:
 else:
     falha(f"2.6.6-C13 P8 sem saida esperada em todos os casos: {erro}")
 
+avancar(caso_p6, registrar_sessao="P8", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P8", autor="Celso do Vale")
 inegociavel(caso_p6, 3, "registro/piloto/CT-101.yaml", satisfazer=True, autor="Marina Prado")
 
@@ -736,6 +745,7 @@ if codigo == 0 and met_gravada.get("tipo") == "resultado" and met_gravada.get("e
 else:
     falha(f"2.6.6-C14 P9 nao produziu metrica de resultado apurada: {erro}")
 
+avancar(caso_p6, registrar_sessao="P9", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_p6, encerrar="P9", autor="Celso do Vale")
 inegociavel(caso_p6, 4, "registro/metricas/MET-101.yaml", satisfazer=True, autor="Marina Prado")
 
@@ -858,10 +868,12 @@ avancar(caso_e1e3, encerrar="P1", autor="Celso do Vale")
 avancar(caso_e1e3, encerrar="P2", autor="Celso do Vale")
 selar(caso_e1e3, "selo apos P2, exigido por P3b")
 preparar_bl(caso_e1e3)
+avancar(caso_e1e3, registrar_sessao="P3a", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_e1e3, encerrar="P3a", autor="Celso do Vale")
 inegociavel(caso_e1e3, 1, "registro/baseline/BL-101.yaml", satisfazer=True, autor="Marina Prado")
 avancar(caso_e1e3, registrar_sessao="P3b", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_e1e3, encerrar="P3b", autor="Celso do Vale")
+avancar(caso_e1e3, registrar_sessao="P3d", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_e1e3, encerrar="P3d", autor="Celso do Vale")
 codigo_e2, _, erro_e2 = entregavel(caso_e1e3, "E2", "Celso do Vale", emitir=True)
 if codigo_e2 == 0 and (caso_e1e3 / "caso" / "entregaveis" / "E2.md").exists():
@@ -869,6 +881,7 @@ if codigo_e2 == 0 and (caso_e1e3 / "caso" / "entregaveis" / "E2.md").exists():
 else:
     falha(f"2.6.6-C29 E2 nao autorizado/materializado: {erro_e2}")
 
+avancar(caso_e1e3, registrar_sessao="P4", autor="Celso do Vale", participantes="Fernanda, Celso")
 avancar(caso_e1e3, encerrar="P4", autor="Celso do Vale")
 gravar_p5_agentico(caso_e1e3)
 codigo_e3d, _, erro_e3d = avancar(caso_e1e3, emitir="E3-D", autor="Celso do Vale")

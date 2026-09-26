@@ -173,7 +173,10 @@ def percorrer_ate(caso, ate_etapa_id):
     alvo = ordem[1:ordem.index(ate_etapa_id) + 1]
     restante = set(alvo)
     for etapa_id in alvo:
-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
+        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
+        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
+                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
@@ -581,6 +584,7 @@ else:
     falha(f"2.6.3-T09 registrar evidencia do inegociavel 3 foi RECUSADO: {erro}")
 
 # ============================================================ P9 =========
+avancar(caso, registrar_sessao="P8", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P8", autor="Celso do Vale")
 
 # --- T10/T11: P9 com P8+baseline validos / sem baseline ----------------------
@@ -671,6 +675,7 @@ else:
     falha(f"2.6.3-T18b apuracao sem fatores externos foi ACEITA: exit={codigo}")
 
 # ============================================================ P10 ========
+avancar(caso, registrar_sessao="P9", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso, encerrar="P9", autor="Celso do Vale")
 
 # --- T19/T20: P10 sem/com responsavel nominal ---------------------------------
@@ -858,8 +863,10 @@ preparar_aut_decidido(caso_pendente)
 avancar(caso_pendente, registrar_sessao="P7", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso_pendente, encerrar="P7", autor="Celso do Vale")
 preparar_ct_revisado(caso_pendente)
+avancar(caso_pendente, registrar_sessao="P8", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso_pendente, encerrar="P8", autor="Celso do Vale")
 preparar_met_apurada(caso_pendente)
+avancar(caso_pendente, registrar_sessao="P9", autor="Celso do Vale", participantes="Ana, Celso")
 avancar(caso_pendente, encerrar="P9", autor="Celso do Vale")
 preparar_cal(caso_pendente)
 (caso_pendente / "rascunho" / "CAL-001-C01.yaml").write_text(

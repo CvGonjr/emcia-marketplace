@@ -47,6 +47,9 @@ jobs:
       - name: Apuração declarada do nível (A7)
         run: python3 testes/triagem_a7.py
 
+      - name: Sessão no encerramento (A8)
+        run: python3 testes/sessao_a8.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 

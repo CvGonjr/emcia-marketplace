@@ -65,6 +65,14 @@ def preparar_caso():
     caso = tmp / "caso"
     shutil.copytree(TEMPLATE, caso)
     (caso / "rascunho").mkdir(exist_ok=True)
+    estado_path = caso / "registro/estado.json"
+    st = json.loads(estado_path.read_text())
+    st["responsavel"] = "Celso do Vale"
+    estado_path.write_text(json.dumps(st))
+    for comando in (["git", "init", "-q"],
+                    ["git", "config", "user.name", "Celso do Vale"],
+                    ["git", "config", "user.email", "caso-sintetico@exemplo.com"]):
+        subprocess.run(comando, cwd=caso, check=True, capture_output=True)
     return caso
 
 
@@ -108,10 +116,17 @@ def percorrer_ate(caso, ate_etapa_id):
     apurar_e_encerrar_f0(caso)
     ordem = [e["id"] for e in pb_oficial["etapas"]]
     for etapa_id in ordem[1:ordem.index(ate_etapa_id) + 1]:
-        if etapa_id in ETAPAS_NAO_DELEGAVEIS:
+        etapa = next(e for e in pb_oficial["etapas"] if e["id"] == etapa_id)
+        nivel = json.loads((caso / "registro/estado.json").read_text())["nivel"]
+        if (etapa_id in ETAPAS_NAO_DELEGAVEIS
+                or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+        if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
+            subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),
+                            "--autor", "Celso do Vale", "--nota", f"selo apos {etapa_id}"],
+                           cwd=caso, check=True, capture_output=True)
 
 
 print("== testes 2.6.4 -- catalogo HB/AG")
