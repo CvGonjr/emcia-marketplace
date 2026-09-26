@@ -30,3 +30,5 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
 | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
 | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
+| 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
+| 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |

@@ -69,6 +69,7 @@ A ordem importa pouco, mas o núcleo é quem traz as hooks.
 | `/eiac-nucleo:gravar` | núcleo |
 | `/eiac-nucleo:curar` | núcleo |
 | `/eiac-nucleo:registrar-sessao` | núcleo |
+| `/eiac-nucleo:registrar-campo` | núcleo |
 | `/eiac-nucleo:encerrar` | núcleo |
 | `/eiac-nucleo:emitir` | núcleo |
 | `/eiac-nucleo:selar` | núcleo |
@@ -283,3 +284,28 @@ Cada linha é um evento de domínio com data e componente (variante campo/contra
 | 4/18 HB sem implementação física própria (HB-04, HB-05, HB-06, HB-13) | Catálogo formal completo; nenhuma é exigida pelo contrato F0–P10 congelado — ver `decisoes/020` |
 
 Nenhum deles impede o percurso F0 a P10, que é executável e verificado de ponta a ponta (ver `.projectdocs/evidencias/sprint2/2.6.6/`).
+
+## Registro dos campos e emissão com arquivo
+
+Com P5 corrente, confirme a classificação com a pessoa e registre antes de
+encerrar:
+
+```text
+/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
+```
+
+Aceitos pelo playbook: `agente`, `caso isolado`, `habilitador acoplado`.
+Teste campo não declarado, categoria diferente, autor agente e etapa futura:
+recusa com `TentativaNegada`, sem mudar o estado. Registro válido produz
+`CampoRegistrado`. A sessão exigida por P5 continua obrigatória no encerramento.
+
+Com o portão aberto, tente `/eiac-nucleo:emitir E3-D` antes de gerar o arquivo:
+a recusa deve indicar `caso/entregaveis/E3.md` e `/eiac-campo:emitir`.
+Use `/eiac-campo:emitir E3` para materializar e emitir o documento a partir dos
+registros reais. `NAO_APLICAVEL` para E3-E continua registrável sem arquivo.
+`--materializar` não permite substituir o caminho declarado por outro arquivo.
+
+Ao atualizar caso já aberto, atualize seu `registro/playbook.json` com as
+declarações de artefato/comando de cada entregável e de campos por etapa.
+O núcleo recusa contrato incompleto e nunca lê o playbook do plugin como
+substituto do playbook do caso.

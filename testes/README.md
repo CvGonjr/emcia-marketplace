@@ -661,3 +661,16 @@ Cinco testes cobrem o que CAT-01 seção 3.6 estabelece: **a camada de uma etapa
 | 13 | Playbook com camada plana, sem mapa por nível, é recusado |
 
 O par 9 e 10 é o mais importante do conjunto: mesma etapa, mesma habilidade, resultado oposto conforme o nível. Se os dois passarem juntos, a fronteira desloca.
+
+A9 acrescenta 13 verificações de emissão com artefato declarado; A10 acrescenta
+18 de campos, autoria e E3 ponta a ponta sem escrita direta em estado.json.
+O total completo passa a **592 verificações em 24 módulos**:
+
+```bash
+python3 testes/emissao_a9.py
+python3 testes/campos_a10.py
+```
+
+A execução integral confere códigos de saída e mensagens de falha; preserva
+todos os testes anteriores. As contagens são por teste/método, sem somar
+subtestes ou os módulos reexecutados internamente pelos testes de regressão.

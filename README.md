@@ -101,7 +101,30 @@ permanece exigida (decisões 024 e 021).
 
 E os comandos de núcleo, que valem em qualquer playbook:
 
-`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
+`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-campo` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
+
+## Campos da etapa e artefatos de emissão
+
+Antes de encerrar P5, registre a classificação confirmada pela pessoa:
+
+```text
+/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
+```
+
+O playbook declara os campos aceitos por etapa em `campos_registraveis` e a
+taxonomia em `valores`. No passo 5: `agente`, `caso isolado` ou
+`habilitador acoplado`. O registro só aceita a etapa corrente ainda aberta e
+autor pessoa nomeada; produz `CampoRegistrado`. Campo não declarado, valor
+fora da taxonomia, autor agente ou etapa incorreta produzem `TentativaNegada`.
+
+Cada entregável declara `artefato` e `comando_materializacao`. O núcleo recusa
+emissão sem o arquivo esperado, indicando seu caminho e `/eiac-campo:emitir`.
+Esse comando materializa a partir dos registros reais do caso. E3-D/E3-E
+compartilham `caso/entregaveis/E3.md`; `NAO_APLICAVEL` dispensa arquivo e fica
+registrado. Toda emissão autorizada guarda arquivo, versão e pessoa autora.
+
+Casos existentes atualizam explicitamente seu próprio playbook; não recebem
+essas declarações do plugin automaticamente.
 
 ## Verificação por estados do caso
 
