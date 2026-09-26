@@ -1,0 +1,29 @@
+Componente congelado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+Diretório: /tmp/caso-f0
+$ python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/estado.py
+{
+  "caso": "caso-f0",
+  "nivel": "N1",
+  "etapa_atual": "P1",
+  "camada_atual": "EX2",
+  "modalidade_atual": "video",
+  "cumprimentos": {
+    "F0": {
+      "eixos": "DAD 3, GOV 1, CRI 1",
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    }
+  },
+  "inegociaveis": {},
+  "selo": null,
+  "responsavel": "Celso do Vale",
+  "entregaveis_emitidos": {
+    "E1": {
+      "arquivo": "caso/entregaveis/E1.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    }
+  }
+}
+
+Código de saída: 0

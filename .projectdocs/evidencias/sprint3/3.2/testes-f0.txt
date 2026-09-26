@@ -1,0 +1,48 @@
+Fase F0 — Sprint 3, ação 3.2
+Data: 2026-09-26T08:55:22.969670
+Tag: v-sprint3-poc
+Objeto da tag: de68c888c773bde7add2946600421d8464d68fe1
+Commit verificado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+
+23 verificações selecionadas: 9 + 7 + 4 + 3; zero falhas.
+170 verificações nos quatro módulos integrais; zero falhas.
+Pré-verificação adicional exigida por AGENTS.md: contexto.py, 11 aprovadas.
+
+$ bash testes/negativos.sh
+Módulo integral: saída 0; 51 verificações aprovadas.
+Recorte F0: 9 verificações.
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 caso com responsavel agente recusado na abertura
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+
+$ python3 testes/autoria_responsavel.py
+Módulo integral: saída 0; 14 verificações aprovadas.
+Recorte F0: 7 verificações.
+  ok    novo-caso.sh recusa responsavel codigo de agente ('AG-01')
+  ok    novo-caso.sh recusa responsavel codigo de agente ('agente')
+  ok    novo-caso.sh recusa responsavel placeholder ('<nome da pessoa>')
+  ok    novo-caso.sh recusa responsavel coletivo generico ('equipe')
+  ok    novo-caso.sh recusa responsavel vazio ('')
+  ok    novo-caso.sh grava responsavel valido em registro/estado.json
+  ok    novo-caso.sh emite CasoAberto com o responsavel
+
+$ python3 testes/campo_2_6_5.py
+Módulo integral: saída 0; 62 verificações aprovadas.
+Recorte F0: 4 verificações.
+  ok    2.6.5-T13 E1 antes de F0 completo: NEGADO
+  ok    2.6.5-T14 E1 apos F0: AUTORIZADO
+  ok    2.6.5-T15 materializacao de E1: arquivo real existente (/tmp/tmpkeeejtr1/caso/caso/entregaveis/E1.md)
+  ok    2.6.5-T43 E1 contem secoes obrigatorias do modelo oficial
+
+$ python3 testes/campo_2_6_6.py
+Módulo integral: saída 0; 43 verificações aprovadas.
+Recorte F0: 3 verificações.
+  ok    2.6.6-C02 caso novo inicia em F0
+  ok    2.6.6-C03 F0 encerrada e etapa avanca para P1
+  ok    2.6.6-C28 E1 autorizado e materializado (Ficha de Enquadramento)

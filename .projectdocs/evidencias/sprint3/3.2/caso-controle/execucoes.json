@@ -1,0 +1,189 @@
+{
+  "componente": "737525a1c92a163bc375e80ae7a54a58f0a6d0be",
+  "caso": "/tmp/caso-f0",
+  "execucoes": [
+    {
+      "arquivo": "01-abertura.txt",
+      "comando": [
+        "bash",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/novo-caso.sh",
+        "caso-f0",
+        "--responsavel",
+        "Celso do Vale",
+        "/tmp"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "02-estado-inicial.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/estado.py"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "03-recusa-autor-agente.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N2",
+        "--autor",
+        "AG-01",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 1
+    },
+    {
+      "arquivo": "04-apuracao-n2.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N2",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "apuracao-N1.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N1",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "fronteira-N1.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/fronteira.py"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "apuracao-N2.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N2",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "fronteira-N2.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/fronteira.py"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "apuracao-N3.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N3",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "fronteira-N3.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/fronteira.py"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "05-restabelecer-n2.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N2",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 2, GOV 1, CRI 2"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "06-encerrar-f0.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--encerrar",
+        "F0",
+        "--autor",
+        "Celso do Vale"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "07-emissao-e1.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/entregaveis.py",
+        "--renderizar",
+        "E1",
+        "--autor",
+        "Celso do Vale",
+        "--emitir"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "08-estado-apos-f0.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/estado.py"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "09-achado-A7.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py",
+        "--apurar-nivel",
+        "N1",
+        "--autor",
+        "Celso do Vale",
+        "--eixos",
+        "DAD 3, GOV 1, CRI 1"
+      ],
+      "saida": 0
+    },
+    {
+      "arquivo": "10-estado-apos-A7.txt",
+      "comando": [
+        "python3",
+        "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/estado.py"
+      ],
+      "saida": 0
+    }
+  ]
+}

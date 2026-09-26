@@ -1,0 +1,7 @@
+Componente congelado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+Diretório: /tmp/caso-f0
+$ python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/entregaveis.py --renderizar E1 --autor 'Celso do Vale' --emitir
+E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+
+Código de saída: 0

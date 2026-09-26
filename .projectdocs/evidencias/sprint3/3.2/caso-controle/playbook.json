@@ -1,0 +1,142 @@
+{
+  "nome": "Engenharia de IA de Campo",
+  "versao": "0.4.2",
+  "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+
+  "niveis": ["N1", "N2", "N3"],
+
+  "procedencia": {
+    "valores": ["D", "I", "V"],
+    "rotulos": {
+      "D": "Declarada",
+      "I": "Inferida",
+      "V": "Verificada"
+    }
+  },
+
+  "dimensoes": {
+    "apuracao": ["medido", "calculado", "estimado"],
+    "tipo_fonte": ["interna", "externa"]
+  },
+
+  "etapas": [
+    {
+      "id": "F0", "nome": "Enquadramento e triagem",
+      "modalidade": "assincrono", "habilidade": "hb-enquadrar",
+      "hb": ["HB-01", "HB-02", "HB-03"],
+      "camada": { "N1": "EX1", "N2": "EX1", "N3": "EX1" }
+    },
+    {
+      "id": "P1", "nome": "Contexto de negocio",
+      "modalidade": "video", "habilidade": "hb-mapear-contexto",
+      "hb": ["HB-08", "HB-09"],
+      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
+    },
+    {
+      "id": "P2", "nome": "Fontes e regras candidatas",
+      "modalidade": "assincrono", "habilidade": "hb-extrair-regras",
+      "hb": ["HB-07"],
+      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
+    },
+    {
+      "id": "P3a", "nome": "Linha de base",
+      "modalidade": "remoto", "habilidade": "hb-medir",
+      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P3b", "nome": "Levantamento de regras nao documentadas",
+      "modalidade": "presencial", "habilidade": "hb-levantar-regras",
+      "delegavel": false, "exige_selo_apos": "P2",
+      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
+    },
+    {
+      "id": "P3d", "nome": "Confronto declarado x observado",
+      "modalidade": "remoto", "habilidade": "hb-confrontar",
+      "depende_de": "P3b",
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P4", "nome": "Priorizacao e zona de contencao",
+      "modalidade": "video", "habilidade": "hb-priorizar",
+      "hb": ["HB-10"],
+      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P5", "nome": "Classificacao tecnologica",
+      "modalidade": "video", "habilidade": "hb-classificar",
+      "hb": ["HB-11", "HB-12"],
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P6", "nome": "Operacionalize a solucao",
+      "modalidade": "presencial_ou_remoto", "habilidade": "hb-operacionalizar",
+      "depende_de": "P5",
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P7", "nome": "Estabeleca governanca e conformidade",
+      "modalidade": "decisao_humana_registrada", "habilidade": "hb-governar",
+      "hb": ["HB-14"],
+      "delegavel": false,
+      "depende_de": "P6",
+      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
+    },
+    {
+      "id": "P8", "nome": "Pilote, valide e escale",
+      "modalidade": "conforme_nivel", "habilidade": "hb-pilotar",
+      "hb": ["HB-15", "HB-16"],
+      "depende_de": "P7",
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P9", "nome": "Meca o valor gerado",
+      "modalidade": "conforme_nivel", "habilidade": "hb-medir-valor",
+      "hb": ["HB-17"],
+      "depende_de": "P8",
+      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
+    },
+    {
+      "id": "P10", "nome": "Aprenda, recalibre e evolua",
+      "modalidade": "conforme_nivel", "habilidade": "hb-recalibrar",
+      "hb": ["HB-18"],
+      "depende_de": "P9",
+      "delegavel": false,
+      "recorrente": true,
+      "cadencia_obrigatoria": true,
+      "responsavel_obrigatorio": true,
+      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
+      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" }
+    }
+  ],
+
+  "deslocamento_por_nivel": {
+    "referencia": "EMCIA-CAT-01 secao 3.6",
+    "N1": { "preparacao_automatizada_ate": "P4", "verificacao_obrigatoria_a_partir_de": "P5" },
+    "N2": { "preparacao_automatizada_ate": "P2", "verificacao_obrigatoria_a_partir_de": "P3a" },
+    "N3": { "preparacao_automatizada_ate": "F0", "verificacao_obrigatoria_a_partir_de": "P1" }
+  },
+
+  "entregaveis": [
+    { "id": "E1", "portao": ["F0"] },
+    { "id": "E2", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+    { "id": "E3-D", "portao": ["P4","P5"] },
+    {
+      "id": "E3-E", "portao": ["P5"],
+      "condicao": {
+        "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
+        "campo": "classificacao_tecnologica", "etapa": "P5",
+        "operador": "contem", "valor": "agente"
+      }
+    },
+    { "id": "E4", "portao": ["P6","P7"], "inegociavel": [2] },
+    { "id": "E5", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
+  ],
+
+  "inegociaveis": [
+    { "n": 1, "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "passo": "P3a" },
+    { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
+    { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
+    { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
+    { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
+  ]
+}

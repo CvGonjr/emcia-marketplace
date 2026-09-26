@@ -1,0 +1,24 @@
+Componente congelado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+Diretório: /tmp/caso-f0
+$ python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/fronteira.py
+Fronteira de delegacao | caso caso-f0 | nivel N2
+
+   etapa  camada  modalidade   natureza
+-> F0     EX1     assincrono   preparacao delegavel
+   P1     EX2     video        preparacao delegavel
+   P2     EX2     assincrono   preparacao delegavel
+   P3a    EX3     remoto       exige verificacao humana
+   P3b    EX4     presencial   nao delegavel
+   P3d    EX3     remoto       exige verificacao humana
+   P4     EX3     video        exige verificacao humana
+   P5     EX3     video        exige verificacao humana
+   P6     EX3     presencial_ou_remoto exige verificacao humana
+   P7     EX4     decisao_humana_registrada nao delegavel
+   P8     EX3     conforme_nivel exige verificacao humana
+   P9     EX3     conforme_nivel exige verificacao humana
+   P10    EX4     conforme_nivel nao delegavel
+
+A partir de P3a (EX3): exige verificacao humana.
+Declarado no playbook para N2: preparacao automatizada ate P2, verificacao obrigatoria a partir de P3a.
+
+Código de saída: 0

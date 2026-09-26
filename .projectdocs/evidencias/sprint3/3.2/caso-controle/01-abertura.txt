@@ -1,0 +1,24 @@
+Componente congelado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+Diretório: /home/netiv-dn-1/Projetos/emcia-marketplace
+$ bash /home/netiv-dn-1/Projetos/emcia-marketplace/novo-caso.sh caso-f0 --responsavel 'Celso do Vale' /tmp
+
+caso "caso-f0" criado em /tmp/caso-f0
+
+Falta uma coisa antes de comecar:
+
+  copie os documentos do metodo para /tmp/caso-f0/metodo/
+  documento do metodo, glossario, catalogo de delegacao, quadro de
+  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+  verificacao, CTX-01
+
+Os artefatos da organizacao vao para /tmp/caso-f0/fontes/ — leia o README
+de la antes de commitar documento de cliente.
+
+Depois:
+
+  cd "/tmp/caso-f0" && claude
+
+E confirme com  /eiac-nucleo:estado
+
+
+Código de saída: 0

@@ -1,0 +1,24 @@
+{
+  "caso": "caso-f0",
+  "nivel": "N2",
+  "etapa_atual": "P1",
+  "camada_atual": "EX2",
+  "modalidade_atual": "video",
+  "cumprimentos": {
+    "F0": {
+      "eixos": "DAD 2, GOV 1, CRI 2",
+      "cumprido": true,
+      "autor": "Celso do Vale"
+    }
+  },
+  "inegociaveis": {},
+  "selo": null,
+  "responsavel": "Celso do Vale",
+  "entregaveis_emitidos": {
+    "E1": {
+      "arquivo": "caso/entregaveis/E1.md",
+      "versao": 1,
+      "autor": "Celso do Vale"
+    }
+  }
+}

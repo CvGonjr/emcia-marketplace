@@ -1,0 +1,6 @@
+Componente congelado: 737525a1c92a163bc375e80ae7a54a58f0a6d0be
+Diretório: /tmp/caso-f0
+$ python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --apurar-nivel N2 --autor 'Celso do Vale' --eixos 'DAD 2, GOV 1, CRI 2'
+ok | etapa atual: F0 | camada: EX1
+
+Código de saída: 0
