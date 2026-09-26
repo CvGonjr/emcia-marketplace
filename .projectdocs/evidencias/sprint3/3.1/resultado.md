@@ -1,4 +1,4 @@
-# Sprint 3 — Pacote 3.2
+# Sprint 3 — Pacote 3.1 — congelamento da versão
 
 ## 1. Identificação
 
