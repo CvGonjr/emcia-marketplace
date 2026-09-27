@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import unittest
 
+from apoio.preparar import produto as preparar_produto
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 SCRIPT = RAIZ / "eiac-nucleo/scripts/avancar.py"
 REGRAS = {"EX1": False, "EX2": False, "EX3": True, "EX4": True}
@@ -73,6 +74,7 @@ class SessaoA8(unittest.TestCase):
         self.assertEqual(self.ultimo_evento()["evento"], "SessaoDeCampoRegistrada")
 
     def encerramento(self, etapa):
+        preparar_produto(self.caso, etapa)
         result = self.executar("--encerrar", etapa)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(json.loads(self.estado.read_text())["cumprimentos"][etapa]["cumprido"])

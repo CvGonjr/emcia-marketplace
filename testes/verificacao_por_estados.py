@@ -27,6 +27,7 @@ import subprocess
 import sys
 import tempfile
 
+from apoio.preparar import produto as preparar_produto
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
 GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
@@ -106,6 +107,7 @@ def levar_ate_p3b(caso):
     if codigo != 0:
         return codigo, saida, erro
     avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
+    preparar_produto(caso, "P3a")
     codigo, saida, erro = avancar(caso, encerrar="P3a", autor="Celso do Vale")
     if codigo != 0:
         return codigo, saida, erro
@@ -165,6 +167,7 @@ with tempfile.TemporaryDirectory() as tmp:
         falha(f"T03 pre-condicao: P2 nao encerrou: {erro}")
     else:
         avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
+        preparar_produto(caso, "P3a")
         avancar(caso, encerrar="P3a", autor="Celso do Vale")
         avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
         codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})

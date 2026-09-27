@@ -22,6 +22,8 @@ import subprocess
 import sys
 import tempfile
 
+from apoio.preparar import produto as preparar_produto
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 _spec = importlib.util.spec_from_file_location(
@@ -189,6 +191,7 @@ def percorrer_ate(caso, ate_etapa_id, nivel="N2"):
                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
+        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
         restante.discard(etapa_id)
         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])

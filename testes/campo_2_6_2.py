@@ -22,6 +22,8 @@ import subprocess
 import sys
 import tempfile
 
+from apoio.preparar import produto as preparar_produto
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 _spec = importlib.util.spec_from_file_location(
@@ -125,6 +127,7 @@ def percorrer_ate(caso, ate_etapa_id):
                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
+        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
         if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
             subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),

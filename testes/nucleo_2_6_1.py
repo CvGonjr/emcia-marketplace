@@ -18,6 +18,8 @@ import subprocess
 import sys
 import tempfile
 
+from apoio.preparar import produto as preparar_produto
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
 AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
@@ -137,6 +139,7 @@ def percorrer_ate(caso, ate_etapa_id):
                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
+        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
         restante.discard(etapa_id)
         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
@@ -174,6 +177,7 @@ else:
 caso_dep = preparar_caso()
 apurar_e_encerrar_f0(caso_dep)
 for e in ["P1", "P2", "P3a"]:
+    preparar_produto(caso_dep, e)
     avancar(caso_dep, encerrar=e, autor="Celso do Vale")
 # nao registra sessao nem encerra P3b -- forca o estado para P3d (que
 # depende de P3b) sem que P3b esteja cumprida, e usa avancar.py --encerrar,
@@ -202,6 +206,7 @@ else:
 caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
 for e in ["P1", "P2", "P3a"]:
+    preparar_produto(caso, e)
     avancar(caso, encerrar=e, autor="Celso do Vale")
 selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
@@ -222,6 +227,7 @@ else:
     falha(f"2.6.1-T05 etapa delegavel RECUSADA: {erro}")
 
 for e in ["P2", "P3a"]:
+    preparar_produto(caso, e)
     avancar(caso, encerrar=e, autor="Celso do Vale")
 selar(caso, "selo apos P2, exigido por P3b")
 # etapa corrente agora e P3b, delegavel:false
@@ -353,6 +359,7 @@ else:
 caso = preparar_caso()
 apurar_e_encerrar_f0(caso)
 for e in ["P1", "P2", "P3a"]:
+    preparar_produto(caso, e)
     avancar(caso, encerrar=e, autor="Celso do Vale")
 selar(caso, "selo apos P2, exigido por P3b")
 avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")

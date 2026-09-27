@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import unittest
 
+from apoio.preparar import produto as preparar_produto
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 SCRIPT = RAIZ / 'eiac-nucleo/scripts/avancar.py'
 VALORES = ['agente', 'caso isolado', 'habilitador acoplado']
@@ -159,6 +160,7 @@ class CamposA10(unittest.TestCase):
                 r = self.executar('--registrar-sessao', et['id'], '--participantes',
                                   'Celso do Vale, Pessoa Cliente')
                 self.assertEqual(r.returncode, 0, r.stderr)
+            preparar_produto(self.caso, et['id'])
             r = self.executar('--encerrar', et['id'])
             self.assertEqual(r.returncode, 0, r.stderr)
             if any(e.get('exige_selo_apos') == et['id'] for e in pb['etapas']):

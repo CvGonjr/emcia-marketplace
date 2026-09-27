@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 
+from apoio.preparar import produto as preparar_produto
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 _spec = importlib.util.spec_from_file_location(
@@ -651,6 +652,7 @@ avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fe
 avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
 gravar_p5_agentico(caso_p6)
 avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
+preparar_produto(caso_p6, "P6")
 codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel")
@@ -671,6 +673,7 @@ else:
 # C10/C11/C12 -- P7 operacional, agente nao decide, humano decide
 # ======================================================================
 avancar(caso_p6, registrar_sessao="P7", autor="Celso do Vale", participantes="Fernanda, Celso")
+preparar_produto(caso_p6, "P7")
 codigo, saida, erro = avancar(caso_p6, encerrar="P7", autor="Celso do Vale")
 if codigo == 0:
     ok("2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel")

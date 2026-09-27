@@ -20,6 +20,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
 import apuracao as A
+import produtos as R
 
 
 class _RecusaSessao(str):
@@ -92,6 +93,10 @@ def encerrar(st, pb, etapa_id, autor):
     selo_ok, motivo_selo = P.selo_apos_etapa(pb, etapa_id, E.eventos())
     if not selo_ok:
         return motivo_selo
+
+    faltas = R.faltas(et, st)
+    if faltas:
+        return _RecusaSessao(f"{etapa_id}: produto de encerramento ausente: " + "; ".join(faltas))
 
     st["cumprimentos"].setdefault(etapa_id, {})
     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})

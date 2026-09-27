@@ -58,6 +58,10 @@ def carregar():
                         or any(not isinstance(v, str) or not v.strip() for v in valores_campo)
                         or len(valores_campo) != len(set(valores_campo))):
                     return None, f"etapa {e['id']}: valores invalidos para campo {nome}"
+        import produtos as R
+        erro_produto = R.validar(e)
+        if erro_produto:
+            return None, erro_produto
         dep = e.get("depende_de")
         if dep and dep not in ids_etapa:
             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
