@@ -121,6 +121,32 @@
           "EX4"
         ]
       }
+    },
+    {
+      "id": "revisar-piloto",
+      "script": "piloto.py",
+      "condicao": {
+        "tipo": "arquivo",
+        "argumento": "--arquivo",
+        "diretorio": "rascunho",
+        "campo": "estado",
+        "operador": "igual",
+        "valor": "revisado",
+        "preparacao": [
+          "rascunho"
+        ]
+      }
+    },
+    {
+      "id": "definir-rotina",
+      "script": "calibragem.py",
+      "condicao": {
+        "tipo": "arquivo",
+        "argumento": "--arquivo",
+        "diretorio": "rascunho",
+        "campo": "responsavel",
+        "operador": "preenchido"
+      }
     }
   ],
 
