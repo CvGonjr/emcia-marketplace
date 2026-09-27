@@ -15,12 +15,14 @@ Regras, sem ordem fixa exigida entre si:
       do agente
   G7  habilidade de etapa que declara "exige_selo_apos" nao carrega sem
       selo posterior ao encerramento da etapa referenciada
+  G8  operações humanas declaradas no playbook não executam pela sessão
 """
 import json, os, pathlib, re, shlex, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
+import decisao_humana as H
 
 
 META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
@@ -124,6 +126,20 @@ def main():
     nivel = st.get("nivel")
     etapa = P.etapa(pb, etapa_id) or {}
     camada_corrente = P.camada(pb, etapa_id, nivel)
+
+    # Toda chamada recebida neste hook vem da sessão do agente. A
+    # identidade digitada não muda essa origem; condições vêm do caso.
+    if ferramenta == "Bash":
+        decisao = H.avaliar(pb, st, comando)
+        if decisao:
+            operacao, motivo = decisao
+            negar(
+                f"{motivo} A decisao humana e executada pelo engenheiro no "
+                f"proprio terminal, fora da sessao do Claude Code. "
+                f"Comando exato: {comando}",
+                operacao=operacao, acao_tentada=operacao, comando=comando,
+                autor=st.get("responsavel"), etapa=etapa_id, ferramenta=ferramenta,
+            )
 
     # G1 — habilidade de camada humana nao carrega sem sessao valida
     # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):

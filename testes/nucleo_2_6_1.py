@@ -408,10 +408,10 @@ else:
 codigo, saida, erro = guarda(caso, "Bash", {
     "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3, GOV 3, CRI 3'"
 })
-if codigo == 0:
-    ok("2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional")
+if codigo == 2 and "proprio terminal" in erro:
+    ok("2.6.1-T22 apuracao por Bash da sessao recusada, mesmo com nome humano")
 else:
-    falha(f"2.6.1-T22 chamada autorizada ao nucleo foi bloqueada pela guarda: exit={codigo} stderr={erro}")
+    falha(f"2.6.1-T22 decisao pela sessao deveria ser recusada: exit={codigo} stderr={erro}")
 
 # --- T23/T24: regressao de contexto/ (Acao 2.5) ------------------------------
 caso = preparar_caso()

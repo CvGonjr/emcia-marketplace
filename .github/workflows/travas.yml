@@ -56,6 +56,9 @@ jobs:
       - name: Campos declarados e E3 ponta a ponta (A10)
         run: python3 testes/campos_a10.py
 
+      - name: Decisão humana fora da sessão (A12)
+        run: python3 testes/decisao_a12.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 

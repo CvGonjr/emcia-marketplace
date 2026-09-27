@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.6",
+  "versao": "0.4.7",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -11,6 +11,118 @@
     "EX3": true,
     "EX4": true
   },
+
+  "decisoes_humanas": [
+    {
+      "id": "decidir-autonomia",
+      "script": "governanca.py",
+      "condicao": {
+        "tipo": "arquivo",
+        "argumento": "--arquivo",
+        "diretorio": "rascunho",
+        "campo": "estado",
+        "operador": "igual",
+        "valor": "decidido",
+        "preparacao": [
+          "rascunho",
+          "proposto"
+        ]
+      }
+    },
+    {
+      "id": "validar-operacional",
+      "script": "operacional.py",
+      "condicao": {
+        "tipo": "arquivo",
+        "argumento": "--arquivo",
+        "diretorio": "rascunho",
+        "campo": "estado",
+        "operador": "igual",
+        "valor": "validado",
+        "preparacao": [
+          "proposta"
+        ]
+      }
+    },
+    {
+      "id": "decidir-recalibragem",
+      "script": "calibragem.py",
+      "condicao": {
+        "tipo": "arquivo",
+        "argumento": "--arquivo",
+        "diretorio": "rascunho",
+        "campo": "decisao",
+        "operador": "preenchido"
+      }
+    },
+    {
+      "id": "apurar-nivel",
+      "script": "avancar.py",
+      "argumento": "--apurar-nivel",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "registrar-sessao",
+      "script": "avancar.py",
+      "argumento": "--registrar-sessao",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "registrar-campo",
+      "script": "avancar.py",
+      "argumento": "--registrar-campo",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "registrar-recorrencia",
+      "script": "avancar.py",
+      "argumento": "--registrar-recorrencia",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "satisfazer-inegociavel",
+      "script": "avancar.py",
+      "argumento": "--satisfazer-inegociavel",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "satisfazer-inegociavel-campo",
+      "script": "inegociaveis.py",
+      "argumento": "--satisfazer",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "preparar-controle",
+      "script": "preparar-caso.sh",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "encerrar-camada-humana",
+      "script": "avancar.py",
+      "argumento": "--encerrar",
+      "condicao": {
+        "tipo": "camada",
+        "camadas": [
+          "EX3",
+          "EX4"
+        ]
+      }
+    }
+  ],
 
   "apuracao_nivel": {
     "eixos": {

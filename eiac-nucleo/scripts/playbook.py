@@ -73,6 +73,12 @@ def carregar():
             if type(sessoes.get(cam)) is not bool:
                 return None, f"encerramento_por_camada: {cam} precisa declarar booleano"
 
+    # Importação local evita ciclo: o avaliador também resolve etapas.
+    import decisao_humana as H
+    erro_humano = H.validar(pb.get("decisoes_humanas"))
+    if erro_humano:
+        return None, erro_humano
+
     for d in pb.get("entregaveis", []):
         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
         if faltando:

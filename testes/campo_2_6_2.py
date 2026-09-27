@@ -407,13 +407,14 @@ if codigo == 2 and "registro/" in erro:
 else:
     falha(f"2.6.2-T18 escrita direta em registro/governanca/ NAO foi bloqueada: exit={codigo}")
 
+(caso3 / "rascunho/AUT-002.yaml").write_text(aut_yaml("proposto", 2, id="AUT-002"), encoding="utf-8")
 codigo, saida, erro = guarda(caso3, "Bash", {
     "command": f"python3 {GOVERNANCA} --arquivo registro/governanca/autonomia/AUT-002.yaml --ator 'Marina Prado'"
 })
 if codigo == 0:
-    ok("2.6.2-T19 alteracao pelo caminho autorizado (governanca.py via Bash) funcional")
+    ok("2.6.2-T19 preparacao de termo proposto (governanca.py via Bash) permitida")
 else:
-    falha(f"2.6.2-T19 caminho autorizado foi bloqueado pela guarda: exit={codigo} stderr={erro}")
+    falha(f"2.6.2-T19 preparacao foi bloqueada pela guarda: exit={codigo} stderr={erro}")
 
 # --- T20/T21: acao classificada como autonoma so apos decisao humana -------
 if aut_dict.get("estado") == "decidido" and aut_dict.get("decisor"):
