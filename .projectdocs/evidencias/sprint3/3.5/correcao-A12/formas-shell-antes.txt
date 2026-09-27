@@ -1,0 +1,49 @@
+test_33_encerramento_composto_contexto_incerto (a12_shell.DecisaoA12.test_33_encerramento_composto_contexto_incerto) ... FAIL
+test_34_opcao_interpretador_com_valor (a12_shell.DecisaoA12.test_34_opcao_interpretador_com_valor) ... FAIL
+test_35_execucao_por_modulo (a12_shell.DecisaoA12.test_35_execucao_por_modulo) ... FAIL
+test_36_codigo_inline_invoca_script_de_decisao (a12_shell.DecisaoA12.test_36_codigo_inline_invoca_script_de_decisao) ... FAIL
+
+======================================================================
+FAIL: test_33_encerramento_composto_contexto_incerto (a12_shell.DecisaoA12.test_33_encerramento_composto_contexto_incerto)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 213, in test_33_encerramento_composto_contexto_incerto
+    self.recusa('cd /tmp/outro-caso && '+self.comando('avancar.py', '--encerrar P3a --autor "Celso do Vale"'), 'encerrar-camada-humana')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 71, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_34_opcao_interpretador_com_valor (a12_shell.DecisaoA12.test_34_opcao_interpretador_com_valor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 217, in test_34_opcao_interpretador_com_valor
+    self.recusa(c, 'registrar-sessao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 71, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_35_execucao_por_modulo (a12_shell.DecisaoA12.test_35_execucao_por_modulo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 220, in test_35_execucao_por_modulo
+    self.recusa('python3 -m avancar --registrar-sessao P6 --autor "Celso do Vale"', 'registrar-sessao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 71, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_36_codigo_inline_invoca_script_de_decisao (a12_shell.DecisaoA12.test_36_codigo_inline_invoca_script_de_decisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 223, in test_36_codigo_inline_invoca_script_de_decisao
+    self.recusa("python3 -c 'import avancar; avancar.main()' --registrar-sessao P6 --autor \"Celso do Vale\"", 'apurar-nivel')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 71, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.224s
+
+FAILED (failures=4)

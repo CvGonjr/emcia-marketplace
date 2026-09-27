@@ -1,0 +1,14 @@
+Caso sintético: /tmp/emcia-demos-a12-final/controle-final
+Etapa final: P7; nível N2; OP-001 validado; AUT-001 proposto.
+
+$ como-agente.sh 'python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"'
+PERMITIDO | a guarda permite esta chamada; o comando não foi executado.
+
+$ como-agente.sh 'python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator "Celso do Vale"'
+NEGADO | Candidato rascunho/OP-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator "Celso do Vale"
+
+$ como-agente.sh 'python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --autor "Celso do Vale" --participantes "X"'
+NEGADO | Operacao declarada como decisao humana. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --autor "Celso do Vale" --participantes "X"
+
+$ como-agente.sh 'cat registro/estado.json'
+PERMITIDO | a guarda permite esta chamada; o comando não foi executado.

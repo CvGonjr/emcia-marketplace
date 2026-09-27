@@ -1,0 +1,1555 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 87f803c..65963e6 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -56,6 +56,9 @@ jobs:
+       - name: Campos declarados e E3 ponta a ponta (A10)
+         run: python3 testes/campos_a10.py
+ 
++      - name: Decisão humana fora da sessão (A12)
++        run: python3 testes/decisao_a12.py
++
+       - name: Habilitação administrativa
+         run: python3 testes/habilitacao.py
+ 
+diff --git a/.projectdocs/demos/como-agente.sh b/.projectdocs/demos/como-agente.sh
+new file mode 100755
+index 0000000..b4dfb6a
+--- /dev/null
++++ b/.projectdocs/demos/como-agente.sh
+@@ -0,0 +1,22 @@
++#!/usr/bin/env bash
++# Execute dentro do caso, no terminal. Apenas simula a chamada à guarda.
++set -euo pipefail
++if [ "$#" -ne 1 ]; then
++  echo 'uso: como-agente.sh "<comando>" (dentro do caso)' >&2
++  exit 1
++fi
++raiz_demo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
++python3 - "$raiz_demo" "$1" <<'PY'
++import json, pathlib, subprocess, sys
++raiz, comando = pathlib.Path(sys.argv[1]), sys.argv[2]
++r = subprocess.run([sys.executable, str(raiz / 'eiac-nucleo/scripts/guarda.py')],
++                   input=json.dumps({'tool_name': 'Bash', 'tool_input': {'command': comando}}),
++                   text=True, capture_output=True)
++if r.returncode == 0:
++    print('PERMITIDO | a guarda permite esta chamada; o comando não foi executado.')
++elif r.returncode == 2:
++    print('NEGADO | '+r.stderr.strip())
++else:
++    print('ERRO | '+(r.stderr.strip() or r.stdout.strip()), file=sys.stderr)
++    sys.exit(r.returncode)
++PY
+diff --git a/.projectdocs/demos/preparar-caso.sh b/.projectdocs/demos/preparar-caso.sh
+new file mode 100755
+index 0000000..1b2ef2b
+--- /dev/null
++++ b/.projectdocs/demos/preparar-caso.sh
+@@ -0,0 +1,74 @@
++#!/usr/bin/env bash
++# Caso sintético para demonstração; executar pelo engenheiro no terminal.
++# "até etapa" significa deixá-la corrente, ainda aberta.
++set -euo pipefail
++if [ "$#" -ne 2 ]; then
++  echo 'uso: preparar-caso.sh <nome> <ate-etapa>' >&2
++  exit 1
++fi
++raiz_demo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
++base_demo="${EMCIA_DEMO_BASE:-/tmp/emcia-demos}"
++python3 - "$raiz_demo" "$base_demo" "$1" "$2" <<'PY'
++import datetime, json, pathlib, subprocess, sys
++raiz, base, nome, ate = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3], sys.argv[4]
++pb = json.loads((raiz / 'eiac-campo/template-caso/registro/playbook.json').read_text())
++if ate not in [e['id'] for e in pb['etapas']]:
++    sys.exit('etapa não declarada: '+ate)
++caso = base / nome
++pessoa = 'Celso do Vale'
++
++def rodar(comando, cwd=None):
++    r = subprocess.run(comando, cwd=cwd, text=True, capture_output=True)
++    if r.returncode:
++        sys.exit(r.stderr.strip() or r.stdout.strip())
++    return r.stdout
++
++rodar(['bash', str(raiz / 'novo-caso.sh'), nome, '--responsavel', pessoa, str(base)])
++for chave, valor in [('user.name', pessoa), ('user.email', 'controle@exemplo.com')]:
++    rodar(['git', 'config', chave, valor], caso)
++
++def avancar(*args):
++    return rodar([sys.executable, str(raiz / 'eiac-nucleo/scripts/avancar.py'), *args, '--autor', pessoa], caso)
++
++def candidato(nome_arq, dados):
++    # YAML simples também funciona sem PyYAML. Grava apenas rascunho;
++    # registros passam pelos scripts de campo.
++    (caso / 'rascunho').mkdir(exist_ok=True)
++    (caso / 'rascunho' / nome_arq).write_text('\n'.join(
++        chave+': '+json.dumps(valor, ensure_ascii=False) for chave, valor in dados.items())+'\n')
++
++def campo(script, destino):
++    rodar([sys.executable, str(raiz / 'eiac-campo/scripts' / script), '--arquivo', destino, '--ator', pessoa], caso)
++
++hoje = datetime.date.today().isoformat()
++op = dict(id='OP-001', estado='proposta', ponto_insercao='Fila sintética de pedidos', momento='Após recepção', sistema='Sistema de controle sintético', entrada='Pedido fictício', saida='Sugestão de encaminhamento', ator_humano=pessoa, excecao='Pedido sem referência', fallback='Revisão manual', responsavel_operacional=pessoa, procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=hoje, versao=1)
++aut = dict(id='AUT-001', estado='rascunho', operacional_ref='OP-001', escopo='Controle sintético da demonstração', faz_sozinha=['Preparar sugestão'], exige_aprovacao=['Aplicar sugestão'], nunca_faz=['Alterar dados de cliente'], gatilhos_escalonamento=['Referência ausente'], procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=hoje, versao=1)
++avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
++for et in pb['etapas']:
++    eid = et['id']
++    if eid == 'P5':
++        avancar('--registrar-campo', eid, '--campo', 'classificacao_tecnologica', '--valor', 'agente')
++    if eid == 'P6':
++        candidato('OP-001.yaml', op)
++        campo('operacional.py', 'registro/operacional/OP-001.yaml')
++        if ate != eid:
++            op.update(estado='validado', versao=2, validado_por=pessoa, data_validacao=hoje)
++            candidato('OP-001.yaml', op)
++            campo('operacional.py', 'registro/operacional/OP-001.yaml')
++    if eid == 'P7':
++        candidato('AUT-001.yaml', aut)
++        campo('governanca.py', 'registro/governanca/autonomia/AUT-001.yaml')
++        aut.update(estado='proposto', versao=2)
++        candidato('AUT-001.yaml', aut)
++        campo('governanca.py', 'registro/governanca/autonomia/AUT-001.yaml')
++    if pb['encerramento_por_camada'][et['camada']['N2']] or et.get('delegavel') is False:
++        avancar('--registrar-sessao', eid, '--participantes', pessoa+', Pessoa Cliente (controle sintético)')
++    if eid == ate:
++        break
++    avancar('--encerrar', eid)
++    if any(e.get('exige_selo_apos') == eid for e in pb['etapas']):
++        rodar([sys.executable, str(raiz / 'eiac-nucleo/scripts/selar.py'), '--autor', pessoa, '--nota', 'controle sintético: selo de '+eid], caso)
++st = json.loads((caso / 'registro/estado.json').read_text())
++print('Caso de controle: '+str(caso))
++print('Etapa final: '+st['etapa_atual']+' | nível: '+st['nivel'])
++PY
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index 5d05648..bbbf731 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -171,6 +171,11 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
+ 
+ ### Teste 5 — encerrar camada que exige sessão sem registrá-la
+ 
++**A12:** os comandos de barra dos testes 5 e 6 preparam o comando real.
++O engenheiro executa esse comando no próprio terminal para conferir sessão
++e selo. Se o agente tentar executá-lo por Bash, a guarda recusa primeiro
++pela origem da decisão, mesmo com nome humano.
++
+ Com P3b como etapa corrente, tente encerrar sem registrar sua sessão:
+ 
+ ```
+@@ -287,8 +292,8 @@ Nenhum deles impede o percurso F0 a P10, que é executável e verificado de pont
+ 
+ ## Registro dos campos e emissão com arquivo
+ 
+-Com P5 corrente, confirme a classificação com a pessoa e registre antes de
+-encerrar:
++Com P5 corrente, confirme a classificação com a pessoa e entregue este
++comando ao engenheiro para execução no próprio terminal antes de encerrar:
+ 
+ ```text
+ /eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
+@@ -309,3 +314,40 @@ Ao atualizar caso já aberto, atualize seu `registro/playbook.json` com as
+ declarações de artefato/comando de cada entregável e de campos por etapa.
+ O núcleo recusa contrato incompleto e nunca lê o playbook do plugin como
+ substituto do playbook do caso.
++
++## Decisão humana fora da sessão do Claude Code (A12)
++
++O nome informado não identifica a origem da chamada. Toda chamada à guarda
++vem do agente. O playbook declara as operações humanas e suas condições em
++`decisoes_humanas`; o núcleo aplica essa lista.
++
++O agente prepara argumentos e entrega o comando pronto, com caminho absoluto
++real do script. O engenheiro executa no próprio terminal, fora da sessão,
++no diretório do caso. Não basta confirmar no chat nem informar nome humano.
++Isso vale para apuração, sessão, campos, recorrência, satisfação de
++inegociáveis e encerramento em EX3/EX4; também para autonomia decidida,
++operacional validado e ciclo com decisão de recalibragem.
++
++Minuta/proposto (P7), proposta (P6), rotina e recomendação sem decisão (P10),
++leitura, validação de asserções, curadoria e materialização/emissão continuam
++permitidas à sessão. `inegociaveis.py --verificar` continua permitido, mas
++`--satisfazer` é decisão humana. O terminal ainda aplica sessão, selo e os
++portões existentes; executar fora da sessão não dispensa essas verificações.
++
++### Conferir a instalação
++
++1. No terminal, execute `.projectdocs/demos/preparar-caso.sh controle-a12 P7`.
++2. Entre em `/tmp/emcia-demos/controle-a12` (ou na base EMCIA_DEMO_BASE escolhida).
++3. Use `.projectdocs/demos/como-agente.sh "<comando>"` pelo caminho absoluto
++   do checkout para simular chamadas: sessão, apuração e encerramento de P7
++   devem dar NEGADO, mesmo com nome humano.
++4. Governança com AUT-001 proposto e leitura devem dar PERMITIDO. Altere o
++   rascunho para decidido no terminal e simule de novo: NEGADO.
++
++O simulador apenas chama a guarda; não executa o comando que recebeu.
++A recusa registra TentativaNegada com operação e comando exato. Candidato
++ilegível, ausente ou comando condicionado por arquivo em cadeia não autoriza
++uma decisão por falha de inspeção. Use chamada simples para preparação.
++
++Casos existentes atualizam explicitamente seu playbook. A ausência da lista
++recusa o carregamento; não há fallback ao playbook do plugin.
+diff --git a/README.md b/README.md
+index d935090..2ff8680 100644
+--- a/README.md
++++ b/README.md
+@@ -88,7 +88,8 @@ A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela a
+ **Sessão antes de encerrar:** o playbook do caso declara a exigência por
+ camada em `encerramento_por_camada`. EX3 e EX4 exigem sessão humana
+ registrada da própria etapa; EX1 e EX2 não. Em N2, isso inclui P3a, P3d,
+-P4 e P5. Registre a sessão enquanto a etapa for a corrente, com
++P4 e P5. O engenheiro registra a sessão no próprio terminal, enquanto a
++etapa for a corrente, usando o comando preparado por
+ `/eiac-nucleo:registrar-sessao <etapa> <participantes>`, antes de chamar
+ `/eiac-nucleo:encerrar <etapa>`. Etapa futura ou já encerrada não aceita
+ sessão, e sessão de outra etapa não libera o encerramento.
+@@ -105,7 +106,8 @@ E os comandos de núcleo, que valem em qualquer playbook:
+ 
+ ## Campos da etapa e artefatos de emissão
+ 
+-Antes de encerrar P5, registre a classificação confirmada pela pessoa:
++Antes de encerrar P5, prepare o comando de classificação confirmada
++pela pessoa e entregue ao engenheiro para executar no próprio terminal:
+ 
+ ```text
+ /eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
+@@ -126,6 +128,49 @@ registrado. Toda emissão autorizada guarda arquivo, versão e pessoa autora.
+ Casos existentes atualizam explicitamente seu próprio playbook; não recebem
+ essas declarações do plugin automaticamente.
+ 
++## Decisões humanas fora da sessão (A12)
++
++Toda chamada que chega à guarda é da sessão do agente. Informar um nome
++humano em `--autor` ou `--ator` não muda essa origem. O playbook declara
++`decisoes_humanas`, com script, argumento e condição de cada operação:
++
++| Operação | Quem executa |
++|---|---|
++| Apurar nível; registrar sessão/campo/recorrência; satisfazer inegociável | Engenheiro no próprio terminal |
++| Encerrar etapa em camada humana (EX3/EX4 no campo) | Engenheiro no próprio terminal |
++| Gravar autonomia decidida, operacional validado ou decisão de recalibragem | Engenheiro no próprio terminal |
++| Gravar minuta/proposta/recomendação sem decisão; ler; validar asserção; curar; emitir | Agente pela sessão |
++
++O agente prepara os argumentos e entrega o comando com caminho absoluto
++real do script. O engenheiro o executa **no diretório do caso, fora da
++sessão do Claude Code**. Confirmação no chat não executa a decisão nem
++autoriza o agente a executá-la. A guarda recusa a chamada, registra
++`TentativaNegada` e devolve a operação e o comando exato.
++
++`inegociaveis.py --verificar` pode ser usado pelo agente; adicionar
++`--satisfazer` torna a operação humana. Os demais portões e exigências de
++sessão/selo continuam aplicados no terminal. A decisão 027 substitui a
++exceção de ator informado pelo agente da decisão 019.
++
++### Demonstração por caso sintético
++
++No próprio terminal:
++
++```bash
++.projectdocs/demos/preparar-caso.sh controle-a12 P7
++cd /tmp/emcia-demos/controle-a12
++~/Projetos/emcia-marketplace/.projectdocs/demos/como-agente.sh 'python3 ~/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --autor "Celso do Vale" --participantes "X"'
++```
++
++O auxiliar deixa a etapa pedida corrente e registra as sessões exigidas,
++o selo, a classificação e os rascunhos conforme o percurso. OP-001 chega
++validado a P7 e AUT-001 fica proposto. A base pode ser escolhida com
++`EMCIA_DEMO_BASE`; o padrão é `/tmp/emcia-demos`. Um nome já existente é
++recusado. O auxiliar é executado pelo engenheiro no terminal.
++
++`como-agente.sh` envia a chamada simulada à guarda e imprime PERMITIDO ou
++NEGADO com o motivo; não executa o comando. Não cria nova permissão.
++
+ ## Verificação por estados do caso
+ 
+ A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
+@@ -141,7 +186,7 @@ O levantamento público sobre a organização e o setor, feito na etapa 0a do pr
+ | Trava | Mecanismo | Onde |
+ |---|---|---|
+ | **T1 procedência** | Escrita direta em `caso/` negada; todo conteúdo passa pelo validador | `guarda.py` G2 + `validar.py` |
+-| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada | `guarda.py` G1 e G3 + `avancar.py` |
++| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada; decisão humana não executa pela sessão | `guarda.py` G1, G3 e G8 + `avancar.py` |
+ | **T3 selo** | Commits do repositório do caso | Git |
+ 
+ ## Testes negativos — faça no primeiro dia
+diff --git a/decisoes/019-autoria-atribuida-pelo-responsavel.md b/decisoes/019-autoria-atribuida-pelo-responsavel.md
+index b9e1f95..bd53461 100644
+--- a/decisoes/019-autoria-atribuida-pelo-responsavel.md
++++ b/decisoes/019-autoria-atribuida-pelo-responsavel.md
+@@ -2,6 +2,12 @@
+ 
+ **Data:** 22/09/2026 · **Estado:** firme
+ 
++**Revisão pela decisão 027 (A12):** a exceção de `--ator` informado pelo
++agente foi substituída para decisões de método. Essas decisões são
++executadas pelo engenheiro no próprio terminal, fora da sessão. A regra
++de atribuição de autoria de validar/curar/selar permanece. O texto abaixo
++preserva o registro histórico da decisão original.
++
+ ## Contexto
+ 
+ `validar.py`, `curar.py` e `selar.py` aceitavam `--autor`/`--registrado-por` digitado a cada chamada, validado só por checagem léxica (`estado.autor_e_agente()`). Um achado documentado desde o baseline (`testes/curadoria.py::2.5.2-T-baseline`) mostrava que `"AG-01"` com hífen escapava dessa checagem e era aceito como autor humano — a garantia "autor é sempre pessoa nomeada" dependia de reconhecer o formato do valor recebido, não de uma propriedade estrutural do caso.
+diff --git a/decisoes/027-decisao-humana-fora-sessao-A12.md b/decisoes/027-decisao-humana-fora-sessao-A12.md
+new file mode 100644
+index 0000000..d4c6d0c
+--- /dev/null
++++ b/decisoes/027-decisao-humana-fora-sessao-A12.md
+@@ -0,0 +1,63 @@
++# 027 — Decisão humana fora da sessão do agente (A12)
++
++**Data:** 26/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++A verificação de F3 mostrou que o agente podia informar um nome humano em
++--ator/--autor e executar uma decisão pela sessão. O argumento lexical
++não distingue origem humana de origem agente. Base: v-sprint3-poc.3.
++
++Foram lidos CLAUDE.md, índice e decisões 003, 019 e 022–025. O número 026
++já registra A10 e permanece preservado. A12 recebe 027, próximo livre.
++
++## Decisão
++
++- Toda chamada à guarda tem origem na sessão do agente, qualquer que seja
++  o nome informado. Operações humanas declaradas no playbook são negadas
++  por ela e executadas pelo engenheiro no próprio terminal, fora da sessão
++  do Claude Code, no diretório do caso.
++- O campo declara `decisoes_humanas`: script, argumento e condição. Condições
++  são incondicional, campo do rascunho ou camada da etapa alvo no nível
++  apurado. O núcleo não cita script de método, etapa ou categoria de decisão
++  no novo avaliador; lê o contrato do caso.
++- A lista cobre governança decidida, operacional validado, recalibragem com
++  decisão, apuração, sessão, campos, recorrência, satisfação de inegociáveis
++  e encerramento em EX3/EX4. Inclui o wrapper de satisfação do campo e o
++  auxiliar automático de controle, pois chamam operações humanas.
++- A recusa gera TentativaNegada com operação, comando e responsável nominal;
++  informa que a decisão é executada pelo engenheiro no próprio terminal e
++  entrega o comando exato. O estado não muda por essa tentativa.
++- Preparação continua permitida: rascunho/proposto, proposta, recomendação
++  sem decisão, leitura, validação de asserções, curadoria e emissão.
++- Ausência/ilegitimidade do contrato não desativa a guarda. Candidato ausente,
++  ilegível ou fora do caso recusa. Comandos compostos condicionados por
++  arquivo recusam porque podem mudar o rascunho após sua inspeção. Preparação
++  usa chamadas simples. Reconhecimento não executa o shell.
++
++## Revisão da decisão 019
++
++A regra de autoria fixa dos componentes validar/curar/selar permanece.
++A exceção que permitia ao agente informar --ator para executar decisões de
++método é substituída: o engenheiro executa essas operações no próprio
++terminal. O ator pode continuar como dado do comando humano; seu nome não
++é credencial que autorize o agente. A 019 recebeu marca de revisão,
++preservando seu texto histórico. A 003 continua vigente.
++
++## Consequência
++
++Núcleo 0.2.26, campo 0.8.4, playbook 0.4.7. Casos existentes atualizam
++explicitamente sua lista; nunca leem o playbook do plugin como substituto.
++Nenhum sinalizador desativa a guarda e não foi adicionada dependência.
++
++Comandos e habilidades entregam ao engenheiro o comando pronto. Os scripts
++no terminal mantêm validações de conteúdo, nome, sessão, selo e portões;
++esta decisão não cria autenticação de identidade no sistema operacional.
++
++Os auxiliares `.projectdocs/demos/como-agente.sh` e `preparar-caso.sh` servem
++à demonstração por caso sintético. O primeiro apenas consulta a guarda; o
++segundo é executado pelo engenheiro no terminal e prepara o percurso.
++
++Testes negativos precederam a correção. Nenhum teste anterior foi removido.
++Evidências: `.projectdocs/evidencias/sprint3/3.5/correcao-A12/`.
++Tag da entrega: v-sprint3-poc.4.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index ad27376..c45c3a4 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -24,7 +24,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 016 | O contraste substitui a identidade de runtime do núcleo | substituída por 021 |
+ | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
+ | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
+-| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme (regra geral de autoria; a parte específica de execução de contraste substituída por 021) |
++| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
+ | 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
+ | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+@@ -32,3 +32,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
+ | 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
+ | 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |
++| 027 | Decisão humana fora da sessão do agente (A12) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 3cf3b7c..ac2c1b2 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.3",
++  "version": "0.8.4",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/emitir.md b/eiac-campo/commands/emitir.md
+index 0e8fa94..a36aa6c 100644
+--- a/eiac-campo/commands/emitir.md
++++ b/eiac-campo/commands/emitir.md
+@@ -11,6 +11,11 @@ Renderize o entregável a partir dos artefatos reais do caso e, se o portão aut
+ 
+ Sem `--emitir`, o comando só renderiza `caso/entregaveis/<ID>.md` e recusa se algum campo obrigatório do modelo oficial não tiver evidência rastreável no caso — nenhum campo ausente é preenchido com texto genérico.
+ 
+-Com `--emitir`, a emissão só é registrada se o portão declarado em `reference/gates.md` estiver autorizado: etapas do portão encerradas, condição declarativa satisfeita (ou não aplicável, para `E3-E`) e, quando o entregável exigir, os itens inegociáveis correspondentes já satisfeitos via `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/inegociaveis.py" --verificar <N> --arquivo <artefato> --satisfazer --autor "<nome>"`.
++Com `--emitir`, a emissão só é registrada se o portão declarado em `reference/gates.md` estiver autorizado: etapas do portão encerradas, condição declarativa satisfeita (ou não aplicável, para `E3-E`) e, quando o entregável exigir, os itens inegociáveis correspondentes já satisfeitos pelo engenheiro no próprio terminal, via `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/inegociaveis.py" --verificar <N> --arquivo <artefato> --satisfazer --autor "<nome>"`.
+ 
+ **`E3` consolida duas autorizações internas (`E3-D`, sempre avaliado; `E3-E`, condicionado a P5 classificar como agente) em um único entregável ao cliente — nunca duas entregas separadas.**
++
++O agente pode verificar os inegociáveis sem `--satisfazer`. A satisfação
++registrada é decisão humana: entregue esse comando ao engenheiro; não o
++execute na sessão, mesmo com nome humano. Materialização/emissão continua
++permitida à sessão quando os requisitos já estiverem registrados.
+diff --git a/eiac-campo/commands/governar.md b/eiac-campo/commands/governar.md
+index c75f42d..91b9351 100644
+--- a/eiac-campo/commands/governar.md
++++ b/eiac-campo/commands/governar.md
+@@ -1,6 +1,13 @@
+ ---
+ description: Executa a etapa P7 do playbook Engenharia de IA de Campo.
+ ---
++
++**Fluxo A12:** o agente grava apenas preparação. Para validação/decisão,
++prepare os argumentos e entregue o comando pronto ao engenheiro. Ele
++executa no próprio terminal, fora do Claude Code, no diretório do caso.
++Não execute a decisão por Bash, mesmo usando nome humano. Resolva o
++caminho do plugin para entregar um comando com caminho absoluto real.
++
+ Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P7**. Se não for, pare e diga qual é.
+ 
+ Carregue a habilidade `hb-governar` e siga o procedimento do passo no documento do método, em `metodo/`.
+@@ -12,3 +19,7 @@ Escreva o candidato em `rascunho/AUT-NNN.yaml`, referenciando `operacional_ref`
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/governanca.py" --arquivo registro/governanca/autonomia/AUT-NNN.yaml --ator "<nome>"`
+ 
+ `estado: decidido` exige ator humano nomeado, com `decisor`, `data_decisao` e `justificativa_decisao` preenchidos.
++
++Após a pessoa preencher estado decidido, decisor, data e justificativa,
++entregue o comando de governanca.py para o engenheiro executar no próprio
++terminal. A guarda lê o rascunho correspondente e recusa a decisão na sessão.
+diff --git a/eiac-campo/commands/operacionalizar.md b/eiac-campo/commands/operacionalizar.md
+index 4bbd71e..ee03801 100644
+--- a/eiac-campo/commands/operacionalizar.md
++++ b/eiac-campo/commands/operacionalizar.md
+@@ -1,6 +1,13 @@
+ ---
+ description: Executa a etapa P6 do playbook Engenharia de IA de Campo.
+ ---
++
++**Fluxo A12:** o agente grava apenas preparação. Para validação/decisão,
++prepare os argumentos e entregue o comando pronto ao engenheiro. Ele
++executa no próprio terminal, fora do Claude Code, no diretório do caso.
++Não execute a decisão por Bash, mesmo usando nome humano. Resolva o
++caminho do plugin para entregar um comando com caminho absoluto real.
++
+ Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P6**. Se não for, pare e diga qual é.
+ 
+ Carregue a habilidade `hb-operacionalizar` e siga o procedimento do passo no documento do método, em `metodo/`.
+@@ -9,4 +16,6 @@ Escreva o candidato em `rascunho/OP-NNN.yaml` e grave com:
+ 
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/operacional.py" --arquivo registro/operacional/OP-NNN.yaml --ator "<nome>"`
+ 
+-`estado: proposta` pode ser gravado por qualquer ator. `estado: validado` exige pessoa humana nomeada — o script recusa qualquer tentativa de um agente validar sua própria proposta.
++`estado: proposta` continua permitido à sessão. Com `estado: validado`,
++a guarda recusa a chamada mesmo com nome humano: entregue o comando ao
++engenheiro para execução no próprio terminal.
+diff --git a/eiac-campo/commands/recalibrar.md b/eiac-campo/commands/recalibrar.md
+index 21e5ab8..6ec440b 100644
+--- a/eiac-campo/commands/recalibrar.md
++++ b/eiac-campo/commands/recalibrar.md
+@@ -1,6 +1,13 @@
+ ---
+ description: Executa a etapa P10 do playbook Engenharia de IA de Campo.
+ ---
++
++**Fluxo A12:** o agente grava apenas preparação. Para validação/decisão,
++prepare os argumentos e entregue o comando pronto ao engenheiro. Ele
++executa no próprio terminal, fora do Claude Code, no diretório do caso.
++Não execute a decisão por Bash, mesmo usando nome humano. Resolva o
++caminho do plugin para entregar um comando com caminho absoluto real.
++
+ Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P10**. Se não for, pare e diga qual é.
+ 
+ Carregue a habilidade `hb-recalibrar` e siga o procedimento do passo no documento do método, em `metodo/`.
+@@ -17,4 +24,5 @@ Ciclo:
+ 
+ `decisao` exige ator humano nomeado, com `decisor`, `data_decisao` e `justificativa_decisao` preenchidos.
+ 
+-A recorrência (cadência, responsável, histórico) usa o mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
++A recorrência também é executada pelo engenheiro no próprio terminal.
++Entregue o comando pronto do mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
+diff --git a/eiac-campo/skills/hb-classificar/SKILL.md b/eiac-campo/skills/hb-classificar/SKILL.md
+index abbb34e..cb5a30a 100644
+--- a/eiac-campo/skills/hb-classificar/SKILL.md
++++ b/eiac-campo/skills/hb-classificar/SKILL.md
+@@ -30,14 +30,15 @@ Para cada Regra que sustenta a classificação, consulte o objeto — não reint
+ 
+ Consulte o passo 5 de `reference/metodo/EMCIA-MET-01-documento-do-metodo.md`
+ e a declaração `campos_registraveis` de P5 no playbook do caso. Depois da
+-confirmação humana, enquanto P5 ainda for a etapa corrente, registre:
++confirmação humana, enquanto P5 ainda for a etapa corrente, prepare o
++comando e entregue ao engenheiro para execução no próprio terminal:
+ 
+ `/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "<categoria>"`
+ 
+ As categorias declaradas são `agente`, `caso isolado` e `habilitador acoplado`.
+ O comando grava o campo estruturado que o portão de E3 e seu renderizador leem,
+-com evento e autoria nominal. Registre também a sessão de P5 e encerre a etapa
+-pelo núcleo. A justificativa escrita continua no artefato deste passo, conforme
++com evento e autoria nominal. Entregue também os comandos de sessão e encerramento de P5 ao engenheiro
++para execução no próprio terminal. A justificativa escrita continua no artefato deste passo, conforme
+ o procedimento do método.
+ 
+ ## Efeito no entregável
+@@ -46,3 +47,18 @@ A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates
+ 
+ **Saída:** `caso/P5-classificacao.md`, marcada `I` até o operador confirmar.
+ **Encerramento:** critério do passo 5 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-enquadrar/SKILL.md b/eiac-campo/skills/hb-enquadrar/SKILL.md
+index 228afc8..a637e01 100644
+--- a/eiac-campo/skills/hb-enquadrar/SKILL.md
++++ b/eiac-campo/skills/hb-enquadrar/SKILL.md
+@@ -14,11 +14,27 @@ description: Estrutura a dor declarada e calcula o nivel de complexidade da orga
+ As nove perguntas têm redação fixa e não podem ser reformuladas.
+ 
+ Registre as somas dos eixos na escala de 3 a 9 indicada pelo instrumento.
+-Escreva a conta antes do resultado e use `/eiac-nucleo:apurar-nivel` para
+-conferir a regra declarada no playbook. Se houver recusa, apresente o motivo
++Escreva a conta antes do resultado e prepare o comando de
++`/eiac-nucleo:apurar-nivel` para o engenheiro conferir e executar no próprio
++terminal, fora da sessão. Se houver recusa, apresente o motivo
+ ao operador; não edite o estado para contorná-la.
+ 
+ **Pare e pergunte** se o custo do problema exigir cálculo e a premissa admitir mais de uma base. Não escolha; registre quem escolheu.
+ 
+ **Saída:** `caso/E1-ficha.md`, toda asserção marcada conforme `reference/procedencia.md`.
+ **Encerramento:** critério da Fase 0 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-governar/SKILL.md b/eiac-campo/skills/hb-governar/SKILL.md
+index 8ad1408..c158ee8 100644
+--- a/eiac-campo/skills/hb-governar/SKILL.md
++++ b/eiac-campo/skills/hb-governar/SKILL.md
+@@ -12,7 +12,7 @@ description: Minuta o termo de autonomia a partir do desenho operacional de P6.
+ 
+ ## ⛔ A decisão de autonomia não é executável por agente
+ 
+-Se você é um agente, pode **preparar** a minuta (`estado: rascunho` ou `proposto`), mas **nunca** grave `estado: decidido`. Se tentar, o script recusa e o evento `TermoAutonomiaRecusado` fica registrado. Não ofereça atalho, não peça "confirmação simbólica" — a decisão exige pessoa nomeada com autoridade, sempre.
++Se você é um agente, pode **preparar** a minuta (`estado: rascunho` ou `proposto`), mas **nunca** grave `estado: decidido`. Se a chamada de decisão vier da sessão, a guarda recusa e registra `TentativaNegada`, mesmo com nome humano. Não ofereça atalho, não peça "confirmação simbólica" — a decisão exige pessoa nomeada com autoridade, sempre.
+ 
+ ## Para o agente: o que preparar
+ 
+@@ -39,3 +39,18 @@ Ao decidir, preencha `decisor`, `data_decisao` e `justificativa_decisao`, com `e
+ 
+ **Saída:** `registro/governanca/autonomia/AUT-NNN.yaml`, evidência rastreável para o item inegociável 2 (validação semântica final do portão E4 pertence ao pacote 2.6.5 — não declare E4 emitido aqui).
+ **Encerramento:** critério do passo 7 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-medir-valor/SKILL.md b/eiac-campo/skills/hb-medir-valor/SKILL.md
+index 3f3ca61..a1e46ef 100644
+--- a/eiac-campo/skills/hb-medir-valor/SKILL.md
++++ b/eiac-campo/skills/hb-medir-valor/SKILL.md
+@@ -42,3 +42,18 @@ python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/metrica.py" --arquivo regis
+ 
+ **Saída:** `registro/metricas/MET-NNN.yaml`, evidência rastreável para o item inegociável 4 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
+ **Encerramento:** critério do passo 9 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-medir/SKILL.md b/eiac-campo/skills/hb-medir/SKILL.md
+index 2b88e3f..042ebb0 100644
+--- a/eiac-campo/skills/hb-medir/SKILL.md
++++ b/eiac-campo/skills/hb-medir/SKILL.md
+@@ -21,3 +21,18 @@ description: Produz a medicao inicial a partir das amostras enviadas pela organi
+ **Quando esta medição sustentar uma Regra ou Fonte `V`,** dê à linha da medição um identificador estável dentro de `caso/P3a-medicao.md` (por exemplo, um cabeçalho ou âncora citável), para que `evidencia.referencia` daquele objeto CTX possa apontar para ela sem ambiguidade. Isso é vínculo rastreável, não duplicação — a medição continua vivendo só em `caso/P3a-medicao.md`.
+ 
+ **Encerramento:** critério do passo 3 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-operacionalizar/SKILL.md b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+index d8d8a7c..b41b1f5 100644
+--- a/eiac-campo/skills/hb-operacionalizar/SKILL.md
++++ b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+@@ -35,7 +35,24 @@ Escreva o candidato em `rascunho/OP-NNN.yaml` e grave com:
+ python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/operacional.py" --arquivo registro/operacional/OP-NNN.yaml --ator "<nome>"
+ ```
+ 
+-Para `estado: proposta`, qualquer ator (inclusive agente) pode gravar. Para `estado: validado`, o ator precisa ser pessoa humana nomeada — o script recusa qualquer tentativa de um agente validar sua própria proposta.
++Para `estado: proposta`, a sessão pode gravar. Para `estado: validado`,
++a guarda recusa a chamada vinda da sessão mesmo com nome humano; o
++engenheiro executa o comando no próprio terminal, fora do Claude Code.
+ 
+ **Saída:** `registro/operacional/OP-NNN.yaml`, referenciável por `operacional_ref` em P7.
+ **Encerramento:** critério do passo 6 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-pilotar/SKILL.md b/eiac-campo/skills/hb-pilotar/SKILL.md
+index d483e50..47f5084 100644
+--- a/eiac-campo/skills/hb-pilotar/SKILL.md
++++ b/eiac-campo/skills/hb-pilotar/SKILL.md
+@@ -40,3 +40,18 @@ Para `estado: rascunho`, qualquer ator (inclusive agente) pode gravar. Para `est
+ 
+ **Saída:** `registro/piloto/CT-NNN.yaml`, evidência rastreável para o item inegociável 3 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
+ **Encerramento:** critério do passo 8 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/skills/hb-recalibrar/SKILL.md b/eiac-campo/skills/hb-recalibrar/SKILL.md
+index 2867d6d..7994ee4 100644
+--- a/eiac-campo/skills/hb-recalibrar/SKILL.md
++++ b/eiac-campo/skills/hb-recalibrar/SKILL.md
+@@ -12,7 +12,7 @@ description: Instala a rotina de recalibragem, monitora desvio e prepara recomen
+ 
+ ## ⛔ A decisão de recalibrar, expandir ou descontinuar não é executável por agente
+ 
+-Se você é um agente, pode **detectar** desvio, **quantificar**, **descrever** e **recomendar**, mas **nunca** grave o campo `decisao`. Se tentar, o script recusa e o evento `CicloCalibragemRecusado` fica registrado. A decisão exige pessoa nomeada com autoridade, sempre (CAM-01 3.6, CAT-01 3.4.5).
++Se você é um agente, pode **detectar** desvio, **quantificar**, **descrever** e **recomendar**, mas **nunca** grave o campo `decisao`. Se a chamada de decisão vier da sessão, a guarda recusa e registra `TentativaNegada`, mesmo com nome humano. A decisão exige pessoa nomeada com autoridade, sempre (CAM-01 3.6, CAT-01 3.4.5).
+ 
+ ## Para o agente: a rotina (Anexo D)
+ 
+@@ -51,7 +51,23 @@ Ciclo:
+ python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN-C01.yaml --ator "<nome>" --ciclo
+ ```
+ 
+-A recorrência (cadência, responsável, histórico de ciclos) também passa por `avancar.py --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"` — mecanismo genérico do núcleo (2.6.1), reaproveitado sem alteração.
++O agente entrega ao engenheiro, para execução no próprio terminal, o comando
++de recorrência (cadência, responsável, histórico de ciclos): `avancar.py --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"` — mecanismo genérico do núcleo (2.6.1), reaproveitado sem alteração.
+ 
+ **Saída:** `registro/calibragem/CAL-NNN.yaml` e `registro/calibragem/CAL-NNN-CNN.yaml`, evidência rastreável para o item inegociável 5 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
+ **Encerramento:** critério do passo 10 no documento do método.
++
++## Execução das decisões humanas (A12)
++
++O agente prepara a proposta e os comandos; o engenheiro executa as decisões
++no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
++Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
++entregue comandos com caminho absoluto real e argumentos confirmados.
++
++Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
++inegociáveis são operações humanas declaradas no playbook. A verificação de
++inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
++o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
++O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
++contexto e materializar/emitir entregáveis. A recusa da guarda registra
++`TentativaNegada` com operação e comando exato.
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index ccfc7a2..96b13f9 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.6",
++  "versao": "0.4.7",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+@@ -12,6 +12,118 @@
+     "EX4": true
+   },
+ 
++  "decisoes_humanas": [
++    {
++      "id": "decidir-autonomia",
++      "script": "governanca.py",
++      "condicao": {
++        "tipo": "arquivo",
++        "argumento": "--arquivo",
++        "diretorio": "rascunho",
++        "campo": "estado",
++        "operador": "igual",
++        "valor": "decidido",
++        "preparacao": [
++          "rascunho",
++          "proposto"
++        ]
++      }
++    },
++    {
++      "id": "validar-operacional",
++      "script": "operacional.py",
++      "condicao": {
++        "tipo": "arquivo",
++        "argumento": "--arquivo",
++        "diretorio": "rascunho",
++        "campo": "estado",
++        "operador": "igual",
++        "valor": "validado",
++        "preparacao": [
++          "proposta"
++        ]
++      }
++    },
++    {
++      "id": "decidir-recalibragem",
++      "script": "calibragem.py",
++      "condicao": {
++        "tipo": "arquivo",
++        "argumento": "--arquivo",
++        "diretorio": "rascunho",
++        "campo": "decisao",
++        "operador": "preenchido"
++      }
++    },
++    {
++      "id": "apurar-nivel",
++      "script": "avancar.py",
++      "argumento": "--apurar-nivel",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "registrar-sessao",
++      "script": "avancar.py",
++      "argumento": "--registrar-sessao",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "registrar-campo",
++      "script": "avancar.py",
++      "argumento": "--registrar-campo",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "registrar-recorrencia",
++      "script": "avancar.py",
++      "argumento": "--registrar-recorrencia",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "satisfazer-inegociavel",
++      "script": "avancar.py",
++      "argumento": "--satisfazer-inegociavel",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "satisfazer-inegociavel-campo",
++      "script": "inegociaveis.py",
++      "argumento": "--satisfazer",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "preparar-controle",
++      "script": "preparar-caso.sh",
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "encerrar-camada-humana",
++      "script": "avancar.py",
++      "argumento": "--encerrar",
++      "condicao": {
++        "tipo": "camada",
++        "camadas": [
++          "EX3",
++          "EX4"
++        ]
++      }
++    }
++  ],
++
+   "apuracao_nivel": {
+     "eixos": {
+       "DAD": {"minimo": 3, "maximo": 9},
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 33d588f..ea33bbc 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.25",
++  "version": "0.2.26",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/apurar-nivel.md b/eiac-nucleo/commands/apurar-nivel.md
+index ec09315..c879cb7 100644
+--- a/eiac-nucleo/commands/apurar-nivel.md
++++ b/eiac-nucleo/commands/apurar-nivel.md
+@@ -2,12 +2,19 @@
+ description: Grava o nível de complexidade apurado pela triagem no Registro do caso.
+ argument-hint: <nível> <eixos>
+ ---
++
++**Decisão humana fora da sessão (A12).** O agente prepara os argumentos e
++entrega o comando pronto ao engenheiro. Não o execute por Bash na sessão,
++mesmo usando nome humano. O engenheiro executa no próprio terminal, fora
++do Claude Code, no diretório do caso. Resolva o caminho do plugin antes de
++entregar: use o caminho absoluto real, sem variável de sessão no comando.
++
+ Confirme com o operador as somas dos eixos do instrumento de triagem
+ (EMCIA-TRI-01, seção 3.4). Informe todos os eixos declarados no playbook:
+ cada soma está na faixa de 3 a 9. O script calcula o nível pela regra
+ declarada de máximo e confere o nível informado. Não use a média.
+ 
+-Execute:
++Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --apurar-nivel <nivel> --autor "<nome da pessoa>" --eixos "<DAD n, GOV n, CRI n>"`
+ 
+ Exemplo válido: nível `N2`, eixos `DAD 5, GOV 3, CRI 6`.
+diff --git a/eiac-nucleo/commands/encerrar.md b/eiac-nucleo/commands/encerrar.md
+index bf89992..f4313fd 100644
+--- a/eiac-nucleo/commands/encerrar.md
++++ b/eiac-nucleo/commands/encerrar.md
+@@ -2,7 +2,7 @@
+ description: Encerra a etapa corrente, se o critério de encerramento estiver cumprido.
+ argument-hint: <etapa>
+ ---
+-Antes de executar, releia o critério de encerramento da etapa no documento do método e confirme com o operador que ele foi cumprido.
++Antes de preparar o encerramento, releia o critério de encerramento da etapa no documento do método e confirme com o operador que ele foi cumprido.
+ 
+ Confira a etapa corrente e a camada resolvida para o nível do caso com
+ `/eiac-nucleo:estado` e `/eiac-nucleo:fronteira`. O encerramento obedece à
+@@ -10,12 +10,16 @@ exigência de sessão declarada por camada no playbook do caso. No método
+ atual, EX3 e EX4 exigem sessão humana registrada da própria etapa; EX1 e
+ EX2 não exigem sessão para encerrar.
+ 
+-Quando exigida, registre a sessão da etapa corrente, na modalidade
++Quando exigida, peça ao engenheiro registrar a sessão da etapa corrente, na modalidade
+ declarada, com `/eiac-nucleo:registrar-sessao <etapa> <participantes>`.
+ Sessão de outra etapa não libera o encerramento. Etapas futuras ou já
+ encerradas não aceitam registro de sessão.
+ 
+-Depois execute:
++Prepare o comando abaixo. Se a camada da etapa está na lista humana do
++playbook (EX3/EX4 no campo), entregue ao engenheiro: ele executa no próprio
++terminal, fora da sessão do Claude Code, com caminho absoluto real do plugin.
++O agente não executa esse encerramento, mesmo com nome humano. Em EX1/EX2,
++o encerramento continua permitido à sessão quando o playbook assim declara:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --encerrar <etapa> --autor "<nome da pessoa>"`
+ 
+ Se o script recusar, apresente o motivo sem contorná-lo.
+diff --git a/eiac-nucleo/commands/registrar-campo.md b/eiac-nucleo/commands/registrar-campo.md
+index a574c5f..d9853c0 100644
+--- a/eiac-nucleo/commands/registrar-campo.md
++++ b/eiac-nucleo/commands/registrar-campo.md
+@@ -2,11 +2,18 @@
+ description: Registra um campo declarado no playbook para a etapa corrente.
+ argument-hint: <etapa> <campo> <valor>
+ ---
++
++**Decisão humana fora da sessão (A12).** O agente prepara os argumentos e
++entrega o comando pronto ao engenheiro. Não o execute por Bash na sessão,
++mesmo usando nome humano. O engenheiro executa no próprio terminal, fora
++do Claude Code, no diretório do caso. Resolva o caminho do plugin antes de
++entregar: use o caminho absoluto real, sem variável de sessão no comando.
++
+ Confira `/eiac-nucleo:estado` e a declaração `campos_registraveis` da etapa
+ em `registro/playbook.json`. Use apenas campos declarados e, quando houver
+ `valores`, um valor exato dessa taxonomia.
+ 
+-Execute no diretório do caso:
++Prepare o comando para o engenheiro executar no diretório do caso:
+ 
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-campo <etapa> --campo <nome> --valor "<valor>" --autor "<nome da pessoa>"`
+ 
+diff --git a/eiac-nucleo/commands/registrar-recorrencia.md b/eiac-nucleo/commands/registrar-recorrencia.md
+index eeaac82..a2bb34d 100644
+--- a/eiac-nucleo/commands/registrar-recorrencia.md
++++ b/eiac-nucleo/commands/registrar-recorrencia.md
+@@ -2,11 +2,18 @@
+ description: Registra um novo ciclo de uma etapa recorrente, com cadência e responsável.
+ argument-hint: <etapa> <cadência> <responsável>
+ ---
++
++**Decisão humana fora da sessão (A12).** O agente prepara os argumentos e
++entrega o comando pronto ao engenheiro. Não o execute por Bash na sessão,
++mesmo usando nome humano. O engenheiro executa no próprio terminal, fora
++do Claude Code, no diretório do caso. Resolva o caminho do plugin antes de
++entregar: use o caminho absoluto real, sem variável de sessão no comando.
++
+ Só se aplica a etapas que o playbook marca `recorrente: true`, e só depois que a etapa foi encerrada ao menos uma vez.
+ 
+ Pergunte ao operador, se não vierem nos argumentos: etapa, cadência (conforme o nível) e responsável nomeado.
+ 
+-Depois execute:
++Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-recorrencia <etapa> --autor "<nome da pessoa>" --cadencia "<cadência>" --responsavel "<nome da pessoa>"`
+ 
+ O responsável precisa ser pessoa nomeada — "equipe" ou "área" não satisfaz `responsavel_obrigatorio`. Se o script recusar, apresente o motivo sem contorná-lo.
+diff --git a/eiac-nucleo/commands/registrar-sessao.md b/eiac-nucleo/commands/registrar-sessao.md
+index 7fd86a5..7d0f30c 100644
+--- a/eiac-nucleo/commands/registrar-sessao.md
++++ b/eiac-nucleo/commands/registrar-sessao.md
+@@ -2,6 +2,13 @@
+ description: Registra a sessão humana da etapa corrente, na modalidade declarada no caso.
+ argument-hint: <etapa> <participantes>
+ ---
++
++**Decisão humana fora da sessão (A12).** O agente prepara os argumentos e
++entrega o comando pronto ao engenheiro. Não o execute por Bash na sessão,
++mesmo usando nome humano. O engenheiro executa no próprio terminal, fora
++do Claude Code, no diretório do caso. Resolva o caminho do plugin antes de
++entregar: use o caminho absoluto real, sem variável de sessão no comando.
++
+ Pergunte ao operador, se não vierem nos argumentos: etapa, participantes e instrumentos aplicados.
+ 
+ Confirme com `/eiac-nucleo:estado` que a etapa é a corrente e ainda não
+@@ -9,7 +16,7 @@ foi encerrada. Não registre sessão antecipada para uma etapa futura nem
+ retroativa para etapa já encerrada. A recusa fica na trilha como
+ `TentativaNegada`. A sessão só satisfaz a exigência da própria etapa.
+ 
+-Depois execute:
++Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-sessao <etapa> --autor "<nome da pessoa>" --participantes "<lista>"`
+ 
+ O autor é sempre pessoa nomeada. Nunca preencha com identificador de agente.
+diff --git a/eiac-nucleo/commands/satisfazer-inegociavel.md b/eiac-nucleo/commands/satisfazer-inegociavel.md
+index 23a1125..99ae40d 100644
+--- a/eiac-nucleo/commands/satisfazer-inegociavel.md
++++ b/eiac-nucleo/commands/satisfazer-inegociavel.md
+@@ -2,11 +2,18 @@
+ description: Registra a satisfação de um item inegociável do playbook, com evidência rastreável.
+ argument-hint: <número do inegociável> <evidência>
+ ---
++
++**Decisão humana fora da sessão (A12).** O agente prepara os argumentos e
++entrega o comando pronto ao engenheiro. Não o execute por Bash na sessão,
++mesmo usando nome humano. O engenheiro executa no próprio terminal, fora
++do Claude Code, no diretório do caso. Resolva o caminho do plugin antes de
++entregar: use o caminho absoluto real, sem variável de sessão no comando.
++
+ Este é o único caminho autorizado para satisfazer um item inegociável — uma flag manual no estado não é aceita e é bloqueada pela guarda (`registro/` não aceita escrita direta).
+ 
+ Pergunte ao operador, se não vierem nos argumentos: qual item inegociável e qual evidência sustenta a satisfação (documento, sessão, referência).
+ 
+-Depois execute:
++Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --satisfazer-inegociavel <n> --autor "<nome da pessoa>" --evidencia "<descrição ou caminho>"`
+ 
+ O núcleo não julga se a evidência de fato comprova o item — isso é decisão humana/metodológica. Ele exige apenas que evidência e autor estejam presentes e rastreáveis. Se o script recusar, apresente o motivo sem contorná-lo.
+diff --git a/eiac-nucleo/scripts/decisao_humana.py b/eiac-nucleo/scripts/decisao_humana.py
+new file mode 100644
+index 0000000..cb37051
+--- /dev/null
++++ b/eiac-nucleo/scripts/decisao_humana.py
+@@ -0,0 +1,173 @@
++"""Condições declaradas de operações humanas recebidas pela guarda.
++
++Não executa shell. Reconhece invocações e lê o candidato correspondente;
++nome informado nunca transforma uma chamada da sessão em decisão humana.
++"""
++import pathlib
++import re
++import shlex
++
++import estrutura as X
++import playbook as P
++
++
++def validar(regras):
++    if not isinstance(regras, list) or not regras:
++        return 'playbook sem decisoes_humanas validas'
++    ids = set()
++    for regra in regras:
++        if not isinstance(regra, dict):
++            return 'decisoes_humanas: operacao precisa ser objeto'
++        if not isinstance(regra.get('id'), str) or not regra['id'] or regra['id'] in ids:
++            return 'decisoes_humanas: id ausente ou duplicado'
++        ids.add(regra['id'])
++        script = regra.get('script')
++        if not isinstance(script, str) or not script or pathlib.Path(script).name != script:
++            return 'decisoes_humanas: script precisa ser nome de arquivo'
++        arg = regra.get('argumento')
++        if arg is not None and (not isinstance(arg, str) or not arg.startswith('--')):
++            return 'decisoes_humanas: argumento invalido'
++        c = regra.get('condicao')
++        if not isinstance(c, dict) or c.get('tipo') not in ('sempre', 'arquivo', 'camada'):
++            return 'decisoes_humanas: condicao desconhecida ou ausente'
++        if c['tipo'] == 'camada' and (not arg or not isinstance(c.get('camadas'), list) or not c['camadas']
++                                     or any(not isinstance(v, str) for v in c['camadas'])):
++            return 'decisoes_humanas: condicao de camada invalida'
++        if c['tipo'] == 'arquivo':
++            if any(not isinstance(c.get(k), str) or not c[k] for k in ('argumento', 'diretorio', 'campo')):
++                return 'decisoes_humanas: condicao de arquivo incompleta'
++            diretorio = pathlib.Path(c['diretorio'])
++            if diretorio.is_absolute() or '..' in diretorio.parts:
++                return 'decisoes_humanas: diretorio precisa ser relativo ao caso'
++            if 'preparacao' in c and (not isinstance(c['preparacao'], list) or not c['preparacao']):
++                return 'decisoes_humanas: preparacao precisa declarar valores'
++            if c.get('operador') not in ('igual', 'preenchido') or (c['operador'] == 'igual' and 'valor' not in c):
++                return 'decisoes_humanas: operador de arquivo invalido'
++    return None
++
++
++def _argumento(tokens, nome):
++    valores = []
++    for i, token in enumerate(tokens):
++        if token == nome:
++            valores.append(tokens[i+1] if i+1 < len(tokens) and not tokens[i+1].startswith('--') else '')
++        elif token.startswith(nome+'='):
++            valores.append(token[len(nome)+1:])
++    return valores
++
++
++def _segmentos(comando):
++    lexer = shlex.shlex(comando.replace('\n', ';'), posix=True, punctuation_chars=';&|()<>')
++    lexer.whitespace_split = True
++    tokens = list(lexer)
++    segmentos, atual = [], []
++    for token in tokens:
++        if token and all(c in ';&|()<>' for c in token):
++            if atual:
++                segmentos.append(atual)
++                atual = []
++        else:
++            atual.append(token)
++    if atual:
++        segmentos.append(atual)
++    return segmentos
++
++
++def _invocacoes(tokens, profundidade=0):
++    if profundidade > 8:
++        raise ValueError('shell aninhado demais para inspecao')
++    if not tokens:
++        return []
++    tokens = list(tokens)
++    while tokens and re.match(r'^[A-Za-z_][A-Za-z0-9_]*=', tokens[0]):
++        tokens.pop(0)
++    if not tokens:
++        return []
++    exe = pathlib.Path(tokens[0]).name
++    if exe in ('command', 'exec', 'env'):
++        rest = tokens[1:]
++        while rest and (rest[0].startswith('-') or re.match(r'^[A-Za-z_][A-Za-z0-9_]*=', rest[0])):
++            rest.pop(0)
++        return _invocacoes(rest, profundidade+1)
++    if exe in ('bash', 'sh', 'zsh'):
++        for i, token in enumerate(tokens[1:], 1):
++            if token.startswith('-') and 'c' in token and i+1 < len(tokens):
++                internos = _segmentos(tokens[i+1])
++                return [(script, args, composto or len(internos) != 1)
++                        for segmento in internos
++                        for script, args, composto in _invocacoes(segmento, profundidade+1)]
++        return [(pathlib.Path(tokens[1]).name, tokens[2:], False)] if len(tokens) > 1 else []
++    if re.fullmatch(r'python(?:\d+(?:\.\d+)*)?', exe):
++        rest = tokens[1:]
++        while rest and rest[0].startswith('-'):
++            if rest[0] == '-c':
++                return [('__codigo_inline__', rest[1:], False)]
++            if rest[0] == '-m':
++                return [(rest[1].rsplit('.', 1)[-1]+'.py', rest[2:], False)] if len(rest) > 1 else []
++            if rest[0] in ('-W', '-X'):
++                rest = rest[2:]
++            else:
++                rest.pop(0)
++        return [(pathlib.Path(rest[0]).name, rest[1:], False)] if rest else []
++    return [(exe, tokens[1:], False)]
++
++
++def avaliar(pb, st, comando):
++    """Devolve (operação, motivo) quando requer terminal humano; senão None.
++
++    Comandos compostos que invocam operação condicionada por arquivo são
++    recusados: um passo anterior pode mudar o rascunho após a inspeção.
++    """
++    try:
++        segmentos = _segmentos(comando)
++        invocacoes = [item for segmento in segmentos for item in _invocacoes(segmento)]
++    except ValueError:
++        return 'comando-nao-inspecionavel', 'Comando shell ilegivel; nao e possivel conferir decisoes humanas.'
++    for script, args, composto in invocacoes:
++        for regra in pb['decisoes_humanas']:
++            if script == '__codigo_inline__':
++                fonte = args[0] if args else ''
++                nome = regra['script']
++                if nome in fonte or re.search(r'\b'+re.escape(pathlib.Path(nome).stem)+r'\b', fonte):
++                    candidatas = [r for r in pb['decisoes_humanas'] if r['script'] == nome]
++                    selecionada = next((r for r in candidatas if r.get('argumento')
++                                        and _argumento(args[1:], r['argumento'])), regra)
++                    return selecionada['id'], 'Codigo inline invoca componente de decisao sem condicao inspecionavel.'
++            if script != regra['script']:
++                continue
++            argumento = regra.get('argumento')
++            valores = _argumento(args, argumento) if argumento else []
++            if argumento and not valores:
++                continue
++            c = regra['condicao']
++            if c['tipo'] == 'sempre':
++                return regra['id'], 'Operacao declarada como decisao humana.'
++            if c['tipo'] == 'camada':
++                if len(segmentos) != 1 or composto:
++                    return regra['id'], 'Comando composto pode mudar o contexto de resolucao da camada.'
++                if len(valores) != 1 or not valores[0] or P.etapa(pb, valores[0]) is None:
++                    return regra['id'], 'Etapa alvo ausente, ambigua ou desconhecida.'
++                camada = P.camada(pb, valores[0], st.get('nivel'))
++                if camada in c['camadas']:
++                    return regra['id'], f"Etapa {valores[0]}, camada {camada}, nivel {st.get('nivel')}: encerramento humano."
++            if c['tipo'] == 'arquivo':
++                if len(segmentos) != 1 or composto:
++                    return regra['id'], 'Comando composto pode alterar o candidato antes da decisao.'
++                arquivos = _argumento(args, c['argumento'])
++                if len(arquivos) != 1 or not arquivos[0]:
++                    return regra['id'], 'Caminho do candidato ausente ou ambiguo.'
++                candidato = pathlib.Path(c['diretorio']) / pathlib.Path(arquivos[0]).name
++                if not candidato.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++                    return regra['id'], 'Candidato fora do caso.'
++                try:
++                    dados = X.carregar_yaml(candidato.read_text(encoding='utf-8'))
++                    if not isinstance(dados, dict):
++                        raise ValueError('candidato precisa ser objeto')
++                except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml) as exc:
++                    return regra['id'], f'Candidato {candidato} nao inspecionavel: {exc}'
++                valor = dados.get(c['campo'])
++                if 'preparacao' in c and valor not in c['preparacao']:
++                    return regra['id'], f"Candidato {candidato}: campo {c['campo']} nao caracteriza preparacao permitida."
++                if (c['operador'] == 'igual' and valor == c['valor']) or (c['operador'] == 'preenchido' and bool(valor)):
++                    return regra['id'], f"Candidato {candidato}: campo {c['campo']} caracteriza decisao humana."
++    return None
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 8729e23..0b16167 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -15,12 +15,14 @@ Regras, sem ordem fixa exigida entre si:
+       do agente
+   G7  habilidade de etapa que declara "exige_selo_apos" nao carrega sem
+       selo posterior ao encerramento da etapa referenciada
++  G8  operações humanas declaradas no playbook não executam pela sessão
+ """
+ import json, os, pathlib, re, shlex, sys
+ 
+ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
++import decisao_humana as H
+ 
+ 
+ META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
+@@ -125,6 +127,20 @@ def main():
+     etapa = P.etapa(pb, etapa_id) or {}
+     camada_corrente = P.camada(pb, etapa_id, nivel)
+ 
++    # Toda chamada recebida neste hook vem da sessão do agente. A
++    # identidade digitada não muda essa origem; condições vêm do caso.
++    if ferramenta == "Bash":
++        decisao = H.avaliar(pb, st, comando)
++        if decisao:
++            operacao, motivo = decisao
++            negar(
++                f"{motivo} A decisao humana e executada pelo engenheiro no "
++                f"proprio terminal, fora da sessao do Claude Code. "
++                f"Comando exato: {comando}",
++                operacao=operacao, acao_tentada=operacao, comando=comando,
++                autor=st.get("responsavel"), etapa=etapa_id, ferramenta=ferramenta,
++            )
++
+     # G1 — habilidade de camada humana nao carrega sem sessao valida
+     # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
+     # a mesma etapa pode ser EX2 em N1 e EX3 em N3. Sessao humana
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 710571c..ace7f7d 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -73,6 +73,12 @@ def carregar():
+             if type(sessoes.get(cam)) is not bool:
+                 return None, f"encerramento_por_camada: {cam} precisa declarar booleano"
+ 
++    # Importação local evita ciclo: o avaliador também resolve etapas.
++    import decisao_humana as H
++    erro_humano = H.validar(pb.get("decisoes_humanas"))
++    if erro_humano:
++        return None, erro_humano
++
+     for d in pb.get("entregaveis", []):
+         faltando = OBRIGATORIO_ENTREGAVEL - set(d)
+         if faltando:
+diff --git a/testes/README.md b/testes/README.md
+index 3c777e2..832dfde 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -674,3 +674,15 @@ python3 testes/campos_a10.py
+ A execução integral confere códigos de saída e mensagens de falha; preserva
+ todos os testes anteriores. As contagens são por teste/método, sem somar
+ subtestes ou os módulos reexecutados internamente pelos testes de regressão.
++
++A12 acrescenta **37 verificações** de origem na guarda, operações humanas
++com nome informado humano, preparação permitida e terminal direto. A suíte
++completa passa a **629 verificações em 25 módulos**:
++
++```bash
++python3 testes/decisao_a12.py
++```
++
++As decisões diretas dos testes existentes simulam o terminal do engenheiro.
++As chamadas de teste à guarda simulam a sessão. T19 de campo_2_6_2 cobre
++apenas termo proposto; T22 de nucleo_2_6_1 recusa apuração pela sessão.
+diff --git a/testes/campo_2_6_2.py b/testes/campo_2_6_2.py
+index 5e5b504..3fcc915 100644
+--- a/testes/campo_2_6_2.py
++++ b/testes/campo_2_6_2.py
+@@ -407,13 +407,14 @@ if codigo == 2 and "registro/" in erro:
+ else:
+     falha(f"2.6.2-T18 escrita direta em registro/governanca/ NAO foi bloqueada: exit={codigo}")
+ 
++(caso3 / "rascunho/AUT-002.yaml").write_text(aut_yaml("proposto", 2, id="AUT-002"), encoding="utf-8")
+ codigo, saida, erro = guarda(caso3, "Bash", {
+     "command": f"python3 {GOVERNANCA} --arquivo registro/governanca/autonomia/AUT-002.yaml --ator 'Marina Prado'"
+ })
+ if codigo == 0:
+-    ok("2.6.2-T19 alteracao pelo caminho autorizado (governanca.py via Bash) funcional")
++    ok("2.6.2-T19 preparacao de termo proposto (governanca.py via Bash) permitida")
+ else:
+-    falha(f"2.6.2-T19 caminho autorizado foi bloqueado pela guarda: exit={codigo} stderr={erro}")
++    falha(f"2.6.2-T19 preparacao foi bloqueada pela guarda: exit={codigo} stderr={erro}")
+ 
+ # --- T20/T21: acao classificada como autonoma so apos decisao humana -------
+ if aut_dict.get("estado") == "decidido" and aut_dict.get("decisor"):
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+new file mode 100644
+index 0000000..58d5911
+--- /dev/null
++++ b/testes/decisao_a12.py
+@@ -0,0 +1,227 @@
++"""A12: origem na guarda identifica agente, independentemente do nome."""
++import json
++import pathlib
++import shutil
++import subprocess
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++GUARDA = RAIZ / 'eiac-nucleo/scripts/guarda.py'
++# Contrato explícito para exercitar a versão anterior antes da implementação.
++REGRAS = [
++    {'id': 'decidir-autonomia', 'script': 'governanca.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'decidido', 'preparacao': ['rascunho', 'proposto']}},
++    {'id': 'validar-operacional', 'script': 'operacional.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'validado', 'preparacao': ['proposta']}},
++    {'id': 'decidir-recalibragem', 'script': 'calibragem.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'decisao', 'operador': 'preenchido'}},
++    *[{'id': flag, 'script': 'avancar.py', 'argumento': '--'+flag, 'condicao': {'tipo': 'sempre'}} for flag in ['apurar-nivel', 'registrar-sessao', 'registrar-campo', 'registrar-recorrencia', 'satisfazer-inegociavel']],
++    {'id': 'satisfazer-inegociavel-campo', 'script': 'inegociaveis.py', 'argumento': '--satisfazer', 'condicao': {'tipo': 'sempre'}},
++    {'id': 'preparar-controle', 'script': 'preparar-caso.sh', 'condicao': {'tipo': 'sempre'}},
++    {'id': 'encerrar-camada-humana', 'script': 'avancar.py', 'argumento': '--encerrar', 'condicao': {'tipo': 'camada', 'camadas': ['EX3', 'EX4']}},
++]
++
++
++class DecisaoA12(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ / 'eiac-campo/template-caso/registro', self.caso / 'registro')
++        (self.caso / 'rascunho').mkdir()
++        self.estado = self.caso / 'registro/estado.json'
++        self.pbpath = self.caso / 'registro/playbook.json'
++        self.configurar(lambda pb: pb.update(decisoes_humanas=REGRAS))
++        self.posicionar('P6')
++        self.rascunho('AUT-001.yaml', 'estado: decidido\n')
++        self.rascunho('OP-001.yaml', 'estado: validado\n')
++        self.rascunho('CAL-001-C01.yaml', 'decisao: recalibrar\n')
++
++    def configurar(self, fn):
++        pb = json.loads(self.pbpath.read_text())
++        fn(pb)
++        self.pbpath.write_text(json.dumps(pb))
++
++    def posicionar(self, etapa, nivel='N2'):
++        pb = json.loads(self.pbpath.read_text())
++        st = json.loads(self.estado.read_text())
++        st.update(responsavel='Celso do Vale', etapa_atual=etapa, nivel=nivel)
++        st['cumprimentos'] = {}
++        for et in pb['etapas']:
++            if et['id'] == etapa:
++                st.update(camada_atual=et['camada'][nivel], modalidade_atual=et['modalidade'])
++                break
++            st['cumprimentos'][et['id']] = {'cumprido': True}
++        self.estado.write_text(json.dumps(st))
++
++    def rascunho(self, nome, texto):
++        (self.caso / 'rascunho' / nome).write_text(texto)
++
++    def executar(self, comando, ferramenta='Bash'):
++        return subprocess.run(['python3', str(GUARDA)], cwd=self.caso,
++                              input=json.dumps({'tool_name': ferramenta,
++                                                'tool_input': {'command': comando}}),
++                              text=True, capture_output=True)
++
++    def comando(self, script, argumentos):
++        plugin = 'eiac-nucleo' if script == 'avancar.py' else 'eiac-campo'
++        return f'python3 "{RAIZ / plugin / "scripts" / script}" {argumentos}'
++
++    def recusa(self, comando, operacao):
++        antes = self.estado.read_bytes()
++        r = self.executar(comando)
++        self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
++        self.assertIn('engenheiro', r.stderr)
++        self.assertIn('proprio terminal', r.stderr)
++        self.assertIn(comando, r.stderr)
++        self.assertEqual(self.estado.read_bytes(), antes)
++        ev = json.loads((self.caso / 'registro/eventos.jsonl').read_text().splitlines()[-1])
++        self.assertEqual(ev['evento'], 'TentativaNegada')
++        self.assertEqual(ev['autor'], 'Celso do Vale')
++        self.assertEqual(ev['comando'], comando)
++        self.assertEqual(ev['operacao'], operacao)
++
++    def permitido(self, comando):
++        r = self.executar(comando)
++        self.assertEqual(r.returncode, 0, r.stderr)
++
++    def test_00_governanca_decidido_nome_humano(self):
++        self.recusa(self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"'), 'decidir-autonomia')
++
++    def test_01_operacional_validado_nome_humano(self):
++        self.recusa(self.comando('operacional.py', '--arquivo registro/operacional/OP-001.yaml --ator "Celso do Vale"'), 'validar-operacional')
++
++    def test_02_calibragem_com_decisao(self):
++        self.recusa(self.comando('calibragem.py', '--arquivo registro/calibragem/CAL-001-C01.yaml --ciclo --ator "Celso do Vale"'), 'decidir-recalibragem')
++
++    def test_03_apurar_nivel(self):
++        self.recusa(self.comando('avancar.py', '--apurar-nivel N3 --autor "Celso do Vale" --eixos "DAD 4, GOV 3, CRI 8"'), 'apurar-nivel')
++
++    def test_04_registrar_sessao(self):
++        self.recusa(self.comando('avancar.py', '--registrar-sessao P6 --autor "Celso do Vale" --participantes "X"'), 'registrar-sessao')
++
++    def test_05_registrar_campo(self):
++        self.recusa(self.comando('avancar.py', '--registrar-campo P5 --campo classificacao_tecnologica --valor agente --autor "Celso do Vale"'), 'registrar-campo')
++
++    def test_06_registrar_recorrencia(self):
++        self.recusa(self.comando('avancar.py', '--registrar-recorrencia P10 --cadencia mensal --responsavel "Celso do Vale" --autor "Celso do Vale"'), 'registrar-recorrencia')
++
++    def test_07_satisfazer_inegociavel(self):
++        self.recusa(self.comando('avancar.py', '--satisfazer-inegociavel 2 --evidencia AUT-001 --autor "Celso do Vale"'), 'satisfazer-inegociavel')
++
++    def test_08_encerrar_ex3(self):
++        self.recusa(self.comando('avancar.py', '--encerrar P6 --autor "Celso do Vale"'), 'encerrar-camada-humana')
++
++    def test_09_encerrar_ex4(self):
++        self.posicionar('P7')
++        self.recusa(self.comando('avancar.py', '--encerrar P7 --autor "Celso do Vale"'), 'encerrar-camada-humana')
++
++    def test_10_camada_da_etapa_alvo_nao_cache(self):
++        self.posicionar('P1')
++        self.recusa(self.comando('avancar.py', '--encerrar P6 --autor "Celso do Vale"'), 'encerrar-camada-humana')
++
++    def test_11_opcao_com_igual(self):
++        self.recusa(self.comando('avancar.py', '--registrar-sessao=P6 --autor="Celso do Vale"'), 'registrar-sessao')
++
++    def test_12_cadeia_de_comandos(self):
++        c = 'pwd && '+self.comando('avancar.py', '--apurar-nivel N2 --autor "Celso do Vale"')
++        self.recusa(c, 'apurar-nivel')
++
++    def test_13_shell_interno(self):
++        c = "bash -c '"+self.comando('avancar.py', '--registrar-sessao P6 --autor "Celso do Vale"')+"'"
++        self.recusa(c, 'registrar-sessao')
++
++    def test_14_rascunho_ausente(self):
++        c = self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-999.yaml --ator "Celso do Vale"')
++        self.recusa(c, 'decidir-autonomia')
++
++    def test_15_rascunho_ilegivel(self):
++        self.rascunho('AUT-001.yaml', 'estado: [\n')
++        self.recusa(self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"'), 'decidir-autonomia')
++
++    def test_16_regra_ausente_nao_desativa_guarda(self):
++        self.configurar(lambda pb: pb.pop('decisoes_humanas'))
++        r = self.executar('pwd')
++        self.assertEqual(r.returncode, 2)
++        self.assertIn('decisoes_humanas', r.stderr)
++
++    def test_17_condicao_desconhecida(self):
++        self.configurar(lambda pb: pb['decisoes_humanas'][0]['condicao'].update(tipo='preferencia'))
++        r = self.executar('pwd')
++        self.assertEqual(r.returncode, 2)
++        self.assertIn('condicao', r.stderr)
++
++    def test_18_mudar_rascunho_na_mesma_chamada(self):
++        self.rascunho('AUT-001.yaml', 'estado: proposto\n')
++        c = "sed -i s/proposto/decidido/ rascunho/AUT-001.yaml && "+self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"')
++        self.recusa(c, 'decidir-autonomia')
++
++    def test_19_contrato_alternativo_sem_vocabulario_do_metodo(self):
++        self.configurar(lambda pb: pb['decisoes_humanas'].append({'id': 'outra-decisao', 'script': 'outro.py', 'argumento': '--confirmar', 'condicao': {'tipo': 'sempre'}}))
++        self.recusa('python3 outro.py --confirmar --autor "Celso do Vale"', 'outra-decisao')
++
++    def test_20_governanca_proposto(self):
++        self.rascunho('AUT-001.yaml', 'estado: proposto\n')
++        self.permitido(self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator AG-01'))
++
++    def test_21_operacional_proposta(self):
++        self.rascunho('OP-001.yaml', 'estado: proposta\n')
++        self.permitido(self.comando('operacional.py', '--arquivo registro/operacional/OP-001.yaml --ator AG-01'))
++
++    def test_22_calibragem_recomendacao_sem_decisao(self):
++        self.rascunho('CAL-001-C01.yaml', 'recomendacao_agente: recalibrar\n')
++        self.permitido(self.comando('calibragem.py', '--arquivo registro/calibragem/CAL-001-C01.yaml --ciclo --ator AG-01'))
++
++    def test_23_leitura(self):
++        self.permitido('cat registro/estado.json')
++        self.permitido('python3 '+str(RAIZ/'eiac-nucleo/scripts/estado.py'))
++        self.permitido('cat '+str(RAIZ/'eiac-campo/scripts/governanca.py'))
++
++    def test_24_validador_curador_emissao(self):
++        for comando in ['python3 validar.py --arquivo caso/regra.yaml', 'python3 curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml', 'python3 entregaveis.py --renderizar E3 --autor "Celso do Vale" --emitir']:
++            self.permitido(comando)
++
++    def test_25_encerrar_ex2(self):
++        self.posicionar('P1')
++        self.permitido(self.comando('avancar.py', '--encerrar P1 --autor "Celso do Vale"'))
++
++    def test_26_mesma_etapa_ex2_em_n1(self):
++        self.posicionar('P3a', 'N1')
++        self.permitido(self.comando('avancar.py', '--encerrar P3a --autor "Celso do Vale"'))
++
++    def test_27_texto_nao_e_execucao(self):
++        self.permitido('echo "python3 avancar.py --apurar-nivel N3"')
++
++    def test_28_terminal_direto_apura_nivel(self):
++        r = subprocess.run(['python3', str(RAIZ/'eiac-nucleo/scripts/avancar.py'), '--apurar-nivel', 'N3', '--autor', 'Celso do Vale', '--eixos', 'DAD 4, GOV 3, CRI 8'], cwd=self.caso, text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertEqual(json.loads(self.estado.read_text())['nivel'], 'N3')
++
++    def test_29_template_declara_lista(self):
++        pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
++        self.assertEqual(pb.get('decisoes_humanas'), REGRAS)
++
++    def test_30_satisfacao_por_wrapper_campo(self):
++        self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
++
++    def test_31_auxiliar_automatico_exige_terminal(self):
++        self.recusa('bash .projectdocs/demos/preparar-caso.sh controle P7', 'preparar-controle')
++
++    def test_32_verificar_inegociavel_sem_satisfazer(self):
++        self.permitido('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml')
++
++    def test_33_encerramento_composto_contexto_incerto(self):
++        self.posicionar('P3a', 'N1')
++        self.recusa('cd /tmp/outro-caso && '+self.comando('avancar.py', '--encerrar P3a --autor "Celso do Vale"'), 'encerrar-camada-humana')
++
++    def test_34_opcao_interpretador_com_valor(self):
++        c = self.comando('avancar.py', '--registrar-sessao P6 --autor "Celso do Vale"').replace('python3 ', 'python3 -W ignore ', 1)
++        self.recusa(c, 'registrar-sessao')
++
++    def test_35_execucao_por_modulo(self):
++        self.recusa('python3 -m avancar --registrar-sessao P6 --autor "Celso do Vale"', 'registrar-sessao')
++
++    def test_36_codigo_inline_invoca_script_de_decisao(self):
++        self.recusa("python3 -c 'import avancar; avancar.main()' --registrar-sessao P6 --autor \"Celso do Vale\"", 'registrar-sessao')
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 2633d9d..1cc07a8 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -408,10 +408,10 @@ else:
+ codigo, saida, erro = guarda(caso, "Bash", {
+     "command": f"python3 {AVANCAR} --apurar-nivel N1 --autor 'Celso' --eixos 'DAD 3, GOV 3, CRI 3'"
+ })
+-if codigo == 0:
+-    ok("2.6.1-T22 escrita autorizada em registro/ (via avancar.py) funcional")
++if codigo == 2 and "proprio terminal" in erro:
++    ok("2.6.1-T22 apuracao por Bash da sessao recusada, mesmo com nome humano")
+ else:
+-    falha(f"2.6.1-T22 chamada autorizada ao nucleo foi bloqueada pela guarda: exit={codigo} stderr={erro}")
++    falha(f"2.6.1-T22 decisao pela sessao deveria ser recusada: exit={codigo} stderr={erro}")
+ 
+ # --- T23/T24: regressao de contexto/ (Acao 2.5) ------------------------------
+ caso = preparar_caso()

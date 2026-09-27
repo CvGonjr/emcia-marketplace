@@ -1,0 +1,7 @@
+Etapa final: P7 | nível: N2
+Sessão da etapa final: True
+Classificação: agente
+PERMITIDO | a guarda permite esta chamada; o comando não foi executado.
+NEGADO | Candidato rascunho/AUT-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/governanca.py" --arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"
+Execução pelo terminal: termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+Estado do termo registrado: decidido

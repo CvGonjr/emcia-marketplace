@@ -1,0 +1,239 @@
+test_00_governanca_decidido_nome_humano (__main__.DecisaoA12.test_00_governanca_decidido_nome_humano) ... FAIL
+test_01_operacional_validado_nome_humano (__main__.DecisaoA12.test_01_operacional_validado_nome_humano) ... FAIL
+test_02_calibragem_com_decisao (__main__.DecisaoA12.test_02_calibragem_com_decisao) ... FAIL
+test_03_apurar_nivel (__main__.DecisaoA12.test_03_apurar_nivel) ... FAIL
+test_04_registrar_sessao (__main__.DecisaoA12.test_04_registrar_sessao) ... FAIL
+test_05_registrar_campo (__main__.DecisaoA12.test_05_registrar_campo) ... FAIL
+test_06_registrar_recorrencia (__main__.DecisaoA12.test_06_registrar_recorrencia) ... FAIL
+test_07_satisfazer_inegociavel (__main__.DecisaoA12.test_07_satisfazer_inegociavel) ... FAIL
+test_08_encerrar_ex3 (__main__.DecisaoA12.test_08_encerrar_ex3) ... FAIL
+test_09_encerrar_ex4 (__main__.DecisaoA12.test_09_encerrar_ex4) ... FAIL
+test_10_camada_da_etapa_alvo_nao_cache (__main__.DecisaoA12.test_10_camada_da_etapa_alvo_nao_cache) ... FAIL
+test_11_opcao_com_igual (__main__.DecisaoA12.test_11_opcao_com_igual) ... FAIL
+test_12_cadeia_de_comandos (__main__.DecisaoA12.test_12_cadeia_de_comandos) ... FAIL
+test_13_shell_interno (__main__.DecisaoA12.test_13_shell_interno) ... FAIL
+test_14_rascunho_ausente (__main__.DecisaoA12.test_14_rascunho_ausente) ... FAIL
+test_15_rascunho_ilegivel (__main__.DecisaoA12.test_15_rascunho_ilegivel) ... FAIL
+test_16_regra_ausente_nao_desativa_guarda (__main__.DecisaoA12.test_16_regra_ausente_nao_desativa_guarda) ... FAIL
+test_17_condicao_desconhecida (__main__.DecisaoA12.test_17_condicao_desconhecida) ... FAIL
+test_18_mudar_rascunho_na_mesma_chamada (__main__.DecisaoA12.test_18_mudar_rascunho_na_mesma_chamada) ... FAIL
+test_19_contrato_alternativo_sem_vocabulario_do_metodo (__main__.DecisaoA12.test_19_contrato_alternativo_sem_vocabulario_do_metodo) ... FAIL
+test_20_governanca_proposto (__main__.DecisaoA12.test_20_governanca_proposto) ... ok
+test_21_operacional_proposta (__main__.DecisaoA12.test_21_operacional_proposta) ... ok
+test_22_calibragem_recomendacao_sem_decisao (__main__.DecisaoA12.test_22_calibragem_recomendacao_sem_decisao) ... ok
+test_23_leitura (__main__.DecisaoA12.test_23_leitura) ... ok
+test_24_validador_curador_emissao (__main__.DecisaoA12.test_24_validador_curador_emissao) ... ok
+test_25_encerrar_ex2 (__main__.DecisaoA12.test_25_encerrar_ex2) ... ok
+test_26_mesma_etapa_ex2_em_n1 (__main__.DecisaoA12.test_26_mesma_etapa_ex2_em_n1) ... ok
+test_27_texto_nao_e_execucao (__main__.DecisaoA12.test_27_texto_nao_e_execucao) ... ok
+test_28_terminal_direto_apura_nivel (__main__.DecisaoA12.test_28_terminal_direto_apura_nivel) ... ok
+test_29_template_declara_lista (__main__.DecisaoA12.test_29_template_declara_lista) ... FAIL
+
+======================================================================
+FAIL: test_00_governanca_decidido_nome_humano (__main__.DecisaoA12.test_00_governanca_decidido_nome_humano)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 85, in test_00_governanca_decidido_nome_humano
+    self.recusa(self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"'), 'decidir-autonomia')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_01_operacional_validado_nome_humano (__main__.DecisaoA12.test_01_operacional_validado_nome_humano)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 88, in test_01_operacional_validado_nome_humano
+    self.recusa(self.comando('operacional.py', '--arquivo registro/operacional/OP-001.yaml --ator "Celso do Vale"'), 'validar-operacional')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_02_calibragem_com_decisao (__main__.DecisaoA12.test_02_calibragem_com_decisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 91, in test_02_calibragem_com_decisao
+    self.recusa(self.comando('calibragem.py', '--arquivo registro/calibragem/CAL-001-C01.yaml --ciclo --ator "Celso do Vale"'), 'decidir-recalibragem')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_03_apurar_nivel (__main__.DecisaoA12.test_03_apurar_nivel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 94, in test_03_apurar_nivel
+    self.recusa(self.comando('avancar.py', '--apurar-nivel N3 --autor "Celso do Vale" --eixos "DAD 4, GOV 3, CRI 8"'), 'apurar-nivel')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_04_registrar_sessao (__main__.DecisaoA12.test_04_registrar_sessao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 97, in test_04_registrar_sessao
+    self.recusa(self.comando('avancar.py', '--registrar-sessao P6 --autor "Celso do Vale" --participantes "X"'), 'registrar-sessao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_05_registrar_campo (__main__.DecisaoA12.test_05_registrar_campo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 100, in test_05_registrar_campo
+    self.recusa(self.comando('avancar.py', '--registrar-campo P5 --campo classificacao_tecnologica --valor agente --autor "Celso do Vale"'), 'registrar-campo')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_06_registrar_recorrencia (__main__.DecisaoA12.test_06_registrar_recorrencia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 103, in test_06_registrar_recorrencia
+    self.recusa(self.comando('avancar.py', '--registrar-recorrencia P10 --cadencia mensal --responsavel "Celso do Vale" --autor "Celso do Vale"'), 'registrar-recorrencia')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_07_satisfazer_inegociavel (__main__.DecisaoA12.test_07_satisfazer_inegociavel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 106, in test_07_satisfazer_inegociavel
+    self.recusa(self.comando('avancar.py', '--satisfazer-inegociavel 2 --evidencia AUT-001 --autor "Celso do Vale"'), 'satisfazer-inegociavel')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_08_encerrar_ex3 (__main__.DecisaoA12.test_08_encerrar_ex3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 109, in test_08_encerrar_ex3
+    self.recusa(self.comando('avancar.py', '--encerrar P6 --autor "Celso do Vale"'), 'encerrar-camada-humana')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_09_encerrar_ex4 (__main__.DecisaoA12.test_09_encerrar_ex4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 113, in test_09_encerrar_ex4
+    self.recusa(self.comando('avancar.py', '--encerrar P7 --autor "Celso do Vale"'), 'encerrar-camada-humana')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_10_camada_da_etapa_alvo_nao_cache (__main__.DecisaoA12.test_10_camada_da_etapa_alvo_nao_cache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 117, in test_10_camada_da_etapa_alvo_nao_cache
+    self.recusa(self.comando('avancar.py', '--encerrar P6 --autor "Celso do Vale"'), 'encerrar-camada-humana')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_11_opcao_com_igual (__main__.DecisaoA12.test_11_opcao_com_igual)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 120, in test_11_opcao_com_igual
+    self.recusa(self.comando('avancar.py', '--registrar-sessao=P6 --autor="Celso do Vale"'), 'registrar-sessao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_12_cadeia_de_comandos (__main__.DecisaoA12.test_12_cadeia_de_comandos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 124, in test_12_cadeia_de_comandos
+    self.recusa(c, 'apurar-nivel')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_13_shell_interno (__main__.DecisaoA12.test_13_shell_interno)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 128, in test_13_shell_interno
+    self.recusa(c, 'registrar-sessao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_14_rascunho_ausente (__main__.DecisaoA12.test_14_rascunho_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 132, in test_14_rascunho_ausente
+    self.recusa(c, 'decidir-autonomia')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_15_rascunho_ilegivel (__main__.DecisaoA12.test_15_rascunho_ilegivel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 136, in test_15_rascunho_ilegivel
+    self.recusa(self.comando('governanca.py', '--arquivo registro/governanca/autonomia/AUT-001.yaml --ator "Celso do Vale"'), 'decidir-autonomia')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_16_regra_ausente_nao_desativa_guarda (__main__.DecisaoA12.test_16_regra_ausente_nao_desativa_guarda)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 141, in test_16_regra_ausente_nao_desativa_guarda
+    self.assertEqual(r.returncode, 2)
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_17_condicao_desconhecida (__main__.DecisaoA12.test_17_condicao_desconhecida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 147, in test_17_condicao_desconhecida
+    self.assertEqual(r.returncode, 2)
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_18_mudar_rascunho_na_mesma_chamada (__main__.DecisaoA12.test_18_mudar_rascunho_na_mesma_chamada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 153, in test_18_mudar_rascunho_na_mesma_chamada
+    self.recusa(c, 'decidir-autonomia')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_19_contrato_alternativo_sem_vocabulario_do_metodo (__main__.DecisaoA12.test_19_contrato_alternativo_sem_vocabulario_do_metodo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 157, in test_19_contrato_alternativo_sem_vocabulario_do_metodo
+    self.recusa('python3 outro.py --confirmar --autor "Celso do Vale"', 'outra-decisao')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 69, in recusa
+    self.assertEqual(r.returncode, 2, r.stdout+r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_29_template_declara_lista (__main__.DecisaoA12.test_29_template_declara_lista)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/decisao_a12.py", line 198, in test_29_template_declara_lista
+    self.assertEqual(pb.get('decisoes_humanas'), REGRAS)
+AssertionError: None != [{'id': 'decidir-autonomia', 'script': 'g[1299 chars]']}}]
+
+----------------------------------------------------------------------
+Ran 30 tests in 1.256s
+
+FAILED (failures=21)

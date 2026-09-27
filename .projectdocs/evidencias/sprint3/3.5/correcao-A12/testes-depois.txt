@@ -1,0 +1,42 @@
+test_00_governanca_decidido_nome_humano (__main__.DecisaoA12.test_00_governanca_decidido_nome_humano) ... ok
+test_01_operacional_validado_nome_humano (__main__.DecisaoA12.test_01_operacional_validado_nome_humano) ... ok
+test_02_calibragem_com_decisao (__main__.DecisaoA12.test_02_calibragem_com_decisao) ... ok
+test_03_apurar_nivel (__main__.DecisaoA12.test_03_apurar_nivel) ... ok
+test_04_registrar_sessao (__main__.DecisaoA12.test_04_registrar_sessao) ... ok
+test_05_registrar_campo (__main__.DecisaoA12.test_05_registrar_campo) ... ok
+test_06_registrar_recorrencia (__main__.DecisaoA12.test_06_registrar_recorrencia) ... ok
+test_07_satisfazer_inegociavel (__main__.DecisaoA12.test_07_satisfazer_inegociavel) ... ok
+test_08_encerrar_ex3 (__main__.DecisaoA12.test_08_encerrar_ex3) ... ok
+test_09_encerrar_ex4 (__main__.DecisaoA12.test_09_encerrar_ex4) ... ok
+test_10_camada_da_etapa_alvo_nao_cache (__main__.DecisaoA12.test_10_camada_da_etapa_alvo_nao_cache) ... ok
+test_11_opcao_com_igual (__main__.DecisaoA12.test_11_opcao_com_igual) ... ok
+test_12_cadeia_de_comandos (__main__.DecisaoA12.test_12_cadeia_de_comandos) ... ok
+test_13_shell_interno (__main__.DecisaoA12.test_13_shell_interno) ... ok
+test_14_rascunho_ausente (__main__.DecisaoA12.test_14_rascunho_ausente) ... ok
+test_15_rascunho_ilegivel (__main__.DecisaoA12.test_15_rascunho_ilegivel) ... ok
+test_16_regra_ausente_nao_desativa_guarda (__main__.DecisaoA12.test_16_regra_ausente_nao_desativa_guarda) ... ok
+test_17_condicao_desconhecida (__main__.DecisaoA12.test_17_condicao_desconhecida) ... ok
+test_18_mudar_rascunho_na_mesma_chamada (__main__.DecisaoA12.test_18_mudar_rascunho_na_mesma_chamada) ... ok
+test_19_contrato_alternativo_sem_vocabulario_do_metodo (__main__.DecisaoA12.test_19_contrato_alternativo_sem_vocabulario_do_metodo) ... ok
+test_20_governanca_proposto (__main__.DecisaoA12.test_20_governanca_proposto) ... ok
+test_21_operacional_proposta (__main__.DecisaoA12.test_21_operacional_proposta) ... ok
+test_22_calibragem_recomendacao_sem_decisao (__main__.DecisaoA12.test_22_calibragem_recomendacao_sem_decisao) ... ok
+test_23_leitura (__main__.DecisaoA12.test_23_leitura) ... ok
+test_24_validador_curador_emissao (__main__.DecisaoA12.test_24_validador_curador_emissao) ... ok
+test_25_encerrar_ex2 (__main__.DecisaoA12.test_25_encerrar_ex2) ... ok
+test_26_mesma_etapa_ex2_em_n1 (__main__.DecisaoA12.test_26_mesma_etapa_ex2_em_n1) ... ok
+test_27_texto_nao_e_execucao (__main__.DecisaoA12.test_27_texto_nao_e_execucao) ... ok
+test_28_terminal_direto_apura_nivel (__main__.DecisaoA12.test_28_terminal_direto_apura_nivel) ... ok
+test_29_template_declara_lista (__main__.DecisaoA12.test_29_template_declara_lista) ... ok
+test_30_satisfacao_por_wrapper_campo (__main__.DecisaoA12.test_30_satisfacao_por_wrapper_campo) ... ok
+test_31_auxiliar_automatico_exige_terminal (__main__.DecisaoA12.test_31_auxiliar_automatico_exige_terminal) ... ok
+test_32_verificar_inegociavel_sem_satisfazer (__main__.DecisaoA12.test_32_verificar_inegociavel_sem_satisfazer) ... ok
+test_33_encerramento_composto_contexto_incerto (__main__.DecisaoA12.test_33_encerramento_composto_contexto_incerto) ... ok
+test_34_opcao_interpretador_com_valor (__main__.DecisaoA12.test_34_opcao_interpretador_com_valor) ... ok
+test_35_execucao_por_modulo (__main__.DecisaoA12.test_35_execucao_por_modulo) ... ok
+test_36_codigo_inline_invoca_script_de_decisao (__main__.DecisaoA12.test_36_codigo_inline_invoca_script_de_decisao) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 2.357s
+
+OK
