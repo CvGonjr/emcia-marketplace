@@ -32,6 +32,7 @@ import os
 RAIZ_NUCLEO = pathlib.Path(os.environ["EIAC_NUCLEO_SCRIPTS"]) if os.environ.get("EIAC_NUCLEO_SCRIPTS") else pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
 sys.path.insert(0, str(RAIZ_NUCLEO))
 import estrutura as X  # noqa: E402
+import estado as E
 
 
 def _agora():
@@ -174,10 +175,7 @@ def verificar_i5(caminho):
     if erro:
         return _resultado(5, False, caminho, verificador, erro)
     responsavel = str(dados.get("responsavel") or "").strip()
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir",
-                 "ti", "consultoria"}
-    tokens = set(responsavel.lower().replace(",", " ").split())
-    if not responsavel or tokens & genericos:
+    if not E.pessoa_nomeada(responsavel):
         return _resultado(5, False, caminho, verificador,
                           f"responsavel '{responsavel or '(vazio)'}' nao e pessoa "
                           f"nomeada -- area, equipe ou coletivo generico (mesmo em "

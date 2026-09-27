@@ -17,7 +17,7 @@ ARQUIVO = pathlib.Path("registro/esforco.jsonl")
 
 
 def registrar(etapa_id, duracao_segundos, autor, pb, nivel):
-    if E.autor_e_agente(autor):
+    if not E.pessoa_nomeada(autor):
         return "autor do esforço precisa ser pessoa nomeada, não agente", None
     if not autor.strip():
         return "autor do esforço é obrigatório", None

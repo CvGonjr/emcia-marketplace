@@ -45,11 +45,13 @@ def checar_autoria(dados):
     qualquer um desses campos que o objeto de fato declarar.
     """
     erros = []
-    for campo in CAMPOS_AUTORIA:
+    import json
+    pb = json.loads(pathlib.Path("registro/playbook.json").read_text(encoding="utf-8"))
+    for campo in pb.get("campos_pessoa", CAMPOS_AUTORIA):
         valor = dados.get(campo)
         if valor is None:
             continue
-        if E.autor_e_agente(valor):
+        if not E.pessoa_nomeada(valor):
             erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
     return erros
 
@@ -114,7 +116,7 @@ def checar_versao(anterior, candidato, tipo):
             ultima = historico[-1] if isinstance(historico[-1], dict) else {}
             faltando = [c for c in ("versao", "data") if not ultima.get(c)]
             responsavel = ultima.get("registrado_por") or ultima.get("confirmado_por")
-            if not responsavel:
+            if not E.pessoa_nomeada(responsavel):
                 faltando.append("registrado_por ou confirmado_por")
             if faltando:
                 erros.append(
@@ -281,7 +283,7 @@ def main():
 
     estado = E.ler()
     responsavel = (estado or {}).get("responsavel")
-    if not responsavel:
+    if not E.pessoa_nomeada(responsavel):
         print("caso sem responsavel definido em registro/estado.json "
               "(fixado por novo-caso.sh --responsavel). Nenhuma curadoria "
               "e aceita sem isso.", file=sys.stderr)

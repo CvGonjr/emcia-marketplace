@@ -39,11 +39,7 @@ DECISOES_VALIDAS = ("recalibrar", "expandir", "descontinuar")
 
 
 def _ator_pessoa_nomeada(nome):
-    nome = (nome or "").strip()
-    if not nome or E.autor_e_agente(nome):
-        return False
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-    return nome.lower() not in genericos
+    return E.pessoa_nomeada(nome)
 
 
 def checar_autoria(dados):
@@ -55,8 +51,8 @@ def checar_autoria(dados):
     erros = []
     for campo in ("declarado_por", "registrado_por", "responsavel"):
         valor = dados.get(campo)
-        if valor is not None and E.autor_e_agente(valor):
-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
+        if valor is not None and not E.pessoa_nomeada(valor):
+            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
     return erros
 
 
@@ -112,6 +108,8 @@ def gravar_rotina(destino, ator, schema_caminho="registro/calibragem.schema.json
     erros = X.validar(candidato, schema, "rotina_calibragem")
     erros += checar_autoria(candidato)
     erros += checar_responsavel_nominal(candidato)
+    if not E.pessoa_nomeada(ator):
+        erros.append("rotina exige ator pessoa nomeada")
     erros += checar_metricas_ref(candidato)
 
     if erros:
@@ -176,7 +174,7 @@ def checar_decisao(candidato, ator):
     for campo in ("decisor", "data_decisao", "justificativa_decisao"):
         if not str(candidato.get(campo) or "").strip():
             erros.append(f"decisao preenchida exige '{campo}' preenchido")
-    if candidato.get("decisor") and E.autor_e_agente(candidato.get("decisor")):
+    if candidato.get("decisor") and not E.pessoa_nomeada(candidato.get("decisor")):
         erros.append("'decisor' nao pode ser agente")
     return erros
 

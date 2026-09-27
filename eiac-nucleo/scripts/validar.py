@@ -81,8 +81,9 @@ def validar_linha(marca, pb, n):
         return f"linha {n}: apuracao estimado exige base"
     if apur == "medido" and not any(x.startswith("amostra:") for x in c):
         return f"linha {n}: apuracao medido exige amostra"
-    if any(E.autor_e_agente(x) for x in c):
-        return f"linha {n}: autor nao pode ser agente"
+    autores = [x for x in c if x not in valores and ":" not in x and not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", x)]
+    if not autores or any(not E.pessoa_nomeada(x, pb["pessoa_nomeada"]) for x in autores):
+        return f"linha {n}: autor precisa ser pessoa nomeada, nao pode ser agente"
     return None
 
 
@@ -99,7 +100,7 @@ def main():
 
     estado = E.ler()
     responsavel = (estado or {}).get("responsavel")
-    if not responsavel:
+    if not E.pessoa_nomeada(responsavel):
         print("caso sem responsavel definido em registro/estado.json "
               "(fixado por novo-caso.sh --responsavel). Nenhuma gravacao "
               "e aceita sem isso.", file=sys.stderr)

@@ -1,6 +1,7 @@
 """Produtos de encerramento declarados pelo caso; sem vocabulário de método."""
 import pathlib
 import estrutura as X
+import estado as E
 
 
 def validar(et):
@@ -14,8 +15,10 @@ def validar(et):
             if set(r) != {'tipo', 'campo', 'descricao'} or r.get('campo') not in et.get('campos_registraveis', {}):
                 return f"etapa {et['id']}: produto de estado exige campo registravel"
         elif r.get('tipo') == 'arquivo':
-            if set(r) != {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'}:
+            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
                 return f"etapa {et['id']}: contrato de produto de arquivo invalido"
+            if not isinstance(r.get('pessoas', []), list) or any(not isinstance(c, str) or not c.strip() for c in r.get('pessoas', [])):
+                return f"etapa {et['id']}: campos de pessoa invalidos no produto"
             p = r['padrao']
             if not isinstance(p, str) or not p.strip() or pathlib.Path(p).is_absolute() or '..' in pathlib.Path(p).parts:
                 return f"etapa {et['id']}: padrao de produto deve ficar dentro do caso"
@@ -37,7 +40,7 @@ def faltas(et, st):
             detalhe = regra['campo']
         else:
             ok = False
-            detalhe = f"{regra['padrao']} | iguais={regra['iguais']} | preenchidos={regra['preenchidos']}"
+            detalhe = f"{regra['padrao']} | iguais={regra['iguais']} | preenchidos={regra['preenchidos']} | pessoas={regra.get('pessoas', [])}"
             for arquivo in raiz.glob(regra['padrao']):
                 try:
                     if not arquivo.is_file() or not arquivo.resolve().is_relative_to(raiz):
@@ -46,7 +49,8 @@ def faltas(et, st):
                     if not isinstance(dados, dict):
                         continue
                     if (all(dados.get(c) == v for c, v in regra['iguais'].items())
-                            and all(str(dados.get(c) or '').strip() for c in regra['preenchidos'])):
+                            and all(str(dados.get(c) or '').strip() for c in regra['preenchidos'])
+                            and all(E.pessoa_nomeada(dados.get(c)) for c in regra.get('pessoas', []))):
                         ok = True
                         break
                 except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml):

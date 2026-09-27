@@ -282,7 +282,7 @@
       "responsavel_obrigatorio": true,
       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
       "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" },
-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia"}]
+      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia", "pessoas": ["responsavel"]}]
     }
   ],
 
@@ -315,5 +315,55 @@
     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
     { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
+  ],
+  "pessoa_nomeada": {
+    "minimo_partes": 2,
+    "termos_coletivos": [
+      "equipe",
+      "time",
+      "área",
+      "setor",
+      "departamento",
+      "diretoria",
+      "comitê",
+      "grupo",
+      "núcleo",
+      "TI",
+      "suporte",
+      "consultoria",
+      "team",
+      "staff",
+      "department",
+      "committee",
+      "group",
+      "support",
+      "definir",
+      "agente",
+      "sistema",
+      "assistant",
+      "chatgpt",
+      "codex",
+      "equipes",
+      "times",
+      "áreas",
+      "setores",
+      "departamentos",
+      "diretorias",
+      "comitês",
+      "grupos",
+      "núcleos",
+      "teams",
+      "departments",
+      "committees",
+      "groups"
+    ]
+  },
+  "campos_pessoa": [
+    "autoria_conteudo",
+    "declarado_por",
+    "registrado_por",
+    "autor",
+    "responsavel",
+    "decisor_quando_nao_cobre"
   ]
 }

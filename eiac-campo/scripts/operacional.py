@@ -32,12 +32,12 @@ ESTADOS = ("proposta", "validado")
 
 def checar_autoria(dados):
     erros = []
-    for campo in ("declarado_por", "registrado_por", "validado_por"):
+    for campo in ("declarado_por", "registrado_por", "validado_por", "ator_humano", "responsavel_operacional"):
         valor = dados.get(campo)
         if valor is None:
             continue
-        if E.autor_e_agente(valor):
-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
+        if valor is not None and not E.pessoa_nomeada(valor):
+            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
     return erros
 
 
@@ -91,11 +91,7 @@ def checar_validacao(candidato):
 
 
 def _ator_pessoa_nomeada(nome):
-    nome = (nome or "").strip()
-    if not nome or E.autor_e_agente(nome):
-        return False
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-    return nome.lower() not in genericos
+    return E.pessoa_nomeada(nome)
 
 
 def gravar_especificacao(destino, ator, schema_caminho="registro/operacional.schema.json"):

@@ -43,19 +43,15 @@ case "$nome" in
   */*|.*|"") echo "nome invalido: use apenas o nome do caso, sem barras" >&2; exit 1 ;;
 esac
 
-python3 - "$responsavel" <<'PY'
-import re, sys
-nome = (sys.argv[1] or "").strip()
-if not nome:
-    sys.exit("responsavel vazio: informe pessoa nomeada")
-if re.search(r"[<>]", nome):
-    sys.exit(f"responsavel invalido (placeholder nao preenchido): '{nome}'")
-chave = re.sub(r"[\s\-_]", "", nome.lower())
-if chave.startswith(("ag0", "agente", "sistema")):
-    sys.exit(f"responsavel nao pode ser codigo de agente: '{nome}'")
-genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-if nome.lower() in genericos:
-    sys.exit(f"responsavel precisa ser pessoa nomeada, nao coletivo generico: '{nome}'")
+python3 - "$responsavel" "$RAIZ" "$TEMPLATE" <<'PY'
+import json, pathlib, sys
+sys.path.insert(0, str(pathlib.Path(sys.argv[2])/'eiac-nucleo/scripts'))
+import estado as E
+regra=json.loads((pathlib.Path(sys.argv[3])/'registro/playbook.json').read_text())['pessoa_nomeada']
+if E.autor_e_agente(sys.argv[1]):
+    sys.exit("responsavel nao pode ser codigo de agente")
+if not E.pessoa_nomeada(sys.argv[1], regra):
+    sys.exit(f"responsavel precisa ser pessoa nomeada, nao agente, placeholder nem coletivo generico: '{sys.argv[1]}'")
 PY
 
 destino="$base/$nome"

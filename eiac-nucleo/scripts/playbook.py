@@ -18,6 +18,15 @@ def carregar():
         return None, "registro/playbook.json ausente"
     pb = json.loads(p.read_text(encoding="utf-8"))
 
+    import pessoa
+    erro_pessoa = pessoa.validar_regra(pb.get("pessoa_nomeada"))
+    if erro_pessoa:
+        return None, erro_pessoa
+
+    campos_pessoa = pb.get("campos_pessoa", [])
+    if not isinstance(campos_pessoa, list) or any(not isinstance(c, str) or not c.strip() for c in campos_pessoa):
+        return None, "campos_pessoa precisa declarar nomes de campo"
+
     niveis = pb.get("niveis")
     if not niveis:
         return None, "playbook sem lista de niveis"

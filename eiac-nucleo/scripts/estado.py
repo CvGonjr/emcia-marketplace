@@ -90,6 +90,16 @@ def autor_e_agente(nome):
     return chave.startswith(("ag0", "agente", "sistema"))
 
 
+def pessoa_nomeada(nome, regra=None):
+    import pessoa
+    if regra is None:
+        try:
+            regra = json.loads(pathlib.Path('registro/playbook.json').read_text(encoding='utf-8')).get('pessoa_nomeada')
+        except (OSError, ValueError):
+            return False
+    return not autor_e_agente(nome) and pessoa.aceita(nome, regra)
+
+
 if __name__ == "__main__":
     e = ler()
     if not e:

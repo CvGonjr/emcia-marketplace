@@ -28,18 +28,7 @@ class _RecusaSessao(str):
 
 
 def _ator_valido(nome):
-    """Pessoa nomeada: nao vazio, nao generico, nao agente.
-
-    'equipe', 'area' e afins nao satisfazem responsavel_obrigatorio (ESP-01
-    3.6, CAM-01 anexo D: "responsavel e pessoa, nao area"). O nucleo nao
-    conhece o motivo metodologico; conhece apenas que um nome generico de
-    coletivo nao e uma pessoa nomeada.
-    """
-    nome = (nome or "").strip()
-    if not nome or E.autor_e_agente(nome):
-        return False
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-    return nome.lower() not in genericos
+    return E.pessoa_nomeada(nome)
 
 
 def apurar_nivel(st, pb, nivel, autor, eixos):
@@ -332,8 +321,8 @@ def _recusar_operacao(st, autor, motivo, acao="apurar_nivel"):
     # A tentativa de agente é atribuída ao responsável nominal do caso;
     # identificadores de agente nunca entram como autor na trilha.
     responsavel = (st or {}).get("responsavel")
-    pessoa = responsavel if _ator_valido(responsavel) else autor
-    if not _ator_valido(pessoa):
+    pessoa = responsavel or autor
+    if not isinstance(pessoa, str) or not pessoa.strip() or E.autor_e_agente(pessoa):
         raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
     E.evento("TentativaNegada", acao_tentada=acao, motivo=motivo,
              autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
@@ -373,11 +362,11 @@ def main():
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
                              "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
-    if (a.apurar_nivel or a.registrar_campo) and not _ator_valido(a.autor):
+    if not _ator_valido(a.autor):
+        acao_autor = next((nome for nome in ("apurar_nivel", "registrar_campo", "registrar_sessao",
+            "registrar_recorrencia", "satisfazer_inegociavel", "encerrar", "emitir") if getattr(a, nome)), "operacao")
         _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada",
-                         "registrar_campo" if a.registrar_campo else "apurar_nivel")
-        print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
-    if E.autor_e_agente(a.autor):
+                         acao_autor)
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
 
     if a.apurar_nivel:

@@ -46,19 +46,15 @@ CATEGORIAS_VALIDAS = ("comum", "excecao", "celula_critica")
 
 
 def _ator_pessoa_nomeada(nome):
-    nome = (nome or "").strip()
-    if not nome or E.autor_e_agente(nome):
-        return False
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-    return nome.lower() not in genericos
+    return E.pessoa_nomeada(nome)
 
 
 def checar_autoria(dados):
     erros = []
     for campo in ("declarado_por", "registrado_por"):
         valor = dados.get(campo)
-        if valor is not None and E.autor_e_agente(valor):
-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
+        if valor is not None and not E.pessoa_nomeada(valor):
+            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
     return erros
 
 
@@ -98,8 +94,8 @@ def checar_casos(candidato):
         if caso.get("categoria") == "celula_critica":
             tem_celula_critica = True
 
-        if E.autor_e_agente(caso.get("revisor")):
-            erros.append(f"caso {ident}: revisor nao pode ser agente")
+        if not E.pessoa_nomeada(caso.get("revisor")):
+            erros.append(f"caso {ident}: revisor precisa ser pessoa nomeada, nao pode ser agente")
 
         definido_em = caso.get("esperado_definido_em")
         if not str(definido_em or "").strip():
@@ -108,6 +104,9 @@ def checar_casos(candidato):
                          f"da execucao para provar que nao foi escrita depois")
         if not str(caso.get("esperado_definido_por") or "").strip():
             erros.append(f"caso {ident}: 'esperado_definido_por' ausente")
+
+        elif not E.pessoa_nomeada(caso.get("esperado_definido_por")):
+            erros.append(f"caso {ident}: esperado_definido_por precisa ser pessoa nomeada")
 
         obtido = caso.get("saida_obtida")
         if obtido is not None and str(obtido).strip():
@@ -139,7 +138,7 @@ def checar_revisao(candidato):
         return []
     if not str(candidato.get("revisado_por") or "").strip():
         return ["estado 'revisado' exige 'revisado_por' preenchido"]
-    if E.autor_e_agente(candidato.get("revisado_por")):
+    if not E.pessoa_nomeada(candidato.get("revisado_por")):
         return ["'revisado_por' nao pode ser agente -- a revisao do conjunto "
                 "e condicao de validade, nao etapa opcional (CAM-01 3.4)"]
     if not str(candidato.get("data_revisao") or "").strip():
@@ -162,6 +161,8 @@ def gravar_conjunto(destino, ator, schema_caminho="registro/piloto.schema.json")
     erros += checar_autoria(candidato)
     erros += checar_casos(candidato)
     erros += checar_revisao(candidato)
+    if candidato.get("estado") == "revisado" and not E.pessoa_nomeada(ator):
+        erros.append("revisao exige ator pessoa nomeada")
 
     if erros:
         E.evento("ConjuntoPilotoRecusado", arquivo=str(destino), erros=erros,

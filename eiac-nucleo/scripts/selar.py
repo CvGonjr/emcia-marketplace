@@ -123,7 +123,7 @@ def main():
         print("nenhum caso aberto neste diretorio", file=sys.stderr); sys.exit(1)
 
     responsavel = estado.get("responsavel")
-    if not responsavel:
+    if not E.pessoa_nomeada(responsavel):
         print("caso sem responsavel definido em registro/estado.json "
               "(fixado por novo-caso.sh --responsavel). Selo recusado.",
               file=sys.stderr)

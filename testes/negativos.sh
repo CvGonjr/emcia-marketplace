@@ -42,47 +42,47 @@ echo '{"tool_name":"Bash","tool_input":{"command":"echo oi > caso/x.md"}}' \
 [ $? -eq 2 ] && ok "2b bash para caso/ negado" || falha "2b bash para caso/ NAO foi negado"
 
 # 3 assercao sem procedencia
-printf -- '- [Celso · 2026-09-11] regra qualquer\n' > rascunho/t.md
-python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [Celso do Vale · 2026-09-11] regra qualquer\n' > rascunho/t.md
+python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "3 assercao sem procedencia recusada" || falha "3 assercao sem procedencia ACEITA"
 
 # 4 assercao valida grava (teste positivo de controle)
-printf -- '- [I · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
-python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [I · premissa: teste · Celso do Vale] regra de teste\n' > rascunho/t.md
+python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "4 assercao valida gravada" || falha "4 assercao valida RECUSADA"
 
 # Pacote 2.5.0 — contrato canonico D/I/V
 
 # T01 D valido nao exige evidencia de verificacao
-printf -- '- [D · Helena · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena" >/dev/null 2>&1
+printf -- '- [D · Helena Duarte · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena Duarte" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "2.5.0-T01 D valido aceito" || falha "2.5.0-T01 D valido RECUSADO"
 
 # T02 I sem premissa e recusado
-printf -- '- [I · Celso] inferencia sem premissa\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [I · Celso do Vale] inferencia sem premissa\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "2.5.0-T02 I sem premissa recusado" || falha "2.5.0-T02 I sem premissa ACEITO"
 
 # T03 I com premissa e aceito
-printf -- '- [I · premissa: padrao observado nos documentos · Celso] inferencia rastreavel\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [I · premissa: padrao observado nos documentos · Celso do Vale] inferencia rastreavel\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "2.5.0-T03 I com premissa aceito" || falha "2.5.0-T03 I com premissa RECUSADO"
 
 # T04 V sem evidencia e recusado
-printf -- '- [V · Celso] verificacao sem evidencia\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [V · Celso do Vale] verificacao sem evidencia\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "2.5.0-T04 V sem evidencia recusado" || falha "2.5.0-T04 V sem evidencia ACEITO"
 
 # T05 V com evidencia e aceito
-printf -- '- [V · observacao: sessao-2026-09-18 · Celso] verificacao rastreavel\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [V · observacao: sessao-2026-09-18 · Celso do Vale] verificacao rastreavel\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "2.5.0-T05 V com evidencia aceito" || falha "2.5.0-T05 V com evidencia RECUSADO"
 
 # T06 valores fora de D/I/V nao sao procedencia
 invalidas_recusadas=1
 for valor in X campo externo; do
-  printf -- '- [%s · Celso] procedencia invalida\n' "$valor" > rascunho/procedencia.md
-  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1; then
+  printf -- '- [%s · Celso do Vale] procedencia invalida\n' "$valor" > rascunho/procedencia.md
+  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1; then
     invalidas_recusadas=0
   fi
 done
@@ -91,12 +91,12 @@ done
   || falha "2.5.0-T06 procedencia fora de D/I/V ACEITA"
 
 # T07 apuracao coexiste em campo distinto da procedencia
-printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso] numero verificado\n' > rascunho/procedencia.md
-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
+printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso do Vale] numero verificado\n' > rascunho/procedencia.md
+python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "2.5.0-T07 V coexiste com apuracao separada" || falha "2.5.0-T07 dimensao separada RECUSADA"
 
 # 5 encerrar etapa presencial sem sessao
-python3 "$S/avancar.py" --encerrar P3b --autor "Celso" >/dev/null 2>&1
+python3 "$S/avancar.py" --encerrar P3b --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "5 encerramento sem sessao recusado" || falha "5 encerramento sem sessao ACEITO"
 
 # 6 autor agente
@@ -104,7 +104,7 @@ python3 "$S/avancar.py" --encerrar F0 --autor "AG05" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "6 autor agente recusado" || falha "6 autor agente ACEITO"
 
 # 7 emitir com portao fechado
-python3 "$S/avancar.py" --emitir E2 --autor "Celso" >/dev/null 2>&1
+python3 "$S/avancar.py" --emitir E2 --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "7 emissao com portao fechado recusada" || falha "7 emissao ACEITA indevidamente"
 
 
@@ -140,7 +140,7 @@ python3 -c "
 import json, pathlib
 p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
 d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
-python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
+python3 "$S/avancar.py" --encerrar F0 --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "12 F0 sem nivel nao encerra" || falha "12 F0 encerrou sem nivel"
 
 # 13 playbook com camada plana e recusado
@@ -158,7 +158,7 @@ python3 -c "
 import json, pathlib
 p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
 d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
-python3 "$S/avancar.py" --apurar-nivel N9 --autor "Celso" >/dev/null 2>&1
+python3 "$S/avancar.py" --apurar-nivel N9 --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "14 nivel fora do playbook recusado" || falha "14 nivel invalido ACEITO"
 
 # 15 apuracao de nivel por agente e recusada
@@ -166,7 +166,7 @@ python3 "$S/avancar.py" --apurar-nivel N2 --autor "AG05" >/dev/null 2>&1
 [ $? -ne 0 ] && ok "15 nivel apurado por agente recusado" || falha "15 nivel por agente ACEITO"
 
 # 16 apuracao valida grava e deixa rastro (controle positivo)
-python3 "$S/avancar.py" --apurar-nivel N2 --autor "Celso" --eixos "DAD 4, GOV 5, CRI 7" >/dev/null 2>&1
+python3 "$S/avancar.py" --apurar-nivel N2 --autor "Celso do Vale" --eixos "DAD 4, GOV 5, CRI 7" >/dev/null 2>&1
 gravou=$?
 grep -q '"evento": "NivelApurado"' registro/eventos.jsonl 2>/dev/null
 rastro=$?
@@ -174,7 +174,7 @@ rastro=$?
   && ok "16 nivel apurado grava com evento" || falha "16 nivel apurado SEM gravar ou SEM evento"
 
 # 17 com o nivel apurado pelo comando, F0 encerra
-python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
+python3 "$S/avancar.py" --encerrar F0 --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
 
 # 18 selo por agente e recusado -- garantia estrutural: autoria de registro
@@ -189,7 +189,7 @@ saida="$("$RAIZ/novo-caso.sh" "teste-18-$$" --responsavel "AG05" "$TMP" 2>&1)"
 rm -rf "${TMP:?}/teste-18-$$"
 
 # 19 selo fora de repositorio git e recusado, e pelo motivo certo
-saida="$(python3 "$S/selar.py" --autor "Celso" --nota "teste" 2>&1)"
+saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "teste" 2>&1)"
 [ $? -ne 0 ] && echo "$saida" | grep -q "repositorio git" \
   && ok "19 selo sem repositorio recusado" || falha "19 selo sem repositorio ACEITO ou recusado por outro motivo"
 
@@ -236,15 +236,15 @@ echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao de
 
 # 24 documento citado que nao esta em fontes/ e recusado
 mkdir -p fontes
-printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
-saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" 2>&1)"
+printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso do Vale] regra\n' > rascunho/d.md
+saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" 2>&1)"
 [ $? -ne 0 ] && echo "$saida" | grep -q "nao esta em fontes/" \
   && ok "24 documento citado ausente recusado" \
   || falha "24 documento ausente ACEITO ou recusado por outro motivo"
 
 # 25 com o documento presente, grava e registra o hash (controle positivo)
 echo "conteudo" > fontes/ausente.xlsx
-python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" >/dev/null 2>&1
+python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" >/dev/null 2>&1
 gravou=$?
 grep -q '"documentos": {"ausente.xlsx"' registro/eventos.jsonl 2>/dev/null
 rastro=$?
@@ -364,7 +364,7 @@ rm -f marcador-iso-selo-1.txt
 python3 -c "
 import json
 with open('registro/eventos.jsonl', 'a') as f:
-    f.write(json.dumps({'evento': 'TesteFabricado', 'autor': 'Celso'}) + '\n')
+    f.write(json.dumps({'evento': 'TesteFabricado', 'autor': 'Celso do Vale'}) + '\n')
 "
 echo "x" > marcador-iso-selo-2.txt
 saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "tentativa sem carimbo" 2>&1)"

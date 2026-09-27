@@ -32,19 +32,15 @@ DIRETORIO_BASELINE = pathlib.Path("registro/baseline")
 
 
 def _ator_pessoa_nomeada(nome):
-    nome = (nome or "").strip()
-    if not nome or E.autor_e_agente(nome):
-        return False
-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
-    return nome.lower() not in genericos
+    return E.pessoa_nomeada(nome)
 
 
 def checar_autoria(dados):
     erros = []
     for campo in ("declarado_por", "registrado_por", "responsavel_apuracao"):
         valor = dados.get(campo)
-        if valor is not None and E.autor_e_agente(valor):
-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
+        if valor is not None and not E.pessoa_nomeada(valor):
+            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
     return erros
 
 

@@ -131,7 +131,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     caso = preparar_caso(tmp, responsavel="Celso do Vale")
     (caso / "rascunho" / "t.md").write_text(
-        "- [D · Helena · 2026-09-11] fato declarado\n", encoding="utf-8")
+        "- [D · Helena Duarte · 2026-09-11] fato declarado\n", encoding="utf-8")
     codigo, saida, erro = rodar(VALIDAR, caso, "--arquivo", "caso/t.md", "--autor", "AG-03")
     ev = ultimo_evento(caso)
     if codigo == 0 and ev.get("evento") == "AssercaoRegistrada" and ev.get("autor") == "Celso do Vale":
@@ -147,8 +147,8 @@ with tempfile.TemporaryDirectory() as tmp:
     shutil.copytree(TEMPLATE, caso2)
     (caso2 / "rascunho").mkdir(exist_ok=True)
     (caso2 / "rascunho" / "t.md").write_text(
-        "- [D · Helena · 2026-09-11] fato declarado\n", encoding="utf-8")
-    codigo, saida, erro = rodar(VALIDAR, caso2, "--arquivo", "caso/t.md", "--autor", "Celso")
+        "- [D · Helena Duarte · 2026-09-11] fato declarado\n", encoding="utf-8")
+    codigo, saida, erro = rodar(VALIDAR, caso2, "--arquivo", "caso/t.md", "--autor", "Celso do Vale")
     if codigo != 0 and "responsavel" in erro:
         ok("validar.py recusa gravar em caso sem responsavel definido")
     else:
@@ -163,7 +163,7 @@ with tempfile.TemporaryDirectory() as tmp:
     termo = (
         "id: T-900\ntermo: prazo de retorno\nsignificado: teste\n"
         "nao_e: prazo de resposta\nsinonimos_em_uso: []\nprocedencia: D\n"
-        "declarado_por: Helena\nregistrado_por: Helena\ndata: 2026-09-22\nversao: 1\n"
+        "declarado_por: Helena Duarte\nregistrado_por: Helena Duarte\ndata: 2026-09-22\nversao: 1\n"
     )
     (caso / "rascunho" / "T-900.yaml").write_text(termo, encoding="utf-8")
     codigo, saida, erro = rodar(
@@ -183,7 +183,7 @@ with tempfile.TemporaryDirectory() as tmp:
         termo.replace("T-900", "T-901"), encoding="utf-8")
     codigo, saida, erro = rodar(
         CURAR, caso2, "--tipo", "termo", "--arquivo", "contexto/termos/T-901.yaml",
-        "--registrado-por", "Helena",
+        "--registrado-por", "Helena Duarte",
     )
     if codigo != 0 and "responsavel" in erro:
         ok("curar.py recusa curar em caso sem responsavel definido")

@@ -17,6 +17,8 @@ import shutil
 import subprocess
 import tempfile
 import uuid
+from contextvars import ContextVar
+REGRA_PESSOA = ContextVar("regra_pessoa", default=None)
 
 
 class Recusa(ValueError):
@@ -43,11 +45,14 @@ def texto(valor):
 
 def pessoa(valor):
     valor = texto(valor)
-    chave = re.sub(r"[\s_-]", "", valor.lower())
-    exigir(not re.search(r"[<>{}]", valor) and not chave.startswith(
-        ("ag0", "agente", "sistema", "assistant", "chatgpt", "codex"))
-        and valor.lower() not in {"equipe", "área", "area", "time", "setor", "departamento", "a definir"},
-        "é necessária uma pessoa nomeada")
+    # Habilitação é anterior ao caso: a regra vem do template do método,
+    # explicitamente, e é copiada para o expediente na abertura.
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'eiac-nucleo/scripts'))
+    import estado as E
+    regra = REGRA_PESSOA.get() or json.loads((pathlib.Path(__file__).resolve().parents[1] /
+        'template-caso/registro/playbook.json').read_text())['pessoa_nomeada']
+    exigir(E.pessoa_nomeada(valor, regra), 'é necessária uma pessoa nomeada com nome e sobrenome')
     return valor
 
 
@@ -94,12 +99,14 @@ def local_externo(root):
 
 def iniciar(root, hab_id, responsavel, caso_id=None):
     root = local_externo(root)
+    regra = json.loads((pathlib.Path(__file__).resolve().parents[1] / "template-caso/registro/playbook.json").read_text())["pessoa_nomeada"]
+    REGRA_PESSOA.set(regra)
     pessoa(responsavel)
     identificador(hab_id)
     identificador(caso_id or hab_id)
     exigir(not root.exists(), "expediente já existe")
     root.mkdir(parents=True, mode=0o700)
-    state = dict(schema=1, habilitacao=hab_id, caso_reservado=caso_id or hab_id,
+    state = dict(pessoa_nomeada=regra, schema=1, habilitacao=hab_id, caso_reservado=caso_id or hab_id,
                  caso_aberto=False, responsavel=responsavel, fontes={}, pendencias={},
                  campos={}, documentos={}, eventos=[], tratamento=None, revisao=None, acessos=None)
     evento(state, "ExpedienteAberto")
@@ -424,6 +431,7 @@ def executar(root, action, payload):
     with (root / ".lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         original = json.loads((root / "expediente.json").read_text(encoding="utf-8"))
+        REGRA_PESSOA.set(original.get("pessoa_nomeada"))
         pessoa(original["responsavel"])
         s = copy.deepcopy(original)
         try:

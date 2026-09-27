@@ -517,23 +517,16 @@ else:
     falha(f"2.6.5-T09 I5 sem pessoa nominal nao foi recusado pelo motivo esperado: "
           f"exit={codigo} saida={saida!r} erro={erro!r}")
 
-# 'equipe de TI' (frase composta) escapa da checagem lexica de palavra
-# inteira de calibragem.py (que so compara contra palavras exatas) --
-# o verificador semantico de I1-I5 (inegociaveis.py) e a segunda camada
-# que ainda recusa frases compostas contendo 'ti'/'consultoria', mesmo
-# que o registro em si tenha sido gravado.
+# A16: frase composta coletiva é recusada já no registro da rotina.
 caso = preparar_caso()
 preparar_ct_revisado(caso)
 preparar_met_apurada(caso)
-(caso / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1, responsavel="equipe de TI"),
-                                                  encoding="utf-8")
-calibragem(caso, "registro/calibragem/CAL-001.yaml", "Marina Prado")
-codigo, saida, erro = inegociavel(caso, 5, "registro/calibragem/CAL-001.yaml")
-if codigo != 0:
-    ok("2.6.5-T09b I5 com 'equipe de TI' gravado (frase composta, escapou da "
-       "checagem lexica de calibragem.py): RECUSA no verificador semantico")
+(caso / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1, responsavel="equipe de TI"), encoding="utf-8")
+codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001.yaml", "Marina Prado")
+if codigo != 0 and not (caso / "registro/calibragem/CAL-001.yaml").exists():
+    ok("2.6.5-T09b A16: 'equipe de TI' recusado na gravação")
 else:
-    falha("2.6.5-T09b I5 com 'equipe de TI' foi ACEITO pelo verificador semantico")
+    falha("2.6.5-T09b A16: responsável coletivo aceito")
 
 caso = preparar_caso()
 preparar_ct_revisado(caso)
