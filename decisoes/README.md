@@ -24,7 +24,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 016 | O contraste substitui a identidade de runtime do núcleo | substituída por 021 |
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
-| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme (regra geral de autoria; a parte específica de execução de contraste substituída por 021) |
+| 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
 | 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
 | 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
@@ -32,3 +32,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
 | 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
 | 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |
+| 027 | Decisão humana fora da sessão do agente (A12) | firme |

@@ -30,14 +30,15 @@ Para cada Regra que sustenta a classificação, consulte o objeto — não reint
 
 Consulte o passo 5 de `reference/metodo/EMCIA-MET-01-documento-do-metodo.md`
 e a declaração `campos_registraveis` de P5 no playbook do caso. Depois da
-confirmação humana, enquanto P5 ainda for a etapa corrente, registre:
+confirmação humana, enquanto P5 ainda for a etapa corrente, prepare o
+comando e entregue ao engenheiro para execução no próprio terminal:
 
 `/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "<categoria>"`
 
 As categorias declaradas são `agente`, `caso isolado` e `habilitador acoplado`.
 O comando grava o campo estruturado que o portão de E3 e seu renderizador leem,
-com evento e autoria nominal. Registre também a sessão de P5 e encerre a etapa
-pelo núcleo. A justificativa escrita continua no artefato deste passo, conforme
+com evento e autoria nominal. Entregue também os comandos de sessão e encerramento de P5 ao engenheiro
+para execução no próprio terminal. A justificativa escrita continua no artefato deste passo, conforme
 o procedimento do método.
 
 ## Efeito no entregável
@@ -46,3 +47,18 @@ A conclusão deste passo abre ou fecha o portão de `E3-E`. Ver `reference/gates
 
 **Saída:** `caso/P5-classificacao.md`, marcada `I` até o operador confirmar.
 **Encerramento:** critério do passo 5 no documento do método.
+
+## Execução das decisões humanas (A12)
+
+O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
+Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
+entregue comandos com caminho absoluto real e argumentos confirmados.
+
+Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
+inegociáveis são operações humanas declaradas no playbook. A verificação de
+inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
+o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+contexto e materializar/emitir entregáveis. A recusa da guarda registra
+`TentativaNegada` com operação e comando exato.

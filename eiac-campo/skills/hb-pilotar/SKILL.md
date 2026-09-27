@@ -40,3 +40,18 @@ Para `estado: rascunho`, qualquer ator (inclusive agente) pode gravar. Para `est
 
 **Saída:** `registro/piloto/CT-NNN.yaml`, evidência rastreável para o item inegociável 3 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
 **Encerramento:** critério do passo 8 no documento do método.
+
+## Execução das decisões humanas (A12)
+
+O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
+Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
+entregue comandos com caminho absoluto real e argumentos confirmados.
+
+Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
+inegociáveis são operações humanas declaradas no playbook. A verificação de
+inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
+o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+contexto e materializar/emitir entregáveis. A recusa da guarda registra
+`TentativaNegada` com operação e comando exato.

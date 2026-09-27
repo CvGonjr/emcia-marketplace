@@ -12,7 +12,7 @@ description: Instala a rotina de recalibragem, monitora desvio e prepara recomen
 
 ## ⛔ A decisão de recalibrar, expandir ou descontinuar não é executável por agente
 
-Se você é um agente, pode **detectar** desvio, **quantificar**, **descrever** e **recomendar**, mas **nunca** grave o campo `decisao`. Se tentar, o script recusa e o evento `CicloCalibragemRecusado` fica registrado. A decisão exige pessoa nomeada com autoridade, sempre (CAM-01 3.6, CAT-01 3.4.5).
+Se você é um agente, pode **detectar** desvio, **quantificar**, **descrever** e **recomendar**, mas **nunca** grave o campo `decisao`. Se a chamada de decisão vier da sessão, a guarda recusa e registra `TentativaNegada`, mesmo com nome humano. A decisão exige pessoa nomeada com autoridade, sempre (CAM-01 3.6, CAT-01 3.4.5).
 
 ## Para o agente: a rotina (Anexo D)
 
@@ -51,7 +51,23 @@ Ciclo:
 python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-campo/scripts/calibragem.py" --arquivo registro/calibragem/CAL-NNN-C01.yaml --ator "<nome>" --ciclo
 ```
 
-A recorrência (cadência, responsável, histórico de ciclos) também passa por `avancar.py --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"` — mecanismo genérico do núcleo (2.6.1), reaproveitado sem alteração.
+O agente entrega ao engenheiro, para execução no próprio terminal, o comando
+de recorrência (cadência, responsável, histórico de ciclos): `avancar.py --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"` — mecanismo genérico do núcleo (2.6.1), reaproveitado sem alteração.
 
 **Saída:** `registro/calibragem/CAL-NNN.yaml` e `registro/calibragem/CAL-NNN-CNN.yaml`, evidência rastreável para o item inegociável 5 (validação semântica final do portão E5 pertence ao pacote 2.6.5 — não declare E5 emitido aqui).
 **Encerramento:** critério do passo 10 no documento do método.
+
+## Execução das decisões humanas (A12)
+
+O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
+Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
+entregue comandos com caminho absoluto real e argumentos confirmados.
+
+Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
+inegociáveis são operações humanas declaradas no playbook. A verificação de
+inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
+o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+contexto e materializar/emitir entregáveis. A recusa da guarda registra
+`TentativaNegada` com operação e comando exato.

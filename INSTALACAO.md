@@ -171,6 +171,11 @@ python3 ~/.claude/plugins/eiac-nucleo/scripts/validar.py --arquivo caso/P2.md --
 
 ### Teste 5 — encerrar camada que exige sessão sem registrá-la
 
+**A12:** os comandos de barra dos testes 5 e 6 preparam o comando real.
+O engenheiro executa esse comando no próprio terminal para conferir sessão
+e selo. Se o agente tentar executá-lo por Bash, a guarda recusa primeiro
+pela origem da decisão, mesmo com nome humano.
+
 Com P3b como etapa corrente, tente encerrar sem registrar sua sessão:
 
 ```
@@ -287,8 +292,8 @@ Nenhum deles impede o percurso F0 a P10, que é executável e verificado de pont
 
 ## Registro dos campos e emissão com arquivo
 
-Com P5 corrente, confirme a classificação com a pessoa e registre antes de
-encerrar:
+Com P5 corrente, confirme a classificação com a pessoa e entregue este
+comando ao engenheiro para execução no próprio terminal antes de encerrar:
 
 ```text
 /eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
@@ -309,3 +314,40 @@ Ao atualizar caso já aberto, atualize seu `registro/playbook.json` com as
 declarações de artefato/comando de cada entregável e de campos por etapa.
 O núcleo recusa contrato incompleto e nunca lê o playbook do plugin como
 substituto do playbook do caso.
+
+## Decisão humana fora da sessão do Claude Code (A12)
+
+O nome informado não identifica a origem da chamada. Toda chamada à guarda
+vem do agente. O playbook declara as operações humanas e suas condições em
+`decisoes_humanas`; o núcleo aplica essa lista.
+
+O agente prepara argumentos e entrega o comando pronto, com caminho absoluto
+real do script. O engenheiro executa no próprio terminal, fora da sessão,
+no diretório do caso. Não basta confirmar no chat nem informar nome humano.
+Isso vale para apuração, sessão, campos, recorrência, satisfação de
+inegociáveis e encerramento em EX3/EX4; também para autonomia decidida,
+operacional validado e ciclo com decisão de recalibragem.
+
+Minuta/proposto (P7), proposta (P6), rotina e recomendação sem decisão (P10),
+leitura, validação de asserções, curadoria e materialização/emissão continuam
+permitidas à sessão. `inegociaveis.py --verificar` continua permitido, mas
+`--satisfazer` é decisão humana. O terminal ainda aplica sessão, selo e os
+portões existentes; executar fora da sessão não dispensa essas verificações.
+
+### Conferir a instalação
+
+1. No terminal, execute `.projectdocs/demos/preparar-caso.sh controle-a12 P7`.
+2. Entre em `/tmp/emcia-demos/controle-a12` (ou na base EMCIA_DEMO_BASE escolhida).
+3. Use `.projectdocs/demos/como-agente.sh "<comando>"` pelo caminho absoluto
+   do checkout para simular chamadas: sessão, apuração e encerramento de P7
+   devem dar NEGADO, mesmo com nome humano.
+4. Governança com AUT-001 proposto e leitura devem dar PERMITIDO. Altere o
+   rascunho para decidido no terminal e simule de novo: NEGADO.
+
+O simulador apenas chama a guarda; não executa o comando que recebeu.
+A recusa registra TentativaNegada com operação e comando exato. Candidato
+ilegível, ausente ou comando condicionado por arquivo em cadeia não autoriza
+uma decisão por falha de inspeção. Use chamada simples para preparação.
+
+Casos existentes atualizam explicitamente seu playbook. A ausência da lista
+recusa o carregamento; não há fallback ao playbook do plugin.

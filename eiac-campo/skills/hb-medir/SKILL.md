@@ -21,3 +21,18 @@ description: Produz a medicao inicial a partir das amostras enviadas pela organi
 **Quando esta medição sustentar uma Regra ou Fonte `V`,** dê à linha da medição um identificador estável dentro de `caso/P3a-medicao.md` (por exemplo, um cabeçalho ou âncora citável), para que `evidencia.referencia` daquele objeto CTX possa apontar para ela sem ambiguidade. Isso é vínculo rastreável, não duplicação — a medição continua vivendo só em `caso/P3a-medicao.md`.
 
 **Encerramento:** critério do passo 3 no documento do método.
+
+## Execução das decisões humanas (A12)
+
+O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
+Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
+entregue comandos com caminho absoluto real e argumentos confirmados.
+
+Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
+inegociáveis são operações humanas declaradas no playbook. A verificação de
+inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
+o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+contexto e materializar/emitir entregáveis. A recusa da guarda registra
+`TentativaNegada` com operação e comando exato.

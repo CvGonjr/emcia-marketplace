@@ -674,3 +674,15 @@ python3 testes/campos_a10.py
 A execução integral confere códigos de saída e mensagens de falha; preserva
 todos os testes anteriores. As contagens são por teste/método, sem somar
 subtestes ou os módulos reexecutados internamente pelos testes de regressão.
+
+A12 acrescenta **37 verificações** de origem na guarda, operações humanas
+com nome informado humano, preparação permitida e terminal direto. A suíte
+completa passa a **629 verificações em 25 módulos**:
+
+```bash
+python3 testes/decisao_a12.py
+```
+
+As decisões diretas dos testes existentes simulam o terminal do engenheiro.
+As chamadas de teste à guarda simulam a sessão. T19 de campo_2_6_2 cobre
+apenas termo proposto; T22 de nucleo_2_6_1 recusa apuração pela sessão.

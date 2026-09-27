@@ -88,7 +88,8 @@ A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela a
 **Sessão antes de encerrar:** o playbook do caso declara a exigência por
 camada em `encerramento_por_camada`. EX3 e EX4 exigem sessão humana
 registrada da própria etapa; EX1 e EX2 não. Em N2, isso inclui P3a, P3d,
-P4 e P5. Registre a sessão enquanto a etapa for a corrente, com
+P4 e P5. O engenheiro registra a sessão no próprio terminal, enquanto a
+etapa for a corrente, usando o comando preparado por
 `/eiac-nucleo:registrar-sessao <etapa> <participantes>`, antes de chamar
 `/eiac-nucleo:encerrar <etapa>`. Etapa futura ou já encerrada não aceita
 sessão, e sessão de outra etapa não libera o encerramento.
@@ -105,7 +106,8 @@ E os comandos de núcleo, que valem em qualquer playbook:
 
 ## Campos da etapa e artefatos de emissão
 
-Antes de encerrar P5, registre a classificação confirmada pela pessoa:
+Antes de encerrar P5, prepare o comando de classificação confirmada
+pela pessoa e entregue ao engenheiro para executar no próprio terminal:
 
 ```text
 /eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
@@ -126,6 +128,49 @@ registrado. Toda emissão autorizada guarda arquivo, versão e pessoa autora.
 Casos existentes atualizam explicitamente seu próprio playbook; não recebem
 essas declarações do plugin automaticamente.
 
+## Decisões humanas fora da sessão (A12)
+
+Toda chamada que chega à guarda é da sessão do agente. Informar um nome
+humano em `--autor` ou `--ator` não muda essa origem. O playbook declara
+`decisoes_humanas`, com script, argumento e condição de cada operação:
+
+| Operação | Quem executa |
+|---|---|
+| Apurar nível; registrar sessão/campo/recorrência; satisfazer inegociável | Engenheiro no próprio terminal |
+| Encerrar etapa em camada humana (EX3/EX4 no campo) | Engenheiro no próprio terminal |
+| Gravar autonomia decidida, operacional validado ou decisão de recalibragem | Engenheiro no próprio terminal |
+| Gravar minuta/proposta/recomendação sem decisão; ler; validar asserção; curar; emitir | Agente pela sessão |
+
+O agente prepara os argumentos e entrega o comando com caminho absoluto
+real do script. O engenheiro o executa **no diretório do caso, fora da
+sessão do Claude Code**. Confirmação no chat não executa a decisão nem
+autoriza o agente a executá-la. A guarda recusa a chamada, registra
+`TentativaNegada` e devolve a operação e o comando exato.
+
+`inegociaveis.py --verificar` pode ser usado pelo agente; adicionar
+`--satisfazer` torna a operação humana. Os demais portões e exigências de
+sessão/selo continuam aplicados no terminal. A decisão 027 substitui a
+exceção de ator informado pelo agente da decisão 019.
+
+### Demonstração por caso sintético
+
+No próprio terminal:
+
+```bash
+.projectdocs/demos/preparar-caso.sh controle-a12 P7
+cd /tmp/emcia-demos/controle-a12
+~/Projetos/emcia-marketplace/.projectdocs/demos/como-agente.sh 'python3 ~/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --autor "Celso do Vale" --participantes "X"'
+```
+
+O auxiliar deixa a etapa pedida corrente e registra as sessões exigidas,
+o selo, a classificação e os rascunhos conforme o percurso. OP-001 chega
+validado a P7 e AUT-001 fica proposto. A base pode ser escolhida com
+`EMCIA_DEMO_BASE`; o padrão é `/tmp/emcia-demos`. Um nome já existente é
+recusado. O auxiliar é executado pelo engenheiro no terminal.
+
+`como-agente.sh` envia a chamada simulada à guarda e imprime PERMITIDO ou
+NEGADO com o motivo; não executa o comando. Não cria nova permissão.
+
 ## Verificação por estados do caso
 
 A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
@@ -141,7 +186,7 @@ O levantamento público sobre a organização e o setor, feito na etapa 0a do pr
 | Trava | Mecanismo | Onde |
 |---|---|---|
 | **T1 procedência** | Escrita direta em `caso/` negada; todo conteúdo passa pelo validador | `guarda.py` G2 + `validar.py` |
-| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada | `guarda.py` G1 e G3 + `avancar.py` |
+| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada; decisão humana não executa pela sessão | `guarda.py` G1, G3 e G8 + `avancar.py` |
 | **T3 selo** | Commits do repositório do caso | Git |
 
 ## Testes negativos — faça no primeiro dia

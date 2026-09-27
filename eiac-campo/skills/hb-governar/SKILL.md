@@ -12,7 +12,7 @@ description: Minuta o termo de autonomia a partir do desenho operacional de P6. 
 
 ## ⛔ A decisão de autonomia não é executável por agente
 
-Se você é um agente, pode **preparar** a minuta (`estado: rascunho` ou `proposto`), mas **nunca** grave `estado: decidido`. Se tentar, o script recusa e o evento `TermoAutonomiaRecusado` fica registrado. Não ofereça atalho, não peça "confirmação simbólica" — a decisão exige pessoa nomeada com autoridade, sempre.
+Se você é um agente, pode **preparar** a minuta (`estado: rascunho` ou `proposto`), mas **nunca** grave `estado: decidido`. Se a chamada de decisão vier da sessão, a guarda recusa e registra `TentativaNegada`, mesmo com nome humano. Não ofereça atalho, não peça "confirmação simbólica" — a decisão exige pessoa nomeada com autoridade, sempre.
 
 ## Para o agente: o que preparar
 
@@ -39,3 +39,18 @@ Ao decidir, preencha `decisor`, `data_decisao` e `justificativa_decisao`, com `e
 
 **Saída:** `registro/governanca/autonomia/AUT-NNN.yaml`, evidência rastreável para o item inegociável 2 (validação semântica final do portão E4 pertence ao pacote 2.6.5 — não declare E4 emitido aqui).
 **Encerramento:** critério do passo 7 no documento do método.
+
+## Execução das decisões humanas (A12)
+
+O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+no próprio terminal, fora da sessão do Claude Code, no diretório do caso.
+Nome humano informado não autoriza o agente. Resolva o caminho do plugin e
+entregue comandos com caminho absoluto real e argumentos confirmados.
+
+Apuração de nível, sessão, campos de decisão, recorrência e satisfação de
+inegociáveis são operações humanas declaradas no playbook. A verificação de
+inegociável sem `--satisfazer` continua permitida; com `--satisfazer`, entregue
+o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+contexto e materializar/emitir entregáveis. A recusa da guarda registra
+`TentativaNegada` com operação e comando exato.

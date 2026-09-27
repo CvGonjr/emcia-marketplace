@@ -1,6 +1,13 @@
 ---
 description: Executa a etapa P10 do playbook Engenharia de IA de Campo.
 ---
+
+**Fluxo A12:** o agente grava apenas preparação. Para validação/decisão,
+prepare os argumentos e entregue o comando pronto ao engenheiro. Ele
+executa no próprio terminal, fora do Claude Code, no diretório do caso.
+Não execute a decisão por Bash, mesmo usando nome humano. Resolva o
+caminho do plugin para entregar um comando com caminho absoluto real.
+
 Confirme com `/eiac-nucleo:estado` que a etapa corrente é **P10**. Se não for, pare e diga qual é.
 
 Carregue a habilidade `hb-recalibrar` e siga o procedimento do passo no documento do método, em `metodo/`.
@@ -17,4 +24,5 @@ Ciclo:
 
 `decisao` exige ator humano nomeado, com `decisor`, `data_decisao` e `justificativa_decisao` preenchidos.
 
-A recorrência (cadência, responsável, histórico) usa o mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
+A recorrência também é executada pelo engenheiro no próprio terminal.
+Entregue o comando pronto do mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`

@@ -2,6 +2,12 @@
 
 **Data:** 22/09/2026 · **Estado:** firme
 
+**Revisão pela decisão 027 (A12):** a exceção de `--ator` informado pelo
+agente foi substituída para decisões de método. Essas decisões são
+executadas pelo engenheiro no próprio terminal, fora da sessão. A regra
+de atribuição de autoria de validar/curar/selar permanece. O texto abaixo
+preserva o registro histórico da decisão original.
+
 ## Contexto
 
 `validar.py`, `curar.py` e `selar.py` aceitavam `--autor`/`--registrado-por` digitado a cada chamada, validado só por checagem léxica (`estado.autor_e_agente()`). Um achado documentado desde o baseline (`testes/curadoria.py::2.5.2-T-baseline`) mostrava que `"AG-01"` com hífen escapava dessa checagem e era aceito como autor humano — a garantia "autor é sempre pessoa nomeada" dependia de reconhecer o formato do valor recebido, não de uma propriedade estrutural do caso.

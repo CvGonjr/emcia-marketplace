@@ -11,6 +11,11 @@ Renderize o entregável a partir dos artefatos reais do caso e, se o portão aut
 
 Sem `--emitir`, o comando só renderiza `caso/entregaveis/<ID>.md` e recusa se algum campo obrigatório do modelo oficial não tiver evidência rastreável no caso — nenhum campo ausente é preenchido com texto genérico.
 
-Com `--emitir`, a emissão só é registrada se o portão declarado em `reference/gates.md` estiver autorizado: etapas do portão encerradas, condição declarativa satisfeita (ou não aplicável, para `E3-E`) e, quando o entregável exigir, os itens inegociáveis correspondentes já satisfeitos via `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/inegociaveis.py" --verificar <N> --arquivo <artefato> --satisfazer --autor "<nome>"`.
+Com `--emitir`, a emissão só é registrada se o portão declarado em `reference/gates.md` estiver autorizado: etapas do portão encerradas, condição declarativa satisfeita (ou não aplicável, para `E3-E`) e, quando o entregável exigir, os itens inegociáveis correspondentes já satisfeitos pelo engenheiro no próprio terminal, via `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/inegociaveis.py" --verificar <N> --arquivo <artefato> --satisfazer --autor "<nome>"`.
 
 **`E3` consolida duas autorizações internas (`E3-D`, sempre avaliado; `E3-E`, condicionado a P5 classificar como agente) em um único entregável ao cliente — nunca duas entregas separadas.**
+
+O agente pode verificar os inegociáveis sem `--satisfazer`. A satisfação
+registrada é decisão humana: entregue esse comando ao engenheiro; não o
+execute na sessão, mesmo com nome humano. Materialização/emissão continua
+permitida à sessão quando os requisitos já estiverem registrados.
