@@ -32,4 +32,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
 | 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
 | 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |
-| 027 | Decisão humana fora da sessão do agente (A12) | firme |
+| 027 | Decisão humana fora da sessão do agente (A12) | firme; ampliada por 029 e checagem nominal por 030 |
+| 028 | Produto próprio exigido no encerramento (A14) | firme |
+| 029 | Revisão humana do piloto declarada na guarda (A15) | firme |
+| 030 | Pessoa nomeada sem termos coletivos (A16) | firme |

@@ -61,3 +61,11 @@ segundo é executado pelo engenheiro no terminal e prepara o percurso.
 Testes negativos precederam a correção. Nenhum teste anterior foi removido.
 Evidências: `.projectdocs/evidencias/sprint3/3.5/correcao-A12/`.
 Tag da entrega: v-sprint3-poc.4.
+
+## Ampliação posterior
+
+A decisão 029 (A15) acrescenta revisão do piloto e definição da rotina à
+lista humana. A permissão de preparação da rotina descrita nesta decisão
+passa a se limitar ao rascunho: a gravação da rotina é feita no terminal.
+Ciclos sem decisão continuam permitidos à sessão. A decisão 030 (A16)
+substitui as comparações lexicais locais pela regra do playbook.

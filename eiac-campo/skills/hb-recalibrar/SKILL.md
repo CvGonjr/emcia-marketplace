@@ -71,3 +71,12 @@ o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
 O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
 contexto e materializar/emitir entregáveis. A recusa da guarda registra
 `TentativaNegada` com operação e comando exato.
+
+### Definição da rotina (A15)
+
+A rotina com responsável e cadência é decisão humana. O agente prepara
+CAL-NNN.yaml e entrega o comando de gravação ao engenheiro para executar
+no próprio terminal, fora da sessão. A guarda recusa essa gravação mesmo
+com nome humano informado. O agente pode registrar ciclo de drift e
+recomendação sem decisão; a decisão do ciclo também pertence ao engenheiro.
+Responsável e decisor precisam de nome e sobrenome, sem termos coletivos.

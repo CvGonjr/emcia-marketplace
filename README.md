@@ -138,7 +138,7 @@ humano em `--autor` ou `--ator` não muda essa origem. O playbook declara
 |---|---|
 | Apurar nível; registrar sessão/campo/recorrência; satisfazer inegociável | Engenheiro no próprio terminal |
 | Encerrar etapa em camada humana (EX3/EX4 no campo) | Engenheiro no próprio terminal |
-| Gravar autonomia decidida, operacional validado ou decisão de recalibragem | Engenheiro no próprio terminal |
+| Gravar autonomia decidida, operacional validado, piloto revisado, rotina ou decisão de recalibragem | Engenheiro no próprio terminal |
 | Gravar minuta/proposta/recomendação sem decisão; ler; validar asserção; curar; emitir | Agente pela sessão |
 
 O agente prepara os argumentos e entrega o comando com caminho absoluto
@@ -276,3 +276,42 @@ bash testes/negativos.sh
 ```
 
 Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste. A suíte acumulada (regressão + pacotes por ação) soma centenas de verificações; ver `testes/README.md` para o detalhamento por pacote.
+
+## Encerramento com produto e revisão humana (A14–A16)
+
+O encerramento confere sessão, dependências e selo, depois os produtos
+`produtos_encerramento` do playbook do caso: linha de base (P3a), classificação
+registrada (P5), OP validado (P6), AUT decidido (P7), conjunto revisado (P8),
+métrica de resultado apurada (P9) e rotina com responsável e cadência (P10).
+Produto ausente gera `TentativaNegada`, informa o que falta e preserva o estado.
+O portão do entregável continua sendo conferido na emissão.
+
+A revisão do piloto e a definição da rotina de calibragem também são atos
+humanos da lista `decisoes_humanas`. O agente prepara os rascunhos; o
+engenheiro os registra no próprio terminal, fora da sessão. Rascunho de
+piloto, medição de baseline/métrica e ciclo com recomendação sem decisão
+continuam permitidos. Um nome humano informado não libera a guarda.
+
+Pessoas exigem nome e sobrenome e nenhuma palavra coletiva, conforme
+`pessoa_nomeada` do playbook: equipe de TI, Time Comercial, Área de Vendas
+e Marina são recusados; Marina Prado é aceito. A regra vale também para
+campos nominais dos artefatos. Atualize explicitamente o playbook de casos
+existentes; o núcleo não consulta o template como alternativa.
+
+### Demonstração até P10
+
+Execute no terminal do engenheiro:
+
+```bash
+cd ~/Projetos/emcia-marketplace
+bash .projectdocs/demos/preparar-caso.sh controle-p10 P10
+```
+
+O caso fica em `/tmp/emcia-demos/controle-p10`, P10 corrente e N2. O auxiliar
+imprime o caminho e os rascunhos. Ao parar em P6/P7/P8, o rascunho da etapa
+tem versão incrementada e campos de decisão preenchidos: o engenheiro muda
+apenas estado para validado/decidido/revisado e executa o script indicado.
+As decisões das etapas anteriores são executadas no percurso sintético.
+Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
+sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
+o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).

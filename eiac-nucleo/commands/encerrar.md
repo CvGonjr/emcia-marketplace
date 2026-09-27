@@ -27,3 +27,8 @@ Se o script recusar, apresente o motivo sem contorná-lo.
 A falta de sessão produz `TentativaNegada`, com etapa, camada, nível e
 modalidade na mensagem. Satisfeita a sessão, o núcleo confere as demais
 condições; a exigência de selo posterior declarada no playbook permanece.
+
+Depois da sessão e do selo, o núcleo confere os produtos declarados em
+`produtos_encerramento` da etapa. Produto ausente gera TentativaNegada e
+preserva o estado. Apresente a descrição, o caminho e os campos faltantes;
+prepare o registro correspondente antes de pedir novo encerramento.

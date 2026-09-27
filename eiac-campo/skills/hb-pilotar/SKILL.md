@@ -55,3 +55,11 @@ o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
 O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
 contexto e materializar/emitir entregáveis. A recusa da guarda registra
 `TentativaNegada` com operação e comando exato.
+
+### Registro da revisão (A15)
+
+O agente grava apenas estado rascunho. Para estado revisado, prepara o
+rascunho com revisor, revisado_por e datas e entrega o comando acima com
+caminho absoluto real ao engenheiro. Ele executa no próprio terminal,
+fora da sessão do Claude Code. Nome humano informado não autoriza o agente;
+a guarda recusa a revisão com TentativaNegada.

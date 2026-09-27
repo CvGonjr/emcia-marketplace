@@ -181,3 +181,11 @@ duplicado para fora do marketplace.
 - 4/18 HB (HB-04, HB-05, HB-06, HB-13) seguem sem implementação física
   própria — catálogo completo e resolvível, mas sem skill dedicada; nenhuma
   é exigida pelo contrato F0–P10 congelado.
+
+## Sprint 3 — ação 3.6
+
+Correções A14–A16 sobre `v-sprint3-poc.4`: decisões 028–030; produtos da
+etapa, revisão humana do piloto/rotina e pessoa nomeada. Evidência em
+`.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/` (resultado, auditoria,
+diff e suíte integral). Novos testes: `produtos_a14.py`, `revisao_a15.py` e
+`pessoa_a16.py`; preparação do caso de controle em `.projectdocs/demos/`.

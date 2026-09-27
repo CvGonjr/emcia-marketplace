@@ -10,3 +10,11 @@ Escreva o candidato em `rascunho/CT-NNN.yaml` e grave com:
 `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/piloto.py" --arquivo registro/piloto/CT-NNN.yaml --ator "<nome>"`
 
 `estado: rascunho` pode ser gravado por qualquer ator. `estado: revisado` exige `revisado_por` humano nomeado — o script recusa a autorrevisão de um agente.
+
+### Registro da revisão (A15)
+
+O agente grava apenas estado rascunho. Para estado revisado, prepara o
+rascunho com revisor, revisado_por e datas e entrega o comando acima com
+caminho absoluto real ao engenheiro. Ele executa no próprio terminal,
+fora da sessão do Claude Code. Nome humano informado não autoriza o agente;
+a guarda recusa a revisão com TentativaNegada.

@@ -26,3 +26,12 @@ Ciclo:
 
 A recorrência também é executada pelo engenheiro no próprio terminal.
 Entregue o comando pronto do mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
+
+### Definição da rotina (A15)
+
+A rotina com responsável e cadência é decisão humana. O agente prepara
+CAL-NNN.yaml e entrega o comando de gravação ao engenheiro para executar
+no próprio terminal, fora da sessão. A guarda recusa essa gravação mesmo
+com nome humano informado. O agente pode registrar ciclo de drift e
+recomendação sem decisão; a decisão do ciclo também pertence ao engenheiro.
+Responsável e decisor precisam de nome e sobrenome, sem termos coletivos.

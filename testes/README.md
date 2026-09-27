@@ -686,3 +686,17 @@ python3 testes/decisao_a12.py
 As decisões diretas dos testes existentes simulam o terminal do engenheiro.
 As chamadas de teste à guarda simulam a sessão. T19 de campo_2_6_2 cobre
 apenas termo proposto; T22 de nucleo_2_6_1 recusa apuração pela sessão.
+
+A14–A16 acrescentam **44 verificações**, preservando as 629 anteriores:
+**673 verificações em 28 módulos**. Novos módulos:
+
+```bash
+python3 testes/produtos_a14.py   # 21
+python3 testes/revisao_a15.py    # 6
+python3 testes/pessoa_a16.py     # 17
+```
+
+`testes/apoio/preparar.py` fornece produtos sintéticos para os percursos de
+preparação existentes; não é módulo de verificações. T09b de campo_2_6_5
+exige recusa do coletivo composto na gravação. As saídas antes/depois e a
+lista de ajustes ficam em `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/`.
