@@ -1,0 +1,11 @@
+$ bash .projectdocs/demos/preparar-caso.sh controle-a23 P10
+Caso de controle: /tmp/emcia-A23-demo-grf4q_96/controle-a23
+Etapa final: P10 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+  /tmp/emcia-A23-demo-grf4q_96/controle-a23/rascunho/OP-001.yaml
+  /tmp/emcia-A23-demo-grf4q_96/controle-a23/rascunho/AUT-001.yaml
+  /tmp/emcia-A23-demo-grf4q_96/controle-a23/rascunho/CT-001.yaml
+  /tmp/emcia-A23-demo-grf4q_96/controle-a23/rascunho/CAL-001-C01.yaml
+Ciclo sem decisão: preencher apenas decisao (recalibrar/expandir/descontinuar).
+CAL-001.responsavel: Marina Prado
+Caso sintético removido após a conferência.

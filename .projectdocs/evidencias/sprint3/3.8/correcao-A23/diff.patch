@@ -1,0 +1,531 @@
+diff --git a/.projectdocs/demos/percurso-completo.sh b/.projectdocs/demos/percurso-completo.sh
+index 1bc1f62..1eb0b02 100755
+--- a/.projectdocs/demos/percurso-completo.sh
++++ b/.projectdocs/demos/percurso-completo.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Demonstração sintética da ação 3.8, pela tag v-sprint3-poc.6.
++# Demonstração sintética da ação 3.8, pela tag v-sprint3-poc.7.
+ # Executar pelo engenheiro no próprio terminal; inclui decisões humanas
+ # fictícias de controle. Não é um roteiro para aplicar decisões a clientes.
+ # Conta invocações diretas: não soma subprocessos internos dos plugins,
+@@ -18,7 +18,7 @@ raiz = pathlib.Path(sys.argv[1])
+ base = pathlib.Path(sys.argv[2]).expanduser().resolve()
+ nome = sys.argv[3]
+ pessoa = 'Celso do Vale'
+-tag = 'v-sprint3-poc.6'
++tag = 'v-sprint3-poc.7'
+ caso = base / nome
+ contagens = collections.Counter()
+ 
+@@ -75,7 +75,7 @@ comum = dict(procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=
+ bl = dict(comum, id='BL-001', indicador='Tempo de controle', valor_atual='10 minutos', apuracao='medido', nivel='N2')
+ ct = dict(comum, id='CT-001', estado='rascunho', modo='assistido', duracao='1 semana', plano_reversao='Retorno manual', criterio_aprovacao_escala='100% no caso de controle', criterio_aprovacao_escala_definido_em=hoje, casos=[dict(identificador='CT-001-01', origem='Controle sintético', entrada='Pedido fictício', saida_esperada='Encaminhar', criterio_aprovacao='Igual à saída esperada', categoria='celula_critica', revisor=pessoa, data_revisao=hoje, esperado_definido_em=hoje, esperado_definido_por=pessoa)])
+ met = dict(comum, id='MET-001', estado='planejada', piloto_ref='CT-001', baseline_ref='BL-001', metrica='Tempo de controle', tipo='resultado', linha_base='10 minutos', linha_base_data=hoje, linha_base_procedencia='D', metodo_apuracao='Diferença de horários', fonte_dado='Controle sintético', periodicidade='mensal', responsavel_apuracao=pessoa)
+-cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel=pessoa, responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
++cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel='Marina Prado', responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
+ 
+ def executar(fonte):
+     nucleo = fonte/'eiac-nucleo/scripts'
+@@ -189,7 +189,7 @@ def main():
+         sys.exit('o destino já existe: '+str(caso))
+     codigo = 0
+     # Cópia de trabalho separada: o estado local do repositório não muda.
+-    with tempfile.TemporaryDirectory(prefix='emcia-percurso-v6-') as temporario:
++    with tempfile.TemporaryDirectory(prefix='emcia-percurso-v7-') as temporario:
+         fonte = pathlib.Path(temporario)/'fonte'
+         criada = False
+         try:
+diff --git a/.projectdocs/demos/preparar-caso.sh b/.projectdocs/demos/preparar-caso.sh
+index f2b4f46..f455c1b 100755
+--- a/.projectdocs/demos/preparar-caso.sh
++++ b/.projectdocs/demos/preparar-caso.sh
+@@ -61,7 +61,7 @@ comum = dict(procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=
+ bl = dict(comum, id='BL-001', indicador='Tempo de controle', valor_atual='10 minutos', apuracao='medido', nivel='N2')
+ ct = dict(comum, id='CT-001', estado='rascunho', modo='assistido', duracao='1 semana', plano_reversao='Retorno manual', criterio_aprovacao_escala='100% no caso de controle', criterio_aprovacao_escala_definido_em=hoje, casos=[dict(identificador='CT-001-01', origem='Controle sintético', entrada='Pedido fictício', saida_esperada='Encaminhar', criterio_aprovacao='Igual à saída esperada', categoria='celula_critica', revisor=pessoa, data_revisao=hoje, esperado_definido_em=hoje, esperado_definido_por=pessoa)])
+ met = dict(comum, id='MET-001', estado='planejada', piloto_ref='CT-001', baseline_ref='BL-001', metrica='Tempo de controle', tipo='resultado', linha_base='10 minutos', linha_base_data=hoje, linha_base_procedencia='D', metodo_apuracao='Diferença de horários', fonte_dado='Controle sintético', periodicidade='mensal', responsavel_apuracao=pessoa)
+-cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel=pessoa, responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
++cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel='Marina Prado', responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
+ prontos = []
+ def decisao_pronta(nome_arq, dados):
+     dados.update(decisor=pessoa, data_decisao=hoje, justificativa_decisao='Revisão sintética para demonstração')
+diff --git a/decisoes/036-coerencia-responsavel-recorrencia.md b/decisoes/036-coerencia-responsavel-recorrencia.md
+new file mode 100644
+index 0000000..e74d154
+--- /dev/null
++++ b/decisoes/036-coerencia-responsavel-recorrencia.md
+@@ -0,0 +1,41 @@
++# 036 — Responsável da recorrência conferido com a fonte vigente (A23)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++No percurso da ação 3.8 sobre v-sprint3-poc.6, CAL-001 foi registrada com
++Celso do Vale e a recorrência de P10 com Marina Prado. Ambos os nomes eram
++válidos, mas designavam a mesma responsabilidade. A máquina aceitava a
++recorrência sem consultar a rotina registrada.
++
++## Decisão
++
++A etapa declara `coerencia_responsavel_recorrencia` no playbook do caso:
++padrão dos arquivos, padrão a excluir, campo da pessoa, campo da versão,
++seleção `maior_versao` e orientação de troca. No método de campo, P10 aponta
++para `registro/calibragem/CAL-*.yaml`, excluindo `*-C*.yaml` (ciclos), e
++compara `responsavel` na maior `versao` inteira positiva.
++
++O núcleo aplica esse contrato genérico antes de alterar o estado: recusa
++ausência de fonte, divergência de responsável, fonte ilegível ou externa
++ao caso, versão inválida e empate na maior versão com responsáveis
++diferentes. Não decide por nome de arquivo nem por data do arquivo. A
++recusa de divergência mostra ambos os nomes e a orientação: nova versão
++da rotina, gravada pelo engenheiro no próprio terminal antes da recorrência.
++
++A fonte comparada (arquivo, versão, campo e valor) fica registrada junto
++à recorrência e ao evento. Toda recusa gera evento e preserva o estado.
++Nenhum identificador de etapa nem diretório de método entra no avaliador.
++Casos anteriores não recebem implicitamente o playbook do plugin.
++
++## Consequência e verificação
++
++`testes/recorrencia_a23.py` cobre negativas antes do caminho positivo,
++mesmo responsável, troca por nova versão gravada por calibragem.py,
++seleção numérica, exclusão de ciclos, empates, fonte externa, fonte
++ilegível, contrato inválido e uso do contrato com outra etapa/campo/caminho.
++
++Os auxiliares sintéticos usam Marina Prado na rotina e na recorrência.
++A auditoria de outras responsabilidades está na evidência da ação 3.8;
++nenhuma outra coerência é imposta nesta correção.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index d34ab80..aa9f919 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -41,3 +41,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 033 | Redirecionamento inspecionado pelo alvo de escrita (A20) | firme |
+ | 034 | Recusa de habilidade registrada como evento (A21) | firme |
+ | 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |
++| 036 | Responsável da recorrência conferido com a fonte vigente (A23) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 56e6d6e..75cacdc 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.6",
++  "version": "0.8.7",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 01537c0..3d227af 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.8",
++  "versao": "0.4.9",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+@@ -280,6 +280,14 @@
+       "recorrente": true,
+       "cadencia_obrigatoria": true,
+       "responsavel_obrigatorio": true,
++      "coerencia_responsavel_recorrencia": {
++        "padrao": "registro/calibragem/CAL-*.yaml",
++        "excluir_padrao": "registro/calibragem/*-C*.yaml",
++        "campo": "responsavel",
++        "campo_versao": "versao",
++        "selecao": "maior_versao",
++        "orientacao_troca": "Para trocar o responsavel, grave uma nova versao da rotina pelo engenheiro no proprio terminal, antes da recorrencia."
++      },
+       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
+       "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" },
+       "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia", "pessoas": ["responsavel"]}]
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index c5ab74a..a3ba395 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.32",
++  "version": "0.2.33",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/registrar-recorrencia.md b/eiac-nucleo/commands/registrar-recorrencia.md
+index a2bb34d..07113b9 100644
+--- a/eiac-nucleo/commands/registrar-recorrencia.md
++++ b/eiac-nucleo/commands/registrar-recorrencia.md
+@@ -17,3 +17,11 @@ Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-recorrencia <etapa> --autor "<nome da pessoa>" --cadencia "<cadência>" --responsavel "<nome da pessoa>"`
+ 
+ O responsável precisa ser pessoa nomeada — "equipe" ou "área" não satisfaz `responsavel_obrigatorio`. Se o script recusar, apresente o motivo sem contorná-lo.
++
++Quando a etapa declara `coerencia_responsavel_recorrencia`, o responsável
++informado precisa coincidir com o da fonte vigente, selecionada pela maior
++versão. A recusa mostra os dois nomes e a orientação de troca do playbook.
++Para trocar o responsável, siga a orientação declarada no playbook:
++o engenheiro grava uma nova versão da fonte no próprio terminal antes de
++registrar a recorrência. Não tente repetir com outro nome para
++contornar a recusa.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 6800f25..b2d606c 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -21,6 +21,7 @@ import estado as E
+ import playbook as P
+ import apuracao as A
+ import produtos as R
++import recorrencia as C
+ 
+ 
+ class _RecusaSessao(str):
+@@ -146,7 +147,8 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+ 
+     O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
+     estejam presentes quando o playbook marcar a etapa como recorrente e
+-    cadencia_obrigatoria/responsavel_obrigatorio.
++    cadencia_obrigatoria/responsavel_obrigatorio. A fonte vigente para
++    conferir o responsavel tambem e declarada pelo playbook.
+     """
+     et = P.etapa(pb, etapa_id)
+     if not et:
+@@ -162,6 +164,10 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+         return (f"{etapa_id} exige responsavel nominal (pessoa nomeada, nao agente "
+                 f"nem area/equipe generica) para registrar recorrencia")
+ 
++    erro, fonte = C.conferir(et, responsavel)
++    if erro:
++        return erro
++
+     registro = st["cumprimentos"].setdefault(etapa_id, {})
+     ciclo = registro.setdefault("estado_recorrente", {"ciclo": 0, "historico": []})
+     ciclo["ciclo"] += 1
+@@ -175,8 +181,11 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+     ciclo["ultima_verificacao"] = agora
+     ciclo["cadencia"] = cadencia
+     ciclo["responsavel"] = responsavel
++    if fonte is not None:
++        ciclo["fonte_responsavel"] = fonte
+     E.evento("RecorrenciaRegistrada", etapa=etapa_id, autor=autor,
+-             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel)
++             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel,
++             **({"fonte_responsavel": fonte} if fonte is not None else {}))
+     return None
+ 
+ 
+@@ -351,13 +360,15 @@ def main():
+     try:
+         pb, erro = P.carregar()
+     except (ValueError, TypeError, KeyError) as exc:
+-        if not (a.apurar_nivel or a.registrar_campo):
++        if not (a.apurar_nivel or a.registrar_campo or a.registrar_recorrencia):
+             raise
+         pb, erro = None, f"playbook invalido: {exc}"
+     if not st or erro:
+         if a.apurar_nivel or a.registrar_campo:
+             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+                              "registrar_campo" if a.registrar_campo else "apurar_nivel")
++        elif a.registrar_recorrencia:
++            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto", "registrar_recorrencia")
+         elif a.encerrar or a.registrar_sessao or a.emitir:
+             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+                              "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 46ab2b4..62693d8 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -71,6 +71,10 @@ def carregar():
+         erro_produto = R.validar(e)
+         if erro_produto:
+             return None, erro_produto
++        import recorrencia as C
++        erro_coerencia = C.validar(e)
++        if erro_coerencia:
++            return None, erro_coerencia
+         dep = e.get("depende_de")
+         if dep and dep not in ids_etapa:
+             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
+diff --git a/eiac-nucleo/scripts/recorrencia.py b/eiac-nucleo/scripts/recorrencia.py
+new file mode 100644
+index 0000000..c205b16
+--- /dev/null
++++ b/eiac-nucleo/scripts/recorrencia.py
+@@ -0,0 +1,67 @@
++"""Coerência com fonte vigente declarada no playbook do caso."""
++import fnmatch, pathlib
++import estrutura as X
++import estado as E
++
++CHAVE = 'coerencia_responsavel_recorrencia'
++CAMPOS = {'padrao', 'excluir_padrao', 'campo', 'campo_versao', 'selecao', 'orientacao_troca'}
++
++
++def validar(et):
++    if CHAVE not in et:
++        return None
++    r = et[CHAVE]
++    if not isinstance(r, dict) or set(r) != CAMPOS:
++        return f"etapa {et['id']}: contrato de {CHAVE} invalido"
++    if any(not isinstance(v, str) or not v.strip() for v in r.values()):
++        return f"etapa {et['id']}: {CHAVE} exige campos preenchidos"
++    if not et.get('recorrente') or not et.get('responsavel_obrigatorio'):
++        return f"etapa {et['id']}: {CHAVE} exige etapa recorrente com responsavel obrigatorio"
++    for campo in ('padrao', 'excluir_padrao'):
++        p = pathlib.Path(r[campo])
++        if p.is_absolute() or '..' in p.parts:
++            return f"etapa {et['id']}: {campo} precisa ficar dentro do caso"
++    if r['selecao'] != 'maior_versao':
++        return f"etapa {et['id']}: selecao de fonte desconhecida: {r['selecao']}"
++    return None
++
++
++def conferir(et, responsavel):
++    """Retorna erro e fonte; não altera estado nem grava evento."""
++    r = et.get(CHAVE)
++    if r is None:
++        return None, None
++    raiz = pathlib.Path.cwd().resolve()
++    fontes = []
++    orientacao = r['orientacao_troca']
++    for p in sorted(raiz.glob(r['padrao'])):
++        relativo = p.relative_to(raiz).as_posix()
++        if fnmatch.fnmatchcase(relativo, r['excluir_padrao']):
++            continue
++        if not p.resolve().is_relative_to(raiz):
++            return f"fonte {relativo} fora do caso; {orientacao}", None
++        try:
++            d = X.carregar_yaml(p.read_text(encoding='utf-8'))
++        except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml):
++            return f"fonte {relativo} ilegivel; {orientacao}", None
++        if not isinstance(d, dict):
++            return f"fonte {relativo} precisa ser objeto; {orientacao}", None
++        v = d.get(r['campo_versao'])
++        if (type(v) is not int or v < 1):
++            return f"fonte {relativo}: {r['campo_versao']} exige inteiro positivo; {orientacao}", None
++        pessoa = d.get(r['campo'])
++        if not E.pessoa_nomeada(pessoa):
++            return f"fonte {relativo}: {r['campo']} exige pessoa nomeada; {orientacao}", None
++        fontes.append(dict(arquivo=relativo, versao=v, campo=r['campo'], valor=pessoa))
++    if not fontes:
++        return f"fonte vigente ausente: {r['padrao']} (exclui {r['excluir_padrao']}); {orientacao}", None
++    maior = max(f['versao'] for f in fontes)
++    vigentes = [f for f in fontes if f['versao'] == maior]
++    if len({f['valor'] for f in vigentes}) != 1:
++        nomes = '; '.join(f"{f['arquivo']}: {f['valor']}" for f in vigentes)
++        return f"fonte vigente ambigua na versao {maior}: {nomes}; {orientacao}", None
++    fonte = vigentes[0]
++    if responsavel != fonte['valor']:
++        return (f"responsavel da recorrencia '{responsavel}' diverge do responsavel "
++                f"da fonte vigente '{fonte['valor']}' ({fonte['arquivo']}, versao {maior}); {orientacao}"), None
++    return None, fonte
+diff --git a/testes/README.md b/testes/README.md
+index 9cbcc2e..595fe43 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -723,3 +723,15 @@ parâmetros de ferramentas da sessão sintética controle-37, não módulos de
+ verificações. Os campos comuns de hook seguem o contrato oficial. T04 de
+ verificacao_por_estados mantém a emissão do selo e o encerramento humano,
+ mas agora exige recusa do carregamento não delegável. Nenhum teste é apagado.
++
++## Sprint 3 — A23: coerência do responsável da recorrência
++
++```bash
++python3 testes/recorrencia_a23.py
++```
++
++12 verificações: divergência e ausência de rotina; seleção por maior versão;
++ciclos excluídos; versão inválida; empate ambíguo; link externo; contrato
++inválido; mesmo responsável com fonte rastreável; troca por nova versão
++gravada pelo script de campo; contrato com outra etapa/campo/caminho;
++fonte ilegível. As recusas preservam o estado e deixam evento.
+diff --git a/testes/apoio/preparar.py b/testes/apoio/preparar.py
+index cafc26b..3d869df 100644
+--- a/testes/apoio/preparar.py
++++ b/testes/apoio/preparar.py
+@@ -7,7 +7,7 @@ import json, pathlib, subprocess
+ RAIZ=pathlib.Path(__file__).resolve().parents[2]
+ PESSOA='Celso do Vale'
+ 
+-def produto(caso, etapa):
++def produto(caso, etapa, responsavel=None):
+     caso=pathlib.Path(caso)
+     st=json.loads((caso/'registro/estado.json').read_text())
+     if etapa=='P5':
+@@ -25,5 +25,7 @@ def produto(caso, etapa):
+     }
+     if etapa not in dados: return
+     destino,d=dados[etapa]; p=caso/destino; p.parent.mkdir(parents=True,exist_ok=True)
++    if etapa == 'P10' and responsavel is not None:
++        d['responsavel'] = responsavel
+     d.update(procedencia='D',declarado_por=PESSOA,registrado_por=PESSOA,versao=1)
+     p.write_text('\n'.join(k+': '+json.dumps(v,ensure_ascii=False) for k,v in d.items())+'\n')
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index abbf408..c11bd72 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -139,7 +139,7 @@ def percorrer_ate(caso, ate_etapa_id):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
+-        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
++        preparar_produto(caso, etapa_id, responsavel="Marina Prado" if etapa_id == "P10" else None)  # A23: rotina e recorrência com a mesma pessoa
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         restante.discard(etapa_id)
+         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+diff --git a/testes/recorrencia_a23.py b/testes/recorrencia_a23.py
+new file mode 100644
+index 0000000..3199fb0
+--- /dev/null
++++ b/testes/recorrencia_a23.py
+@@ -0,0 +1,146 @@
++"""A23: responsável da recorrência conferido contra a fonte vigente do caso."""
++import json, pathlib, subprocess, sys, unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.preparar import produto
++
++REGRA = dict(padrao='registro/calibragem/CAL-*.yaml',
++             excluir_padrao='registro/calibragem/*-C*.yaml', campo='responsavel',
++             campo_versao='versao', selecao='maior_versao',
++             orientacao_troca='Para trocar o responsavel, grave uma nova versao da rotina pelo engenheiro no proprio terminal, antes da recorrencia.')
++
++class RecorrenciaA23(CasoHook):
++    def setUp(self):
++        super().setUp()
++        self.estado.update(etapa_atual='P10', cumprimentos={'P10': {'cumprido': True}})
++        self.salvar()
++        self.pb = json.loads((self.caso/'registro/playbook.json').read_text())
++        self.et = next(e for e in self.pb['etapas'] if e['id']=='P10')
++        self.et['coerencia_responsavel_recorrencia'] = dict(REGRA)
++        self.salvar_pb()
++
++    def salvar_pb(self):
++        (self.caso/'registro/playbook.json').write_text(json.dumps(self.pb))
++
++    def fonte(self, nome='CAL-001.yaml', pessoa='Celso do Vale', versao=1, **extras):
++        p = self.caso/'registro/calibragem'/nome
++        p.parent.mkdir(parents=True, exist_ok=True)
++        d = dict(responsavel=pessoa, versao=versao, **extras)
++        p.write_text('\n'.join(k+': '+json.dumps(v, ensure_ascii=False) for k,v in d.items())+'\n')
++        return p
++
++    def recorrencia(self, pessoa='Celso do Vale', etapa='P10'):
++        return self.rodar('avancar.py', '--registrar-recorrencia', etapa,
++                          '--autor', 'Celso do Vale', '--cadencia', 'mensal', '--responsavel', pessoa)
++
++    def recusa(self, pessoa='Marina Prado', trecho=None):
++        antes = (self.caso/'registro/estado.json').read_bytes()
++        n = len(self.eventos())
++        r = self.recorrencia(pessoa)
++        self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
++        self.assertEqual((self.caso/'registro/estado.json').read_bytes(), antes)
++        evs = self.eventos()
++        self.assertEqual(len(evs), n+1)
++        self.assertIn(evs[-1]['evento'], ['TentativaNegada','RecusaMaquina'])
++        self.assertEqual(evs[-1]['acao_tentada'], 'registrar_recorrencia')
++        if trecho: self.assertIn(trecho, r.stderr)
++        return r
++
++    def test_01_responsavel_divergente_recusado_com_orientacao(self):
++        self.fonte()
++        r = self.recusa(trecho='Marina Prado')
++        self.assertIn('Celso do Vale', r.stderr)
++        self.assertIn(REGRA['orientacao_troca'], r.stderr)
++
++    def test_02_sem_rotina_recusado(self):
++        self.recusa(trecho=REGRA['padrao'])
++
++    def test_03_versao_mais_alta_nao_e_nome_lexicografico(self):
++        self.fonte('CAL-999.yaml', 'Celso do Vale', 2)
++        self.fonte('CAL-001.yaml', 'Marina Prado', 10)
++        self.recusa('Celso do Vale', 'Marina Prado')
++        self.assertEqual(self.recorrencia('Marina Prado').returncode, 0)
++
++    def test_04_ciclo_nao_substitui_rotina(self):
++        self.fonte()
++        self.fonte('CAL-001-C01.yaml', 'Marina Prado', 100)
++        self.recusa('Marina Prado', 'Celso do Vale')
++        self.assertEqual(self.recorrencia().returncode, 0)
++
++    def test_05_versao_invalida_nao_libera_por_rotina_antiga(self):
++        self.fonte('CAL-001.yaml', 'Marina Prado', 1)
++        self.fonte('CAL-002.yaml', 'Marina Prado', 'invalida')
++        self.recusa(trecho='versao')
++
++    def test_06_empate_com_responsaveis_distintos_recusado(self):
++        self.fonte('CAL-001.yaml', 'Celso do Vale', 3)
++        self.fonte('CAL-002.yaml', 'Marina Prado', 3)
++        self.recusa(trecho='ambigu')
++
++    def test_07_link_para_fora_do_caso_recusado(self):
++        alvo = self.base/'externo.yaml'
++        alvo.write_text('responsavel: Marina Prado\nversao: 1\n')
++        (self.caso/'registro/calibragem').mkdir(parents=True, exist_ok=True)
++        (self.caso/'registro/calibragem/CAL-001.yaml').symlink_to(alvo)
++        self.recusa(trecho='fora do caso')
++
++    def test_08_contrato_invalido_recusado_com_evento(self):
++        self.et['coerencia_responsavel_recorrencia']['selecao'] = 'primeiro'
++        self.salvar_pb()
++        self.recusa(trecho='selecao')
++
++    def test_09_mesmo_responsavel_aceito_com_fonte_rastreavel(self):
++        self.fonte()
++        r = self.recorrencia()
++        self.assertEqual(r.returncode, 0, r.stderr)
++        st = json.loads((self.caso/'registro/estado.json').read_text())
++        registro = st['cumprimentos']['P10']['estado_recorrente']
++        self.assertEqual(registro['responsavel'], 'Celso do Vale')
++        self.assertEqual(registro['fonte_responsavel']['arquivo'], 'registro/calibragem/CAL-001.yaml')
++        self.assertEqual(registro['fonte_responsavel']['versao'], 1)
++        self.assertEqual(self.eventos()[-1]['evento'], 'RecorrenciaRegistrada')
++        self.assertEqual(self.eventos()[-1]['fonte_responsavel'], registro['fonte_responsavel'])
++
++    def test_10_troca_por_nova_versao_gravada_pelo_script(self):
++        produto(self.caso, 'P9')
++        produto(self.caso, 'P10')
++        self.assertEqual(self.recorrencia().returncode, 0)
++        fonte = self.caso/'registro/calibragem/CAL-999.yaml'
++        texto = fonte.read_text().replace('responsavel: "Celso do Vale"', 'responsavel: "Marina Prado"').replace('versao: 1', 'versao: 2')
++        (self.caso/'rascunho/CAL-999.yaml').write_text(texto)
++        r = subprocess.run([sys.executable, str(RAIZ/'eiac-campo/scripts/calibragem.py'),
++                            '--arquivo', 'registro/calibragem/CAL-999.yaml', '--ator', 'Celso do Vale'],
++                           cwd=self.caso, text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.recusa('Celso do Vale', 'Marina Prado')
++        r = self.recorrencia('Marina Prado')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        st = json.loads((self.caso/'registro/estado.json').read_text())
++        ciclo = st['cumprimentos']['P10']['estado_recorrente']
++        self.assertEqual(ciclo['fonte_responsavel']['versao'], 2)
++        self.assertEqual(ciclo['ciclo'], 2)
++        self.assertEqual(ciclo['historico'][0]['responsavel'], 'Celso do Vale')
++
++    def test_11_regra_generica_outro_caminho_campo_etapa(self):
++        self.et['id'] = 'Z99'
++        for ent in self.pb['entregaveis']:
++            ent['portao'] = ['Z99' if x=='P10' else x for x in ent['portao']]
++        for item in self.pb['inegociaveis']:
++            if item.get('passo')=='P10': item['passo']='Z99'
++        self.et['coerencia_responsavel_recorrencia'].update(padrao='registro/agenda/*.yaml', excluir_padrao='registro/agenda/*-ciclo.yaml', campo='titular', campo_versao='revisao')
++        self.salvar_pb()
++        self.estado.update(etapa_atual='Z99', cumprimentos={'Z99': {'cumprido': True}})
++        self.salvar()
++        p = self.caso/'registro/agenda/rotina.yaml'
++        p.parent.mkdir()
++        p.write_text('titular: Marina Prado\nrevisao: 4\n')
++        r = self.recorrencia('Celso do Vale', 'Z99')
++        self.assertEqual(r.returncode, 1, r.stderr)
++        self.assertIn('Marina Prado', r.stderr)
++        self.assertEqual(self.recorrencia('Marina Prado', 'Z99').returncode, 0)
++
++    def test_12_fonte_ilegivel_nao_e_ignorada(self):
++        self.fonte('CAL-001.yaml', 'Marina Prado')
++        (self.caso/'registro/calibragem/CAL-002.yaml').write_bytes(b'\xff')
++        self.recusa(trecho='ilegivel')
++
++if __name__ == '__main__': unittest.main(verbosity=2)

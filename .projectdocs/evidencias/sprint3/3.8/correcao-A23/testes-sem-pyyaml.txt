@@ -1,0 +1,18 @@
+A23: interpretadores dos scripts executados com -S, sem site-packages/PyYAML.
+test_01_responsavel_divergente_recusado_com_orientacao (__main__.RecorrenciaA23.test_01_responsavel_divergente_recusado_com_orientacao) ... ok
+test_02_sem_rotina_recusado (__main__.RecorrenciaA23.test_02_sem_rotina_recusado) ... ok
+test_03_versao_mais_alta_nao_e_nome_lexicografico (__main__.RecorrenciaA23.test_03_versao_mais_alta_nao_e_nome_lexicografico) ... ok
+test_04_ciclo_nao_substitui_rotina (__main__.RecorrenciaA23.test_04_ciclo_nao_substitui_rotina) ... ok
+test_05_versao_invalida_nao_libera_por_rotina_antiga (__main__.RecorrenciaA23.test_05_versao_invalida_nao_libera_por_rotina_antiga) ... ok
+test_06_empate_com_responsaveis_distintos_recusado (__main__.RecorrenciaA23.test_06_empate_com_responsaveis_distintos_recusado) ... ok
+test_07_link_para_fora_do_caso_recusado (__main__.RecorrenciaA23.test_07_link_para_fora_do_caso_recusado) ... ok
+test_08_contrato_invalido_recusado_com_evento (__main__.RecorrenciaA23.test_08_contrato_invalido_recusado_com_evento) ... ok
+test_09_mesmo_responsavel_aceito_com_fonte_rastreavel (__main__.RecorrenciaA23.test_09_mesmo_responsavel_aceito_com_fonte_rastreavel) ... ok
+test_10_troca_por_nova_versao_gravada_pelo_script (__main__.RecorrenciaA23.test_10_troca_por_nova_versao_gravada_pelo_script) ... ok
+test_11_regra_generica_outro_caminho_campo_etapa (__main__.RecorrenciaA23.test_11_regra_generica_outro_caminho_campo_etapa) ... ok
+test_12_fonte_ilegivel_nao_e_ignorada (__main__.RecorrenciaA23.test_12_fonte_ilegivel_nao_e_ignorada) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.960s
+
+OK

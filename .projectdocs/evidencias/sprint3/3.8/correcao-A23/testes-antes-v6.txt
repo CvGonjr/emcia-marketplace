@@ -1,0 +1,147 @@
+Testes A23 contra v-sprint3-poc.6 (533391bb65fdd9735fa9d229d363f04f08bdff35)
+Saida: 1
+test_01_responsavel_divergente_recusado_com_orientacao (__main__.RecorrenciaA23.test_01_responsavel_divergente_recusado_com_orientacao) ... FAIL
+test_02_sem_rotina_recusado (__main__.RecorrenciaA23.test_02_sem_rotina_recusado) ... FAIL
+test_03_versao_mais_alta_nao_e_nome_lexicografico (__main__.RecorrenciaA23.test_03_versao_mais_alta_nao_e_nome_lexicografico) ... FAIL
+test_04_ciclo_nao_substitui_rotina (__main__.RecorrenciaA23.test_04_ciclo_nao_substitui_rotina) ... FAIL
+test_05_versao_invalida_nao_libera_por_rotina_antiga (__main__.RecorrenciaA23.test_05_versao_invalida_nao_libera_por_rotina_antiga) ... FAIL
+test_06_empate_com_responsaveis_distintos_recusado (__main__.RecorrenciaA23.test_06_empate_com_responsaveis_distintos_recusado) ... FAIL
+test_07_link_para_fora_do_caso_recusado (__main__.RecorrenciaA23.test_07_link_para_fora_do_caso_recusado) ... FAIL
+test_08_contrato_invalido_recusado_com_evento (__main__.RecorrenciaA23.test_08_contrato_invalido_recusado_com_evento) ... FAIL
+test_09_mesmo_responsavel_aceito_com_fonte_rastreavel (__main__.RecorrenciaA23.test_09_mesmo_responsavel_aceito_com_fonte_rastreavel) ... ERROR
+test_10_troca_por_nova_versao_gravada_pelo_script (__main__.RecorrenciaA23.test_10_troca_por_nova_versao_gravada_pelo_script) ... FAIL
+test_11_regra_generica_outro_caminho_campo_etapa (__main__.RecorrenciaA23.test_11_regra_generica_outro_caminho_campo_etapa) ... FAIL
+test_12_fonte_ilegivel_nao_e_ignorada (__main__.RecorrenciaA23.test_12_fonte_ilegivel_nao_e_ignorada) ... FAIL
+
+======================================================================
+ERROR: test_09_mesmo_responsavel_aceito_com_fonte_rastreavel (__main__.RecorrenciaA23.test_09_mesmo_responsavel_aceito_com_fonte_rastreavel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 98, in test_09_mesmo_responsavel_aceito_com_fonte_rastreavel
+    self.assertEqual(registro['fonte_responsavel']['arquivo'], 'registro/calibragem/CAL-001.yaml')
+                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'fonte_responsavel'
+
+======================================================================
+FAIL: test_01_responsavel_divergente_recusado_com_orientacao (__main__.RecorrenciaA23.test_01_responsavel_divergente_recusado_com_orientacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 50, in test_01_responsavel_divergente_recusado_com_orientacao
+    r = self.recusa(trecho='Marina Prado')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_02_sem_rotina_recusado (__main__.RecorrenciaA23.test_02_sem_rotina_recusado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 55, in test_02_sem_rotina_recusado
+    self.recusa(trecho=REGRA['padrao'])
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_03_versao_mais_alta_nao_e_nome_lexicografico (__main__.RecorrenciaA23.test_03_versao_mais_alta_nao_e_nome_lexicografico)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 60, in test_03_versao_mais_alta_nao_e_nome_lexicografico
+    self.recusa('Celso do Vale', 'Marina Prado')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_04_ciclo_nao_substitui_rotina (__main__.RecorrenciaA23.test_04_ciclo_nao_substitui_rotina)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 66, in test_04_ciclo_nao_substitui_rotina
+    self.recusa('Marina Prado', 'Celso do Vale')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_05_versao_invalida_nao_libera_por_rotina_antiga (__main__.RecorrenciaA23.test_05_versao_invalida_nao_libera_por_rotina_antiga)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 72, in test_05_versao_invalida_nao_libera_por_rotina_antiga
+    self.recusa(trecho='versao')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_06_empate_com_responsaveis_distintos_recusado (__main__.RecorrenciaA23.test_06_empate_com_responsaveis_distintos_recusado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 77, in test_06_empate_com_responsaveis_distintos_recusado
+    self.recusa(trecho='ambigu')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_07_link_para_fora_do_caso_recusado (__main__.RecorrenciaA23.test_07_link_para_fora_do_caso_recusado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 84, in test_07_link_para_fora_do_caso_recusado
+    self.recusa(trecho='fora do caso')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_08_contrato_invalido_recusado_com_evento (__main__.RecorrenciaA23.test_08_contrato_invalido_recusado_com_evento)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 89, in test_08_contrato_invalido_recusado_com_evento
+    self.recusa(trecho='selecao')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_10_troca_por_nova_versao_gravada_pelo_script (__main__.RecorrenciaA23.test_10_troca_por_nova_versao_gravada_pelo_script)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 114, in test_10_troca_por_nova_versao_gravada_pelo_script
+    self.recusa('Celso do Vale', 'Marina Prado')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+======================================================================
+FAIL: test_11_regra_generica_outro_caminho_campo_etapa (__main__.RecorrenciaA23.test_11_regra_generica_outro_caminho_campo_etapa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 137, in test_11_regra_generica_outro_caminho_campo_etapa
+    self.assertEqual(r.returncode, 1, r.stderr)
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_12_fonte_ilegivel_nao_e_ignorada (__main__.RecorrenciaA23.test_12_fonte_ilegivel_nao_e_ignorada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 144, in test_12_fonte_ilegivel_nao_e_ignorada
+    self.recusa(trecho='ilegivel')
+  File "/tmp/emcia-A23-antes-lpmpu3bn/fonte/testes/recorrencia_a23.py", line 39, in recusa
+    self.assertEqual(r.returncode, 1, r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: None
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.046s
+
+FAILED (failures=11, errors=1)
