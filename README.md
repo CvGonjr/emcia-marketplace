@@ -61,7 +61,9 @@ alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
 
 Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
 
-**A sessão precisa estar dentro do caso.** O núcleo lê `registro/estado.json` do diretório corrente — de fora, não há guarda nem validador.
+**Abra a sessão na raiz do caso.** A guarda conserva a raiz indicada por
+`CLAUDE_PROJECT_DIR` e localiza o registro também nos ancestrais do cwd.
+Os comandos de operação continuam sendo executados na raiz do caso.
 
 ## Percurso — 13 etapas, F0 a P10
 
@@ -175,7 +177,9 @@ NEGADO com o motivo; não executa o comando. Não cria nova permissão.
 
 A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
 
-A trava de código dessa comparação é única: P3b não abre, nem encerra, sem o selo de P2. Sem selo, `/eiac-nucleo:estado` mostra a etapa presa em P3b e a mensagem nomeia exatamente qual selo falta.
+P3b exige selo posterior ao encerramento de P2. O encerramento pelo
+engenheiro nomeia o selo que falta. Sessão e selo não autorizam o agente
+a carregar uma habilidade declarada não delegável (decisão 031).
 
 ## Material público da etapa 0a
 
@@ -315,3 +319,26 @@ As decisões das etapas anteriores são executadas no percurso sintético.
 Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
 sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
 o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
+
+## Fronteira da sessão e caminhos — Sprint 3, ação 3.7
+
+A guarda alcança Read, Skill, leitura de conteúdo por Bash/Grep e a invocação
+direta de habilidades pelo evento UserPromptExpansion. Uma habilidade com
+`delegavel: false` no playbook não carrega, mesmo após sessão humana e selo.
+O nome da habilidade identifica a etapa; a pasta da instalação não autoriza
+seu uso. Nas etapas delegáveis de camada humana, mantém-se o apoio após a
+sessão da própria etapa. Toda recusa produz TentativaNegada.
+
+Absolutos, relativos, `..` e links simbólicos passam pela mesma proteção de
+caso/, contexto/, registro/ e fontes/. Redirecionamentos de Bash são
+conferidos pelo destino: leitura com `2>/dev/null` e escrita em rascunho/
+continuam permitidas. A tentativa de carregar hb-levantar-regras é evento
+da guarda; não se escreve uma marca inválida de procedência em caso/.
+
+`/eiac-nucleo:estado` exibe o último selo confirmado pelo Git do caso, com
+hash, data e nota, inclusive no resumo. Essa apresentação não altera o
+arquivo de estado nem cria uma mudança após o selo.
+
+Versão desta correção: `v-sprint3-poc.6` (núcleo 0.2.32, campo 0.8.6).
+Decisões 031–035 e evidência em
+[correcao-A17-A21](.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/resultado.md).

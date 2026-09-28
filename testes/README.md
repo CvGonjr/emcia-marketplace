@@ -75,7 +75,7 @@ As 38 verificações operacionais de P6 e P7 (pacote 2.6.2: especificação
 operacional, termo de autonomia, fronteira agente×humano em ambos,
 dependência P7→P6, evidência para o inegociável 2, e a correção de G1
 em `guarda.py` — sessão humana válida libera carregamento de skill
-EX3/EX4) rodam separadamente:
+de etapa delegável; não libera habilidade não delegável) rodam separadamente:
 
 ```bash
 python3 testes/campo_2_6_2.py
@@ -446,15 +446,16 @@ introduzir semântica de método em `eiac-nucleo/`.
 | 2.6.2-T28–T30 | Eventos de tentativa de agente, decisão inválida e decisão válida, todos rastreáveis |
 | 2.6.2-T31 | Ausência de hard-code comportamental de P6/P7/autonomia/E4 no núcleo |
 | 2.6.2-T32/T33 | Regressão da Ação 2.5 e do pacote 2.6.1 |
-| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill EX3/EX4 sem sessão bloqueada; com sessão válida da mesma etapa carrega; sessão de outra etapa não libera |
+| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill delegável de camada humana sem sessão bloqueada; com sessão da própria etapa carrega; sessão de outra etapa não libera; 031 impede carregar não delegável mesmo com sessão |
 
 **Achado corrigido neste pacote:** `guarda.py` G1 bloqueava o
 carregamento do próprio `SKILL.md` para qualquer etapa EX3/EX4,
 independentemente de sessão humana registrada — comportamento
 pré-existente (já afetava `hb-confrontar`, `hb-priorizar`,
 `hb-classificar`), descoberto ao escrever `hb-operacionalizar`/
-`hb-governar`. G1 agora libera o carregamento quando existe sessão
-humana válida **para a etapa corrente** — não libera decisão, aprovação
+`hb-governar`. G1 libera o carregamento de habilidade **delegável** quando existe sessão
+humana válida **para a própria etapa**; a decisão 031 recusa sempre o
+carregamento das habilidades não delegáveis — não libera decisão, aprovação
 ou fechamento de etapa por agente, que continuam bloqueados por outras
 regras (`delegavel:false` em `avancar.encerrar()`,
 `operacional.py`/`governanca.py` recusando agente em
@@ -557,7 +558,7 @@ genérica (capacidade↔papel, sem conhecer HB/AG/EMCIA) fica em
 | 2.6.4-T31 | Skills que materializam mais de uma HB preservam critério individual por HB |
 | 2.6.4-T32–T35 | Mecanismo genérico do 2.6.1 recebe HB real sem/com critério; critério recuperável em runtime; não duplicado na etapa do playbook |
 | 2.6.4-T36–T38 | Nenhum AG tem autoridade sobre a decisão humana de P7 (HB-14) nem de recalibragem em P10 (HB-18); nenhum AG substitui a sessão de P3b |
-| 2.6.4-T39/T40 | Regressão G1: skill EX3/EX4 sem sessão bloqueada; com sessão válida carrega |
+| 2.6.4-T39/T40 | Regressão G1: skill delegável de camada humana sem sessão bloqueada; com sessão válida carrega |
 | 2.6.4-T41–T43 | Os 4 AG lógicos resolvem sem exigir 4 arquivos físicos; agentes físicos existentes preservam identidade 1:1; implementação física resolve para arquivo real |
 | 2.6.4-T44/T45 | `catalogo.py` não expõe caminho de auto-ampliação em runtime; catálogo só muda por edição de arquivo versionado |
 | 2.6.4-T46 | Ausência de hard-code HB/AG no núcleo |
@@ -700,3 +701,25 @@ python3 testes/pessoa_a16.py     # 17
 preparação existentes; não é módulo de verificações. T09b de campo_2_6_5
 exige recusa do coletivo composto na gravação. As saídas antes/depois e a
 lista de ajustes ficam em `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/`.
+
+## Sprint 3 — ação 3.7: A17–A21
+
+**769 verificações em 33 módulos**, mantendo as 673 anteriores. As 96 novas:
+
+| Módulo | Verificações | Cobertura |
+|---|---:|---|
+| `habilidades_a18.py` | 13 | Skill da sessão real, expansão direta, instalação, Read/Grep/Bash, aliases e níveis |
+| `caminhos_a19.py` | 62 | áreas protegidas × caminhos, Edit/Bash, cwd, links, subshell e pipeline |
+| `redirecionamentos_a20.py` | 12 | destinos de saída, FD, aspas, leitura e rascunho |
+| `recusa_a21.py` | 2 | instrução de recusa por evento e ausência de asserção inventada |
+| `selo_a17.py` | 7 | selo confirmado, falha de commit, último selo, hash estável e resumo |
+
+Execute cada módulo com `python3 testes/<módulo>.py`. A evidência inclui
+[reexecutar-suite.py](../.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/reexecutar-suite.py)
+para a bateria completa, todos os `.py` da raiz de testes/ e negativos.sh.
+
+`apoio/hook_real.py` e `apoio/entradas_sessao_37.json` são preparação e
+parâmetros de ferramentas da sessão sintética controle-37, não módulos de
+verificações. Os campos comuns de hook seguem o contrato oficial. T04 de
+verificacao_por_estados mantém a emissão do selo e o encerramento humano,
+mas agora exige recusa do carregamento não delegável. Nenhum teste é apagado.

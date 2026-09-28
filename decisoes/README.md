@@ -36,3 +36,8 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 028 | Produto próprio exigido no encerramento (A14) | firme |
 | 029 | Revisão humana do piloto declarada na guarda (A15) | firme |
 | 030 | Pessoa nomeada sem termos coletivos (A16) | firme |
+| 031 | Habilidade não delegável bloqueada nas rotas de carregamento (A18) | firme; substitui a exceção de sessão para habilidades não delegáveis |
+| 032 | Caminhos normalizados relativos à raiz do caso (A19) | firme |
+| 033 | Redirecionamento inspecionado pelo alvo de escrita (A20) | firme |
+| 034 | Recusa de habilidade registrada como evento (A21) | firme |
+| 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |

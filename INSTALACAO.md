@@ -119,7 +119,10 @@ cd ~/casos/medic-plus
 claude
 ```
 
-O núcleo lê `registro/estado.json` do diretório corrente. De fora, a guarda não protege nada.
+Abra a sessão na raiz do caso. A guarda conserva essa raiz pelo
+`CLAUDE_PROJECT_DIR` e usa o cwd do hook para resolver caminhos relativos,
+inclusive quando a ferramenta muda de diretório. Execute os scripts de
+operação na raiz do caso.
 
 **Verificar:**
 
@@ -139,7 +142,11 @@ Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está n
 
 Peça ao Claude: *leia o arquivo `skills/hb-levantar-regras/SKILL.md`*.
 
-**Esperado:** bloqueio, com a mensagem sobre `EX4` e modalidade presencial.
+**Esperado:** bloqueio de carregamento. Sem os pré-requisitos, a mensagem
+pode primeiro nomear o selo que falta. Com sessão e selo, a recusa deve
+nomear a não delegabilidade, `EX4` e a modalidade presencial.
+Repita pela ferramenta Skill (`eiac-campo:hb-levantar-regras`) e pelo
+caminho absoluto do SKILL.md instalado; ambos devem ser recusados.
 **Confirmar:** `cat registro/eventos.jsonl` contém `TentativaNegada`.
 
 ### Teste 2 — escrita direta no repositório do caso ⚠️
@@ -210,7 +217,9 @@ se a camada do nível exigir. Já em P3b, registre sua sessão, mas
 /eiac-nucleo:encerrar P3b
 ```
 
-**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 e antes de tentar novamente resolve.
+**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 satisfaz esse
+pré-requisito. O encerramento é executado pelo engenheiro no próprio
+terminal; o carregamento da habilidade pelo agente continua recusado.
 
 ### Teste 7 — autor agente
 
@@ -390,3 +399,26 @@ As decisões das etapas anteriores são executadas no percurso sintético.
 Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
 sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
 o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
+
+## Atualizar a fronteira — v-sprint3-poc.6
+
+Atualize o marketplace e os dois plugins pela versão `v-sprint3-poc.6`,
+confira núcleo 0.2.32 e campo 0.8.6 e reinicie a sessão dentro do caso.
+Conteúdo já carregado na sessão anterior não é removido por um hook novo.
+A referência usada para as rotas de hook é o Claude Code 2.1.283, que foi
+conferido neste ambiente; o runtime precisa reconhecer UserPromptExpansion.
+
+Prove também a invocação direta `/eiac-campo:hb-levantar-regras`: ela deve
+ser recusada e produzir TentativaNegada, mesmo com sessão e selo. Skill usa
+PreToolUse; a invocação direta usa UserPromptExpansion. Read e Grep/Bash
+que leem o arquivo da habilidade também passam pela guarda.
+
+Tente Edit com o absoluto `<raiz-do-caso>/registro/estado.json`: deve ser
+recusado sem mudar o estado. Repita com `..` e com um link externo apontando
+para registro/. Os três caminhos devem produzir evento de recusa.
+Como controles, `cat registro/estado.json 2>/dev/null` e redirecionamento
+para rascunho/ devem passar pela guarda. `2>registro/erro.txt` deve recusar.
+
+Após selar, `/eiac-nucleo:estado` e o resumo mostram hash completo, data e
+nota do último selo confirmado. Um commit posterior comum não muda esse
+hash; uma tentativa de commit recusada não aparece como selo aplicado.

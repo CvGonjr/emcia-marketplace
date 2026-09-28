@@ -189,3 +189,14 @@ etapa, revisão humana do piloto/rotina e pessoa nomeada. Evidência em
 `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/` (resultado, auditoria,
 diff e suíte integral). Novos testes: `produtos_a14.py`, `revisao_a15.py` e
 `pessoa_a16.py`; preparação do caso de controle em `.projectdocs/demos/`.
+
+## Sprint 3 — ação 3.7
+
+Correções A17–A21 sobre `v-sprint3-poc.5`, preservando a evidência da sessão
+real em `.projectdocs/evidencias/sprint3/3.7/sessao-1/`. Decisões 031–035;
+rotas de carregamento, normalização de caminhos, redirecionamentos, recusa
+por evento e apresentação do selo. Evidência em
+`.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/`: resultado, entradas
+de regressão, diff, suíte completa e script de reexecução. Novos módulos:
+`habilidades_a18.py`, `caminhos_a19.py`, `redirecionamentos_a20.py`,
+`recusa_a21.py` e `selo_a17.py`.
