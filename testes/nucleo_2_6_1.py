@@ -139,7 +139,7 @@ def percorrer_ate(caso, ate_etapa_id):
                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
                     participantes="Ana, Celso")
-        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+        preparar_produto(caso, etapa_id, responsavel="Marina Prado" if etapa_id == "P10" else None)  # A23: rotina e recorrência com a mesma pessoa
         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
         restante.discard(etapa_id)
         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])

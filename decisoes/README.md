@@ -41,3 +41,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 033 | Redirecionamento inspecionado pelo alvo de escrita (A20) | firme |
 | 034 | Recusa de habilidade registrada como evento (A21) | firme |
 | 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |
+| 036 | Responsável da recorrência conferido com a fonte vigente (A23) | firme |

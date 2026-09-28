@@ -21,6 +21,7 @@ import estado as E
 import playbook as P
 import apuracao as A
 import produtos as R
+import recorrencia as C
 
 
 class _RecusaSessao(str):
@@ -146,7 +147,8 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
 
     O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
     estejam presentes quando o playbook marcar a etapa como recorrente e
-    cadencia_obrigatoria/responsavel_obrigatorio.
+    cadencia_obrigatoria/responsavel_obrigatorio. A fonte vigente para
+    conferir o responsavel tambem e declarada pelo playbook.
     """
     et = P.etapa(pb, etapa_id)
     if not et:
@@ -162,6 +164,10 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
         return (f"{etapa_id} exige responsavel nominal (pessoa nomeada, nao agente "
                 f"nem area/equipe generica) para registrar recorrencia")
 
+    erro, fonte = C.conferir(et, responsavel)
+    if erro:
+        return erro
+
     registro = st["cumprimentos"].setdefault(etapa_id, {})
     ciclo = registro.setdefault("estado_recorrente", {"ciclo": 0, "historico": []})
     ciclo["ciclo"] += 1
@@ -175,8 +181,11 @@ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
     ciclo["ultima_verificacao"] = agora
     ciclo["cadencia"] = cadencia
     ciclo["responsavel"] = responsavel
+    if fonte is not None:
+        ciclo["fonte_responsavel"] = fonte
     E.evento("RecorrenciaRegistrada", etapa=etapa_id, autor=autor,
-             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel)
+             ciclo=ciclo["ciclo"], cadencia=cadencia, responsavel=responsavel,
+             **({"fonte_responsavel": fonte} if fonte is not None else {}))
     return None
 
 
@@ -351,13 +360,15 @@ def main():
     try:
         pb, erro = P.carregar()
     except (ValueError, TypeError, KeyError) as exc:
-        if not (a.apurar_nivel or a.registrar_campo):
+        if not (a.apurar_nivel or a.registrar_campo or a.registrar_recorrencia):
             raise
         pb, erro = None, f"playbook invalido: {exc}"
     if not st or erro:
         if a.apurar_nivel or a.registrar_campo:
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
                              "registrar_campo" if a.registrar_campo else "apurar_nivel")
+        elif a.registrar_recorrencia:
+            _recusar_operacao(st, a.autor, erro or "nenhum caso aberto", "registrar_recorrencia")
         elif a.encerrar or a.registrar_sessao or a.emitir:
             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
                              "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))

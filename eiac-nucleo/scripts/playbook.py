@@ -71,6 +71,10 @@ def carregar():
         erro_produto = R.validar(e)
         if erro_produto:
             return None, erro_produto
+        import recorrencia as C
+        erro_coerencia = C.validar(e)
+        if erro_coerencia:
+            return None, erro_coerencia
         dep = e.get("depende_de")
         if dep and dep not in ids_etapa:
             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"

@@ -17,3 +17,11 @@ Prepare e entregue ao engenheiro este comando:
 `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-recorrencia <etapa> --autor "<nome da pessoa>" --cadencia "<cadência>" --responsavel "<nome da pessoa>"`
 
 O responsável precisa ser pessoa nomeada — "equipe" ou "área" não satisfaz `responsavel_obrigatorio`. Se o script recusar, apresente o motivo sem contorná-lo.
+
+Quando a etapa declara `coerencia_responsavel_recorrencia`, o responsável
+informado precisa coincidir com o da fonte vigente, selecionada pela maior
+versão. A recusa mostra os dois nomes e a orientação de troca do playbook.
+Para trocar o responsável, siga a orientação declarada no playbook:
+o engenheiro grava uma nova versão da fonte no próprio terminal antes de
+registrar a recorrência. Não tente repetir com outro nome para
+contornar a recusa.

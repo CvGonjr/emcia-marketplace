@@ -7,7 +7,7 @@ import json, pathlib, subprocess
 RAIZ=pathlib.Path(__file__).resolve().parents[2]
 PESSOA='Celso do Vale'
 
-def produto(caso, etapa):
+def produto(caso, etapa, responsavel=None):
     caso=pathlib.Path(caso)
     st=json.loads((caso/'registro/estado.json').read_text())
     if etapa=='P5':
@@ -25,5 +25,7 @@ def produto(caso, etapa):
     }
     if etapa not in dados: return
     destino,d=dados[etapa]; p=caso/destino; p.parent.mkdir(parents=True,exist_ok=True)
+    if etapa == 'P10' and responsavel is not None:
+        d['responsavel'] = responsavel
     d.update(procedencia='D',declarado_por=PESSOA,registrado_por=PESSOA,versao=1)
     p.write_text('\n'.join(k+': '+json.dumps(v,ensure_ascii=False) for k,v in d.items())+'\n')

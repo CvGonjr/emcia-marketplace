@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.8",
+  "versao": "0.4.9",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -280,6 +280,14 @@
       "recorrente": true,
       "cadencia_obrigatoria": true,
       "responsavel_obrigatorio": true,
+      "coerencia_responsavel_recorrencia": {
+        "padrao": "registro/calibragem/CAL-*.yaml",
+        "excluir_padrao": "registro/calibragem/*-C*.yaml",
+        "campo": "responsavel",
+        "campo_versao": "versao",
+        "selecao": "maior_versao",
+        "orientacao_troca": "Para trocar o responsavel, grave uma nova versao da rotina pelo engenheiro no proprio terminal, antes da recorrencia."
+      },
       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
       "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" },
       "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia", "pessoas": ["responsavel"]}]

@@ -723,3 +723,15 @@ parâmetros de ferramentas da sessão sintética controle-37, não módulos de
 verificações. Os campos comuns de hook seguem o contrato oficial. T04 de
 verificacao_por_estados mantém a emissão do selo e o encerramento humano,
 mas agora exige recusa do carregamento não delegável. Nenhum teste é apagado.
+
+## Sprint 3 — A23: coerência do responsável da recorrência
+
+```bash
+python3 testes/recorrencia_a23.py
+```
+
+12 verificações: divergência e ausência de rotina; seleção por maior versão;
+ciclos excluídos; versão inválida; empate ambíguo; link externo; contrato
+inválido; mesmo responsável com fonte rastreável; troca por nova versão
+gravada pelo script de campo; contrato com outra etapa/campo/caminho;
+fonte ilegível. As recusas preservam o estado e deixam evento.
