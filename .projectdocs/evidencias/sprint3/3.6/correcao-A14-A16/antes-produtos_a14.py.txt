@@ -1,0 +1,207 @@
+Base: v-sprint3-poc.4
+Comando: python3 testes/produtos_a14.py
+Saída: 1
+test_00_sem_P3a (__main__.ProdutosA14.test_00_sem_P3a) ... FAIL
+test_01_sem_P5 (__main__.ProdutosA14.test_01_sem_P5) ... FAIL
+test_02_sem_P6 (__main__.ProdutosA14.test_02_sem_P6) ... FAIL
+test_03_sem_P7 (__main__.ProdutosA14.test_03_sem_P7) ... FAIL
+test_04_sem_P8 (__main__.ProdutosA14.test_04_sem_P8) ... FAIL
+test_05_sem_P9 (__main__.ProdutosA14.test_05_sem_P9) ... FAIL
+test_06_sem_P10 (__main__.ProdutosA14.test_06_sem_P10) ... FAIL
+test_10_com_P3a (__main__.ProdutosA14.test_10_com_P3a) ... ok
+test_11_com_P5 (__main__.ProdutosA14.test_11_com_P5) ... ok
+test_12_com_P6 (__main__.ProdutosA14.test_12_com_P6) ... ok
+test_13_com_P7 (__main__.ProdutosA14.test_13_com_P7) ... ok
+test_14_com_P8 (__main__.ProdutosA14.test_14_com_P8) ... ok
+test_15_com_P9 (__main__.ProdutosA14.test_15_com_P9) ... ok
+test_16_com_P10 (__main__.ProdutosA14.test_16_com_P10) ... ok
+test_20_estado_errado (__main__.ProdutosA14.test_20_estado_errado) ... FAIL
+test_21_campos_em_arquivos_diferentes (__main__.ProdutosA14.test_21_campos_em_arquivos_diferentes) ... FAIL
+test_22_symlink_externo (__main__.ProdutosA14.test_22_symlink_externo) ... FAIL
+test_23_regra_alternativa (__main__.ProdutosA14.test_23_regra_alternativa) ... FAIL
+test_24_yaml_ilegivel (__main__.ProdutosA14.test_24_yaml_ilegivel) ... FAIL
+test_25_metrica_uso (__main__.ProdutosA14.test_25_metrica_uso) ... FAIL
+test_26_regra_invalida (__main__.ProdutosA14.test_26_regra_invalida) ... FAIL
+
+======================================================================
+FAIL: test_00_sem_P3a (__main__.ProdutosA14.test_00_sem_P3a)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 44, in test_00_sem_P3a
+    self.posicionar('P3a'); self.recusa_produto('P3a')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P3b | camada: EX4
+
+
+======================================================================
+FAIL: test_01_sem_P5 (__main__.ProdutosA14.test_01_sem_P5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 46, in test_01_sem_P5
+    self.posicionar('P5'); self.recusa_produto('P5')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P6 | camada: EX3
+
+
+======================================================================
+FAIL: test_02_sem_P6 (__main__.ProdutosA14.test_02_sem_P6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 48, in test_02_sem_P6
+    self.posicionar('P6'); self.recusa_produto('P6')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P7 | camada: EX4
+
+
+======================================================================
+FAIL: test_03_sem_P7 (__main__.ProdutosA14.test_03_sem_P7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 50, in test_03_sem_P7
+    self.posicionar('P7'); self.recusa_produto('P7')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P8 | camada: EX3
+
+
+======================================================================
+FAIL: test_04_sem_P8 (__main__.ProdutosA14.test_04_sem_P8)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 52, in test_04_sem_P8
+    self.posicionar('P8'); self.recusa_produto('P8')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P9 | camada: EX3
+
+
+======================================================================
+FAIL: test_05_sem_P9 (__main__.ProdutosA14.test_05_sem_P9)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 54, in test_05_sem_P9
+    self.posicionar('P9'); self.recusa_produto('P9')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: EX4
+
+
+======================================================================
+FAIL: test_06_sem_P10 (__main__.ProdutosA14.test_06_sem_P10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 56, in test_06_sem_P10
+    self.posicionar('P10'); self.recusa_produto('P10')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: EX4
+
+
+======================================================================
+FAIL: test_20_estado_errado (__main__.ProdutosA14.test_20_estado_errado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 72, in test_20_estado_errado
+    self.posicionar('P7'); self.produto('P7'); (self.caso/PRODUTOS['P7'][0]).write_text('estado: proposto'); self.recusa_produto('P7')
+                                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P8 | camada: EX3
+
+
+======================================================================
+FAIL: test_21_campos_em_arquivos_diferentes (__main__.ProdutosA14.test_21_campos_em_arquivos_diferentes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 76, in test_21_campos_em_arquivos_diferentes
+    (self.caso/'registro/calibragem/CAL-002.yaml').write_text('cadencia: mensal'); self.recusa_produto('P10')
+                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: EX4
+
+
+======================================================================
+FAIL: test_22_symlink_externo (__main__.ProdutosA14.test_22_symlink_externo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 79, in test_22_symlink_externo
+    self.addCleanup(externo.unlink); p=self.caso/PRODUTOS['P7'][0]; p.parent.mkdir(parents=True,exist_ok=True); p.symlink_to(externo); self.recusa_produto('P7')
+                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P8 | camada: EX3
+
+
+======================================================================
+FAIL: test_23_regra_alternativa (__main__.ProdutosA14.test_23_regra_alternativa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 83, in test_23_regra_alternativa
+    p.write_text(json.dumps(pb)); self.recusa_produto('P1')
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P2 | camada: EX2
+
+
+======================================================================
+FAIL: test_24_yaml_ilegivel (__main__.ProdutosA14.test_24_yaml_ilegivel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 87, in test_24_yaml_ilegivel
+    self.posicionar('P7'); self.produto('P7'); (self.caso/PRODUTOS['P7'][0]).write_text('estado: ['); self.recusa_produto('P7')
+                                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P8 | camada: EX3
+
+
+======================================================================
+FAIL: test_25_metrica_uso (__main__.ProdutosA14.test_25_metrica_uso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 89, in test_25_metrica_uso
+    self.posicionar('P9'); self.produto('P9'); (self.caso/PRODUTOS['P9'][0]).write_text('estado: apurada\ntipo: uso'); self.recusa_produto('P9')
+                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 41, in recusa_produto
+    self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ok | etapa atual: P10 | camada: EX4
+
+
+======================================================================
+FAIL: test_26_regra_invalida (__main__.ProdutosA14.test_26_regra_invalida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/produtos_a14.py", line 93, in test_26_regra_invalida
+    r=self.avancar('--encerrar','P1'); self.assertEqual(r.returncode,1); self.assertIn('tipo de produto desconhecido',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 21 tests in 1.399s
+
+FAILED (failures=14)

@@ -1,0 +1,42 @@
+$ bash .projectdocs/demos/preparar-caso.sh controle-poc5-p6-205431 P6
+Caso de controle: /tmp/emcia-demos/controle-poc5-p6-205431
+Etapa final: P6 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+  /tmp/emcia-demos/controle-poc5-p6-205431/rascunho/OP-001.yaml
+Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.
+
+Terminal do engenheiro; somente estado mudou: python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator Celso do Vale
+especificacao operacional gravada: registro/operacional/OP-001.yaml
+
+$ bash .projectdocs/demos/preparar-caso.sh controle-poc5-p7-205432 P7
+Caso de controle: /tmp/emcia-demos/controle-poc5-p7-205432
+Etapa final: P7 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+  /tmp/emcia-demos/controle-poc5-p7-205432/rascunho/OP-001.yaml
+  /tmp/emcia-demos/controle-poc5-p7-205432/rascunho/AUT-001.yaml
+Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.
+
+Terminal do engenheiro; somente estado mudou: python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator Celso do Vale
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+
+$ bash .projectdocs/demos/preparar-caso.sh controle-poc5-p8-205434 P8
+Caso de controle: /tmp/emcia-demos/controle-poc5-p8-205434
+Etapa final: P8 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+  /tmp/emcia-demos/controle-poc5-p8-205434/rascunho/OP-001.yaml
+  /tmp/emcia-demos/controle-poc5-p8-205434/rascunho/AUT-001.yaml
+  /tmp/emcia-demos/controle-poc5-p8-205434/rascunho/CT-001.yaml
+Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.
+
+Terminal do engenheiro; somente estado mudou: python3 /home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/piloto.py --arquivo registro/piloto/CT-001.yaml --ator Celso do Vale
+conjunto de piloto gravado: registro/piloto/CT-001.yaml
+
+$ bash .projectdocs/demos/preparar-caso.sh controle-poc5-p10-205436 P10
+Caso de controle: /tmp/emcia-demos/controle-poc5-p10-205436
+Etapa final: P10 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+  /tmp/emcia-demos/controle-poc5-p10-205436/rascunho/OP-001.yaml
+  /tmp/emcia-demos/controle-poc5-p10-205436/rascunho/AUT-001.yaml
+  /tmp/emcia-demos/controle-poc5-p10-205436/rascunho/CT-001.yaml
+  /tmp/emcia-demos/controle-poc5-p10-205436/rascunho/CAL-001-C01.yaml
+Ciclo sem decisão: preencher apenas decisao (recalibrar/expandir/descontinuar).

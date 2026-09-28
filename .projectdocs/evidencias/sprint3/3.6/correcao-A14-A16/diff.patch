@@ -1,0 +1,2139 @@
+diff --git a/.projectdocs/demos/preparar-caso.sh b/.projectdocs/demos/preparar-caso.sh
+index 1b2ef2b..f2b4f46 100755
+--- a/.projectdocs/demos/preparar-caso.sh
++++ b/.projectdocs/demos/preparar-caso.sh
+@@ -34,8 +34,21 @@ def candidato(nome_arq, dados):
+     # YAML simples também funciona sem PyYAML. Grava apenas rascunho;
+     # registros passam pelos scripts de campo.
+     (caso / 'rascunho').mkdir(exist_ok=True)
+-    (caso / 'rascunho' / nome_arq).write_text('\n'.join(
+-        chave+': '+json.dumps(valor, ensure_ascii=False) for chave, valor in dados.items())+'\n')
++    def yaml(dado, indent=0):
++        pad = ' '*indent
++        if isinstance(dado, dict):
++            linhas=[]
++            for chave, valor in dado.items():
++                if isinstance(valor, (dict, list)):
++                    linhas.append(pad+chave+':')
++                    linhas.append(yaml(valor, indent+2))
++                else:
++                    linhas.append(pad+chave+': '+json.dumps(valor, ensure_ascii=False))
++            return '\n'.join(linhas)
++        if isinstance(dado, list):
++            return '\n'.join(pad+'-\n'+yaml(v,indent+2) if isinstance(v,dict)
++                             else pad+'- '+json.dumps(v,ensure_ascii=False) for v in dado)
++    (caso / 'rascunho' / nome_arq).write_text(yaml(dados)+'\n')
+ 
+ def campo(script, destino):
+     rodar([sys.executable, str(raiz / 'eiac-campo/scripts' / script), '--arquivo', destino, '--ator', pessoa], caso)
+@@ -43,16 +56,33 @@ def campo(script, destino):
+ hoje = datetime.date.today().isoformat()
+ op = dict(id='OP-001', estado='proposta', ponto_insercao='Fila sintética de pedidos', momento='Após recepção', sistema='Sistema de controle sintético', entrada='Pedido fictício', saida='Sugestão de encaminhamento', ator_humano=pessoa, excecao='Pedido sem referência', fallback='Revisão manual', responsavel_operacional=pessoa, procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=hoje, versao=1)
+ aut = dict(id='AUT-001', estado='rascunho', operacional_ref='OP-001', escopo='Controle sintético da demonstração', faz_sozinha=['Preparar sugestão'], exige_aprovacao=['Aplicar sugestão'], nunca_faz=['Alterar dados de cliente'], gatilhos_escalonamento=['Referência ausente'], procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=hoje, versao=1)
++# Produtos e rascunhos de decisão são dados sintéticos da demonstração.
++comum = dict(procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=hoje, versao=1)
++bl = dict(comum, id='BL-001', indicador='Tempo de controle', valor_atual='10 minutos', apuracao='medido', nivel='N2')
++ct = dict(comum, id='CT-001', estado='rascunho', modo='assistido', duracao='1 semana', plano_reversao='Retorno manual', criterio_aprovacao_escala='100% no caso de controle', criterio_aprovacao_escala_definido_em=hoje, casos=[dict(identificador='CT-001-01', origem='Controle sintético', entrada='Pedido fictício', saida_esperada='Encaminhar', criterio_aprovacao='Igual à saída esperada', categoria='celula_critica', revisor=pessoa, data_revisao=hoje, esperado_definido_em=hoje, esperado_definido_por=pessoa)])
++met = dict(comum, id='MET-001', estado='planejada', piloto_ref='CT-001', baseline_ref='BL-001', metrica='Tempo de controle', tipo='resultado', linha_base='10 minutos', linha_base_data=hoje, linha_base_procedencia='D', metodo_apuracao='Diferença de horários', fonte_dado='Controle sintético', periodicidade='mensal', responsavel_apuracao=pessoa)
++cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel=pessoa, responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
++prontos = []
++def decisao_pronta(nome_arq, dados):
++    dados.update(decisor=pessoa, data_decisao=hoje, justificativa_decisao='Revisão sintética para demonstração')
++    candidato(nome_arq, dados)
++    prontos.append(nome_arq)
++
+ avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
+ for et in pb['etapas']:
+     eid = et['id']
++    if eid == 'P3a':
++        candidato('BL-001.yaml', bl)
++        campo('baseline.py', 'registro/baseline/BL-001.yaml')
+     if eid == 'P5':
+         avancar('--registrar-campo', eid, '--campo', 'classificacao_tecnologica', '--valor', 'agente')
+     if eid == 'P6':
+         candidato('OP-001.yaml', op)
+         campo('operacional.py', 'registro/operacional/OP-001.yaml')
++        op.update(versao=2, validado_por=pessoa, data_validacao=hoje)
++        decisao_pronta('OP-001.yaml', op)
+         if ate != eid:
+-            op.update(estado='validado', versao=2, validado_por=pessoa, data_validacao=hoje)
++            op.update(estado='validado')
+             candidato('OP-001.yaml', op)
+             campo('operacional.py', 'registro/operacional/OP-001.yaml')
+     if eid == 'P7':
+@@ -61,6 +91,35 @@ for et in pb['etapas']:
+         aut.update(estado='proposto', versao=2)
+         candidato('AUT-001.yaml', aut)
+         campo('governanca.py', 'registro/governanca/autonomia/AUT-001.yaml')
++        aut.update(versao=3)
++        decisao_pronta('AUT-001.yaml', aut)
++        if ate != eid:
++            aut.update(estado='decidido')
++            candidato('AUT-001.yaml', aut)
++            campo('governanca.py', 'registro/governanca/autonomia/AUT-001.yaml')
++    if eid == 'P8':
++        candidato('CT-001.yaml', ct)
++        campo('piloto.py', 'registro/piloto/CT-001.yaml')
++        ct.update(versao=2, revisado_por=pessoa, data_revisao=hoje)
++        decisao_pronta('CT-001.yaml', ct)
++        if ate != eid:
++            ct.update(estado='revisado')
++            candidato('CT-001.yaml', ct)
++            campo('piloto.py', 'registro/piloto/CT-001.yaml')
++    if eid == 'P9':
++        candidato('MET-001.yaml', met)
++        campo('metrica.py', 'registro/metricas/MET-001.yaml')
++        met.update(estado='apurada', versao=2, resultado_apurado='8 minutos', resultado_apurado_data=hoje, resultado_apurado_procedencia='D', fatores_externos_declarados='Nenhum: controle sintético')
++        candidato('MET-001.yaml', met)
++        campo('metrica.py', 'registro/metricas/MET-001.yaml')
++    if eid == 'P10':
++        candidato('CAL-001.yaml', cal)
++        campo('calibragem.py', 'registro/calibragem/CAL-001.yaml')
++        ciclo = dict(comum, id='CAL-001-C01', calibragem_ref='CAL-001', ciclo=1, data_verificacao=hoje, drift_detectado=True, drift_descricao='Aumento sintético de tempo', drift_quantificacao='20%', recomendacao_agente='Recalibrar o controle', declarado_por='AG-04', registrado_por='AG-04')
++        candidato('CAL-001-C01.yaml', ciclo)
++        rodar([sys.executable, str(raiz / 'eiac-campo/scripts/calibragem.py'), '--arquivo', 'registro/calibragem/CAL-001-C01.yaml', '--ciclo', '--ator', 'AG-04'], caso)
++        ciclo.update(versao=2)
++        decisao_pronta('CAL-001-C01.yaml', ciclo)
+     if pb['encerramento_por_camada'][et['camada']['N2']] or et.get('delegavel') is False:
+         avancar('--registrar-sessao', eid, '--participantes', pessoa+', Pessoa Cliente (controle sintético)')
+     if eid == ate:
+@@ -71,4 +130,11 @@ for et in pb['etapas']:
+ st = json.loads((caso / 'registro/estado.json').read_text())
+ print('Caso de controle: '+str(caso))
+ print('Etapa final: '+st['etapa_atual']+' | nível: '+st['nivel'])
++print('Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):')
++for nome_arq in prontos:
++    print('  '+str(caso/'rascunho'/nome_arq))
++if ate == 'P10':
++    print('Ciclo sem decisão: preencher apenas decisao (recalibrar/expandir/descontinuar).')
++else:
++    print('Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.')
+ PY
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index 65c9401..a273253 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -181,3 +181,11 @@ duplicado para fora do marketplace.
+ - 4/18 HB (HB-04, HB-05, HB-06, HB-13) seguem sem implementação física
+   própria — catálogo completo e resolvível, mas sem skill dedicada; nenhuma
+   é exigida pelo contrato F0–P10 congelado.
++
++## Sprint 3 — ação 3.6
++
++Correções A14–A16 sobre `v-sprint3-poc.4`: decisões 028–030; produtos da
++etapa, revisão humana do piloto/rotina e pessoa nomeada. Evidência em
++`.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/` (resultado, auditoria,
++diff e suíte integral). Novos testes: `produtos_a14.py`, `revisao_a15.py` e
++`pessoa_a16.py`; preparação do caso de controle em `.projectdocs/demos/`.
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index bbbf731..ed400ec 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -328,7 +328,7 @@ Isso vale para apuração, sessão, campos, recorrência, satisfação de
+ inegociáveis e encerramento em EX3/EX4; também para autonomia decidida,
+ operacional validado e ciclo com decisão de recalibragem.
+ 
+-Minuta/proposto (P7), proposta (P6), rotina e recomendação sem decisão (P10),
++Minuta/proposto (P7), proposta (P6), rascunho do piloto e ciclo com recomendação sem decisão (P10),
+ leitura, validação de asserções, curadoria e materialização/emissão continuam
+ permitidas à sessão. `inegociaveis.py --verificar` continua permitido, mas
+ `--satisfazer` é decisão humana. O terminal ainda aplica sessão, selo e os
+@@ -351,3 +351,42 @@ uma decisão por falha de inspeção. Use chamada simples para preparação.
+ 
+ Casos existentes atualizam explicitamente seu playbook. A ausência da lista
+ recusa o carregamento; não há fallback ao playbook do plugin.
++
++## Encerramento com produto e revisão humana (A14–A16)
++
++O encerramento confere sessão, dependências e selo, depois os produtos
++`produtos_encerramento` do playbook do caso: linha de base (P3a), classificação
++registrada (P5), OP validado (P6), AUT decidido (P7), conjunto revisado (P8),
++métrica de resultado apurada (P9) e rotina com responsável e cadência (P10).
++Produto ausente gera `TentativaNegada`, informa o que falta e preserva o estado.
++O portão do entregável continua sendo conferido na emissão.
++
++A revisão do piloto e a definição da rotina de calibragem também são atos
++humanos da lista `decisoes_humanas`. O agente prepara os rascunhos; o
++engenheiro os registra no próprio terminal, fora da sessão. Rascunho de
++piloto, medição de baseline/métrica e ciclo com recomendação sem decisão
++continuam permitidos. Um nome humano informado não libera a guarda.
++
++Pessoas exigem nome e sobrenome e nenhuma palavra coletiva, conforme
++`pessoa_nomeada` do playbook: equipe de TI, Time Comercial, Área de Vendas
++e Marina são recusados; Marina Prado é aceito. A regra vale também para
++campos nominais dos artefatos. Atualize explicitamente o playbook de casos
++existentes; o núcleo não consulta o template como alternativa.
++
++### Demonstração até P10
++
++Execute no terminal do engenheiro:
++
++```bash
++cd ~/Projetos/emcia-marketplace
++bash .projectdocs/demos/preparar-caso.sh controle-p10 P10
++```
++
++O caso fica em `/tmp/emcia-demos/controle-p10`, P10 corrente e N2. O auxiliar
++imprime o caminho e os rascunhos. Ao parar em P6/P7/P8, o rascunho da etapa
++tem versão incrementada e campos de decisão preenchidos: o engenheiro muda
++apenas estado para validado/decidido/revisado e executa o script indicado.
++As decisões das etapas anteriores são executadas no percurso sintético.
++Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
++sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
++o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
+diff --git a/README.md b/README.md
+index 2ff8680..cb8aeae 100644
+--- a/README.md
++++ b/README.md
+@@ -138,7 +138,7 @@ humano em `--autor` ou `--ator` não muda essa origem. O playbook declara
+ |---|---|
+ | Apurar nível; registrar sessão/campo/recorrência; satisfazer inegociável | Engenheiro no próprio terminal |
+ | Encerrar etapa em camada humana (EX3/EX4 no campo) | Engenheiro no próprio terminal |
+-| Gravar autonomia decidida, operacional validado ou decisão de recalibragem | Engenheiro no próprio terminal |
++| Gravar autonomia decidida, operacional validado, piloto revisado, rotina ou decisão de recalibragem | Engenheiro no próprio terminal |
+ | Gravar minuta/proposta/recomendação sem decisão; ler; validar asserção; curar; emitir | Agente pela sessão |
+ 
+ O agente prepara os argumentos e entrega o comando com caminho absoluto
+@@ -276,3 +276,42 @@ bash testes/negativos.sh
+ ```
+ 
+ Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste. A suíte acumulada (regressão + pacotes por ação) soma centenas de verificações; ver `testes/README.md` para o detalhamento por pacote.
++
++## Encerramento com produto e revisão humana (A14–A16)
++
++O encerramento confere sessão, dependências e selo, depois os produtos
++`produtos_encerramento` do playbook do caso: linha de base (P3a), classificação
++registrada (P5), OP validado (P6), AUT decidido (P7), conjunto revisado (P8),
++métrica de resultado apurada (P9) e rotina com responsável e cadência (P10).
++Produto ausente gera `TentativaNegada`, informa o que falta e preserva o estado.
++O portão do entregável continua sendo conferido na emissão.
++
++A revisão do piloto e a definição da rotina de calibragem também são atos
++humanos da lista `decisoes_humanas`. O agente prepara os rascunhos; o
++engenheiro os registra no próprio terminal, fora da sessão. Rascunho de
++piloto, medição de baseline/métrica e ciclo com recomendação sem decisão
++continuam permitidos. Um nome humano informado não libera a guarda.
++
++Pessoas exigem nome e sobrenome e nenhuma palavra coletiva, conforme
++`pessoa_nomeada` do playbook: equipe de TI, Time Comercial, Área de Vendas
++e Marina são recusados; Marina Prado é aceito. A regra vale também para
++campos nominais dos artefatos. Atualize explicitamente o playbook de casos
++existentes; o núcleo não consulta o template como alternativa.
++
++### Demonstração até P10
++
++Execute no terminal do engenheiro:
++
++```bash
++cd ~/Projetos/emcia-marketplace
++bash .projectdocs/demos/preparar-caso.sh controle-p10 P10
++```
++
++O caso fica em `/tmp/emcia-demos/controle-p10`, P10 corrente e N2. O auxiliar
++imprime o caminho e os rascunhos. Ao parar em P6/P7/P8, o rascunho da etapa
++tem versão incrementada e campos de decisão preenchidos: o engenheiro muda
++apenas estado para validado/decidido/revisado e executa o script indicado.
++As decisões das etapas anteriores são executadas no percurso sintético.
++Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
++sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
++o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
+diff --git a/decisoes/027-decisao-humana-fora-sessao-A12.md b/decisoes/027-decisao-humana-fora-sessao-A12.md
+index d4c6d0c..64a55fe 100644
+--- a/decisoes/027-decisao-humana-fora-sessao-A12.md
++++ b/decisoes/027-decisao-humana-fora-sessao-A12.md
+@@ -61,3 +61,11 @@ segundo é executado pelo engenheiro no terminal e prepara o percurso.
+ Testes negativos precederam a correção. Nenhum teste anterior foi removido.
+ Evidências: `.projectdocs/evidencias/sprint3/3.5/correcao-A12/`.
+ Tag da entrega: v-sprint3-poc.4.
++
++## Ampliação posterior
++
++A decisão 029 (A15) acrescenta revisão do piloto e definição da rotina à
++lista humana. A permissão de preparação da rotina descrita nesta decisão
++passa a se limitar ao rascunho: a gravação da rotina é feita no terminal.
++Ciclos sem decisão continuam permitidos à sessão. A decisão 030 (A16)
++substitui as comparações lexicais locais pela regra do playbook.
+diff --git a/decisoes/028-produto-da-etapa-A14.md b/decisoes/028-produto-da-etapa-A14.md
+new file mode 100644
+index 0000000..12fcff9
+--- /dev/null
++++ b/decisoes/028-produto-da-etapa-A14.md
+@@ -0,0 +1,39 @@
++# 028 — Produto próprio exigido no encerramento (A14)
++
++**Data:** 27/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++Sobre v-sprint3-poc.4, etapas podiam encerrar sem seu produto, embora o
++portão de emissão recusasse depois. 027 já registra A12 e é preservada.
++
++## Decisão
++
++O campo declara `produtos_encerramento` em cada etapa. O núcleo interpreta
++predicados genéricos: arquivo por padrão relativo ao caso, igualdade de
++campos e campos preenchidos no mesmo arquivo; ou campo registrado na etapa.
++Não há nomes de etapas, caminhos de método ou estados do campo no avaliador.
++
++| Etapa | Produto mínimo para encerrar |
++|---|---|
++| P3a | Linha de base com indicador, valor atual e data |
++| P5 | Classificação tecnológica registrada, na taxonomia declarada |
++| P6 | OP em estado validado |
++| P7 | AUT em estado decidido |
++| P8 | Conjunto em estado revisado |
++| P9 | Métrica tipo resultado em estado apurada |
++| P10 | Rotina com responsável nomeado e cadência |
++
++A sessão é conferida primeiro; dependências e selo continuam exigidos.
++Sem produto: TentativaNegada, descrição/caminho/campos faltantes e nenhum
++avanço do estado. Arquivo vazio, ilegível ou symlink externo não satisfaz.
++Condições de arquivo são satisfeitas por um mesmo candidato; campos de
++arquivos diferentes não se somam. Os validadores de campo continuam
++responsáveis pela estrutura e referências de cada artefato.
++
++## Verificação
++
++`testes/produtos_a14.py`: negativas por etapa, estados/tipos errados, YAML
++ilegível, caminho externo e contrato alternativo. Percursos anteriores
++recebem produtos sintéticos somente na preparação; nenhuma asserção removida.
++Casos existentes exigem atualização explícita do próprio playbook.
+diff --git a/decisoes/029-revisao-humana-A15.md b/decisoes/029-revisao-humana-A15.md
+new file mode 100644
+index 0000000..7a10cb0
+--- /dev/null
++++ b/decisoes/029-revisao-humana-A15.md
+@@ -0,0 +1,42 @@
++# 029 — Revisão humana do piloto declarada na guarda (A15)
++
++**Data:** 27/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++A lista de A12 (027) não incluía piloto revisado. O nome revisado_por podia
++ser informado pelo agente. A auditoria também identificou a definição da
++rotina de calibragem: responsável e cadência são decisão de governança,
++conforme o contrato já aplicado por calibragem.py.
++
++## Decisão
++
++O playbook acrescenta duas condições de arquivo à lista `decisoes_humanas`:
++`piloto.py` quando estado=revisado; `calibragem.py` quando responsável está
++preenchido (rotina). A guarda interpreta o contrato existente, sem nomes
++novos no núcleo. Toda chamada Bash vem da sessão do agente; nome humano
++informado não autoriza. A recusa gera TentativaNegada, operação e comando.
++
++Rascunho de piloto e ciclo com drift/recomendação sem decisão continuam
++permitidos. O engenheiro registra revisão e rotina no próprio terminal.
++O agente prepara rascunhos e entrega comandos com caminhos absolutos.
++
++## Auditoria de eiac-campo/scripts
++
++| Script | Transição/ato humano | Declaração na guarda | Preparação permitida |
++|---|---|---|---|
++| baseline.py | Não há transição de decisão: registro de medição/estimativa | Não se acrescenta decisão por nome de autor de conteúdo | Medição, com autoria nominal no artefato |
++| metrica.py | Não há transição de julgamento: planejada/apurada registra medição | Não se acrescenta decisão por autoria nominal | Plano e cálculo, com responsável nominal |
++| piloto.py | Revisão do conjunto | revisar-piloto, estado=revisado (nova) | estado=rascunho |
++| operacional.py | Validar especificação | validar-operacional, estado=validado (027) | estado=proposta |
++| governanca.py | Decidir autonomia | decidir-autonomia, estado=decidido (027) | rascunho/proposto |
++| calibragem.py | Definir rotina; decidir recalibragem | definir-rotina, responsável preenchido (nova); decidir-recalibragem, decisão preenchida (027) | Ciclo sem decisão, com drift e recomendação |
++
++A autoria do conteúdo não autentica origem nem transforma registro de fato
++em decisão. A inspeção de invocações preserva os limites da decisão 027;
++ela não é uma autenticação de sistema operacional para shell arbitrário.
++
++## Verificação
++
++`testes/revisao_a15.py`: piloto revisado e rotina negados pela guarda com nome
++humano; rascunho, baseline, métrica e ciclo sem decisão permitidos.
+diff --git a/decisoes/030-pessoa-nomeada-A16.md b/decisoes/030-pessoa-nomeada-A16.md
+new file mode 100644
+index 0000000..5e32b8e
+--- /dev/null
++++ b/decisoes/030-pessoa-nomeada-A16.md
+@@ -0,0 +1,38 @@
++# 030 — Pessoa nomeada sem termos coletivos (A16)
++
++**Data:** 27/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++A comparação do valor inteiro recusava equipe, mas aceitava equipe de TI.
++O teste 2.6.5-T09b registrava a lacuna na gravação. 029 já registra A15.
++
++## Decisão
++
++O playbook declara `pessoa_nomeada`: mínimo de duas partes de nome e lista
++lexical de termos coletivos, incluindo siglas, plurais e equivalentes em
++inglês. O núcleo normaliza caixa e acentos, separa palavras e recusa qualquer
++palavra presente na lista. Valores e lista pertencem ao campo, não ao código.
++Identificadores de agentes continuam recusados onde se exige pessoa.
++
++A mesma função serve à abertura, autores do avanço/sessão/campos/recorrência,
++autoria de asserções, curadoria e histórico, responsável fixo do selo,
++esforço e campos nominais dos seis scripts de registro do campo. O playbook
++lista os campos pessoais da curadoria em `campos_pessoa`; o produto de P10
++declara `pessoas: [responsavel]` para conferir a mesma regra ao encerrar.
++Ciclos de preparação do agente mantêm sua autoria própria; só a decisão
++exige pessoa. O mecanismo lexical não comprova identidade civil ou origem:
++a barreira de origem continua sendo a guarda da decisão 027/029.
++
++Habilitação é anterior ao caso: lê explicitamente a regra do template na
++abertura e copia-a ao expediente externo; operações seguintes usam essa
++cópia. Expedientes anteriores sem a regra usam o template de habilitação.
++Casos abertos nunca consultam o playbook do plugin como alternativa.
++
++## Verificação
++
++`testes/pessoa_a16.py`: coletivos compostos, primeiro nome isolado, nome
++válido, regra alternativa do caso e registros pelos scripts reais.
++2.6.5-T09b passa a exigir recusa já na gravação, sem arquivo criado.
++Nomes incompletos de fixtures anteriores ganham sobrenome; nenhuma trava
++anterior é retirada para acomodar a nova checagem.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index c45c3a4..2215210 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -32,4 +32,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
+ | 025 | Emissão exige artefato declarado no playbook (A9) | firme quanto à correção solicitada |
+ | 026 | Campos da etapa declarados e registrados pelo núcleo (A10) | firme quanto à correção solicitada |
+-| 027 | Decisão humana fora da sessão do agente (A12) | firme |
++| 027 | Decisão humana fora da sessão do agente (A12) | firme; ampliada por 029 e checagem nominal por 030 |
++| 028 | Produto próprio exigido no encerramento (A14) | firme |
++| 029 | Revisão humana do piloto declarada na guarda (A15) | firme |
++| 030 | Pessoa nomeada sem termos coletivos (A16) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index ac2c1b2..65d8b77 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.4",
++  "version": "0.8.5",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/pilotar.md b/eiac-campo/commands/pilotar.md
+index 16ef930..03cefa4 100644
+--- a/eiac-campo/commands/pilotar.md
++++ b/eiac-campo/commands/pilotar.md
+@@ -10,3 +10,11 @@ Escreva o candidato em `rascunho/CT-NNN.yaml` e grave com:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/piloto.py" --arquivo registro/piloto/CT-NNN.yaml --ator "<nome>"`
+ 
+ `estado: rascunho` pode ser gravado por qualquer ator. `estado: revisado` exige `revisado_por` humano nomeado — o script recusa a autorrevisão de um agente.
++
++### Registro da revisão (A15)
++
++O agente grava apenas estado rascunho. Para estado revisado, prepara o
++rascunho com revisor, revisado_por e datas e entrega o comando acima com
++caminho absoluto real ao engenheiro. Ele executa no próprio terminal,
++fora da sessão do Claude Code. Nome humano informado não autoriza o agente;
++a guarda recusa a revisão com TentativaNegada.
+diff --git a/eiac-campo/commands/recalibrar.md b/eiac-campo/commands/recalibrar.md
+index 6ec440b..2ccb05f 100644
+--- a/eiac-campo/commands/recalibrar.md
++++ b/eiac-campo/commands/recalibrar.md
+@@ -26,3 +26,12 @@ Ciclo:
+ 
+ A recorrência também é executada pelo engenheiro no próprio terminal.
+ Entregue o comando pronto do mecanismo genérico do núcleo: `python3 "${CLAUDE_PLUGIN_ROOT}/../eiac-nucleo/scripts/avancar.py" --registrar-recorrencia P10 --autor "<nome>" --cadencia "<cadência>" --responsavel "<nome>"`
++
++### Definição da rotina (A15)
++
++A rotina com responsável e cadência é decisão humana. O agente prepara
++CAL-NNN.yaml e entrega o comando de gravação ao engenheiro para executar
++no próprio terminal, fora da sessão. A guarda recusa essa gravação mesmo
++com nome humano informado. O agente pode registrar ciclo de drift e
++recomendação sem decisão; a decisão do ciclo também pertence ao engenheiro.
++Responsável e decisor precisam de nome e sobrenome, sem termos coletivos.
+diff --git a/eiac-campo/scripts/baseline.py b/eiac-campo/scripts/baseline.py
+index 70b7707..449a7c0 100644
+--- a/eiac-campo/scripts/baseline.py
++++ b/eiac-campo/scripts/baseline.py
+@@ -37,19 +37,15 @@ APURACAO_INSUFICIENTE_FORA_DE_N1 = {"estimado"}
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def checar_autoria(dados):
+     erros = []
+     for campo in ("declarado_por", "registrado_por"):
+         valor = dados.get(campo)
+-        if valor is not None and E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+diff --git a/eiac-campo/scripts/calibragem.py b/eiac-campo/scripts/calibragem.py
+index cdb61d3..0c60af9 100644
+--- a/eiac-campo/scripts/calibragem.py
++++ b/eiac-campo/scripts/calibragem.py
+@@ -39,11 +39,7 @@ DECISOES_VALIDAS = ("recalibrar", "expandir", "descontinuar")
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def checar_autoria(dados):
+@@ -55,8 +51,8 @@ def checar_autoria(dados):
+     erros = []
+     for campo in ("declarado_por", "registrado_por", "responsavel"):
+         valor = dados.get(campo)
+-        if valor is not None and E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+@@ -112,6 +108,8 @@ def gravar_rotina(destino, ator, schema_caminho="registro/calibragem.schema.json
+     erros = X.validar(candidato, schema, "rotina_calibragem")
+     erros += checar_autoria(candidato)
+     erros += checar_responsavel_nominal(candidato)
++    if not E.pessoa_nomeada(ator):
++        erros.append("rotina exige ator pessoa nomeada")
+     erros += checar_metricas_ref(candidato)
+ 
+     if erros:
+@@ -176,7 +174,7 @@ def checar_decisao(candidato, ator):
+     for campo in ("decisor", "data_decisao", "justificativa_decisao"):
+         if not str(candidato.get(campo) or "").strip():
+             erros.append(f"decisao preenchida exige '{campo}' preenchido")
+-    if candidato.get("decisor") and E.autor_e_agente(candidato.get("decisor")):
++    if candidato.get("decisor") and not E.pessoa_nomeada(candidato.get("decisor")):
+         erros.append("'decisor' nao pode ser agente")
+     return erros
+ 
+diff --git a/eiac-campo/scripts/governanca.py b/eiac-campo/scripts/governanca.py
+index f0f701d..391d47c 100644
+--- a/eiac-campo/scripts/governanca.py
++++ b/eiac-campo/scripts/governanca.py
+@@ -51,8 +51,8 @@ def checar_autoria(dados):
+         valor = dados.get(campo)
+         if valor is None:
+             continue
+-        if E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+@@ -142,14 +142,7 @@ def checar_operacional_ref(candidato):
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    """Mesma convencao ja usada por avancar._ator_valido() (2.6.1): nao
+-    vazio, nao agente, nao coletivo generico.
+-    """
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def gravar_termo(destino, ator, schema_caminho="registro/autonomia.schema.json",
+diff --git a/eiac-campo/scripts/habilitacao.py b/eiac-campo/scripts/habilitacao.py
+index 16ac80d..c438e50 100644
+--- a/eiac-campo/scripts/habilitacao.py
++++ b/eiac-campo/scripts/habilitacao.py
+@@ -17,6 +17,8 @@ import shutil
+ import subprocess
+ import tempfile
+ import uuid
++from contextvars import ContextVar
++REGRA_PESSOA = ContextVar("regra_pessoa", default=None)
+ 
+ 
+ class Recusa(ValueError):
+@@ -43,11 +45,14 @@ def texto(valor):
+ 
+ def pessoa(valor):
+     valor = texto(valor)
+-    chave = re.sub(r"[\s_-]", "", valor.lower())
+-    exigir(not re.search(r"[<>{}]", valor) and not chave.startswith(
+-        ("ag0", "agente", "sistema", "assistant", "chatgpt", "codex"))
+-        and valor.lower() not in {"equipe", "área", "area", "time", "setor", "departamento", "a definir"},
+-        "é necessária uma pessoa nomeada")
++    # Habilitação é anterior ao caso: a regra vem do template do método,
++    # explicitamente, e é copiada para o expediente na abertura.
++    import sys
++    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'eiac-nucleo/scripts'))
++    import estado as E
++    regra = REGRA_PESSOA.get() or json.loads((pathlib.Path(__file__).resolve().parents[1] /
++        'template-caso/registro/playbook.json').read_text())['pessoa_nomeada']
++    exigir(E.pessoa_nomeada(valor, regra), 'é necessária uma pessoa nomeada com nome e sobrenome')
+     return valor
+ 
+ 
+@@ -94,12 +99,14 @@ def local_externo(root):
+ 
+ def iniciar(root, hab_id, responsavel, caso_id=None):
+     root = local_externo(root)
++    regra = json.loads((pathlib.Path(__file__).resolve().parents[1] / "template-caso/registro/playbook.json").read_text())["pessoa_nomeada"]
++    REGRA_PESSOA.set(regra)
+     pessoa(responsavel)
+     identificador(hab_id)
+     identificador(caso_id or hab_id)
+     exigir(not root.exists(), "expediente já existe")
+     root.mkdir(parents=True, mode=0o700)
+-    state = dict(schema=1, habilitacao=hab_id, caso_reservado=caso_id or hab_id,
++    state = dict(pessoa_nomeada=regra, schema=1, habilitacao=hab_id, caso_reservado=caso_id or hab_id,
+                  caso_aberto=False, responsavel=responsavel, fontes={}, pendencias={},
+                  campos={}, documentos={}, eventos=[], tratamento=None, revisao=None, acessos=None)
+     evento(state, "ExpedienteAberto")
+@@ -424,6 +431,7 @@ def executar(root, action, payload):
+     with (root / ".lock").open("a") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX)
+         original = json.loads((root / "expediente.json").read_text(encoding="utf-8"))
++        REGRA_PESSOA.set(original.get("pessoa_nomeada"))
+         pessoa(original["responsavel"])
+         s = copy.deepcopy(original)
+         try:
+diff --git a/eiac-campo/scripts/inegociaveis.py b/eiac-campo/scripts/inegociaveis.py
+index 5c1e8ec..7309a0b 100644
+--- a/eiac-campo/scripts/inegociaveis.py
++++ b/eiac-campo/scripts/inegociaveis.py
+@@ -32,6 +32,7 @@ import os
+ RAIZ_NUCLEO = pathlib.Path(os.environ["EIAC_NUCLEO_SCRIPTS"]) if os.environ.get("EIAC_NUCLEO_SCRIPTS") else pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
+ sys.path.insert(0, str(RAIZ_NUCLEO))
+ import estrutura as X  # noqa: E402
++import estado as E
+ 
+ 
+ def _agora():
+@@ -174,10 +175,7 @@ def verificar_i5(caminho):
+     if erro:
+         return _resultado(5, False, caminho, verificador, erro)
+     responsavel = str(dados.get("responsavel") or "").strip()
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir",
+-                 "ti", "consultoria"}
+-    tokens = set(responsavel.lower().replace(",", " ").split())
+-    if not responsavel or tokens & genericos:
++    if not E.pessoa_nomeada(responsavel):
+         return _resultado(5, False, caminho, verificador,
+                           f"responsavel '{responsavel or '(vazio)'}' nao e pessoa "
+                           f"nomeada -- area, equipe ou coletivo generico (mesmo em "
+diff --git a/eiac-campo/scripts/metrica.py b/eiac-campo/scripts/metrica.py
+index 433dd5e..6fb76f2 100644
+--- a/eiac-campo/scripts/metrica.py
++++ b/eiac-campo/scripts/metrica.py
+@@ -32,19 +32,15 @@ DIRETORIO_BASELINE = pathlib.Path("registro/baseline")
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def checar_autoria(dados):
+     erros = []
+     for campo in ("declarado_por", "registrado_por", "responsavel_apuracao"):
+         valor = dados.get(campo)
+-        if valor is not None and E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+diff --git a/eiac-campo/scripts/operacional.py b/eiac-campo/scripts/operacional.py
+index af30586..653e5cd 100644
+--- a/eiac-campo/scripts/operacional.py
++++ b/eiac-campo/scripts/operacional.py
+@@ -32,12 +32,12 @@ ESTADOS = ("proposta", "validado")
+ 
+ def checar_autoria(dados):
+     erros = []
+-    for campo in ("declarado_por", "registrado_por", "validado_por"):
++    for campo in ("declarado_por", "registrado_por", "validado_por", "ator_humano", "responsavel_operacional"):
+         valor = dados.get(campo)
+         if valor is None:
+             continue
+-        if E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+@@ -91,11 +91,7 @@ def checar_validacao(candidato):
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def gravar_especificacao(destino, ator, schema_caminho="registro/operacional.schema.json"):
+diff --git a/eiac-campo/scripts/piloto.py b/eiac-campo/scripts/piloto.py
+index d8d2f91..0df10c3 100644
+--- a/eiac-campo/scripts/piloto.py
++++ b/eiac-campo/scripts/piloto.py
+@@ -46,19 +46,15 @@ CATEGORIAS_VALIDAS = ("comum", "excecao", "celula_critica")
+ 
+ 
+ def _ator_pessoa_nomeada(nome):
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def checar_autoria(dados):
+     erros = []
+     for campo in ("declarado_por", "registrado_por"):
+         valor = dados.get(campo)
+-        if valor is not None and E.autor_e_agente(valor):
+-            erros.append(f"{campo} nao pode ser agente: '{valor}'")
++        if valor is not None and not E.pessoa_nomeada(valor):
++            erros.append(f"{campo} precisa ser pessoa nomeada, nao pode ser agente: '{valor}'")
+     return erros
+ 
+ 
+@@ -98,8 +94,8 @@ def checar_casos(candidato):
+         if caso.get("categoria") == "celula_critica":
+             tem_celula_critica = True
+ 
+-        if E.autor_e_agente(caso.get("revisor")):
+-            erros.append(f"caso {ident}: revisor nao pode ser agente")
++        if not E.pessoa_nomeada(caso.get("revisor")):
++            erros.append(f"caso {ident}: revisor precisa ser pessoa nomeada, nao pode ser agente")
+ 
+         definido_em = caso.get("esperado_definido_em")
+         if not str(definido_em or "").strip():
+@@ -109,6 +105,9 @@ def checar_casos(candidato):
+         if not str(caso.get("esperado_definido_por") or "").strip():
+             erros.append(f"caso {ident}: 'esperado_definido_por' ausente")
+ 
++        elif not E.pessoa_nomeada(caso.get("esperado_definido_por")):
++            erros.append(f"caso {ident}: esperado_definido_por precisa ser pessoa nomeada")
++
+         obtido = caso.get("saida_obtida")
+         if obtido is not None and str(obtido).strip():
+             data_obtido = caso.get("obtido_em")
+@@ -139,7 +138,7 @@ def checar_revisao(candidato):
+         return []
+     if not str(candidato.get("revisado_por") or "").strip():
+         return ["estado 'revisado' exige 'revisado_por' preenchido"]
+-    if E.autor_e_agente(candidato.get("revisado_por")):
++    if not E.pessoa_nomeada(candidato.get("revisado_por")):
+         return ["'revisado_por' nao pode ser agente -- a revisao do conjunto "
+                 "e condicao de validade, nao etapa opcional (CAM-01 3.4)"]
+     if not str(candidato.get("data_revisao") or "").strip():
+@@ -162,6 +161,8 @@ def gravar_conjunto(destino, ator, schema_caminho="registro/piloto.schema.json")
+     erros += checar_autoria(candidato)
+     erros += checar_casos(candidato)
+     erros += checar_revisao(candidato)
++    if candidato.get("estado") == "revisado" and not E.pessoa_nomeada(ator):
++        erros.append("revisao exige ator pessoa nomeada")
+ 
+     if erros:
+         E.evento("ConjuntoPilotoRecusado", arquivo=str(destino), erros=erros,
+diff --git a/eiac-campo/skills/hb-pilotar/SKILL.md b/eiac-campo/skills/hb-pilotar/SKILL.md
+index 47f5084..0da3956 100644
+--- a/eiac-campo/skills/hb-pilotar/SKILL.md
++++ b/eiac-campo/skills/hb-pilotar/SKILL.md
+@@ -55,3 +55,11 @@ o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+ O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+ contexto e materializar/emitir entregáveis. A recusa da guarda registra
+ `TentativaNegada` com operação e comando exato.
++
++### Registro da revisão (A15)
++
++O agente grava apenas estado rascunho. Para estado revisado, prepara o
++rascunho com revisor, revisado_por e datas e entrega o comando acima com
++caminho absoluto real ao engenheiro. Ele executa no próprio terminal,
++fora da sessão do Claude Code. Nome humano informado não autoriza o agente;
++a guarda recusa a revisão com TentativaNegada.
+diff --git a/eiac-campo/skills/hb-recalibrar/SKILL.md b/eiac-campo/skills/hb-recalibrar/SKILL.md
+index 7994ee4..16fdf1f 100644
+--- a/eiac-campo/skills/hb-recalibrar/SKILL.md
++++ b/eiac-campo/skills/hb-recalibrar/SKILL.md
+@@ -71,3 +71,12 @@ o comando ao engenheiro. Encerramento em EX3/EX4 também é feito por ele.
+ O agente pode ler, gravar preparação pelos scripts, validar asserções, curar
+ contexto e materializar/emitir entregáveis. A recusa da guarda registra
+ `TentativaNegada` com operação e comando exato.
++
++### Definição da rotina (A15)
++
++A rotina com responsável e cadência é decisão humana. O agente prepara
++CAL-NNN.yaml e entrega o comando de gravação ao engenheiro para executar
++no próprio terminal, fora da sessão. A guarda recusa essa gravação mesmo
++com nome humano informado. O agente pode registrar ciclo de drift e
++recomendação sem decisão; a decisão do ciclo também pertence ao engenheiro.
++Responsável e decisor precisam de nome e sobrenome, sem termos coletivos.
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 96b13f9..01537c0 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.7",
++  "versao": "0.4.8",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+ 
+   "niveis": ["N1", "N2", "N3"],
+@@ -121,6 +121,32 @@
+           "EX4"
+         ]
+       }
++    },
++    {
++      "id": "revisar-piloto",
++      "script": "piloto.py",
++      "condicao": {
++        "tipo": "arquivo",
++        "argumento": "--arquivo",
++        "diretorio": "rascunho",
++        "campo": "estado",
++        "operador": "igual",
++        "valor": "revisado",
++        "preparacao": [
++          "rascunho"
++        ]
++      }
++    },
++    {
++      "id": "definir-rotina",
++      "script": "calibragem.py",
++      "condicao": {
++        "tipo": "arquivo",
++        "argumento": "--arquivo",
++        "diretorio": "rascunho",
++        "campo": "responsavel",
++        "operador": "preenchido"
++      }
+     }
+   ],
+ 
+@@ -157,42 +183,49 @@
+       "id": "F0", "nome": "Enquadramento e triagem",
+       "modalidade": "assincrono", "habilidade": "hb-enquadrar",
+       "hb": ["HB-01", "HB-02", "HB-03"],
+-      "camada": { "N1": "EX1", "N2": "EX1", "N3": "EX1" }
++      "camada": { "N1": "EX1", "N2": "EX1", "N3": "EX1" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P1", "nome": "Contexto de negocio",
+       "modalidade": "video", "habilidade": "hb-mapear-contexto",
+       "hb": ["HB-08", "HB-09"],
+-      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
++      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P2", "nome": "Fontes e regras candidatas",
+       "modalidade": "assincrono", "habilidade": "hb-extrair-regras",
+       "hb": ["HB-07"],
+-      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" }
++      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P3a", "nome": "Linha de base",
+       "modalidade": "remoto", "habilidade": "hb-medir",
+-      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/baseline/*.yaml", "iguais": {}, "preenchidos": ["indicador", "valor_atual", "data"], "descricao": "linha de base registrada"}]
+     },
+     {
+       "id": "P3b", "nome": "Levantamento de regras nao documentadas",
+       "modalidade": "presencial", "habilidade": "hb-levantar-regras",
+       "delegavel": false, "exige_selo_apos": "P2",
+-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
++      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P3d", "nome": "Confronto declarado x observado",
+       "modalidade": "remoto", "habilidade": "hb-confrontar",
+       "depende_de": "P3b",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P4", "nome": "Priorizacao e zona de contencao",
+       "modalidade": "video", "habilidade": "hb-priorizar",
+       "hb": ["HB-10"],
+-      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": []
+     },
+     {
+       "id": "P5", "nome": "Classificacao tecnologica",
+@@ -203,13 +236,15 @@
+       },
+       "modalidade": "video", "habilidade": "hb-classificar",
+       "hb": ["HB-11", "HB-12"],
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": [{"tipo": "estado", "campo": "classificacao_tecnologica", "descricao": "classificacao tecnologica registrada"}]
+     },
+     {
+       "id": "P6", "nome": "Operacionalize a solucao",
+       "modalidade": "presencial_ou_remoto", "habilidade": "hb-operacionalizar",
+       "depende_de": "P5",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/operacional/*.yaml", "iguais": {"estado": "validado"}, "preenchidos": [], "descricao": "OP validado"}]
+     },
+     {
+       "id": "P7", "nome": "Estabeleca governanca e conformidade",
+@@ -217,21 +252,24 @@
+       "hb": ["HB-14"],
+       "delegavel": false,
+       "depende_de": "P6",
+-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" }
++      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/governanca/autonomia/*.yaml", "iguais": {"estado": "decidido"}, "preenchidos": [], "descricao": "AUT decidido"}]
+     },
+     {
+       "id": "P8", "nome": "Pilote, valide e escale",
+       "modalidade": "conforme_nivel", "habilidade": "hb-pilotar",
+       "hb": ["HB-15", "HB-16"],
+       "depende_de": "P7",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/piloto/*.yaml", "iguais": {"estado": "revisado"}, "preenchidos": [], "descricao": "conjunto revisado"}]
+     },
+     {
+       "id": "P9", "nome": "Meca o valor gerado",
+       "modalidade": "conforme_nivel", "habilidade": "hb-medir-valor",
+       "hb": ["HB-17"],
+       "depende_de": "P8",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" }
++      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/metricas/*.yaml", "iguais": {"tipo": "resultado", "estado": "apurada"}, "preenchidos": [], "descricao": "metrica de resultado apurada"}]
+     },
+     {
+       "id": "P10", "nome": "Aprenda, recalibre e evolua",
+@@ -243,7 +281,8 @@
+       "cadencia_obrigatoria": true,
+       "responsavel_obrigatorio": true,
+       "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
+-      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" }
++      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" },
++      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia", "pessoas": ["responsavel"]}]
+     }
+   ],
+ 
+@@ -276,5 +315,55 @@
+     { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
+     { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
+     { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
++  ],
++  "pessoa_nomeada": {
++    "minimo_partes": 2,
++    "termos_coletivos": [
++      "equipe",
++      "time",
++      "área",
++      "setor",
++      "departamento",
++      "diretoria",
++      "comitê",
++      "grupo",
++      "núcleo",
++      "TI",
++      "suporte",
++      "consultoria",
++      "team",
++      "staff",
++      "department",
++      "committee",
++      "group",
++      "support",
++      "definir",
++      "agente",
++      "sistema",
++      "assistant",
++      "chatgpt",
++      "codex",
++      "equipes",
++      "times",
++      "áreas",
++      "setores",
++      "departamentos",
++      "diretorias",
++      "comitês",
++      "grupos",
++      "núcleos",
++      "teams",
++      "departments",
++      "committees",
++      "groups"
++    ]
++  },
++  "campos_pessoa": [
++    "autoria_conteudo",
++    "declarado_por",
++    "registrado_por",
++    "autor",
++    "responsavel",
++    "decisor_quando_nao_cobre"
+   ]
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index ea33bbc..9b987d8 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.26",
++  "version": "0.2.28",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/encerrar.md b/eiac-nucleo/commands/encerrar.md
+index f4313fd..ddf1e1b 100644
+--- a/eiac-nucleo/commands/encerrar.md
++++ b/eiac-nucleo/commands/encerrar.md
+@@ -27,3 +27,8 @@ Se o script recusar, apresente o motivo sem contorná-lo.
+ A falta de sessão produz `TentativaNegada`, com etapa, camada, nível e
+ modalidade na mensagem. Satisfeita a sessão, o núcleo confere as demais
+ condições; a exigência de selo posterior declarada no playbook permanece.
++
++Depois da sessão e do selo, o núcleo confere os produtos declarados em
++`produtos_encerramento` da etapa. Produto ausente gera TentativaNegada e
++preserva o estado. Apresente a descrição, o caminho e os campos faltantes;
++prepare o registro correspondente antes de pedir novo encerramento.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 5ae1d87..6800f25 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -20,6 +20,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
+ import apuracao as A
++import produtos as R
+ 
+ 
+ class _RecusaSessao(str):
+@@ -27,18 +28,7 @@ class _RecusaSessao(str):
+ 
+ 
+ def _ator_valido(nome):
+-    """Pessoa nomeada: nao vazio, nao generico, nao agente.
+-
+-    'equipe', 'area' e afins nao satisfazem responsavel_obrigatorio (ESP-01
+-    3.6, CAM-01 anexo D: "responsavel e pessoa, nao area"). O nucleo nao
+-    conhece o motivo metodologico; conhece apenas que um nome generico de
+-    coletivo nao e uma pessoa nomeada.
+-    """
+-    nome = (nome or "").strip()
+-    if not nome or E.autor_e_agente(nome):
+-        return False
+-    genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-    return nome.lower() not in genericos
++    return E.pessoa_nomeada(nome)
+ 
+ 
+ def apurar_nivel(st, pb, nivel, autor, eixos):
+@@ -93,6 +83,10 @@ def encerrar(st, pb, etapa_id, autor):
+     if not selo_ok:
+         return motivo_selo
+ 
++    faltas = R.faltas(et, st)
++    if faltas:
++        return _RecusaSessao(f"{etapa_id}: produto de encerramento ausente: " + "; ".join(faltas))
++
+     st["cumprimentos"].setdefault(etapa_id, {})
+     st["cumprimentos"][etapa_id].update({"cumprido": True, "autor": autor})
+     idx = [e["id"] for e in pb["etapas"]].index(etapa_id)
+@@ -327,8 +321,8 @@ def _recusar_operacao(st, autor, motivo, acao="apurar_nivel"):
+     # A tentativa de agente é atribuída ao responsável nominal do caso;
+     # identificadores de agente nunca entram como autor na trilha.
+     responsavel = (st or {}).get("responsavel")
+-    pessoa = responsavel if _ator_valido(responsavel) else autor
+-    if not _ator_valido(pessoa):
++    pessoa = responsavel or autor
++    if not isinstance(pessoa, str) or not pessoa.strip() or E.autor_e_agente(pessoa):
+         raise ValueError("recusa sem pessoa nomeada: caso precisa de responsavel nominal")
+     E.evento("TentativaNegada", acao_tentada=acao, motivo=motivo,
+              autor=pessoa, etapa_corrente=(st or {}).get("etapa_atual"))
+@@ -368,11 +362,11 @@ def main():
+             _recusar_operacao(st, a.autor, erro or "nenhum caso aberto",
+                              "encerrar" if a.encerrar else ("registrar_sessao" if a.registrar_sessao else "emitir"))
+         print(erro or "nenhum caso aberto", file=sys.stderr); sys.exit(1)
+-    if (a.apurar_nivel or a.registrar_campo) and not _ator_valido(a.autor):
++    if not _ator_valido(a.autor):
++        acao_autor = next((nome for nome in ("apurar_nivel", "registrar_campo", "registrar_sessao",
++            "registrar_recorrencia", "satisfazer_inegociavel", "encerrar", "emitir") if getattr(a, nome)), "operacao")
+         _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada",
+-                         "registrar_campo" if a.registrar_campo else "apurar_nivel")
+-        print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+-    if E.autor_e_agente(a.autor):
++                         acao_autor)
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+ 
+     if a.apurar_nivel:
+diff --git a/eiac-nucleo/scripts/curar.py b/eiac-nucleo/scripts/curar.py
+index 6e384f2..b75ae17 100644
+--- a/eiac-nucleo/scripts/curar.py
++++ b/eiac-nucleo/scripts/curar.py
+@@ -45,11 +45,13 @@ def checar_autoria(dados):
+     qualquer um desses campos que o objeto de fato declarar.
+     """
+     erros = []
+-    for campo in CAMPOS_AUTORIA:
++    import json
++    pb = json.loads(pathlib.Path("registro/playbook.json").read_text(encoding="utf-8"))
++    for campo in pb.get("campos_pessoa", CAMPOS_AUTORIA):
+         valor = dados.get(campo)
+         if valor is None:
+             continue
+-        if E.autor_e_agente(valor):
++        if not E.pessoa_nomeada(valor):
+             erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
+     return erros
+ 
+@@ -114,7 +116,7 @@ def checar_versao(anterior, candidato, tipo):
+             ultima = historico[-1] if isinstance(historico[-1], dict) else {}
+             faltando = [c for c in ("versao", "data") if not ultima.get(c)]
+             responsavel = ultima.get("registrado_por") or ultima.get("confirmado_por")
+-            if not responsavel:
++            if not E.pessoa_nomeada(responsavel):
+                 faltando.append("registrado_por ou confirmado_por")
+             if faltando:
+                 erros.append(
+@@ -281,7 +283,7 @@ def main():
+ 
+     estado = E.ler()
+     responsavel = (estado or {}).get("responsavel")
+-    if not responsavel:
++    if not E.pessoa_nomeada(responsavel):
+         print("caso sem responsavel definido em registro/estado.json "
+               "(fixado por novo-caso.sh --responsavel). Nenhuma curadoria "
+               "e aceita sem isso.", file=sys.stderr)
+diff --git a/eiac-nucleo/scripts/esforco.py b/eiac-nucleo/scripts/esforco.py
+index 5d79480..6a486f4 100644
+--- a/eiac-nucleo/scripts/esforco.py
++++ b/eiac-nucleo/scripts/esforco.py
+@@ -17,7 +17,7 @@ ARQUIVO = pathlib.Path("registro/esforco.jsonl")
+ 
+ 
+ def registrar(etapa_id, duracao_segundos, autor, pb, nivel):
+-    if E.autor_e_agente(autor):
++    if not E.pessoa_nomeada(autor):
+         return "autor do esforço precisa ser pessoa nomeada, não agente", None
+     if not autor.strip():
+         return "autor do esforço é obrigatório", None
+diff --git a/eiac-nucleo/scripts/estado.py b/eiac-nucleo/scripts/estado.py
+index 731a8b6..db3d061 100644
+--- a/eiac-nucleo/scripts/estado.py
++++ b/eiac-nucleo/scripts/estado.py
+@@ -90,6 +90,16 @@ def autor_e_agente(nome):
+     return chave.startswith(("ag0", "agente", "sistema"))
+ 
+ 
++def pessoa_nomeada(nome, regra=None):
++    import pessoa
++    if regra is None:
++        try:
++            regra = json.loads(pathlib.Path('registro/playbook.json').read_text(encoding='utf-8')).get('pessoa_nomeada')
++        except (OSError, ValueError):
++            return False
++    return not autor_e_agente(nome) and pessoa.aceita(nome, regra)
++
++
+ if __name__ == "__main__":
+     e = ler()
+     if not e:
+diff --git a/eiac-nucleo/scripts/pessoa.py b/eiac-nucleo/scripts/pessoa.py
+new file mode 100644
+index 0000000..e131aa6
+--- /dev/null
++++ b/eiac-nucleo/scripts/pessoa.py
+@@ -0,0 +1,26 @@
++"""Validação lexical de pessoa conforme regra fornecida pelo playbook."""
++import re
++import unicodedata
++
++
++def normalizar(texto):
++    return ''.join(c for c in unicodedata.normalize('NFKD', texto.casefold())
++                   if not unicodedata.combining(c))
++
++
++def validar_regra(regra):
++    if (not isinstance(regra, dict) or set(regra) != {'minimo_partes', 'termos_coletivos'}
++            or type(regra.get('minimo_partes')) is not int or regra['minimo_partes'] < 1
++            or not isinstance(regra.get('termos_coletivos'), list)
++            or not regra['termos_coletivos']
++            or any(not isinstance(t, str) or not t.strip() for t in regra['termos_coletivos'])):
++        return 'pessoa_nomeada: regra invalida ou ausente'
++
++
++def aceita(nome, regra):
++    if validar_regra(regra) or not isinstance(nome, str) or re.search(r'[<>{}]', nome):
++        return False
++    palavras = re.findall(r'[^\W\d_]+', normalizar(nome), re.UNICODE)
++    termos = {normalizar(t) for t in regra['termos_coletivos']}
++    # Partes são palavras de nome; pontuação não cria sobrenome.
++    return len(palavras) >= regra['minimo_partes'] and not any(p in termos for p in palavras)
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index ace7f7d..46ab2b4 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -18,6 +18,15 @@ def carregar():
+         return None, "registro/playbook.json ausente"
+     pb = json.loads(p.read_text(encoding="utf-8"))
+ 
++    import pessoa
++    erro_pessoa = pessoa.validar_regra(pb.get("pessoa_nomeada"))
++    if erro_pessoa:
++        return None, erro_pessoa
++
++    campos_pessoa = pb.get("campos_pessoa", [])
++    if not isinstance(campos_pessoa, list) or any(not isinstance(c, str) or not c.strip() for c in campos_pessoa):
++        return None, "campos_pessoa precisa declarar nomes de campo"
++
+     niveis = pb.get("niveis")
+     if not niveis:
+         return None, "playbook sem lista de niveis"
+@@ -58,6 +67,10 @@ def carregar():
+                         or any(not isinstance(v, str) or not v.strip() for v in valores_campo)
+                         or len(valores_campo) != len(set(valores_campo))):
+                     return None, f"etapa {e['id']}: valores invalidos para campo {nome}"
++        import produtos as R
++        erro_produto = R.validar(e)
++        if erro_produto:
++            return None, erro_produto
+         dep = e.get("depende_de")
+         if dep and dep not in ids_etapa:
+             return None, f"etapa {e['id']}: depende de etapa inexistente '{dep}'"
+diff --git a/eiac-nucleo/scripts/produtos.py b/eiac-nucleo/scripts/produtos.py
+new file mode 100644
+index 0000000..356fa83
+--- /dev/null
++++ b/eiac-nucleo/scripts/produtos.py
+@@ -0,0 +1,60 @@
++"""Produtos de encerramento declarados pelo caso; sem vocabulário de método."""
++import pathlib
++import estrutura as X
++import estado as E
++
++
++def validar(et):
++    regras = et.get('produtos_encerramento', [])
++    if not isinstance(regras, list):
++        return f"etapa {et['id']}: produtos_encerramento precisa ser lista"
++    for r in regras:
++        if not isinstance(r, dict) or not isinstance(r.get('descricao'), str) or not r['descricao'].strip():
++            return f"etapa {et['id']}: produto sem descricao"
++        if r.get('tipo') == 'estado':
++            if set(r) != {'tipo', 'campo', 'descricao'} or r.get('campo') not in et.get('campos_registraveis', {}):
++                return f"etapa {et['id']}: produto de estado exige campo registravel"
++        elif r.get('tipo') == 'arquivo':
++            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
++                return f"etapa {et['id']}: contrato de produto de arquivo invalido"
++            if not isinstance(r.get('pessoas', []), list) or any(not isinstance(c, str) or not c.strip() for c in r.get('pessoas', [])):
++                return f"etapa {et['id']}: campos de pessoa invalidos no produto"
++            p = r['padrao']
++            if not isinstance(p, str) or not p.strip() or pathlib.Path(p).is_absolute() or '..' in pathlib.Path(p).parts:
++                return f"etapa {et['id']}: padrao de produto deve ficar dentro do caso"
++            if (not isinstance(r['iguais'], dict) or not isinstance(r['preenchidos'], list)
++                    or any(not isinstance(c, str) or not c.strip() for c in [*r['iguais'], *r['preenchidos']])):
++                return f"etapa {et['id']}: campos do produto invalidos"
++        else:
++            return f"etapa {et['id']}: tipo de produto desconhecido"
++
++
++def faltas(et, st):
++    ausentes = []
++    raiz = pathlib.Path.cwd().resolve()
++    for regra in et.get('produtos_encerramento', []):
++        if regra['tipo'] == 'estado':
++            valor = st.get('cumprimentos', {}).get(et['id'], {}).get(regra['campo'])
++            permitido = et['campos_registraveis'][regra['campo']].get('valores')
++            ok = bool(str(valor or '').strip()) and (permitido is None or valor in permitido)
++            detalhe = regra['campo']
++        else:
++            ok = False
++            detalhe = f"{regra['padrao']} | iguais={regra['iguais']} | preenchidos={regra['preenchidos']} | pessoas={regra.get('pessoas', [])}"
++            for arquivo in raiz.glob(regra['padrao']):
++                try:
++                    if not arquivo.is_file() or not arquivo.resolve().is_relative_to(raiz):
++                        continue
++                    dados = X.carregar_yaml(arquivo.read_text(encoding='utf-8'))
++                    if not isinstance(dados, dict):
++                        continue
++                    if (all(dados.get(c) == v for c, v in regra['iguais'].items())
++                            and all(str(dados.get(c) or '').strip() for c in regra['preenchidos'])
++                            and all(E.pessoa_nomeada(dados.get(c)) for c in regra.get('pessoas', []))):
++                        ok = True
++                        break
++                except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml):
++                    continue
++        if not ok:
++            ausentes.append(f"{regra['descricao']} ({detalhe})")
++    return ausentes
+diff --git a/eiac-nucleo/scripts/selar.py b/eiac-nucleo/scripts/selar.py
+index 422c8b7..bab3e10 100644
+--- a/eiac-nucleo/scripts/selar.py
++++ b/eiac-nucleo/scripts/selar.py
+@@ -123,7 +123,7 @@ def main():
+         print("nenhum caso aberto neste diretorio", file=sys.stderr); sys.exit(1)
+ 
+     responsavel = estado.get("responsavel")
+-    if not responsavel:
++    if not E.pessoa_nomeada(responsavel):
+         print("caso sem responsavel definido em registro/estado.json "
+               "(fixado por novo-caso.sh --responsavel). Selo recusado.",
+               file=sys.stderr)
+diff --git a/eiac-nucleo/scripts/validar.py b/eiac-nucleo/scripts/validar.py
+index 4d1b190..9099378 100644
+--- a/eiac-nucleo/scripts/validar.py
++++ b/eiac-nucleo/scripts/validar.py
+@@ -81,8 +81,9 @@ def validar_linha(marca, pb, n):
+         return f"linha {n}: apuracao estimado exige base"
+     if apur == "medido" and not any(x.startswith("amostra:") for x in c):
+         return f"linha {n}: apuracao medido exige amostra"
+-    if any(E.autor_e_agente(x) for x in c):
+-        return f"linha {n}: autor nao pode ser agente"
++    autores = [x for x in c if x not in valores and ":" not in x and not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", x)]
++    if not autores or any(not E.pessoa_nomeada(x, pb["pessoa_nomeada"]) for x in autores):
++        return f"linha {n}: autor precisa ser pessoa nomeada, nao pode ser agente"
+     return None
+ 
+ 
+@@ -99,7 +100,7 @@ def main():
+ 
+     estado = E.ler()
+     responsavel = (estado or {}).get("responsavel")
+-    if not responsavel:
++    if not E.pessoa_nomeada(responsavel):
+         print("caso sem responsavel definido em registro/estado.json "
+               "(fixado por novo-caso.sh --responsavel). Nenhuma gravacao "
+               "e aceita sem isso.", file=sys.stderr)
+diff --git a/novo-caso.sh b/novo-caso.sh
+index e71f86a..b5c9382 100755
+--- a/novo-caso.sh
++++ b/novo-caso.sh
+@@ -43,19 +43,15 @@ case "$nome" in
+   */*|.*|"") echo "nome invalido: use apenas o nome do caso, sem barras" >&2; exit 1 ;;
+ esac
+ 
+-python3 - "$responsavel" <<'PY'
+-import re, sys
+-nome = (sys.argv[1] or "").strip()
+-if not nome:
+-    sys.exit("responsavel vazio: informe pessoa nomeada")
+-if re.search(r"[<>]", nome):
+-    sys.exit(f"responsavel invalido (placeholder nao preenchido): '{nome}'")
+-chave = re.sub(r"[\s\-_]", "", nome.lower())
+-if chave.startswith(("ag0", "agente", "sistema")):
+-    sys.exit(f"responsavel nao pode ser codigo de agente: '{nome}'")
+-genericos = {"equipe", "area", "time", "setor", "departamento", "a definir"}
+-if nome.lower() in genericos:
+-    sys.exit(f"responsavel precisa ser pessoa nomeada, nao coletivo generico: '{nome}'")
++python3 - "$responsavel" "$RAIZ" "$TEMPLATE" <<'PY'
++import json, pathlib, sys
++sys.path.insert(0, str(pathlib.Path(sys.argv[2])/'eiac-nucleo/scripts'))
++import estado as E
++regra=json.loads((pathlib.Path(sys.argv[3])/'registro/playbook.json').read_text())['pessoa_nomeada']
++if E.autor_e_agente(sys.argv[1]):
++    sys.exit("responsavel nao pode ser codigo de agente")
++if not E.pessoa_nomeada(sys.argv[1], regra):
++    sys.exit(f"responsavel precisa ser pessoa nomeada, nao agente, placeholder nem coletivo generico: '{sys.argv[1]}'")
+ PY
+ 
+ destino="$base/$nome"
+diff --git a/testes/README.md b/testes/README.md
+index 832dfde..832f7ea 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -686,3 +686,17 @@ python3 testes/decisao_a12.py
+ As decisões diretas dos testes existentes simulam o terminal do engenheiro.
+ As chamadas de teste à guarda simulam a sessão. T19 de campo_2_6_2 cobre
+ apenas termo proposto; T22 de nucleo_2_6_1 recusa apuração pela sessão.
++
++A14–A16 acrescentam **44 verificações**, preservando as 629 anteriores:
++**673 verificações em 28 módulos**. Novos módulos:
++
++```bash
++python3 testes/produtos_a14.py   # 21
++python3 testes/revisao_a15.py    # 6
++python3 testes/pessoa_a16.py     # 17
++```
++
++`testes/apoio/preparar.py` fornece produtos sintéticos para os percursos de
++preparação existentes; não é módulo de verificações. T09b de campo_2_6_5
++exige recusa do coletivo composto na gravação. As saídas antes/depois e a
++lista de ajustes ficam em `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/`.
+diff --git a/testes/apoio/preparar.py b/testes/apoio/preparar.py
+new file mode 100644
+index 0000000..cafc26b
+--- /dev/null
++++ b/testes/apoio/preparar.py
+@@ -0,0 +1,29 @@
++"""Produtos sintéticos para a preparação dos testes anteriores ao A14.
++
++Chamado explicitamente apenas nos percursos/precondições; nunca no wrapper
++que executa o encerramento testado. Estado é alterado somente por comando.
++"""
++import json, pathlib, subprocess
++RAIZ=pathlib.Path(__file__).resolve().parents[2]
++PESSOA='Celso do Vale'
++
++def produto(caso, etapa):
++    caso=pathlib.Path(caso)
++    st=json.loads((caso/'registro/estado.json').read_text())
++    if etapa=='P5':
++        if st.get('cumprimentos',{}).get(etapa,{}).get('classificacao_tecnologica'): return
++        r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),'--registrar-campo',etapa,'--campo','classificacao_tecnologica','--valor','agente','--autor',PESSOA],cwd=caso,text=True,capture_output=True)
++        if r.returncode: raise RuntimeError(r.stderr)
++        return
++    dados={
++      'P3a':('registro/baseline/BL-999.yaml',dict(id='BL-999',indicador='tempo de controle',valor_atual='10 minutos',apuracao='medido',nivel=st.get('nivel') or 'N2',data='2026-08-01')),
++      'P6':('registro/operacional/OP-999.yaml',dict(id='OP-999',estado='validado',ponto_insercao='controle',momento='entrada',sistema='controle',entrada='pedido',saida='sugestao',ator_humano=PESSOA,excecao='erro',fallback='manual',responsavel_operacional=PESSOA,validado_por=PESSOA,data_validacao='2026-09-19',data='2026-09-19')),
++      'P7':('registro/governanca/autonomia/AUT-999.yaml',dict(id='AUT-999',estado='decidido',operacional_ref='OP-999',escopo='controle',faz_sozinha=['preparar'],exige_aprovacao=['aplicar'],nunca_faz=['alterar'],gatilhos_escalonamento=['erro'],decisor=PESSOA,data_decisao='2026-09-19',justificativa_decisao='controle sintetico',data='2026-09-19')),
++      'P8':('registro/piloto/CT-999.yaml',dict(id='CT-999',estado='revisado',modo='assistido',duracao='1 semana',plano_reversao='manual',criterio_aprovacao_escala='100%',criterio_aprovacao_escala_definido_em='2026-09-01',revisado_por=PESSOA,data_revisao='2026-09-19',casos=[dict(identificador='CT-999-01',origem='controle',entrada='pedido',saida_esperada='ok',criterio_aprovacao='igual',categoria='celula_critica',revisor=PESSOA,data_revisao='2026-09-19',esperado_definido_em='2026-09-01',esperado_definido_por=PESSOA)],data='2026-09-19')),
++      'P9':('registro/metricas/MET-999.yaml',dict(id='MET-999',estado='apurada',tipo='resultado',piloto_ref='CT-999',metrica='tempo',linha_base='10',linha_base_data='2026-08-01',linha_base_procedencia='D',metodo_apuracao='calculo',fonte_dado='controle',periodicidade='mensal',responsavel_apuracao=PESSOA,resultado_apurado='8',resultado_apurado_data='2026-09-20',resultado_apurado_procedencia='D',fatores_externos_declarados='nenhum',data='2026-09-20')),
++      'P10':('registro/calibragem/CAL-999.yaml',dict(id='CAL-999',metricas_ref=['MET-999'],responsavel=PESSOA,responsavel_ciente=True,cadencia='mensal',data_primeira_revisao='2026-10-19',limiares_desvio='15%',monitoramento='controle',canal_incidente='controle',analise_pos_incidente='revisao',data='2026-09-19')),
++    }
++    if etapa not in dados: return
++    destino,d=dados[etapa]; p=caso/destino; p.parent.mkdir(parents=True,exist_ok=True)
++    d.update(procedencia='D',declarado_por=PESSOA,registrado_por=PESSOA,versao=1)
++    p.write_text('\n'.join(k+': '+json.dumps(v,ensure_ascii=False) for k,v in d.items())+'\n')
+diff --git a/testes/autoria_responsavel.py b/testes/autoria_responsavel.py
+index ba58a68..e5411c0 100644
+--- a/testes/autoria_responsavel.py
++++ b/testes/autoria_responsavel.py
+@@ -131,7 +131,7 @@ with tempfile.TemporaryDirectory() as tmp:
+ 
+     caso = preparar_caso(tmp, responsavel="Celso do Vale")
+     (caso / "rascunho" / "t.md").write_text(
+-        "- [D · Helena · 2026-09-11] fato declarado\n", encoding="utf-8")
++        "- [D · Helena Duarte · 2026-09-11] fato declarado\n", encoding="utf-8")
+     codigo, saida, erro = rodar(VALIDAR, caso, "--arquivo", "caso/t.md", "--autor", "AG-03")
+     ev = ultimo_evento(caso)
+     if codigo == 0 and ev.get("evento") == "AssercaoRegistrada" and ev.get("autor") == "Celso do Vale":
+@@ -147,8 +147,8 @@ with tempfile.TemporaryDirectory() as tmp:
+     shutil.copytree(TEMPLATE, caso2)
+     (caso2 / "rascunho").mkdir(exist_ok=True)
+     (caso2 / "rascunho" / "t.md").write_text(
+-        "- [D · Helena · 2026-09-11] fato declarado\n", encoding="utf-8")
+-    codigo, saida, erro = rodar(VALIDAR, caso2, "--arquivo", "caso/t.md", "--autor", "Celso")
++        "- [D · Helena Duarte · 2026-09-11] fato declarado\n", encoding="utf-8")
++    codigo, saida, erro = rodar(VALIDAR, caso2, "--arquivo", "caso/t.md", "--autor", "Celso do Vale")
+     if codigo != 0 and "responsavel" in erro:
+         ok("validar.py recusa gravar em caso sem responsavel definido")
+     else:
+@@ -163,7 +163,7 @@ with tempfile.TemporaryDirectory() as tmp:
+     termo = (
+         "id: T-900\ntermo: prazo de retorno\nsignificado: teste\n"
+         "nao_e: prazo de resposta\nsinonimos_em_uso: []\nprocedencia: D\n"
+-        "declarado_por: Helena\nregistrado_por: Helena\ndata: 2026-09-22\nversao: 1\n"
++        "declarado_por: Helena Duarte\nregistrado_por: Helena Duarte\ndata: 2026-09-22\nversao: 1\n"
+     )
+     (caso / "rascunho" / "T-900.yaml").write_text(termo, encoding="utf-8")
+     codigo, saida, erro = rodar(
+@@ -183,7 +183,7 @@ with tempfile.TemporaryDirectory() as tmp:
+         termo.replace("T-900", "T-901"), encoding="utf-8")
+     codigo, saida, erro = rodar(
+         CURAR, caso2, "--tipo", "termo", "--arquivo", "contexto/termos/T-901.yaml",
+-        "--registrado-por", "Helena",
++        "--registrado-por", "Helena Duarte",
+     )
+     if codigo != 0 and "responsavel" in erro:
+         ok("curar.py recusa curar em caso sem responsavel definido")
+diff --git a/testes/campo_2_6_2.py b/testes/campo_2_6_2.py
+index 3fcc915..26f7ed5 100644
+--- a/testes/campo_2_6_2.py
++++ b/testes/campo_2_6_2.py
+@@ -22,6 +22,8 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
++
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ 
+ _spec = importlib.util.spec_from_file_location(
+@@ -125,6 +127,7 @@ def percorrer_ate(caso, ate_etapa_id):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
++        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
+             subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),
+diff --git a/testes/campo_2_6_3.py b/testes/campo_2_6_3.py
+index 4862715..ec3d58a 100644
+--- a/testes/campo_2_6_3.py
++++ b/testes/campo_2_6_3.py
+@@ -24,6 +24,8 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
++
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ 
+ _spec = importlib.util.spec_from_file_location(
+@@ -179,6 +181,7 @@ def percorrer_ate(caso, ate_etapa_id):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
++        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         restante.discard(etapa_id)
+         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+diff --git a/testes/campo_2_6_4.py b/testes/campo_2_6_4.py
+index 50a711d..866b9c5 100644
+--- a/testes/campo_2_6_4.py
++++ b/testes/campo_2_6_4.py
+@@ -20,6 +20,8 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
++
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ 
+ _spec = importlib.util.spec_from_file_location(
+@@ -122,6 +124,7 @@ def percorrer_ate(caso, ate_etapa_id):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
++        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         if any(e.get("exige_selo_apos") == etapa_id for e in pb_oficial["etapas"]):
+             subprocess.run(["python3", str(RAIZ / "eiac-nucleo/scripts/selar.py"),
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index 6583bec..b1db00b 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -22,6 +22,8 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
++
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ 
+ _spec = importlib.util.spec_from_file_location(
+@@ -189,6 +191,7 @@ def percorrer_ate(caso, ate_etapa_id, nivel="N2"):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
++        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         restante.discard(etapa_id)
+         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+@@ -514,23 +517,16 @@ else:
+     falha(f"2.6.5-T09 I5 sem pessoa nominal nao foi recusado pelo motivo esperado: "
+           f"exit={codigo} saida={saida!r} erro={erro!r}")
+ 
+-# 'equipe de TI' (frase composta) escapa da checagem lexica de palavra
+-# inteira de calibragem.py (que so compara contra palavras exatas) --
+-# o verificador semantico de I1-I5 (inegociaveis.py) e a segunda camada
+-# que ainda recusa frases compostas contendo 'ti'/'consultoria', mesmo
+-# que o registro em si tenha sido gravado.
++# A16: frase composta coletiva é recusada já no registro da rotina.
+ caso = preparar_caso()
+ preparar_ct_revisado(caso)
+ preparar_met_apurada(caso)
+-(caso / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1, responsavel="equipe de TI"),
+-                                                  encoding="utf-8")
+-calibragem(caso, "registro/calibragem/CAL-001.yaml", "Marina Prado")
+-codigo, saida, erro = inegociavel(caso, 5, "registro/calibragem/CAL-001.yaml")
+-if codigo != 0:
+-    ok("2.6.5-T09b I5 com 'equipe de TI' gravado (frase composta, escapou da "
+-       "checagem lexica de calibragem.py): RECUSA no verificador semantico")
++(caso / "rascunho" / "CAL-001.yaml").write_text(cal_yaml(1, responsavel="equipe de TI"), encoding="utf-8")
++codigo, saida, erro = calibragem(caso, "registro/calibragem/CAL-001.yaml", "Marina Prado")
++if codigo != 0 and not (caso / "registro/calibragem/CAL-001.yaml").exists():
++    ok("2.6.5-T09b A16: 'equipe de TI' recusado na gravação")
+ else:
+-    falha("2.6.5-T09b I5 com 'equipe de TI' foi ACEITO pelo verificador semantico")
++    falha("2.6.5-T09b A16: responsável coletivo aceito")
+ 
+ caso = preparar_caso()
+ preparar_ct_revisado(caso)
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index 8b195a0..74e3633 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -21,6 +21,7 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ 
+ _spec = importlib.util.spec_from_file_location(
+@@ -651,6 +652,7 @@ avancar(caso_p6, registrar_sessao="P4", autor="Celso do Vale", participantes="Fe
+ avancar(caso_p6, encerrar="P4", autor="Celso do Vale")
+ gravar_p5_agentico(caso_p6)
+ avancar(caso_p6, registrar_sessao="P6", autor="Celso do Vale", participantes="Fernanda, Celso")
++preparar_produto(caso_p6, "P6")
+ codigo, saida, erro = avancar(caso_p6, encerrar="P6", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel")
+@@ -671,6 +673,7 @@ else:
+ # C10/C11/C12 -- P7 operacional, agente nao decide, humano decide
+ # ======================================================================
+ avancar(caso_p6, registrar_sessao="P7", autor="Celso do Vale", participantes="Fernanda, Celso")
++preparar_produto(caso_p6, "P7")
+ codigo, saida, erro = avancar(caso_p6, encerrar="P7", autor="Celso do Vale")
+ if codigo == 0:
+     ok("2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel")
+diff --git a/testes/campos_a10.py b/testes/campos_a10.py
+index 18075e5..84a866d 100644
+--- a/testes/campos_a10.py
++++ b/testes/campos_a10.py
+@@ -6,6 +6,7 @@ import subprocess
+ import tempfile
+ import unittest
+ 
++from apoio.preparar import produto as preparar_produto
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ SCRIPT = RAIZ / 'eiac-nucleo/scripts/avancar.py'
+ VALORES = ['agente', 'caso isolado', 'habilitador acoplado']
+@@ -159,6 +160,7 @@ class CamposA10(unittest.TestCase):
+                 r = self.executar('--registrar-sessao', et['id'], '--participantes',
+                                   'Celso do Vale, Pessoa Cliente')
+                 self.assertEqual(r.returncode, 0, r.stderr)
++            preparar_produto(self.caso, et['id'])
+             r = self.executar('--encerrar', et['id'])
+             self.assertEqual(r.returncode, 0, r.stderr)
+             if any(e.get('exige_selo_apos') == et['id'] for e in pb['etapas']):
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index 58d5911..543ee89 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -197,7 +197,8 @@ class DecisaoA12(unittest.TestCase):
+ 
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+-        self.assertEqual(pb.get('decisoes_humanas'), REGRAS)
++        self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/negativos.sh b/testes/negativos.sh
+index 798a2ce..7e0d9cf 100644
+--- a/testes/negativos.sh
++++ b/testes/negativos.sh
+@@ -42,47 +42,47 @@ echo '{"tool_name":"Bash","tool_input":{"command":"echo oi > caso/x.md"}}' \
+ [ $? -eq 2 ] && ok "2b bash para caso/ negado" || falha "2b bash para caso/ NAO foi negado"
+ 
+ # 3 assercao sem procedencia
+-printf -- '- [Celso · 2026-09-11] regra qualquer\n' > rascunho/t.md
+-python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [Celso do Vale · 2026-09-11] regra qualquer\n' > rascunho/t.md
++python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "3 assercao sem procedencia recusada" || falha "3 assercao sem procedencia ACEITA"
+ 
+ # 4 assercao valida grava (teste positivo de controle)
+-printf -- '- [I · premissa: teste · Celso] regra de teste\n' > rascunho/t.md
+-python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [I · premissa: teste · Celso do Vale] regra de teste\n' > rascunho/t.md
++python3 "$S/validar.py" --arquivo caso/t.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "4 assercao valida gravada" || falha "4 assercao valida RECUSADA"
+ 
+ # Pacote 2.5.0 — contrato canonico D/I/V
+ 
+ # T01 D valido nao exige evidencia de verificacao
+-printf -- '- [D · Helena · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena" >/dev/null 2>&1
++printf -- '- [D · Helena Duarte · 2026-09-18] informacao declarada\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Helena Duarte" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "2.5.0-T01 D valido aceito" || falha "2.5.0-T01 D valido RECUSADO"
+ 
+ # T02 I sem premissa e recusado
+-printf -- '- [I · Celso] inferencia sem premissa\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [I · Celso do Vale] inferencia sem premissa\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "2.5.0-T02 I sem premissa recusado" || falha "2.5.0-T02 I sem premissa ACEITO"
+ 
+ # T03 I com premissa e aceito
+-printf -- '- [I · premissa: padrao observado nos documentos · Celso] inferencia rastreavel\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [I · premissa: padrao observado nos documentos · Celso do Vale] inferencia rastreavel\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "2.5.0-T03 I com premissa aceito" || falha "2.5.0-T03 I com premissa RECUSADO"
+ 
+ # T04 V sem evidencia e recusado
+-printf -- '- [V · Celso] verificacao sem evidencia\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [V · Celso do Vale] verificacao sem evidencia\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "2.5.0-T04 V sem evidencia recusado" || falha "2.5.0-T04 V sem evidencia ACEITO"
+ 
+ # T05 V com evidencia e aceito
+-printf -- '- [V · observacao: sessao-2026-09-18 · Celso] verificacao rastreavel\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [V · observacao: sessao-2026-09-18 · Celso do Vale] verificacao rastreavel\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "2.5.0-T05 V com evidencia aceito" || falha "2.5.0-T05 V com evidencia RECUSADO"
+ 
+ # T06 valores fora de D/I/V nao sao procedencia
+ invalidas_recusadas=1
+ for valor in X campo externo; do
+-  printf -- '- [%s · Celso] procedencia invalida\n' "$valor" > rascunho/procedencia.md
+-  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1; then
++  printf -- '- [%s · Celso do Vale] procedencia invalida\n' "$valor" > rascunho/procedencia.md
++  if python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1; then
+     invalidas_recusadas=0
+   fi
+ done
+@@ -91,12 +91,12 @@ done
+   || falha "2.5.0-T06 procedencia fora de D/I/V ACEITA"
+ 
+ # T07 apuracao coexiste em campo distinto da procedencia
+-printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso] numero verificado\n' > rascunho/procedencia.md
+-python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso" >/dev/null 2>&1
++printf -- '- [V · observacao: amostra-controlada · apuracao: medido · amostra: 10 casos · periodo: set/2026 · Celso do Vale] numero verificado\n' > rascunho/procedencia.md
++python3 "$S/validar.py" --arquivo caso/procedencia.md --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "2.5.0-T07 V coexiste com apuracao separada" || falha "2.5.0-T07 dimensao separada RECUSADA"
+ 
+ # 5 encerrar etapa presencial sem sessao
+-python3 "$S/avancar.py" --encerrar P3b --autor "Celso" >/dev/null 2>&1
++python3 "$S/avancar.py" --encerrar P3b --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "5 encerramento sem sessao recusado" || falha "5 encerramento sem sessao ACEITO"
+ 
+ # 6 autor agente
+@@ -104,7 +104,7 @@ python3 "$S/avancar.py" --encerrar F0 --autor "AG05" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "6 autor agente recusado" || falha "6 autor agente ACEITO"
+ 
+ # 7 emitir com portao fechado
+-python3 "$S/avancar.py" --emitir E2 --autor "Celso" >/dev/null 2>&1
++python3 "$S/avancar.py" --emitir E2 --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "7 emissao com portao fechado recusada" || falha "7 emissao ACEITA indevidamente"
+ 
+ 
+@@ -140,7 +140,7 @@ python3 -c "
+ import json, pathlib
+ p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+ d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
+-python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
++python3 "$S/avancar.py" --encerrar F0 --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "12 F0 sem nivel nao encerra" || falha "12 F0 encerrou sem nivel"
+ 
+ # 13 playbook com camada plana e recusado
+@@ -158,7 +158,7 @@ python3 -c "
+ import json, pathlib
+ p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+ d['etapa_atual'] = 'F0'; d['nivel'] = None; p.write_text(json.dumps(d))"
+-python3 "$S/avancar.py" --apurar-nivel N9 --autor "Celso" >/dev/null 2>&1
++python3 "$S/avancar.py" --apurar-nivel N9 --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "14 nivel fora do playbook recusado" || falha "14 nivel invalido ACEITO"
+ 
+ # 15 apuracao de nivel por agente e recusada
+@@ -166,7 +166,7 @@ python3 "$S/avancar.py" --apurar-nivel N2 --autor "AG05" >/dev/null 2>&1
+ [ $? -ne 0 ] && ok "15 nivel apurado por agente recusado" || falha "15 nivel por agente ACEITO"
+ 
+ # 16 apuracao valida grava e deixa rastro (controle positivo)
+-python3 "$S/avancar.py" --apurar-nivel N2 --autor "Celso" --eixos "DAD 4, GOV 5, CRI 7" >/dev/null 2>&1
++python3 "$S/avancar.py" --apurar-nivel N2 --autor "Celso do Vale" --eixos "DAD 4, GOV 5, CRI 7" >/dev/null 2>&1
+ gravou=$?
+ grep -q '"evento": "NivelApurado"' registro/eventos.jsonl 2>/dev/null
+ rastro=$?
+@@ -174,7 +174,7 @@ rastro=$?
+   && ok "16 nivel apurado grava com evento" || falha "16 nivel apurado SEM gravar ou SEM evento"
+ 
+ # 17 com o nivel apurado pelo comando, F0 encerra
+-python3 "$S/avancar.py" --encerrar F0 --autor "Celso" >/dev/null 2>&1
++python3 "$S/avancar.py" --encerrar F0 --autor "Celso do Vale" >/dev/null 2>&1
+ [ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
+ 
+ # 18 selo por agente e recusado -- garantia estrutural: autoria de registro
+@@ -189,7 +189,7 @@ saida="$("$RAIZ/novo-caso.sh" "teste-18-$$" --responsavel "AG05" "$TMP" 2>&1)"
+ rm -rf "${TMP:?}/teste-18-$$"
+ 
+ # 19 selo fora de repositorio git e recusado, e pelo motivo certo
+-saida="$(python3 "$S/selar.py" --autor "Celso" --nota "teste" 2>&1)"
++saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "teste" 2>&1)"
+ [ $? -ne 0 ] && echo "$saida" | grep -q "repositorio git" \
+   && ok "19 selo sem repositorio recusado" || falha "19 selo sem repositorio ACEITO ou recusado por outro motivo"
+ 
+@@ -236,15 +236,15 @@ echo "$n2" | grep -q "P3b .*nao delegavel" && echo "$n1" | grep -q "P3b .*nao de
+ 
+ # 24 documento citado que nao esta em fontes/ e recusado
+ mkdir -p fontes
+-printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso] regra\n' > rascunho/d.md
+-saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" 2>&1)"
++printf -- '- [V · documento: ausente.xlsx p.2 · 2026-09-15 · Celso do Vale] regra\n' > rascunho/d.md
++saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" 2>&1)"
+ [ $? -ne 0 ] && echo "$saida" | grep -q "nao esta em fontes/" \
+   && ok "24 documento citado ausente recusado" \
+   || falha "24 documento ausente ACEITO ou recusado por outro motivo"
+ 
+ # 25 com o documento presente, grava e registra o hash (controle positivo)
+ echo "conteudo" > fontes/ausente.xlsx
+-python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso" >/dev/null 2>&1
++python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" >/dev/null 2>&1
+ gravou=$?
+ grep -q '"documentos": {"ausente.xlsx"' registro/eventos.jsonl 2>/dev/null
+ rastro=$?
+@@ -364,7 +364,7 @@ rm -f marcador-iso-selo-1.txt
+ python3 -c "
+ import json
+ with open('registro/eventos.jsonl', 'a') as f:
+-    f.write(json.dumps({'evento': 'TesteFabricado', 'autor': 'Celso'}) + '\n')
++    f.write(json.dumps({'evento': 'TesteFabricado', 'autor': 'Celso do Vale'}) + '\n')
+ "
+ echo "x" > marcador-iso-selo-2.txt
+ saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "tentativa sem carimbo" 2>&1)"
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 1cc07a8..abbf408 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -18,6 +18,8 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
++
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
+ AVANCAR = RAIZ / "eiac-nucleo" / "scripts" / "avancar.py"
+@@ -137,6 +139,7 @@ def percorrer_ate(caso, ate_etapa_id):
+                 or pb_oficial["encerramento_por_camada"][etapa["camada"][nivel]]):
+             avancar(caso, registrar_sessao=etapa_id, autor="Celso do Vale",
+                     participantes="Ana, Celso")
++        preparar_produto(caso, etapa_id)  # A14: produto na preparação do percurso
+         avancar(caso, encerrar=etapa_id, autor="Celso do Vale")
+         restante.discard(etapa_id)
+         exigentes = ETAPAS_QUE_EXIGEM_SELO_DE.get(etapa_id, [])
+@@ -174,6 +177,7 @@ else:
+ caso_dep = preparar_caso()
+ apurar_e_encerrar_f0(caso_dep)
+ for e in ["P1", "P2", "P3a"]:
++    preparar_produto(caso_dep, e)
+     avancar(caso_dep, encerrar=e, autor="Celso do Vale")
+ # nao registra sessao nem encerra P3b -- forca o estado para P3d (que
+ # depende de P3b) sem que P3b esteja cumprida, e usa avancar.py --encerrar,
+@@ -202,6 +206,7 @@ else:
+ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
+ for e in ["P1", "P2", "P3a"]:
++    preparar_produto(caso, e)
+     avancar(caso, encerrar=e, autor="Celso do Vale")
+ selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+@@ -222,6 +227,7 @@ else:
+     falha(f"2.6.1-T05 etapa delegavel RECUSADA: {erro}")
+ 
+ for e in ["P2", "P3a"]:
++    preparar_produto(caso, e)
+     avancar(caso, encerrar=e, autor="Celso do Vale")
+ selar(caso, "selo apos P2, exigido por P3b")
+ # etapa corrente agora e P3b, delegavel:false
+@@ -353,6 +359,7 @@ else:
+ caso = preparar_caso()
+ apurar_e_encerrar_f0(caso)
+ for e in ["P1", "P2", "P3a"]:
++    preparar_produto(caso, e)
+     avancar(caso, encerrar=e, autor="Celso do Vale")
+ selar(caso, "selo apos P2, exigido por P3b")
+ avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+diff --git a/testes/pessoa_a16.py b/testes/pessoa_a16.py
+new file mode 100644
+index 0000000..2aa5be8
+--- /dev/null
++++ b/testes/pessoa_a16.py
+@@ -0,0 +1,72 @@
++import json, pathlib, shutil, subprocess, tempfile, unittest
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++class Caso(unittest.TestCase):
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
++        self.caso=pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
++        (self.caso/'rascunho').mkdir()
++        self.posicionar('P1')
++    def posicionar(self, etapa):
++        p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
++        st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
++        pb=json.loads((self.caso/'registro/playbook.json').read_text())
++        for e in pb['etapas']:
++            if e['id']==etapa:
++                st['cumprimentos'][etapa]={'sessao':{'autor':'Celso do Vale','participantes':'Marina Prado'}}
++                st.update(camada_atual=e['camada']['N2'],modalidade_atual=e['modalidade']); break
++            st['cumprimentos'][e['id']]={'cumprido':True}
++        p.write_text(json.dumps(st))
++    def avancar(self,*args):
++        return subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),*args,'--autor','Celso do Vale'],cwd=self.caso,text=True,capture_output=True)
++    def evento(self):
++        return json.loads((self.caso/'registro/eventos.jsonl').read_text().splitlines()[-1])
++
++class PessoaA16(Caso):
++    def conferir(self,nome,permitido):
++        r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),'--apurar-nivel','N2','--eixos','DAD 5, GOV 3, CRI 6','--autor',nome],cwd=self.caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
++        if not permitido: self.assertEqual(self.evento()['evento'],'TentativaNegada')
++    def test_00_equipe(self): self.conferir('equipe de TI',False)
++    def test_01_time(self): self.conferir('Time Comercial',False)
++    def test_02_area(self): self.conferir('Área de Vendas',False)
++    def test_03_nome_unico(self): self.conferir('Marina',False)
++    def test_04_comite(self): self.conferir('Comitê Executivo',False)
++    def test_05_pessoa(self): self.conferir('Marina Prado',True)
++    def test_06_regra_do_caso(self):
++        p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text()); pb['pessoa_nomeada']={'minimo_partes':2,'termos_coletivos':['Prado']}; p.write_text(json.dumps(pb)); self.conferir('Marina Prado',False)
++    def campo_pessoa(self,etapa,script,rel,campo):
++        from apoio.preparar import produto
++        for et in ['P3a','P6','P7','P8','P9','P10']: produto(self.caso,et)
++        import sys
++        sys.path.insert(0,str(RAIZ/'eiac-nucleo/scripts'))
++        import estrutura as X
++        destino=self.caso/rel; original=destino.read_bytes(); d=X.carregar_yaml(destino.read_text())
++        def gravar():
++            (self.caso/'rascunho'/destino.name).write_text('\n'.join(k+': '+json.dumps(v) for k,v in d.items())+'\n')
++            return subprocess.run(['python3',str(RAIZ/'eiac-campo/scripts'/script),'--arquivo',rel,'--ator','Marina Prado'],cwd=self.caso,text=True,capture_output=True)
++        if campo=='revisor': d['casos'][0][campo]='equipe de TI'
++        else: d[campo]='equipe de TI'
++        r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
++        self.assertIn('pessoa',r.stderr+' '+self.evento().get('evento',''))
++        if campo=='revisor': d['casos'][0][campo]='Marina Prado'
++        else: d[campo]='Marina Prado'
++        r=gravar(); self.assertEqual(r.returncode,0,r.stderr)
++    def test_10_baseline(self): self.campo_pessoa('P3a','baseline.py','registro/baseline/BL-999.yaml','declarado_por')
++    def test_11_operacional(self): self.campo_pessoa('P6','operacional.py','registro/operacional/OP-999.yaml','responsavel_operacional')
++    def test_12_governanca(self): self.campo_pessoa('P7','governanca.py','registro/governanca/autonomia/AUT-999.yaml','decisor')
++    def test_13_revisor(self): self.campo_pessoa('P8','piloto.py','registro/piloto/CT-999.yaml','revisor')
++    def test_14_metrica(self): self.campo_pessoa('P9','metrica.py','registro/metricas/MET-999.yaml','responsavel_apuracao')
++    def test_15_calibragem(self): self.campo_pessoa('P10','calibragem.py','registro/calibragem/CAL-999.yaml','responsavel')
++    def test_16_novo_caso_coletivo(self):
++        r=subprocess.run(['bash',str(RAIZ/'novo-caso.sh'),'coletivo','--responsavel','Time Comercial',str(self.caso/'casos')],text=True,capture_output=True)
++        self.assertEqual(r.returncode,1,r.stderr); self.assertFalse((self.caso/'casos/coletivo').exists())
++    def test_17_validador_autoria(self):
++        (self.caso/'rascunho/a.md').write_text('- [D · Área de Vendas · 2026-09-27] fato\n')
++        r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/validar.py'),'--arquivo','caso/a.md'],cwd=self.caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,1); self.assertFalse((self.caso/'caso/a.md').exists()); self.assertEqual(self.evento()['evento'],'AssercaoRecusada')
++    def test_18_nome_sobrenome_sem_acentos(self): self.conferir('Marina Núcleo',False)
++    def test_19_produto_responsavel_coletivo(self):
++        self.posicionar('P10'); p=self.caso/'registro/calibragem/CAL-001.yaml'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text('responsavel: equipe de TI\ncadencia: mensal')
++        r=self.avancar('--encerrar','P10'); self.assertEqual(r.returncode,1,r.stderr); self.assertIn('produto',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
++if __name__=='__main__': unittest.main(verbosity=2)
+diff --git a/testes/produtos_a14.py b/testes/produtos_a14.py
+new file mode 100644
+index 0000000..6923c8d
+--- /dev/null
++++ b/testes/produtos_a14.py
+@@ -0,0 +1,94 @@
++import json, pathlib, shutil, subprocess, tempfile, unittest
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++class Caso(unittest.TestCase):
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
++        self.caso=pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
++        (self.caso/'rascunho').mkdir()
++        self.posicionar('P1')
++    def posicionar(self, etapa):
++        p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
++        st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
++        pb=json.loads((self.caso/'registro/playbook.json').read_text())
++        for e in pb['etapas']:
++            if e['id']==etapa:
++                st['cumprimentos'][etapa]={'sessao':{'autor':'Celso do Vale','participantes':'Marina Prado'}}
++                st.update(camada_atual=e['camada']['N2'],modalidade_atual=e['modalidade']); break
++            st['cumprimentos'][e['id']]={'cumprido':True}
++        p.write_text(json.dumps(st))
++    def avancar(self,*args):
++        return subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),*args,'--autor','Celso do Vale'],cwd=self.caso,text=True,capture_output=True)
++    def evento(self):
++        return json.loads((self.caso/'registro/eventos.jsonl').read_text().splitlines()[-1])
++
++PRODUTOS={
++'P3a':('registro/baseline/BL-001.yaml',{'id':'BL-001','indicador':'tempo','valor_atual':'10','data':'2026-09-27'}),
++'P6':('registro/operacional/OP-001.yaml',{'estado':'validado'}),
++'P7':('registro/governanca/autonomia/AUT-001.yaml',{'estado':'decidido'}),
++'P8':('registro/piloto/CT-001.yaml',{'estado':'revisado'}),
++'P9':('registro/metricas/MET-001.yaml',{'tipo':'resultado','estado':'apurada'}),
++'P10':('registro/calibragem/CAL-001.yaml',{'responsavel':'Marina Prado','cadencia':'mensal'})}
++class ProdutosA14(Caso):
++    def produto(self,et):
++        if et=='P5':
++            r=self.avancar('--registrar-campo',et,'--campo','classificacao_tecnologica','--valor','agente'); self.assertEqual(r.returncode,0,r.stderr)
++        else:
++            rel,dados=PRODUTOS[et]; p=self.caso/rel; p.parent.mkdir(parents=True,exist_ok=True)
++            p.write_text('\n'.join(k+': '+json.dumps(v) for k,v in dados.items()))
++    def recusa_produto(self,et):
++        antes=(self.caso/'registro/estado.json').read_bytes(); r=self.avancar('--encerrar',et)
++        self.assertEqual(r.returncode,1,r.stdout+r.stderr); self.assertIn('produto',r.stderr); self.assertIn(et,r.stderr)
++        self.assertEqual(antes,(self.caso/'registro/estado.json').read_bytes()); self.assertEqual(self.evento()['evento'],'TentativaNegada')
++    def test_00_sem_P3a(self):
++        self.posicionar('P3a'); self.recusa_produto('P3a')
++    def test_01_sem_P5(self):
++        self.posicionar('P5'); self.recusa_produto('P5')
++    def test_02_sem_P6(self):
++        self.posicionar('P6'); self.recusa_produto('P6')
++    def test_03_sem_P7(self):
++        self.posicionar('P7'); self.recusa_produto('P7')
++    def test_04_sem_P8(self):
++        self.posicionar('P8'); self.recusa_produto('P8')
++    def test_05_sem_P9(self):
++        self.posicionar('P9'); self.recusa_produto('P9')
++    def test_06_sem_P10(self):
++        self.posicionar('P10'); self.recusa_produto('P10')
++    def test_10_com_P3a(self):
++        self.posicionar('P3a'); self.produto('P3a'); r=self.avancar('--encerrar','P3a'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_11_com_P5(self):
++        self.posicionar('P5'); self.produto('P5'); r=self.avancar('--encerrar','P5'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_12_com_P6(self):
++        self.posicionar('P6'); self.produto('P6'); r=self.avancar('--encerrar','P6'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_13_com_P7(self):
++        self.posicionar('P7'); self.produto('P7'); r=self.avancar('--encerrar','P7'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_14_com_P8(self):
++        self.posicionar('P8'); self.produto('P8'); r=self.avancar('--encerrar','P8'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_15_com_P9(self):
++        self.posicionar('P9'); self.produto('P9'); r=self.avancar('--encerrar','P9'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_16_com_P10(self):
++        self.posicionar('P10'); self.produto('P10'); r=self.avancar('--encerrar','P10'); self.assertEqual(r.returncode,0,r.stderr)
++    def test_20_estado_errado(self):
++        self.posicionar('P7'); self.produto('P7'); (self.caso/PRODUTOS['P7'][0]).write_text('estado: proposto'); self.recusa_produto('P7')
++    def test_21_campos_em_arquivos_diferentes(self):
++        self.posicionar('P10'); self.produto('P10')
++        (self.caso/PRODUTOS['P10'][0]).write_text('responsavel: Marina Prado')
++        (self.caso/'registro/calibragem/CAL-002.yaml').write_text('cadencia: mensal'); self.recusa_produto('P10')
++    def test_22_symlink_externo(self):
++        self.posicionar('P7'); externo=self.caso.parent/(self.caso.name+'-externo.yaml'); externo.write_text('estado: decidido')
++        self.addCleanup(externo.unlink); p=self.caso/PRODUTOS['P7'][0]; p.parent.mkdir(parents=True,exist_ok=True); p.symlink_to(externo); self.recusa_produto('P7')
++    def test_23_regra_alternativa(self):
++        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
++        next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'arquivo','padrao':'registro/outro/*.yaml','iguais':{'status':'feito'},'preenchidos':[],'descricao':'produto alternativo'}]
++        p.write_text(json.dumps(pb)); self.recusa_produto('P1')
++        alvo=self.caso/'registro/outro/a.yaml'; alvo.parent.mkdir(); alvo.write_text('status: feito')
++        self.assertEqual(self.avancar('--encerrar','P1').returncode,0)
++    def test_24_yaml_ilegivel(self):
++        self.posicionar('P7'); self.produto('P7'); (self.caso/PRODUTOS['P7'][0]).write_text('estado: ['); self.recusa_produto('P7')
++    def test_25_metrica_uso(self):
++        self.posicionar('P9'); self.produto('P9'); (self.caso/PRODUTOS['P9'][0]).write_text('estado: apurada\ntipo: uso'); self.recusa_produto('P9')
++    def test_26_regra_invalida(self):
++        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
++        next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'desconhecido','descricao':'produto'}]; p.write_text(json.dumps(pb))
++        r=self.avancar('--encerrar','P1'); self.assertEqual(r.returncode,1); self.assertIn('tipo de produto desconhecido',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
++if __name__=='__main__': unittest.main(verbosity=2)
+diff --git a/testes/revisao_a15.py b/testes/revisao_a15.py
+new file mode 100644
+index 0000000..222988c
+--- /dev/null
++++ b/testes/revisao_a15.py
+@@ -0,0 +1,38 @@
++import json, pathlib, shutil, subprocess, tempfile, unittest
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++class Caso(unittest.TestCase):
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
++        self.caso=pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
++        (self.caso/'rascunho').mkdir()
++        self.posicionar('P1')
++    def posicionar(self, etapa):
++        p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
++        st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
++        pb=json.loads((self.caso/'registro/playbook.json').read_text())
++        for e in pb['etapas']:
++            if e['id']==etapa:
++                st['cumprimentos'][etapa]={'sessao':{'autor':'Celso do Vale','participantes':'Marina Prado'}}
++                st.update(camada_atual=e['camada']['N2'],modalidade_atual=e['modalidade']); break
++            st['cumprimentos'][e['id']]={'cumprido':True}
++        p.write_text(json.dumps(st))
++    def avancar(self,*args):
++        return subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),*args,'--autor','Celso do Vale'],cwd=self.caso,text=True,capture_output=True)
++    def evento(self):
++        return json.loads((self.caso/'registro/eventos.jsonl').read_text().splitlines()[-1])
++
++class RevisaoA15(Caso):
++    def guarda(self,script,texto,extra=''):
++        self.posicionar('P1'); (self.caso/'rascunho/TESTE.yaml').write_text(texto)
++        cmd=f'python3 "{RAIZ / "eiac-campo/scripts" / script}" --arquivo registro/TESTE.yaml --ator "Celso do Vale" {extra}'
++        return subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/guarda.py')],cwd=self.caso,input=json.dumps({'tool_name':'Bash','tool_input':{'command':cmd}}),text=True,capture_output=True)
++    def negado(self,script,texto,extra=''):
++        r=self.guarda(script,texto,extra); self.assertEqual(r.returncode,2,r.stderr); self.assertIn('proprio terminal',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
++    def test_00_revisao(self): self.negado('piloto.py','estado: revisado\nrevisado_por: Celso do Vale')
++    def test_01_rotina(self): self.negado('calibragem.py','responsavel: Celso do Vale\ncadencia: mensal')
++    def test_02_rascunho_permitido(self): self.assertEqual(self.guarda('piloto.py','estado: rascunho').returncode,0)
++    def test_03_baseline_medicao_permitida(self): self.assertEqual(self.guarda('baseline.py','apuracao: medido').returncode,0)
++    def test_04_metrica_calculo_permitido(self): self.assertEqual(self.guarda('metrica.py','estado: apurada').returncode,0)
++    def test_05_ciclo_sem_decisao(self): self.assertEqual(self.guarda('calibragem.py','recomendacao_agente: recalibrar','--ciclo').returncode,0)
++if __name__=='__main__': unittest.main(verbosity=2)
+diff --git a/testes/sessao_a8.py b/testes/sessao_a8.py
+index 7106a15..3c27ca9 100644
+--- a/testes/sessao_a8.py
++++ b/testes/sessao_a8.py
+@@ -6,6 +6,7 @@ import subprocess
+ import tempfile
+ import unittest
+ 
++from apoio.preparar import produto as preparar_produto
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ SCRIPT = RAIZ / "eiac-nucleo/scripts/avancar.py"
+ REGRAS = {"EX1": False, "EX2": False, "EX3": True, "EX4": True}
+@@ -73,6 +74,7 @@ class SessaoA8(unittest.TestCase):
+         self.assertEqual(self.ultimo_evento()["evento"], "SessaoDeCampoRegistrada")
+ 
+     def encerramento(self, etapa):
++        preparar_produto(self.caso, etapa)
+         result = self.executar("--encerrar", etapa)
+         self.assertEqual(result.returncode, 0, result.stderr)
+         self.assertTrue(json.loads(self.estado.read_text())["cumprimentos"][etapa]["cumprido"])
+diff --git a/testes/verificacao_por_estados.py b/testes/verificacao_por_estados.py
+index 75a227f..1f646c0 100644
+--- a/testes/verificacao_por_estados.py
++++ b/testes/verificacao_por_estados.py
+@@ -27,6 +27,7 @@ import subprocess
+ import sys
+ import tempfile
+ 
++from apoio.preparar import produto as preparar_produto
+ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ TEMPLATE = RAIZ / "eiac-campo" / "template-caso"
+ GUARDA = RAIZ / "eiac-nucleo" / "scripts" / "guarda.py"
+@@ -106,6 +107,7 @@ def levar_ate_p3b(caso):
+     if codigo != 0:
+         return codigo, saida, erro
+     avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
++    preparar_produto(caso, "P3a")
+     codigo, saida, erro = avancar(caso, encerrar="P3a", autor="Celso do Vale")
+     if codigo != 0:
+         return codigo, saida, erro
+@@ -165,6 +167,7 @@ with tempfile.TemporaryDirectory() as tmp:
+         falha(f"T03 pre-condicao: P2 nao encerrou: {erro}")
+     else:
+         avancar(caso, registrar_sessao="P3a", autor="Celso do Vale", participantes="Ana, Celso")
++        preparar_produto(caso, "P3a")
+         avancar(caso, encerrar="P3a", autor="Celso do Vale")
+         avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+         codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})

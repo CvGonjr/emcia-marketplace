@@ -1,0 +1,38 @@
+Base: v-sprint3-poc.4
+Comando: python3 testes/revisao_a15.py
+Saída: 1
+test_00_revisao (__main__.RevisaoA15.test_00_revisao) ... FAIL
+test_01_rotina (__main__.RevisaoA15.test_01_rotina) ... FAIL
+test_02_rascunho_permitido (__main__.RevisaoA15.test_02_rascunho_permitido) ... ok
+test_03_baseline_medicao_permitida (__main__.RevisaoA15.test_03_baseline_medicao_permitida) ... ok
+test_04_metrica_calculo_permitido (__main__.RevisaoA15.test_04_metrica_calculo_permitido) ... ok
+test_05_ciclo_sem_decisao (__main__.RevisaoA15.test_05_ciclo_sem_decisao) ... ok
+
+======================================================================
+FAIL: test_00_revisao (__main__.RevisaoA15.test_00_revisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/revisao_a15.py", line 32, in test_00_revisao
+    def test_00_revisao(self): self.negado('piloto.py','estado: revisado\nrevisado_por: Celso do Vale')
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/revisao_a15.py", line 31, in negado
+    r=self.guarda(script,texto,extra); self.assertEqual(r.returncode,2,r.stderr); self.assertIn('proprio terminal',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_01_rotina (__main__.RevisaoA15.test_01_rotina)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/revisao_a15.py", line 33, in test_01_rotina
+    def test_01_rotina(self): self.negado('calibragem.py','responsavel: Celso do Vale\ncadencia: mensal')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/revisao_a15.py", line 31, in negado
+    r=self.guarda(script,texto,extra); self.assertEqual(r.returncode,2,r.stderr); self.assertIn('proprio terminal',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : 
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.326s
+
+FAILED (failures=2)

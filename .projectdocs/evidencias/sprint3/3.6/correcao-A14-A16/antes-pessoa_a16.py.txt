@@ -1,0 +1,208 @@
+Base: v-sprint3-poc.4
+Comando: python3 testes/pessoa_a16.py
+Saída: 1
+test_00_equipe (__main__.PessoaA16.test_00_equipe) ... FAIL
+test_01_time (__main__.PessoaA16.test_01_time) ... FAIL
+test_02_area (__main__.PessoaA16.test_02_area) ... FAIL
+test_03_nome_unico (__main__.PessoaA16.test_03_nome_unico) ... FAIL
+test_04_comite (__main__.PessoaA16.test_04_comite) ... FAIL
+test_05_pessoa (__main__.PessoaA16.test_05_pessoa) ... ok
+test_06_regra_do_caso (__main__.PessoaA16.test_06_regra_do_caso) ... FAIL
+test_10_baseline (__main__.PessoaA16.test_10_baseline) ... FAIL
+test_11_operacional (__main__.PessoaA16.test_11_operacional) ... FAIL
+test_12_governanca (__main__.PessoaA16.test_12_governanca) ... FAIL
+test_13_revisor (__main__.PessoaA16.test_13_revisor) ... FAIL
+test_14_metrica (__main__.PessoaA16.test_14_metrica) ... FAIL
+test_15_calibragem (__main__.PessoaA16.test_15_calibragem) ... FAIL
+test_16_novo_caso_coletivo (__main__.PessoaA16.test_16_novo_caso_coletivo) ... FAIL
+test_17_validador_autoria (__main__.PessoaA16.test_17_validador_autoria) ... FAIL
+test_18_nome_sobrenome_sem_acentos (__main__.PessoaA16.test_18_nome_sobrenome_sem_acentos) ... FAIL
+test_19_produto_responsavel_coletivo (__main__.PessoaA16.test_19_produto_responsavel_coletivo) ... FAIL
+
+======================================================================
+FAIL: test_00_equipe (__main__.PessoaA16.test_00_equipe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 30, in test_00_equipe
+    def test_00_equipe(self): self.conferir('equipe de TI',False)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_01_time (__main__.PessoaA16.test_01_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 31, in test_01_time
+    def test_01_time(self): self.conferir('Time Comercial',False)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_02_area (__main__.PessoaA16.test_02_area)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 32, in test_02_area
+    def test_02_area(self): self.conferir('Área de Vendas',False)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_03_nome_unico (__main__.PessoaA16.test_03_nome_unico)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 33, in test_03_nome_unico
+    def test_03_nome_unico(self): self.conferir('Marina',False)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_04_comite (__main__.PessoaA16.test_04_comite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 34, in test_04_comite
+    def test_04_comite(self): self.conferir('Comitê Executivo',False)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_06_regra_do_caso (__main__.PessoaA16.test_06_regra_do_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 37, in test_06_regra_do_caso
+    p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text()); pb['pessoa_nomeada']={'minimo_partes':2,'termos_coletivos':['Prado']}; p.write_text(json.dumps(pb)); self.conferir('Marina Prado',False)
+                                                                                                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_10_baseline (__main__.PessoaA16.test_10_baseline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 55, in test_10_baseline
+    def test_10_baseline(self): self.campo_pessoa('P3a','baseline.py','registro/baseline/BL-999.yaml','declarado_por')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_11_operacional (__main__.PessoaA16.test_11_operacional)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 56, in test_11_operacional
+    def test_11_operacional(self): self.campo_pessoa('P6','operacional.py','registro/operacional/OP-999.yaml','responsavel_operacional')
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_12_governanca (__main__.PessoaA16.test_12_governanca)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 57, in test_12_governanca
+    def test_12_governanca(self): self.campo_pessoa('P7','governanca.py','registro/governanca/autonomia/AUT-999.yaml','decisor')
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_13_revisor (__main__.PessoaA16.test_13_revisor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 58, in test_13_revisor
+    def test_13_revisor(self): self.campo_pessoa('P8','piloto.py','registro/piloto/CT-999.yaml','revisor')
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_14_metrica (__main__.PessoaA16.test_14_metrica)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 59, in test_14_metrica
+    def test_14_metrica(self): self.campo_pessoa('P9','metrica.py','registro/metricas/MET-999.yaml','responsavel_apuracao')
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_15_calibragem (__main__.PessoaA16.test_15_calibragem)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 60, in test_15_calibragem
+    def test_15_calibragem(self): self.campo_pessoa('P10','calibragem.py','registro/calibragem/CAL-999.yaml','responsavel')
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 50, in campo_pessoa
+    r=gravar(); self.assertEqual(r.returncode,1,r.stderr); self.assertEqual(destino.read_bytes(),original)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_16_novo_caso_coletivo (__main__.PessoaA16.test_16_novo_caso_coletivo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 63, in test_16_novo_caso_coletivo
+    self.assertEqual(r.returncode,1,r.stderr); self.assertFalse((self.caso/'casos/coletivo').exists())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+======================================================================
+FAIL: test_17_validador_autoria (__main__.PessoaA16.test_17_validador_autoria)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 67, in test_17_validador_autoria
+    self.assertEqual(r.returncode,1); self.assertFalse((self.caso/'caso/a.md').exists()); self.assertEqual(self.evento()['evento'],'AssercaoRecusada')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_18_nome_sobrenome_sem_acentos (__main__.PessoaA16.test_18_nome_sobrenome_sem_acentos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 68, in test_18_nome_sobrenome_sem_acentos
+    def test_18_nome_sobrenome_sem_acentos(self): self.conferir('Marina Núcleo',False)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 28, in conferir
+    self.assertEqual(r.returncode,0 if permitido else 1,r.stdout+r.stderr)
+AssertionError: 0 != 1 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_19_produto_responsavel_coletivo (__main__.PessoaA16.test_19_produto_responsavel_coletivo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/emcia-antes-A14-vz2h6cy0/testes/pessoa_a16.py", line 71, in test_19_produto_responsavel_coletivo
+    r=self.avancar('--encerrar','P10'); self.assertEqual(r.returncode,1,r.stderr); self.assertIn('produto',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.134s
+
+FAILED (failures=16)
