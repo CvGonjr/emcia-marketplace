@@ -18,7 +18,7 @@ para os portoes de emissao (2.6.0).
 Negativos primeiro (decisao 011): sem selo, e com selo anterior ao
 encerramento de P2, ambos recusam -- abrir (guarda.py, TentativaNegada) e
 encerrar (avancar.py, RecusaMaquina). Depois o controle positivo: selo
-posterior abre e encerra normalmente.
+posterior permite encerrar; A18 mantém o carregamento não delegável recusado.
 """
 import json
 import pathlib
@@ -98,8 +98,8 @@ def eventos(caso):
 
 def levar_ate_p3b(caso):
     """F0 -> P1 -> P2 -> P3a, sem selar. Etapa corrente fica P3b, com a
-    sessao humana ja registrada (P3b e nao delegavel -- G1 recusaria antes
-    de G7 sequer ser avaliado, sem a sessao)."""
+    sessao humana ja registrada. G7 é conferida independentemente de G1;
+    a sessão não autoriza carregar habilidade não delegável (A18)."""
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
     avancar(caso, encerrar="F0", autor="Celso do Vale")
     avancar(caso, encerrar="P1", autor="Celso do Vale")
@@ -177,8 +177,8 @@ with tempfile.TemporaryDirectory() as tmp:
             falha(f"T03 selo anterior foi aceito indevidamente: exit={codigo} erro={erro}")
 
 # =====================================================================
-# T04 (positivo, controle) -- selo POSTERIOR ao encerramento de P2 abre
-# e encerra P3b normalmente
+# T04 (controle) -- selo POSTERIOR ao encerramento de P2 satisfaz G7
+# e permite encerrar P3b pelo engenheiro; o agente continua sem carregar a habilidade
 # =====================================================================
 with tempfile.TemporaryDirectory() as tmp:
     caso = preparar_caso(pathlib.Path(tmp))
@@ -192,10 +192,10 @@ with tempfile.TemporaryDirectory() as tmp:
             falha(f"T04 selo posterior falhou ao ser aplicado: {erro_selo}")
         else:
             codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
-            if codigo == 0:
-                ok("T04 P3b abre com selo posterior ao encerramento de P2")
+            if codigo == 2 and "nao e delegavel" in erro:
+                ok("T04 P3b não carrega pelo agente mesmo com sessão e selo posterior (A18)")
             else:
-                falha(f"T04 P3b nao abriu com selo posterior valido: exit={codigo} erro={erro}")
+                falha(f"T04 P3b foi delegada apesar da proibição: exit={codigo} erro={erro}")
 
             avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
             codigo, saida, erro = avancar(caso, encerrar="P3b", autor="Celso do Vale")

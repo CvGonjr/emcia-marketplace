@@ -1,0 +1,11 @@
+{
+  "Skill": {
+    "skill": "eiac-campo:hb-levantar-regras"
+  },
+  "Edit": {
+    "replace_all": false,
+    "file_path": "/tmp/emcia-demos/controle-37/registro/estado.json",
+    "old_string": "  \"etapa_atual\": \"P10\",",
+    "new_string": "  \"etapa_atual\": \"F0\","
+  }
+}

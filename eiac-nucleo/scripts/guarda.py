@@ -36,9 +36,31 @@ MARCADOR_CONTRASTE = re.compile(
 
 
 def negar(motivo, **ctx):
+    ctx.setdefault("autor", (E.ler() or {}).get("responsavel"))
     E.evento("TentativaNegada", motivo=motivo, **ctx)
     print(motivo, file=sys.stderr)
     sys.exit(2)
+
+
+def nomes_habilidades(ev, entrada, alvo, comando):
+    nomes = set()
+    if ev.get("tool_name") == "Skill":
+        nomes.add(str(entrada.get("skill", "")).split(":")[-1])
+    if ev.get("hook_event_name") == "UserPromptExpansion":
+        nomes.add(str(ev.get("command_name", "")).lstrip("/").split(":")[-1])
+    caminhos = [alvo] if alvo else []
+    if ev.get("tool_name") == "Bash":
+        try:
+            caminhos.extend(shlex.split(comando))
+        except ValueError:
+            pass
+    for caminho in caminhos:
+        nomes.update(pathlib.PurePath(caminho).parts)
+        try:
+            nomes.update(pathlib.Path(caminho).expanduser().resolve().parts)
+        except (OSError, RuntimeError):
+            pass
+    return nomes
 
 
 def _em_fontes(alvo):
@@ -141,47 +163,35 @@ def main():
                 autor=st.get("responsavel"), etapa=etapa_id, ferramenta=ferramenta,
             )
 
-    # G1 — habilidade de camada humana nao carrega sem sessao valida
-    # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
-    # a mesma etapa pode ser EX2 em N1 e EX3 em N3. Sessao humana
-    # registrada (por avancar.py --registrar-sessao, caminho autorizado)
-    # libera o CARREGAMENTO da skill como instrumento de apoio/registro —
-    # nao libera decisao, aprovacao ou fechamento da etapa por agente,
-    # que continuam bloqueados por outras regras (delegavel:false em
-    # avancar.encerrar(), G1 nao muda isso). Sessao de outra etapa, ou
-    # ausente, nao libera.
-    for e in pb["etapas"]:
-        if not e.get("habilidade") or e["habilidade"] not in alvo:
-            continue
+    # A habilidade é identificada pelo nome declarado, em todas as rotas
+    # de carregamento. O namespace e a localização da instalação não
+    # fazem parte da regra do método.
+    nomes = nomes_habilidades(ev, entrada, alvo, comando)
+    habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
+    # G7 continua independente da autorização de carregamento.
+    for e in habilidades:
+        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
+        if not selo_ok:
+            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
+
+    # G1: sessão registrada não delega uma etapa explicitamente humana.
+    # Nas etapas delegáveis de camada humana, mantém-se o uso instrumental
+    # após a sessão da própria etapa, sem delegar a decisão.
+    for e in habilidades:
         cam = P.camada(pb, e["id"], nivel)
-        if e.get("delegavel") is False or cam in ("EX3", "EX4"):
-            sessao_valida = bool(
-                st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
-            )
-            if sessao_valida:
-                continue
+        sessao = st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
+        if e.get("delegavel") is False or (P.humana(cam) and not sessao):
             motivo = ("nao e delegavel a agente" if e.get("delegavel") is False
                       else f"esta em camada humana ({cam}) para o nivel {nivel or 'nao apurado'}")
             negar(
                 f"{cam}: a etapa {e['id']} {motivo}. "
                 f"Modalidade exigida: {e.get('modalidade','?')}. "
-                f"Registre a sessao com /eiac-nucleo:registrar-sessao.",
+                "A sessao registrada nao delega uma etapa humana."
+                if e.get("delegavel") is False else
+                f"{cam}: a etapa {e['id']} {motivo}. Registre a sessao com /eiac-nucleo:registrar-sessao.",
                 etapa=e["id"], camada_exigida=cam, nivel=nivel, ferramenta=ferramenta,
+                habilidade=e["habilidade"], hook_event_name=ev.get("hook_event_name"),
             )
-
-    # G7 — habilidade de etapa que exige selo posterior a outra etapa nao
-    # carrega sem esse selo. Generico: qualquer etapa pode declarar
-    # {"exige_selo_apos": "<id>"} no playbook; o nucleo nao sabe por que
-    # (nao cita nenhum id de etapa aqui) -- so compara eventos EtapaEncerrada
-    # e SeloAplicado via playbook.selo_apos_etapa(). Isto cobre a ABERTURA
-    # da etapa (carregamento da skill); o fechamento e recusado por
-    # avancar.encerrar() com a mesma checagem.
-    for e in pb["etapas"]:
-        if not e.get("habilidade") or e["habilidade"] not in alvo:
-            continue
-        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
-        if not selo_ok:
-            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
 
     # G2 — escrita direta no repositorio do caso
     escrita = ferramenta in ("Write", "Edit") and alvo.startswith("caso/")
