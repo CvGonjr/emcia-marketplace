@@ -23,6 +23,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
 import decisao_humana as H
+import caminhos as C
 
 
 META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
@@ -42,59 +43,34 @@ def negar(motivo, **ctx):
     sys.exit(2)
 
 
-def nomes_habilidades(ev, entrada, alvo, comando):
+def nomes_habilidades(ev, entrada, alvo, comando, caminhos):
     nomes = set()
     if ev.get("tool_name") == "Skill":
         nomes.add(str(entrada.get("skill", "")).split(":")[-1])
     if ev.get("hook_event_name") == "UserPromptExpansion":
         nomes.add(str(ev.get("command_name", "")).lstrip("/").split(":")[-1])
-    caminhos = [alvo] if alvo else []
+    if alvo:
+        nomes.update(caminhos.nomes(alvo))
     if ev.get("tool_name") == "Bash":
-        try:
-            caminhos.extend(shlex.split(comando))
-        except ValueError:
-            pass
-    for caminho in caminhos:
-        nomes.update(pathlib.PurePath(caminho).parts)
-        try:
-            nomes.update(pathlib.Path(caminho).expanduser().resolve().parts)
-        except (OSError, RuntimeError):
-            pass
+        for grupo, cwd in C.comandos(comando, caminhos.cwd):
+            for caminho in C.argumentos_caminho(grupo):
+                nomes.update(caminhos.nomes(caminho,cwd))
     return nomes
 
 
-def _em_fontes(alvo):
-    if not alvo:
-        return False
-    if "fontes" in pathlib.PurePath(alvo).parts:
-        return True
-    caminho = pathlib.Path(alvo)
-    resolvido = caminho.resolve() if caminho.is_absolute() else (pathlib.Path.cwd() / caminho).resolve()
-    return "fontes" in resolvido.parts
+def _bash_fontes(comando, caminhos):
+    for grupo, cwd in C.comandos(comando,caminhos.cwd):
+        menciona = any(caminhos.em_segmento(p,"fontes",cwd)
+                      for p in C.argumentos_caminho(grupo))
+        if menciona and (pathlib.Path(grupo[0]).name not in LEITORES_FONTES
+                         or any(">" in parte for parte in grupo)):
+            return True
+    return False
 
 
-def _bash_menciona_fontes(comando):
-    if "fontes/" in comando or "/fontes/" in comando:
-        return True
-    try:
-        partes = shlex.split(comando)
-    except ValueError:
-        partes = comando.split()
-    return any(
-        parte == "fontes" or parte.startswith("fontes/") or "/fontes/" in parte
-        for parte in partes
-    )
-
-
-def _bash_leitura_fontes(comando):
-    """Reconhece somente comandos simples e explicitamente de leitura."""
-    if not comando.strip() or META_SHELL.search(comando):
-        return False
-    try:
-        partes = shlex.split(comando)
-    except ValueError:
-        return False
-    return bool(partes) and pathlib.Path(partes[0]).name in LEITORES_FONTES
+def _bash_em(comando, caminhos, area):
+    return any(caminhos.em(p,area,cwd) for grupo,cwd in C.comandos(comando,caminhos.cwd)
+               for p in C.escritas(grupo))
 
 
 def _registro_contraste():
@@ -120,6 +96,11 @@ def main():
     except Exception:
         sys.exit(0)
 
+    raiz = C.raiz_caso(ev)
+    if raiz is None:
+        sys.exit(0)
+    caminhos = C.Contexto(raiz, ev.get("cwd") or os.getcwd())
+    os.chdir(raiz)
     st = E.ler()
     if not st:
         sys.exit(0)          # fora de caso, o nucleo nao opina
@@ -142,7 +123,7 @@ def main():
 
     ferramenta = ev.get("tool_name", "")
     entrada = ev.get("tool_input", {}) or {}
-    alvo = str(entrada.get("file_path") or entrada.get("path") or "")
+    alvo = str(entrada.get("file_path") or entrada.get("path") or entrada.get("notebook_path") or "")
     comando = str(entrada.get("command") or "")
     etapa_id = st["etapa_atual"]
     nivel = st.get("nivel")
@@ -166,7 +147,7 @@ def main():
     # A habilidade é identificada pelo nome declarado, em todas as rotas
     # de carregamento. O namespace e a localização da instalação não
     # fazem parte da regra do método.
-    nomes = nomes_habilidades(ev, entrada, alvo, comando)
+    nomes = nomes_habilidades(ev, entrada, alvo, comando, caminhos)
     habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
     # G7 continua independente da autorização de carregamento.
     for e in habilidades:
@@ -194,10 +175,8 @@ def main():
             )
 
     # G2 — escrita direta no repositorio do caso
-    escrita = ferramenta in ("Write", "Edit") and alvo.startswith("caso/")
-    escrita_bash = ferramenta == "Bash" and " caso/" in comando and any(
-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
-    )
+    escrita = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"caso")
+    escrita_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"caso")
     if escrita or escrita_bash:
         negar(
             "Escrita direta em caso/ nao e permitida. "
@@ -207,10 +186,8 @@ def main():
         )
 
     # G2b — escrita direta na camada de contexto curada
-    escrita_ctx = ferramenta in ("Write", "Edit") and alvo.startswith("contexto/")
-    escrita_ctx_bash = ferramenta == "Bash" and " contexto/" in comando and any(
-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
-    )
+    escrita_ctx = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"contexto")
+    escrita_ctx_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"contexto")
     if escrita_ctx or escrita_ctx_bash:
         negar(
             "Escrita direta em contexto/ nao e permitida. "
@@ -227,12 +204,8 @@ def main():
     # arvore do caso (raiz e contexto/fontes/, esta ultima ja coberta
     # tambem por G2b). Entrada de documento novo e feita pelo operador,
     # fora da sessao do agente.
-    escrita_fontes = ferramenta in ("Write", "Edit") and _em_fontes(alvo)
-    escrita_fontes_bash = (
-        ferramenta == "Bash"
-        and _bash_menciona_fontes(comando)
-        and not _bash_leitura_fontes(comando)
-    )
+    escrita_fontes = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em_segmento(alvo,"fontes")
+    escrita_fontes_bash = ferramenta == "Bash" and _bash_fontes(comando,caminhos)
     if escrita_fontes or escrita_fontes_bash:
         negar(
             "Escrita, edicao ou remocao em fontes/ nao e permitida a agente. "
@@ -253,10 +226,8 @@ def main():
     # so os scripts do nucleo gravam ali; passar por Write/Edit ou
     # redirecionamento de shell contorna estado, inegociaveis, portoes e
     # eventos (2.6-BL17, D-08).
-    escrita_registro = ferramenta in ("Write", "Edit") and alvo.startswith("registro/")
-    escrita_registro_bash = ferramenta == "Bash" and " registro/" in comando and any(
-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
-    )
+    escrita_registro = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"registro")
+    escrita_registro_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"registro")
     if escrita_registro or escrita_registro_bash:
         negar(
             "Escrita direta em registro/ nao e permitida. "
@@ -280,4 +251,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (C.CaminhoInvalido, ValueError) as exc:
+        negar(f"Entrada de caminho/comando invalida: {exc}")
