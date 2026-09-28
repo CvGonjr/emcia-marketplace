@@ -11,12 +11,18 @@ description: Protocolo humano de levantamento de regras nao documentadas. NAO EX
 
 ## ⛔ Não executável por agente
 
-Se você é um agente e esta habilidade foi carregada, **recuse** e registre em `caso/log-tentativas.md`:
+Se você é um agente e esta habilidade foi carregada, **recuse**.
 
-```
-- [tentativa-negada · etapa: P3b · camada exigida: EX4 · camada corrente: <sua> · <data>]
-  Tentativa de executar levantamento de regras nao documentadas.
-```
+A recusa de carregamento é registrada pela guarda como evento
+`TentativaNegada` em `registro/eventos.jsonl`, com a habilidade, a etapa e
+o responsável do caso. Não transforme a recusa em asserção nem escreva
+diretamente na trilha. Se o conteúdo chegou por um caminho sem hook, informe
+a falha de proteção ao engenheiro para investigação e registro da tentativa;
+não execute o protocolo.
+
+`caso/` aceita somente asserções com procedência real `D`, `I` ou `V`, pelo
+validador. Uma tentativa do agente não recebe essas marcas para forçar a
+aceitação do registro. O evento da guarda é o registro da negativa.
 
 Responda apenas: *este passo é presencial e humano. Registre a sessão ao voltar do campo.*
 
