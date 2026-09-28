@@ -58,6 +58,53 @@ def eventos():
     return lidos
 
 
+def ultimo_selo():
+    """Deriva hash/data/nota do selo que entrou em um commit do caso.
+
+    O evento é escrito antes do commit para integrar o próprio selo.
+    Eventos ainda não commitados não comprovam aplicação. A primeira
+    introdução do evento no Git deve ter a nota e a autoria do selo;
+    commits posteriores de outros arquivos não mudam seu hash.
+    """
+    def git(*args):
+        return subprocess.run(["git", *args], capture_output=True, text=True, timeout=5)
+
+    try:
+        raiz = git("rev-parse", "--show-toplevel")
+        if raiz.returncode or pathlib.Path(raiz.stdout.strip()).resolve() != pathlib.Path.cwd().resolve():
+            return None
+        historico = git("log", "--reverse", "--format=%H", "--", "registro/eventos.jsonl")
+        if historico.returncode:
+            return None
+        vistos, ultimo = set(), None
+        for sha in historico.stdout.splitlines():
+            snapshot = git("show", sha+":registro/eventos.jsonl")
+            if snapshot.returncode:
+                continue
+            novos = []
+            for pos, linha in enumerate(snapshot.stdout.splitlines()):
+                try:
+                    ev = json.loads(linha)
+                except json.JSONDecodeError:
+                    continue
+                chave = (pos, json.dumps(ev, sort_keys=True, ensure_ascii=False))
+                if ev.get("evento") == "SeloAplicado" and chave not in vistos:
+                    novos.append(ev)
+                vistos.add(chave)
+            if not novos:
+                continue
+            meta = git("show", "-s", "--format=%an%x00%B", sha)
+            if meta.returncode:
+                continue
+            autor, nota = meta.stdout.split("\0", 1)
+            for ev in novos:
+                if ev.get("autor") == autor and ev.get("nota", "").strip() == nota.strip():
+                    ultimo = {"hash": sha, "data": ev.get("data"), "nota": ev.get("nota")}
+        return ultimo
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return None
+
+
 def gravar(e):
     CAMINHO.parent.mkdir(parents=True, exist_ok=True)
     CAMINHO.write_text(json.dumps(e, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -112,6 +159,7 @@ if __name__ == "__main__":
         else:
             print("Nenhum caso aberto neste diretorio.")
         sys.exit(0)
+    e["selo"] = ultimo_selo()
     if "--resumo" in sys.argv:
         cam = e.get("camada_atual")
         pb = None
@@ -129,6 +177,8 @@ if __name__ == "__main__":
             sentido = " · " + P.natureza(pb, e["etapa_atual"], e.get("nivel"))
         print(f"Caso {e['caso']} | nivel {nivel} | etapa {e['etapa_atual']} "
               f"| camada {cam or '?'}{sentido} | modalidade {e.get('modalidade_atual','?')}")
+        selo = e["selo"]
+        print(f"Selo: {selo['hash']} | {selo['data']} | {selo['nota']}" if selo else "Selo: nenhum")
         if pb:
             prox = P.proxima_fronteira(pb, e["etapa_atual"], e.get("nivel"))
             if prox:
