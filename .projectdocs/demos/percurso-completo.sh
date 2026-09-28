@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Demonstração sintética da ação 3.8, pela tag v-sprint3-poc.6.
+# Demonstração sintética da ação 3.8, pela tag v-sprint3-poc.7.
 # Executar pelo engenheiro no próprio terminal; inclui decisões humanas
 # fictícias de controle. Não é um roteiro para aplicar decisões a clientes.
 # Conta invocações diretas: não soma subprocessos internos dos plugins,
@@ -18,7 +18,7 @@ raiz = pathlib.Path(sys.argv[1])
 base = pathlib.Path(sys.argv[2]).expanduser().resolve()
 nome = sys.argv[3]
 pessoa = 'Celso do Vale'
-tag = 'v-sprint3-poc.6'
+tag = 'v-sprint3-poc.7'
 caso = base / nome
 contagens = collections.Counter()
 
@@ -75,7 +75,7 @@ comum = dict(procedencia='D', declarado_por=pessoa, registrado_por=pessoa, data=
 bl = dict(comum, id='BL-001', indicador='Tempo de controle', valor_atual='10 minutos', apuracao='medido', nivel='N2')
 ct = dict(comum, id='CT-001', estado='rascunho', modo='assistido', duracao='1 semana', plano_reversao='Retorno manual', criterio_aprovacao_escala='100% no caso de controle', criterio_aprovacao_escala_definido_em=hoje, casos=[dict(identificador='CT-001-01', origem='Controle sintético', entrada='Pedido fictício', saida_esperada='Encaminhar', criterio_aprovacao='Igual à saída esperada', categoria='celula_critica', revisor=pessoa, data_revisao=hoje, esperado_definido_em=hoje, esperado_definido_por=pessoa)])
 met = dict(comum, id='MET-001', estado='planejada', piloto_ref='CT-001', baseline_ref='BL-001', metrica='Tempo de controle', tipo='resultado', linha_base='10 minutos', linha_base_data=hoje, linha_base_procedencia='D', metodo_apuracao='Diferença de horários', fonte_dado='Controle sintético', periodicidade='mensal', responsavel_apuracao=pessoa)
-cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel=pessoa, responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
+cal = dict(comum, id='CAL-001', metricas_ref=['MET-001'], responsavel='Marina Prado', responsavel_ciente=True, cadencia='mensal', data_primeira_revisao=(datetime.date.today()+datetime.timedelta(days=30)).isoformat(), limiares_desvio='Aumento de 15%', limiares_desvio_definidos_em=hoje, monitoramento='Controle sintético', canal_incidente='Terminal do engenheiro', analise_pos_incidente='Revisar causa com responsável')
 
 def executar(fonte):
     nucleo = fonte/'eiac-nucleo/scripts'
@@ -189,7 +189,7 @@ def main():
         sys.exit('o destino já existe: '+str(caso))
     codigo = 0
     # Cópia de trabalho separada: o estado local do repositório não muda.
-    with tempfile.TemporaryDirectory(prefix='emcia-percurso-v6-') as temporario:
+    with tempfile.TemporaryDirectory(prefix='emcia-percurso-v7-') as temporario:
         fonte = pathlib.Path(temporario)/'fonte'
         criada = False
         try:
