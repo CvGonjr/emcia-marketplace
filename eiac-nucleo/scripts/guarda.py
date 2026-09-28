@@ -26,7 +26,6 @@ import decisao_humana as H
 import caminhos as C
 
 
-META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
 LEITORES_FONTES = {
     "cat", "file", "grep", "head", "ls", "rg", "sha256sum",
     "stat", "tail", "wc",
@@ -60,10 +59,14 @@ def nomes_habilidades(ev, entrada, alvo, comando, caminhos):
 
 def _bash_fontes(comando, caminhos):
     for grupo, cwd in C.comandos(comando,caminhos.cwd):
+        if any(caminhos.em_segmento(p,"fontes",cwd) for p in C.escritas(grupo)):
+            return True
+        argv,_ = C.redirecionamentos(grupo)
         menciona = any(caminhos.em_segmento(p,"fontes",cwd)
-                      for p in C.argumentos_caminho(grupo))
-        if menciona and (pathlib.Path(grupo[0]).name not in LEITORES_FONTES
-                         or any(">" in parte for parte in grupo)):
+                      for p in C.argumentos_caminho(argv))
+        # Código arbitrário que toca uma fonte não é reconhecido como
+        # leitor. A inspeção de redirecionamentos não retira essa trava.
+        if menciona and argv and pathlib.Path(argv[0]).name not in LEITORES_FONTES | C.ESCRITORES:
             return True
     return False
 

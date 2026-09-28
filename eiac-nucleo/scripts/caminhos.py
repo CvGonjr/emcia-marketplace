@@ -154,8 +154,45 @@ def argumentos_caminho(grupo):
                 yield no.value
 
 
+def redirecionamentos(grupo):
+    """Retorna argv e os arquivos de saída; duplicação de FD não é arquivo."""
+    argv, saidas=[],[]
+    i=0
+    while i<len(grupo):
+        parte=grupo[i]
+        if getattr(parte,'operador',False) and ('>' in parte or '<' in parte):
+            if i+1>=len(grupo):
+                raise ValueError('redirecionamento sem alvo')
+            alvo=grupo[i+1]
+            if '>' in parte and '<' not in parte:
+                duplica=parte.endswith('&') and (alvo.isdigit() or alvo=='-')
+                if not duplica: saidas.append(alvo)
+            elif parte=='<>':
+                saidas.append(alvo)
+            i+=2
+        else:
+            argv.append(parte); i+=1
+    return argv,saidas
+
+
+ESCRITORES = {'tee','mv','cp','rm','touch','mkdir','install','truncate',
+              'chmod','chown','ln','rmdir','unlink','sed','dd'}
+
+
 def escritas(grupo):
-    """Compatibilidade inicial da guarda; alvos já normalizados pelo chamador."""
-    if any('>' in parte for parte in grupo) or pathlib.Path(grupo[0]).name in ('tee','mv','cp','rm','touch','mkdir','install'):
-        return list(argumentos_caminho(grupo))
-    return []
+    argv,alvos=redirecionamentos(grupo)
+    if not argv: return alvos
+    nome=pathlib.Path(argv[0]).name
+    args=[p for p in argv[1:] if not p.startswith('-')]
+    if nome in ('cp','install','ln'):
+        alvos.extend(args[-1:])
+        for i,p in enumerate(argv[1:],1):
+            if p in ('-t','--target-directory') and i+1<len(argv): alvos.append(argv[i+1])
+            elif p.startswith('--target-directory='): alvos.append(p.split('=',1)[1])
+    elif nome in ('tee','mv','rm','touch','mkdir','truncate','chmod','chown','rmdir','unlink'):
+        alvos.extend(args)
+    elif nome=='sed' and any(p=='--in-place' or p.startswith('--in-place=') or p.startswith('-i') for p in argv[1:]):
+        alvos.extend(args)
+    elif nome=='dd':
+        alvos.extend(p[3:] for p in argv[1:] if p.startswith('of='))
+    return alvos
