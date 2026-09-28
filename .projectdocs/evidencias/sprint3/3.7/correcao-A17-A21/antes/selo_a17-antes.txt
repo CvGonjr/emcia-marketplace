@@ -1,0 +1,57 @@
+test_01_sem_selo_nao_inventa_hash (__main__.Selo.test_01_sem_selo_nao_inventa_hash) ... ok
+test_02_commit_recusado_nao_exibe_selo_aplicado (__main__.Selo.test_02_commit_recusado_nao_exibe_selo_aplicado) ... ok
+test_03_hash_data_nota (__main__.Selo.test_03_hash_data_nota) ... ERROR
+test_04_ultimo_selo (__main__.Selo.test_04_ultimo_selo) ... ERROR
+test_05_commit_posterior_nao_troca_hash (__main__.Selo.test_05_commit_posterior_nao_troca_hash) ... ERROR
+test_06_resumo_mostra_selo (__main__.Selo.test_06_resumo_mostra_selo) ... FAIL
+test_07_tentativa_posterior_nao_apaga_selo (__main__.Selo.test_07_tentativa_posterior_nao_apaga_selo) ... ERROR
+
+======================================================================
+ERROR: test_03_hash_data_nota (__main__.Selo.test_03_hash_data_nota)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_a17.py", line 35, in test_03_hash_data_nota
+    self.assertEqual(selo['hash'],sha); self.assertEqual(selo['nota'],'primeiro selo')
+                     ~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_04_ultimo_selo (__main__.Selo.test_04_ultimo_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_a17.py", line 40, in test_04_ultimo_selo
+    self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_05_commit_posterior_nao_troca_hash (__main__.Selo.test_05_commit_posterior_nao_troca_hash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_a17.py", line 46, in test_05_commit_posterior_nao_troca_hash
+    self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_07_tentativa_posterior_nao_apaga_selo (__main__.Selo.test_07_tentativa_posterior_nao_apaga_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_a17.py", line 56, in test_07_tentativa_posterior_nao_apaga_selo
+    self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+FAIL: test_06_resumo_mostra_selo (__main__.Selo.test_06_resumo_mostra_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_a17.py", line 50, in test_06_resumo_mostra_selo
+    self.assertIn(sha,r.stdout); self.assertIn('selo de controle',r.stdout)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'c8cb6affb600b0278069e980df3abb472ddeffe5' not found in 'Caso ALTERE-ME | nivel N2 | etapa F0 | camada EX1 · preparacao delegavel | modalidade assincrono\nProxima fronteira: P3a (EX3) exige verificacao humana.\n'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.921s
+
+FAILED (failures=1, errors=4)

@@ -1,0 +1,104 @@
+test_01_stderr_protegido (__main__.Redirecionamentos.test_01_stderr_protegido) ... FAIL
+test_02_append_protegido (__main__.Redirecionamentos.test_02_append_protegido) ... ERROR
+test_03_caminho_com_espaco (__main__.Redirecionamentos.test_03_caminho_com_espaco) ... FAIL
+test_04_stderr_dev_null (__main__.Redirecionamentos.test_04_stderr_dev_null) ... FAIL
+test_05_stdout_dev_null (__main__.Redirecionamentos.test_05_stdout_dev_null) ... FAIL
+test_06_fontes_stderr_dev_null (__main__.Redirecionamentos.test_06_fontes_stderr_dev_null) ... FAIL
+test_07_duplicacao_descritor (__main__.Redirecionamentos.test_07_duplicacao_descritor) ... FAIL
+test_08_rascunho_redirecionado (__main__.Redirecionamentos.test_08_rascunho_redirecionado) ... FAIL
+test_09_stdout_e_stderr_protegidos (__main__.Redirecionamentos.test_09_stdout_e_stderr_protegidos) ... FAIL
+test_10_fora_do_caso (__main__.Redirecionamentos.test_10_fora_do_caso) ... FAIL
+
+======================================================================
+ERROR: test_02_append_protegido (__main__.Redirecionamentos.test_02_append_protegido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 10, in test_02_append_protegido
+    self.negado('Bash', {'command':'cat rascunho/x >> caso/x.md'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+FAIL: test_01_stderr_protegido (__main__.Redirecionamentos.test_01_stderr_protegido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 8, in test_01_stderr_protegido
+    self.negado('Bash', {'command':'cat rascunho/x 2>registro/erro.txt'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_03_caminho_com_espaco (__main__.Redirecionamentos.test_03_caminho_com_espaco)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 12, in test_03_caminho_com_espaco
+    self.negado('Bash', {'command':'printf x > "'+str(self.caso/'registro/meu estado.json')+'"'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_04_stderr_dev_null (__main__.Redirecionamentos.test_04_stderr_dev_null)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 14, in test_04_stderr_dev_null
+    self.assertEqual(self.hook('Bash', {'command':'cat registro/estado.json 2>/dev/null'}).returncode,0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_05_stdout_dev_null (__main__.Redirecionamentos.test_05_stdout_dev_null)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 16, in test_05_stdout_dev_null
+    self.assertEqual(self.hook('Bash', {'command':'cat caso/x.md >/dev/null'}).returncode,0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_06_fontes_stderr_dev_null (__main__.Redirecionamentos.test_06_fontes_stderr_dev_null)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 18, in test_06_fontes_stderr_dev_null
+    self.assertEqual(self.hook('Bash', {'command':'ls fontes/ 2>/dev/null'}).returncode,0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_07_duplicacao_descritor (__main__.Redirecionamentos.test_07_duplicacao_descritor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 20, in test_07_duplicacao_descritor
+    self.assertEqual(self.hook('Bash', {'command':'cat contexto/regras/x.yaml 2>&1'}).returncode,0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_08_rascunho_redirecionado (__main__.Redirecionamentos.test_08_rascunho_redirecionado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 22, in test_08_rascunho_redirecionado
+    self.assertEqual(self.hook('Bash', {'command':'cat fontes/x > rascunho/copia.txt 2>/dev/null'}).returncode,0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_09_stdout_e_stderr_protegidos (__main__.Redirecionamentos.test_09_stdout_e_stderr_protegidos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 24, in test_09_stdout_e_stderr_protegidos
+    self.negado('Bash', {'command':'cat rascunho/x &>registro/erro.txt'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_10_fora_do_caso (__main__.Redirecionamentos.test_10_fora_do_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/redirecionamentos_a20.py", line 26, in test_10_fora_do_caso
+    self.assertEqual(self.hook('Bash', {'command':'cat registro/estado.json > '+str(self.base/'copia.txt')}).returncode,0)
+AssertionError: 2 != 0
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.602s
+
+FAILED (failures=9, errors=1)

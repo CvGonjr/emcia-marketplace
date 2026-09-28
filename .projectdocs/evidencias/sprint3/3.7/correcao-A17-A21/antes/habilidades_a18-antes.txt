@@ -1,0 +1,114 @@
+test_01_read_instalado_absoluto (__main__.Habilidades.test_01_read_instalado_absoluto) ... FAIL
+test_02_read_relativo (__main__.Habilidades.test_02_read_relativo) ... FAIL
+test_03_read_pontos (__main__.Habilidades.test_03_read_pontos) ... FAIL
+test_04_read_link (__main__.Habilidades.test_04_read_link) ... FAIL
+test_05_ferramenta_skill (__main__.Habilidades.test_05_ferramenta_skill) ... FAIL
+test_06_ferramenta_skill_sem_namespace (__main__.Habilidades.test_06_ferramenta_skill_sem_namespace) ... FAIL
+test_07_expansao_direta (__main__.Habilidades.test_07_expansao_direta) ... FAIL
+test_08_bash_leitura (__main__.Habilidades.test_08_bash_leitura) ... FAIL
+test_09_grep_conteudo (__main__.Habilidades.test_09_grep_conteudo) ... FAIL
+test_10_habilidade_delegavel (__main__.Habilidades.test_10_habilidade_delegavel) ... ok
+test_11_hooks_instalados_cobrem_rotas (__main__.Habilidades.test_11_hooks_instalados_cobrem_rotas) ... FAIL
+
+======================================================================
+FAIL: test_01_read_instalado_absoluto (__main__.Habilidades.test_01_read_instalado_absoluto)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 12, in test_01_read_instalado_absoluto
+    self.negado('Read', {'file_path': str(self.skill)})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_02_read_relativo (__main__.Habilidades.test_02_read_relativo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 15, in test_02_read_relativo
+    self.negado('Read', {'file_path': os.path.relpath(self.skill, self.caso)})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_03_read_pontos (__main__.Habilidades.test_03_read_pontos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 18, in test_03_read_pontos
+    self.negado('Read', {'file_path': str(self.skill.parent/'../hb-levantar-regras/SKILL.md')})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_04_read_link (__main__.Habilidades.test_04_read_link)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 23, in test_04_read_link
+    self.negado('Read', {'file_path': str(link)})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_05_ferramenta_skill (__main__.Habilidades.test_05_ferramenta_skill)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 26, in test_05_ferramenta_skill
+    self.negado('Skill', {'skill': 'eiac-campo:hb-levantar-regras', 'args': ''})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_06_ferramenta_skill_sem_namespace (__main__.Habilidades.test_06_ferramenta_skill_sem_namespace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 29, in test_06_ferramenta_skill_sem_namespace
+    self.negado('Skill', {'skill': 'hb-levantar-regras'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_07_expansao_direta (__main__.Habilidades.test_07_expansao_direta)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 32, in test_07_expansao_direta
+    self.negado('', {}, evento='UserPromptExpansion', expansion_type='slash_command',
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_08_bash_leitura (__main__.Habilidades.test_08_bash_leitura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 37, in test_08_bash_leitura
+    self.negado('Bash', {'command': 'cat '+str(self.skill)})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_09_grep_conteudo (__main__.Habilidades.test_09_grep_conteudo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 40, in test_09_grep_conteudo
+    self.negado('Grep', {'path': str(self.skill), 'pattern': '.', 'output_mode': 'content'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_11_hooks_instalados_cobrem_rotas (__main__.Habilidades.test_11_hooks_instalados_cobrem_rotas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilidades_a18.py", line 47, in test_11_hooks_instalados_cobrem_rotas
+    self.assertIn('Skill', hooks['PreToolUse'][0]['matcher'].split('|'))
+AssertionError: 'Skill' not found in ['Read', 'Write', 'Edit', 'Bash']
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.613s
+
+FAILED (failures=10)

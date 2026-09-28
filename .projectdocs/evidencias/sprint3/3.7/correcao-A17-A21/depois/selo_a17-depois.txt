@@ -1,0 +1,12 @@
+test_01_sem_selo_nao_inventa_hash (__main__.Selo.test_01_sem_selo_nao_inventa_hash) ... ok
+test_02_commit_recusado_nao_exibe_selo_aplicado (__main__.Selo.test_02_commit_recusado_nao_exibe_selo_aplicado) ... ok
+test_03_hash_data_nota (__main__.Selo.test_03_hash_data_nota) ... ok
+test_04_ultimo_selo (__main__.Selo.test_04_ultimo_selo) ... ok
+test_05_commit_posterior_nao_troca_hash (__main__.Selo.test_05_commit_posterior_nao_troca_hash) ... ok
+test_06_resumo_mostra_selo (__main__.Selo.test_06_resumo_mostra_selo) ... ok
+test_07_tentativa_posterior_nao_apaga_selo (__main__.Selo.test_07_tentativa_posterior_nao_apaga_selo) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.037s
+
+OK

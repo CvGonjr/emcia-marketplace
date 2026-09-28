@@ -1,0 +1,644 @@
+test_caso_absoluto_Bash (__main__.Caminhos.test_caso_absoluto_Bash) ... FAIL
+test_caso_absoluto_Edit (__main__.Caminhos.test_caso_absoluto_Edit) ... FAIL
+test_caso_link_Bash (__main__.Caminhos.test_caso_link_Bash) ... FAIL
+test_caso_link_Edit (__main__.Caminhos.test_caso_link_Edit) ... FAIL
+test_caso_pontos_Bash (__main__.Caminhos.test_caso_pontos_Bash) ... FAIL
+test_caso_pontos_Edit (__main__.Caminhos.test_caso_pontos_Edit) ... FAIL
+test_caso_relativo_Bash (__main__.Caminhos.test_caso_relativo_Bash) ... ERROR
+test_caso_relativo_Edit (__main__.Caminhos.test_caso_relativo_Edit) ... ERROR
+test_caso_subdiretorio_Bash (__main__.Caminhos.test_caso_subdiretorio_Bash) ... FAIL
+test_caso_subdiretorio_Edit (__main__.Caminhos.test_caso_subdiretorio_Edit) ... FAIL
+test_contexto_absoluto_Bash (__main__.Caminhos.test_contexto_absoluto_Bash) ... FAIL
+test_contexto_absoluto_Edit (__main__.Caminhos.test_contexto_absoluto_Edit) ... FAIL
+test_contexto_fontes_absoluto_Bash (__main__.Caminhos.test_contexto_fontes_absoluto_Bash) ... ERROR
+test_contexto_fontes_absoluto_Edit (__main__.Caminhos.test_contexto_fontes_absoluto_Edit) ... ERROR
+test_contexto_fontes_link_Bash (__main__.Caminhos.test_contexto_fontes_link_Bash) ... FAIL
+test_contexto_fontes_link_Edit (__main__.Caminhos.test_contexto_fontes_link_Edit) ... ERROR
+test_contexto_fontes_pontos_Bash (__main__.Caminhos.test_contexto_fontes_pontos_Bash) ... ERROR
+test_contexto_fontes_pontos_Edit (__main__.Caminhos.test_contexto_fontes_pontos_Edit) ... ERROR
+test_contexto_fontes_relativo_Bash (__main__.Caminhos.test_contexto_fontes_relativo_Bash) ... ERROR
+test_contexto_fontes_relativo_Edit (__main__.Caminhos.test_contexto_fontes_relativo_Edit) ... ERROR
+test_contexto_fontes_subdiretorio_Bash (__main__.Caminhos.test_contexto_fontes_subdiretorio_Bash) ... FAIL
+test_contexto_fontes_subdiretorio_Edit (__main__.Caminhos.test_contexto_fontes_subdiretorio_Edit) ... FAIL
+test_contexto_link_Bash (__main__.Caminhos.test_contexto_link_Bash) ... FAIL
+test_contexto_link_Edit (__main__.Caminhos.test_contexto_link_Edit) ... FAIL
+test_contexto_pontos_Bash (__main__.Caminhos.test_contexto_pontos_Bash) ... FAIL
+test_contexto_pontos_Edit (__main__.Caminhos.test_contexto_pontos_Edit) ... FAIL
+test_contexto_relativo_Bash (__main__.Caminhos.test_contexto_relativo_Bash) ... ERROR
+test_contexto_relativo_Edit (__main__.Caminhos.test_contexto_relativo_Edit) ... ERROR
+test_contexto_subdiretorio_Bash (__main__.Caminhos.test_contexto_subdiretorio_Bash) ... FAIL
+test_contexto_subdiretorio_Edit (__main__.Caminhos.test_contexto_subdiretorio_Edit) ... FAIL
+test_fontes_absoluto_Bash (__main__.Caminhos.test_fontes_absoluto_Bash) ... ERROR
+test_fontes_absoluto_Edit (__main__.Caminhos.test_fontes_absoluto_Edit) ... ERROR
+test_fontes_link_Bash (__main__.Caminhos.test_fontes_link_Bash) ... FAIL
+test_fontes_link_Edit (__main__.Caminhos.test_fontes_link_Edit) ... ERROR
+test_fontes_pontos_Bash (__main__.Caminhos.test_fontes_pontos_Bash) ... ERROR
+test_fontes_pontos_Edit (__main__.Caminhos.test_fontes_pontos_Edit) ... ERROR
+test_fontes_relativo_Bash (__main__.Caminhos.test_fontes_relativo_Bash) ... ERROR
+test_fontes_relativo_Edit (__main__.Caminhos.test_fontes_relativo_Edit) ... ERROR
+test_fontes_subdiretorio_Bash (__main__.Caminhos.test_fontes_subdiretorio_Bash) ... FAIL
+test_fontes_subdiretorio_Edit (__main__.Caminhos.test_fontes_subdiretorio_Edit) ... FAIL
+test_registro_absoluto_Bash (__main__.Caminhos.test_registro_absoluto_Bash) ... FAIL
+test_registro_absoluto_Edit (__main__.Caminhos.test_registro_absoluto_Edit) ... FAIL
+test_registro_link_Bash (__main__.Caminhos.test_registro_link_Bash) ... FAIL
+test_registro_link_Edit (__main__.Caminhos.test_registro_link_Edit) ... FAIL
+test_registro_pontos_Bash (__main__.Caminhos.test_registro_pontos_Bash) ... FAIL
+test_registro_pontos_Edit (__main__.Caminhos.test_registro_pontos_Edit) ... FAIL
+test_registro_relativo_Bash (__main__.Caminhos.test_registro_relativo_Bash) ... ERROR
+test_registro_relativo_Edit (__main__.Caminhos.test_registro_relativo_Edit) ... ERROR
+test_registro_subdiretorio_Bash (__main__.Caminhos.test_registro_subdiretorio_Bash) ... FAIL
+test_registro_subdiretorio_Edit (__main__.Caminhos.test_registro_subdiretorio_Edit) ... FAIL
+test_01_registro_link_para_fora_continua_protegido (__main__.Controles.test_01_registro_link_para_fora_continua_protegido) ... FAIL
+test_02_rascunho_absoluto (__main__.Controles.test_02_rascunho_absoluto) ... ok
+test_03_leitura_registro (__main__.Controles.test_03_leitura_registro) ... ok
+test_04_arquivo_externo_sem_alias (__main__.Controles.test_04_arquivo_externo_sem_alias) ... ok
+test_05_cd_antes_de_escrever (__main__.Controles.test_05_cd_antes_de_escrever) ... FAIL
+test_06_cp_absoluto (__main__.Controles.test_06_cp_absoluto) ... FAIL
+test_07_mv_absoluto (__main__.Controles.test_07_mv_absoluto) ... FAIL
+test_08_tee_link (__main__.Controles.test_08_tee_link) ... FAIL
+test_09_cwd_fora_raiz_projeto_preservada (__main__.Controles.test_09_cwd_fora_raiz_projeto_preservada) ... FAIL
+
+======================================================================
+ERROR: test_caso_relativo_Bash (__main__.Caminhos.test_caso_relativo_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_caso_relativo_Edit (__main__.Caminhos.test_caso_relativo_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_absoluto_Bash (__main__.Caminhos.test_contexto_fontes_absoluto_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_absoluto_Edit (__main__.Caminhos.test_contexto_fontes_absoluto_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_link_Edit (__main__.Caminhos.test_contexto_fontes_link_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_pontos_Bash (__main__.Caminhos.test_contexto_fontes_pontos_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_pontos_Edit (__main__.Caminhos.test_contexto_fontes_pontos_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_relativo_Bash (__main__.Caminhos.test_contexto_fontes_relativo_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_fontes_relativo_Edit (__main__.Caminhos.test_contexto_fontes_relativo_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_relativo_Bash (__main__.Caminhos.test_contexto_relativo_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_contexto_relativo_Edit (__main__.Caminhos.test_contexto_relativo_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_absoluto_Bash (__main__.Caminhos.test_fontes_absoluto_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_absoluto_Edit (__main__.Caminhos.test_fontes_absoluto_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_link_Edit (__main__.Caminhos.test_fontes_link_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_pontos_Bash (__main__.Caminhos.test_fontes_pontos_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_pontos_Edit (__main__.Caminhos.test_fontes_pontos_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_relativo_Bash (__main__.Caminhos.test_fontes_relativo_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_fontes_relativo_Edit (__main__.Caminhos.test_fontes_relativo_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_registro_relativo_Bash (__main__.Caminhos.test_registro_relativo_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+ERROR: test_registro_relativo_Edit (__main__.Caminhos.test_registro_relativo_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 41, in negado
+    self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
+                     ~~~~~~~^^^^^^^^^
+KeyError: 'autor'
+
+======================================================================
+FAIL: test_caso_absoluto_Bash (__main__.Caminhos.test_caso_absoluto_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_absoluto_Edit (__main__.Caminhos.test_caso_absoluto_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_link_Bash (__main__.Caminhos.test_caso_link_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_link_Edit (__main__.Caminhos.test_caso_link_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_pontos_Bash (__main__.Caminhos.test_caso_pontos_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_pontos_Edit (__main__.Caminhos.test_caso_pontos_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_subdiretorio_Bash (__main__.Caminhos.test_caso_subdiretorio_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_caso_subdiretorio_Edit (__main__.Caminhos.test_caso_subdiretorio_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_absoluto_Bash (__main__.Caminhos.test_contexto_absoluto_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_absoluto_Edit (__main__.Caminhos.test_contexto_absoluto_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_fontes_link_Bash (__main__.Caminhos.test_contexto_fontes_link_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_fontes_subdiretorio_Bash (__main__.Caminhos.test_contexto_fontes_subdiretorio_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_fontes_subdiretorio_Edit (__main__.Caminhos.test_contexto_fontes_subdiretorio_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_link_Bash (__main__.Caminhos.test_contexto_link_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_link_Edit (__main__.Caminhos.test_contexto_link_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_pontos_Bash (__main__.Caminhos.test_contexto_pontos_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_pontos_Edit (__main__.Caminhos.test_contexto_pontos_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_subdiretorio_Bash (__main__.Caminhos.test_contexto_subdiretorio_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_contexto_subdiretorio_Edit (__main__.Caminhos.test_contexto_subdiretorio_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_fontes_link_Bash (__main__.Caminhos.test_fontes_link_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_fontes_subdiretorio_Bash (__main__.Caminhos.test_fontes_subdiretorio_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_fontes_subdiretorio_Edit (__main__.Caminhos.test_fontes_subdiretorio_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_absoluto_Bash (__main__.Caminhos.test_registro_absoluto_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_absoluto_Edit (__main__.Caminhos.test_registro_absoluto_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_link_Bash (__main__.Caminhos.test_registro_link_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_link_Edit (__main__.Caminhos.test_registro_link_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_pontos_Bash (__main__.Caminhos.test_registro_pontos_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_pontos_Edit (__main__.Caminhos.test_registro_pontos_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_subdiretorio_Bash (__main__.Caminhos.test_registro_subdiretorio_Bash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_registro_subdiretorio_Edit (__main__.Caminhos.test_registro_subdiretorio_Edit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 23, in teste
+    self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_01_registro_link_para_fora_continua_protegido (__main__.Controles.test_01_registro_link_para_fora_continua_protegido)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 34, in test_01_registro_link_para_fora_continua_protegido
+    self.negado('Write', {'file_path':str(link)})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_05_cd_antes_de_escrever (__main__.Controles.test_05_cd_antes_de_escrever)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 46, in test_05_cd_antes_de_escrever
+    self.negado('Bash', {'command':'cd '+str(self.caso/'registro')+' && printf x > estado.json'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_06_cp_absoluto (__main__.Controles.test_06_cp_absoluto)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 49, in test_06_cp_absoluto
+    self.negado('Bash', {'command':'cp rascunho/x '+str(self.caso/'registro/estado.json')})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_07_mv_absoluto (__main__.Controles.test_07_mv_absoluto)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 52, in test_07_mv_absoluto
+    self.negado('Bash', {'command':'mv '+str(self.caso/'registro/estado.json')+' /tmp/retirado.json'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_08_tee_link (__main__.Controles.test_08_tee_link)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 56, in test_08_tee_link
+    self.negado('Bash', {'command':'printf x | tee '+str(link/'estado.json')})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_09_cwd_fora_raiz_projeto_preservada (__main__.Controles.test_09_cwd_fora_raiz_projeto_preservada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/caminhos_a19.py", line 59, in test_09_cwd_fora_raiz_projeto_preservada
+    self.negado('Edit', {'file_path':str(self.caso/'registro/estado.json')}, cwd=self.base)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 37, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+----------------------------------------------------------------------
+Ran 59 tests in 3.482s
+
+FAILED (failures=36, errors=20)

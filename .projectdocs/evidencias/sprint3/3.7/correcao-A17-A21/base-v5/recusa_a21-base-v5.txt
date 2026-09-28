@@ -1,0 +1,25 @@
+test_01_instrucoes_nao_pedem_marca_invalida (__main__.Recusa.test_01_instrucoes_nao_pedem_marca_invalida) ... FAIL
+test_02_recusa_e_evento_sem_assercoes (__main__.Recusa.test_02_recusa_e_evento_sem_assercoes) ... FAIL
+
+======================================================================
+FAIL: test_01_instrucoes_nao_pedem_marca_invalida (__main__.Recusa.test_01_instrucoes_nao_pedem_marca_invalida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-A17-A21/base-v5/testes/recusa_a21.py", line 9, in test_01_instrucoes_nao_pedem_marca_invalida
+    self.assertNotIn('[tentativa-negada',texto)
+AssertionError: '[tentativa-negada' unexpectedly found in '---\nname: hb-levantar-regras\netapa: P3b\ncamada: EX4\nmodalidade: presencial\ndelegavel: false\ndescription: Protocolo humano de levantamento de regras nao documentadas. NAO EXECUTAVEL POR AGENTE. Se carregada em sessao de agente, recuse e registre a tentativa.\n---\n\n# Levantamento de regras não documentadas — P3b · EX4\n\n## ⛔ Não executável por agente\n\nSe você é um agente e esta habilidade foi carregada, **recuse** e registre em `caso/log-tentativas.md`:\n\n```\n- [tentativa-negada · etapa: P3b · camada exigida: EX4 · camada corrente: <sua> · <data>]\n  Tentativa de executar levantamento de regras nao documentadas.\n```\n\nResponda apenas: *este passo é presencial e humano. Registre a sessão ao voltar do campo.*\n\nNão ofereça alternativa, não proponha versão reduzida, não gere perguntas "para ajudar". Qualquer uma dessas é a recusa sendo contornada por cortesia.\n\n## Por que\n\nO valor dos três instrumentos depende de existir alguém que sabe algo sem saber que sabe. Um modelo declara tudo que "sabe" quando perguntado. Simular este passo produz regras que não são regras não documentadas — e são elas o objeto da contribuição do método.\n\n## Para o humano\n\n**Procedimento:** documento do método, passo 3, parte de levantamento.\n**Instrumentos:** observação do processo, protocolo de leitura de volta, arquivo pessoal.\n\n**Registro ao voltar:** `caso/P3b-sessao.md` com data, participantes e instrumentos aplicados. Só então P3d abre.\n\n**Da sessão para o contexto:** cada regra levantada entra em `contexto/regras/` por conversão direta dos campos (EMCIA-CTX-01 3.8) — escreva o YAML em `rascunho/RN-*.yaml` preservando a procedência real da sessão (`D`, `I` ou `V`, nunca promovida automaticamente) e cure com `/eiac-nucleo:curar`. Regra ainda em rascunho não é regra de contexto.\n'
+
+======================================================================
+FAIL: test_02_recusa_e_evento_sem_assercoes (__main__.Recusa.test_02_recusa_e_evento_sem_assercoes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/.cache/emcia-A17-A21/base-v5/testes/recusa_a21.py", line 15, in test_02_recusa_e_evento_sem_assercoes
+    self.negado('Read', {'file_path':str(self.skill)})
+  File "/home/netiv-dn-1/.cache/emcia-A17-A21/base-v5/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.068s
+
+FAILED (failures=2)

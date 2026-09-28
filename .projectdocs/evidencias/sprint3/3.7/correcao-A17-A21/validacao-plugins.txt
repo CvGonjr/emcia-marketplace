@@ -1,0 +1,40 @@
+Claude Code 2.1.283 (Claude Code)
+
+$ claude plugin validate eiac-nucleo --json
+{
+  "success": true,
+  "strict": false,
+  "target": "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/.claude-plugin/plugin.json",
+  "manifest": {
+    "file": "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-nucleo/.claude-plugin/plugin.json",
+    "type": "plugin",
+    "errors": [],
+    "warnings": [
+      {
+        "path": "variante",
+        "message": "Unknown field 'variante'. Claude Code ignores it at load time.",
+        "code": null
+      }
+    ],
+    "notes": []
+  },
+  "contents": []
+}
+
+saída: 0
+$ claude plugin validate eiac-campo --json
+{
+  "success": true,
+  "strict": false,
+  "target": "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/.claude-plugin/plugin.json",
+  "manifest": {
+    "file": "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/.claude-plugin/plugin.json",
+    "type": "plugin",
+    "errors": [],
+    "warnings": [],
+    "notes": []
+  },
+  "contents": []
+}
+
+saída: 0

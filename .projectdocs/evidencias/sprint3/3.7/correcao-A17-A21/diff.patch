@@ -1,0 +1,1418 @@
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index a273253..8bd67de 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -189,3 +189,14 @@ etapa, revisão humana do piloto/rotina e pessoa nomeada. Evidência em
+ `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/` (resultado, auditoria,
+ diff e suíte integral). Novos testes: `produtos_a14.py`, `revisao_a15.py` e
+ `pessoa_a16.py`; preparação do caso de controle em `.projectdocs/demos/`.
++
++## Sprint 3 — ação 3.7
++
++Correções A17–A21 sobre `v-sprint3-poc.5`, preservando a evidência da sessão
++real em `.projectdocs/evidencias/sprint3/3.7/sessao-1/`. Decisões 031–035;
++rotas de carregamento, normalização de caminhos, redirecionamentos, recusa
++por evento e apresentação do selo. Evidência em
++`.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/`: resultado, entradas
++de regressão, diff, suíte completa e script de reexecução. Novos módulos:
++`habilidades_a18.py`, `caminhos_a19.py`, `redirecionamentos_a20.py`,
++`recusa_a21.py` e `selo_a17.py`.
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index ed400ec..fd23598 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -119,7 +119,10 @@ cd ~/casos/medic-plus
+ claude
+ ```
+ 
+-O núcleo lê `registro/estado.json` do diretório corrente. De fora, a guarda não protege nada.
++Abra a sessão na raiz do caso. A guarda conserva essa raiz pelo
++`CLAUDE_PROJECT_DIR` e usa o cwd do hook para resolver caminhos relativos,
++inclusive quando a ferramenta muda de diretório. Execute os scripts de
++operação na raiz do caso.
+ 
+ **Verificar:**
+ 
+@@ -139,7 +142,11 @@ Se responder *Nenhum caso aberto AQUI, mas existe caso em…*, a sessão está n
+ 
+ Peça ao Claude: *leia o arquivo `skills/hb-levantar-regras/SKILL.md`*.
+ 
+-**Esperado:** bloqueio, com a mensagem sobre `EX4` e modalidade presencial.
++**Esperado:** bloqueio de carregamento. Sem os pré-requisitos, a mensagem
++pode primeiro nomear o selo que falta. Com sessão e selo, a recusa deve
++nomear a não delegabilidade, `EX4` e a modalidade presencial.
++Repita pela ferramenta Skill (`eiac-campo:hb-levantar-regras`) e pelo
++caminho absoluto do SKILL.md instalado; ambos devem ser recusados.
+ **Confirmar:** `cat registro/eventos.jsonl` contém `TentativaNegada`.
+ 
+ ### Teste 2 — escrita direta no repositório do caso ⚠️
+@@ -210,7 +217,9 @@ se a camada do nível exigir. Já em P3b, registre sua sessão, mas
+ /eiac-nucleo:encerrar P3b
+ ```
+ 
+-**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 e antes de tentar novamente resolve.
++**Esperado:** recusa nomeando explicitamente que P3b exige selo posterior ao encerramento de P2. Selar o caso (`/eiac-nucleo:selar`) depois de encerrar P2 satisfaz esse
++pré-requisito. O encerramento é executado pelo engenheiro no próprio
++terminal; o carregamento da habilidade pelo agente continua recusado.
+ 
+ ### Teste 7 — autor agente
+ 
+@@ -390,3 +399,26 @@ As decisões das etapas anteriores são executadas no percurso sintético.
+ Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
+ sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
+ o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
++
++## Atualizar a fronteira — v-sprint3-poc.6
++
++Atualize o marketplace e os dois plugins pela versão `v-sprint3-poc.6`,
++confira núcleo 0.2.32 e campo 0.8.6 e reinicie a sessão dentro do caso.
++Conteúdo já carregado na sessão anterior não é removido por um hook novo.
++A referência usada para as rotas de hook é o Claude Code 2.1.283, que foi
++conferido neste ambiente; o runtime precisa reconhecer UserPromptExpansion.
++
++Prove também a invocação direta `/eiac-campo:hb-levantar-regras`: ela deve
++ser recusada e produzir TentativaNegada, mesmo com sessão e selo. Skill usa
++PreToolUse; a invocação direta usa UserPromptExpansion. Read e Grep/Bash
++que leem o arquivo da habilidade também passam pela guarda.
++
++Tente Edit com o absoluto `<raiz-do-caso>/registro/estado.json`: deve ser
++recusado sem mudar o estado. Repita com `..` e com um link externo apontando
++para registro/. Os três caminhos devem produzir evento de recusa.
++Como controles, `cat registro/estado.json 2>/dev/null` e redirecionamento
++para rascunho/ devem passar pela guarda. `2>registro/erro.txt` deve recusar.
++
++Após selar, `/eiac-nucleo:estado` e o resumo mostram hash completo, data e
++nota do último selo confirmado. Um commit posterior comum não muda esse
++hash; uma tentativa de commit recusada não aparece como selo aplicado.
+diff --git a/README.md b/README.md
+index cb8aeae..d69b4fb 100644
+--- a/README.md
++++ b/README.md
+@@ -61,7 +61,9 @@ alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
+ 
+ Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
+ 
+-**A sessão precisa estar dentro do caso.** O núcleo lê `registro/estado.json` do diretório corrente — de fora, não há guarda nem validador.
++**Abra a sessão na raiz do caso.** A guarda conserva a raiz indicada por
++`CLAUDE_PROJECT_DIR` e localiza o registro também nos ancestrais do cwd.
++Os comandos de operação continuam sendo executados na raiz do caso.
+ 
+ ## Percurso — 13 etapas, F0 a P10
+ 
+@@ -175,7 +177,9 @@ NEGADO com o motivo; não executa o comando. Não cria nova permissão.
+ 
+ A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
+ 
+-A trava de código dessa comparação é única: P3b não abre, nem encerra, sem o selo de P2. Sem selo, `/eiac-nucleo:estado` mostra a etapa presa em P3b e a mensagem nomeia exatamente qual selo falta.
++P3b exige selo posterior ao encerramento de P2. O encerramento pelo
++engenheiro nomeia o selo que falta. Sessão e selo não autorizam o agente
++a carregar uma habilidade declarada não delegável (decisão 031).
+ 
+ ## Material público da etapa 0a
+ 
+@@ -315,3 +319,26 @@ As decisões das etapas anteriores são executadas no percurso sintético.
+ Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
+ sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
+ o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
++
++## Fronteira da sessão e caminhos — Sprint 3, ação 3.7
++
++A guarda alcança Read, Skill, leitura de conteúdo por Bash/Grep e a invocação
++direta de habilidades pelo evento UserPromptExpansion. Uma habilidade com
++`delegavel: false` no playbook não carrega, mesmo após sessão humana e selo.
++O nome da habilidade identifica a etapa; a pasta da instalação não autoriza
++seu uso. Nas etapas delegáveis de camada humana, mantém-se o apoio após a
++sessão da própria etapa. Toda recusa produz TentativaNegada.
++
++Absolutos, relativos, `..` e links simbólicos passam pela mesma proteção de
++caso/, contexto/, registro/ e fontes/. Redirecionamentos de Bash são
++conferidos pelo destino: leitura com `2>/dev/null` e escrita em rascunho/
++continuam permitidas. A tentativa de carregar hb-levantar-regras é evento
++da guarda; não se escreve uma marca inválida de procedência em caso/.
++
++`/eiac-nucleo:estado` exibe o último selo confirmado pelo Git do caso, com
++hash, data e nota, inclusive no resumo. Essa apresentação não altera o
++arquivo de estado nem cria uma mudança após o selo.
++
++Versão desta correção: `v-sprint3-poc.6` (núcleo 0.2.32, campo 0.8.6).
++Decisões 031–035 e evidência em
++[correcao-A17-A21](.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/resultado.md).
+diff --git a/decisoes/031-habilidades-nao-delegaveis.md b/decisoes/031-habilidades-nao-delegaveis.md
+new file mode 100644
+index 0000000..8a2a314
+--- /dev/null
++++ b/decisoes/031-habilidades-nao-delegaveis.md
+@@ -0,0 +1,37 @@
++# 031 — Habilidade não delegável bloqueada nas rotas de carregamento (A18)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++A sessão de controle da ação 3.7 carregou `eiac-campo:hb-levantar-regras`
++por `Skill`. O matcher só alcançava Read/Write/Edit/Bash. Além disso, G1
++aceitava carregar uma habilidade não delegável quando havia sessão registrada.
++
++## Decisão
++
++A guarda identifica a habilidade pelo nome declarado no playbook, incluindo
++nome qualificado, componentes de caminho e destino de link simbólico.
++Read, leitura de conteúdo por Grep/Bash e Skill passam pela mesma G1/G7.
++`UserPromptExpansion` cobre a invocação direta `/nome`, que não dispara
++PreToolUse. Hooks permanecem determinísticos, sem avaliação por modelo.
++
++`delegavel: false` impede o carregamento mesmo com sessão e selo. O nível
++continua resolvendo a camada pelo playbook. Nas etapas delegáveis de camada
++humana, a sessão da própria etapa mantém o uso instrumental anterior, sem
++autorizar decisão pelo agente. Esta decisão substitui a exceção histórica
++de carregamento com sessão somente quanto às etapas não delegáveis.
++
++Cada bloqueio grava TentativaNegada com responsável, etapa e motivo; G1
++inclui habilidade, camada, nível e evento de hook. G7 continua exigindo selo.
++
++## Consequência e verificação
++
++`testes/habilidades_a18.py` cobre instalação, absolutos, relativos, `..`,
++link, Skill, expansão direta, Bash/Grep e níveis N1/N2/N3. Os parâmetros de
++Skill vêm do transcript do caso sintético controle-37. T04 de
++`verificacao_por_estados.py` mantém o controle de encerramento com selo,
++mas agora exige recusa do carregamento pelo agente. Nenhum teste é apagado.
++
++Referências: [hooks do Claude Code](https://code.claude.com/docs/en/hooks#userpromptexpansion)
++e [habilidades](https://code.claude.com/docs/en/skills#restrict-claudes-skill-access).
+diff --git a/decisoes/032-caminhos-normalizados.md b/decisoes/032-caminhos-normalizados.md
+new file mode 100644
+index 0000000..868c2a3
+--- /dev/null
++++ b/decisoes/032-caminhos-normalizados.md
+@@ -0,0 +1,37 @@
++# 032 — Caminhos normalizados relativos à raiz do caso (A19)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++Edit recebeu um absoluto para `registro/estado.json`; o prefixo relativo
++não coincidiu, e a escrita foi liberada sem evento. Read/Write/Edit recebem
++caminhos absolutos do Claude Code, conforme seu contrato de hooks.
++
++## Decisão
++
++A guarda localiza o caso pela raiz de projeto informada pelo runtime,
++pelo cwd do hook ou pelo diretório de execução, procurando o registro nos
++ancestrais. O playbook continua sendo exclusivamente o do caso.
++
++Um único contexto de caminhos resolve absoluto, relativo ao cwd da
++ferramenta, `~`, `..` e links simbólicos. Todas as comparações de áreas usam
++representações relativas à raiz física do caso. Preserva também a forma
++lexical: um link de registro para fora não libera a escrita; um alias
++externo para dentro continua protegido. Caminho não resolvível é recusado.
++
++A mesma normalização serve às áreas caso/contexto/registro/fontes e à
++identificação de habilidades. Alvos e argumentos de Bash são segmentados
++com shlex; cd, subshell, pipeline e shell aninhado preservam seu contexto.
++Literais de código inline são inspecionados sem executar esse código.
++NotebookEdit também passa pela proteção de escrita. Recusas produzem evento.
++
++## Consequência e verificação
++
++`testes/caminhos_a19.py` cobre as cinco áreas, cinco formas de caminho,
++Edit/Bash, cp/mv/tee, raiz mantida com cwd externo, fontes, leitura e
++rascunho. Inclui os parâmetros de Edit da sessão controle-37, substituindo
++somente a raiz temporária. Arquivos externos sem alias para o caso não são
++classificados como registro do caso só pelo nome de uma pasta.
++
++Referência: [entrada PreToolUse](https://code.claude.com/docs/en/hooks#pretooluse-input).
+diff --git a/decisoes/033-redirecionamentos.md b/decisoes/033-redirecionamentos.md
+new file mode 100644
+index 0000000..4d6f89b
+--- /dev/null
++++ b/decisoes/033-redirecionamentos.md
+@@ -0,0 +1,27 @@
++# 033 — Redirecionamento inspecionado pelo alvo de escrita (A20)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++A presença de `>` em leituras com `2>/dev/null` disparava a proteção de
++escrita, mesmo quando a saída não ia para o caso.
++
++## Decisão
++
++A análise shlex distingue operadores de caracteres entre aspas/escapados,
++separa argumentos dos redirecionamentos e identifica os arquivos de saída.
++A proteção usa o destino normalizado: `>`, `>>`, `2>`, `&>` e variantes
++para área protegida são recusados. Duplicação de descritor não é arquivo.
++`/dev/null`, saída externa e rascunho continuam permitidos nessas regras.
++
++Comandos de escrita conhecidos também têm seus alvos inspecionados. A trava
++anterior para código arbitrário que menciona fontes permanece: reconhecer
++redirecionamento de leitura não autoriza remoção por Python ou outro código.
++
++## Consequência e verificação
++
++`testes/redirecionamentos_a20.py` cobre negativas de stdout/stderr/append,
++caminho com espaço, leituras com descarte, duplicação de FD, cópia para
++rascunho, saída externa e caracteres literais. `negativos.sh` mantém todos
++os controles de imutabilidade de fontes, inclusive G6k.
+diff --git a/decisoes/034-recusa-habilidade-evento.md b/decisoes/034-recusa-habilidade-evento.md
+new file mode 100644
+index 0000000..1eb6fae
+--- /dev/null
++++ b/decisoes/034-recusa-habilidade-evento.md
+@@ -0,0 +1,23 @@
++# 034 — Recusa de habilidade registrada como evento (A21)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++hb-levantar-regras sugeria uma marca de tentativa negada em caso/ que o
++validador recusava por ausência de procedência D/I/V.
++
++## Decisão
++
++A habilidade remete ao evento TentativaNegada da guarda. Não propõe uma
++asserção de caso, não escreve diretamente na trilha e não inventa marca
++D/I/V para fazer uma tentativa do agente passar como evidência de método.
++Se o conteúdo chegar sem hook, recusa o protocolo e informa ao engenheiro
++a falha para investigação e registro. As asserções humanas continuam
++passando pelo validador com sua procedência real.
++
++## Consequência e verificação
++
++`testes/recusa_a21.py` confere a instrução e executa a guarda: a recusa
++produz evento e não cria asserção em caso/. O procedimento do método
++continua referenciado, sem reprodução na habilidade.
+diff --git a/decisoes/035-selo-derivado-da-trilha.md b/decisoes/035-selo-derivado-da-trilha.md
+new file mode 100644
+index 0000000..d3e3c64
+--- /dev/null
++++ b/decisoes/035-selo-derivado-da-trilha.md
+@@ -0,0 +1,28 @@
++# 035 — Selo exibido pelo histórico confirmado do caso (A17)
++
++**Data:** 28/09/2026 · **Estado:** firme por instrução do usuário
++
++## Contexto
++
++O selo era registrado na trilha e no Git, mas estado.py exibia o campo
++selo do arquivo, ainda vazio. SeloAplicado entra antes do commit para que
++seu registro integre o conteúdo selado.
++
++## Decisão
++
++A apresentação JSON e o resumo do estado derivam o último selo do histórico
++Git de registro/eventos.jsonl. Identificam a primeira introdução do evento
++em commit com a nota e a pessoa autora correspondentes; exibem hash completo,
++data do evento e nota. Eventos ainda não commitados não comprovam aplicação.
++
++A leitura não regrava estado.json nem suja o caso depois do selo. A trilha
++de trabalho não substitui o histórico confirmado. Sem selo confirmado,
++ou sem histórico Git acessível, a apresentação não inventa um hash.
++A máquina de etapas e a checagem G7 não são alteradas por esta correção.
++
++## Consequência e verificação
++
++`testes/selo_a17.py` cobre ausência de selo, commit recusado, último de dois
++selos, resumo, commit posterior comum, tentativa frustrada após selo e
++limpeza do caso imediatamente após aplicação. A apresentação é derivada;
++o campo bruto no arquivo não é uma segunda fonte de verdade.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 2215210..d34ab80 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -36,3 +36,8 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 028 | Produto próprio exigido no encerramento (A14) | firme |
+ | 029 | Revisão humana do piloto declarada na guarda (A15) | firme |
+ | 030 | Pessoa nomeada sem termos coletivos (A16) | firme |
++| 031 | Habilidade não delegável bloqueada nas rotas de carregamento (A18) | firme; substitui a exceção de sessão para habilidades não delegáveis |
++| 032 | Caminhos normalizados relativos à raiz do caso (A19) | firme |
++| 033 | Redirecionamento inspecionado pelo alvo de escrita (A20) | firme |
++| 034 | Recusa de habilidade registrada como evento (A21) | firme |
++| 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 65d8b77..56e6d6e 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.5",
++  "version": "0.8.6",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/skills/hb-levantar-regras/SKILL.md b/eiac-campo/skills/hb-levantar-regras/SKILL.md
+index a91ac21..f690e6d 100644
+--- a/eiac-campo/skills/hb-levantar-regras/SKILL.md
++++ b/eiac-campo/skills/hb-levantar-regras/SKILL.md
+@@ -11,12 +11,18 @@ description: Protocolo humano de levantamento de regras nao documentadas. NAO EX
+ 
+ ## ⛔ Não executável por agente
+ 
+-Se você é um agente e esta habilidade foi carregada, **recuse** e registre em `caso/log-tentativas.md`:
+-
+-```
+-- [tentativa-negada · etapa: P3b · camada exigida: EX4 · camada corrente: <sua> · <data>]
+-  Tentativa de executar levantamento de regras nao documentadas.
+-```
++Se você é um agente e esta habilidade foi carregada, **recuse**.
++
++A recusa de carregamento é registrada pela guarda como evento
++`TentativaNegada` em `registro/eventos.jsonl`, com a habilidade, a etapa e
++o responsável do caso. Não transforme a recusa em asserção nem escreva
++diretamente na trilha. Se o conteúdo chegou por um caminho sem hook, informe
++a falha de proteção ao engenheiro para investigação e registro da tentativa;
++não execute o protocolo.
++
++`caso/` aceita somente asserções com procedência real `D`, `I` ou `V`, pelo
++validador. Uma tentativa do agente não recebe essas marcas para forçar a
++aceitação do registro. O evento da guarda é o registro da negativa.
+ 
+ Responda apenas: *este passo é presencial e humano. Registre a sessão ao voltar do campo.*
+ 
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 9b987d8..c5ab74a 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.28",
++  "version": "0.2.32",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/estado.md b/eiac-nucleo/commands/estado.md
+index 7b2525d..797cb93 100644
+--- a/eiac-nucleo/commands/estado.md
++++ b/eiac-nucleo/commands/estado.md
+@@ -2,4 +2,5 @@
+ description: Mostra o estado do caso corrente — etapa, camada, modalidade e cumprimentos.
+ ---
+ Execute `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/estado.py"` e apresente o resultado.
+-Não interprete além do que o arquivo diz. Se não houver caso aberto, diga isso e pare.
++O campo `selo` é derivado do histórico Git confirmado da trilha: hash, data e nota.
++Não interprete além dos dados apresentados. Se não houver caso aberto, diga isso e pare.
+diff --git a/eiac-nucleo/hooks/hooks.json b/eiac-nucleo/hooks/hooks.json
+index ae12702..3ad4620 100644
+--- a/eiac-nucleo/hooks/hooks.json
++++ b/eiac-nucleo/hooks/hooks.json
+@@ -2,7 +2,7 @@
+   "hooks": {
+     "PreToolUse": [
+       {
+-        "matcher": "Read|Write|Edit|Bash",
++        "matcher": "Read|Write|Edit|Bash|Skill|Grep|NotebookEdit",
+         "hooks": [
+           {
+             "type": "command",
+@@ -21,6 +21,17 @@
+           }
+         ]
+       }
++    ],
++    "UserPromptExpansion": [
++      {
++        "hooks": [
++          {
++            "type": "command",
++            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/guarda.py\"",
++            "timeout": 15
++          }
++        ]
++      }
+     ]
+   }
+ }
+diff --git a/eiac-nucleo/scripts/caminhos.py b/eiac-nucleo/scripts/caminhos.py
+new file mode 100644
+index 0000000..a33f247
+--- /dev/null
++++ b/eiac-nucleo/scripts/caminhos.py
+@@ -0,0 +1,198 @@
++"""Caminhos do hook e do shell, relativos à raiz física do caso.
++
++Mantém também o caminho lexical: um arquivo de área protegida que seja
++link para fora continua protegido. Um alias externo para dentro é
++reconhecido pela resolução física. Não contém vocabulário de método.
++"""
++import ast, os, pathlib, re, shlex
++
++class CaminhoInvalido(ValueError):
++    pass
++
++
++def raiz_caso(ev):
++    candidatos = [os.environ.get('CLAUDE_PROJECT_DIR'), ev.get('cwd'), os.getcwd()]
++    for candidato in candidatos:
++        if not candidato:
++            continue
++        try:
++            p = pathlib.Path(candidato).expanduser().resolve()
++            for pai in (p, *p.parents):
++                if (pai/'registro/estado.json').is_file():
++                    return pai
++        except (OSError, RuntimeError, ValueError):
++            continue
++    return None
++
++
++class Contexto:
++    def __init__(self, raiz, cwd):
++        self.raiz = pathlib.Path(raiz).resolve()
++        self.cwd = pathlib.Path(cwd).expanduser()
++        if not self.cwd.is_absolute():
++            self.cwd = self.raiz/self.cwd
++
++    def absolutos(self, alvo, cwd=None):
++        if not alvo:
++            return ()
++        try:
++            p = pathlib.Path(os.path.expandvars(str(alvo))).expanduser()
++            if not p.is_absolute():
++                p = pathlib.Path(cwd or self.cwd)/p
++            return (pathlib.Path(os.path.abspath(p)), p.resolve())
++        except (OSError, RuntimeError, ValueError) as exc:
++            raise CaminhoInvalido(f'caminho não resolvível: {alvo}: {exc}') from exc
++
++    def relativos(self, alvo, cwd=None):
++        saida = set()
++        for p in self.absolutos(alvo, cwd):
++            try:
++                saida.add(p.relative_to(self.raiz).as_posix())
++            except ValueError:
++                pass
++        return saida
++
++    def em(self, alvo, area, cwd=None):
++        return any(p == area or p.startswith(area+'/') for p in self.relativos(alvo,cwd))
++
++    def em_segmento(self, alvo, segmento, cwd=None):
++        return any(segmento in pathlib.PurePosixPath(p).parts for p in self.relativos(alvo,cwd))
++
++    def nomes(self, alvo, cwd=None):
++        return {parte for p in self.absolutos(alvo,cwd) for parte in p.parts}
++
++
++class Palavra(str):
++    """Mantém a distinção entre operador shell e caractere entre aspas."""
++    def __new__(cls, valor, operador=False):
++        obj = super().__new__(cls,valor)
++        obj.operador = operador
++        return obj
++
++
++def tokens_shell(texto):
++    pontuacao = ';&|<>()\n'
++    marcas = {c:chr(0xE000+i) for i,c in enumerate(pontuacao)}
++    inversas = {v:k for k,v in marcas.items()}
++    aspas, escape, protegido = None, False, []
++    for c in texto:
++        if escape:
++            protegido.append(marcas.get(c,c)); escape=False
++        elif c == "\\" and aspas != "'":
++            protegido.append(c); escape=True
++        elif c in ("'", '"'):
++            if aspas == c: aspas=None
++            elif aspas is None: aspas=c
++            protegido.append(c)
++        else:
++            protegido.append(marcas.get(c,c) if aspas else c)
++    lexer = shlex.shlex(''.join(protegido), posix=True, punctuation_chars=pontuacao)
++    lexer.whitespace=' \t\r'
++    lexer.whitespace_split=True
++    for token in lexer:
++        operador = bool(token) and all(c in pontuacao for c in token)
++        if operador:
++            for op in re.findall(r'&&|\|\||&>>|&>|>>|>&|<<<|<<|<>|<&|>\||[;&|<>()\n]',token):
++                yield Palavra(op,True)
++        else:
++            yield Palavra(''.join(inversas.get(c,c) for c in token))
++
++
++def comandos(texto, cwd, profundidade=0):
++    """Segmenta com shlex; preserva diretório de cd e shells aninhados."""
++    if profundidade > 8:
++        raise ValueError('shell aninhado demais para inspecao de caminhos')
++    grupos, atual = [], []
++    for parte in [*tokens_shell(texto), Palavra(';',True)]:
++        if parte.operador and parte in (';', '&&', '||', '|', '&', '\n', '(', ')'):
++            if atual:
++                grupos.append((atual,parte))
++                atual=[]
++            if parte in ('(',')'):
++                grupos.append((None,parte))
++        else:
++            atual.append(parte)
++    diretorio = pathlib.Path(cwd)
++    pilha = []
++    for grupo,separador in grupos:
++        if grupo is None:
++            if separador=='(': pilha.append(diretorio)
++            elif pilha: diretorio=pilha.pop()
++            continue
++        nome=pathlib.Path(grupo[0]).name
++        if nome == 'cd' and len(grupo)>1:
++            p=pathlib.Path(os.path.expandvars(grupo[-1])).expanduser()
++            destino=p if p.is_absolute() else diretorio/p
++            # cd em pipeline/background não altera o diretório do shell pai.
++            if separador not in ('|','&') and destino.is_dir():
++                diretorio=destino
++        elif nome in ('bash','sh','zsh') and any(p.startswith('-') and 'c' in p for p in grupo[1:]):
++            pos=next(i+1 for i,p in enumerate(grupo) if p.startswith('-') and 'c' in p)
++            if pos<len(grupo):
++                yield from comandos(grupo[pos],diretorio,profundidade+1)
++        elif nome in ('command','exec','env'):
++            pos=1
++            while pos<len(grupo) and (grupo[pos].startswith('-') or re.match(r'^[A-Za-z_][A-Za-z0-9_]*=',grupo[pos])):
++                pos+=1
++            if pos<len(grupo):
++                yield grupo[pos:],diretorio
++        else:
++            yield grupo,diretorio
++
++
++def argumentos_caminho(grupo):
++    for parte in grupo[1:]:
++        yield parte
++        yield from re.findall(r'(?:/|\.\.?/)?(?:[\w.-]+/)+[\w.-]+',parte)
++        # Literais em scripts inline são inspecionados sem executar código.
++        try:
++            arvore=ast.parse(parte)
++        except (SyntaxError, ValueError):
++            continue
++        for no in ast.walk(arvore):
++            if isinstance(no,ast.Constant) and isinstance(no.value,str):
++                yield no.value
++
++
++def redirecionamentos(grupo):
++    """Retorna argv e os arquivos de saída; duplicação de FD não é arquivo."""
++    argv, saidas=[],[]
++    i=0
++    while i<len(grupo):
++        parte=grupo[i]
++        if getattr(parte,'operador',False) and ('>' in parte or '<' in parte):
++            if i+1>=len(grupo):
++                raise ValueError('redirecionamento sem alvo')
++            alvo=grupo[i+1]
++            if '>' in parte and '<' not in parte:
++                duplica=parte.endswith('&') and (alvo.isdigit() or alvo=='-')
++                if not duplica: saidas.append(alvo)
++            elif parte=='<>':
++                saidas.append(alvo)
++            i+=2
++        else:
++            argv.append(parte); i+=1
++    return argv,saidas
++
++
++ESCRITORES = {'tee','mv','cp','rm','touch','mkdir','install','truncate',
++              'chmod','chown','ln','rmdir','unlink','sed','dd'}
++
++
++def escritas(grupo):
++    argv,alvos=redirecionamentos(grupo)
++    if not argv: return alvos
++    nome=pathlib.Path(argv[0]).name
++    args=[p for p in argv[1:] if not p.startswith('-')]
++    if nome in ('cp','install','ln'):
++        alvos.extend(args[-1:])
++        for i,p in enumerate(argv[1:],1):
++            if p in ('-t','--target-directory') and i+1<len(argv): alvos.append(argv[i+1])
++            elif p.startswith('--target-directory='): alvos.append(p.split('=',1)[1])
++    elif nome in ('tee','mv','rm','touch','mkdir','truncate','chmod','chown','rmdir','unlink'):
++        alvos.extend(args)
++    elif nome=='sed' and any(p=='--in-place' or p.startswith('--in-place=') or p.startswith('-i') for p in argv[1:]):
++        alvos.extend(args)
++    elif nome=='dd':
++        alvos.extend(p[3:] for p in argv[1:] if p.startswith('of='))
++    return alvos
+diff --git a/eiac-nucleo/scripts/estado.py b/eiac-nucleo/scripts/estado.py
+index db3d061..8df7150 100644
+--- a/eiac-nucleo/scripts/estado.py
++++ b/eiac-nucleo/scripts/estado.py
+@@ -58,6 +58,53 @@ def eventos():
+     return lidos
+ 
+ 
++def ultimo_selo():
++    """Deriva hash/data/nota do selo que entrou em um commit do caso.
++
++    O evento é escrito antes do commit para integrar o próprio selo.
++    Eventos ainda não commitados não comprovam aplicação. A primeira
++    introdução do evento no Git deve ter a nota e a autoria do selo;
++    commits posteriores de outros arquivos não mudam seu hash.
++    """
++    def git(*args):
++        return subprocess.run(["git", *args], capture_output=True, text=True, timeout=5)
++
++    try:
++        raiz = git("rev-parse", "--show-toplevel")
++        if raiz.returncode or pathlib.Path(raiz.stdout.strip()).resolve() != pathlib.Path.cwd().resolve():
++            return None
++        historico = git("log", "--reverse", "--format=%H", "--", "registro/eventos.jsonl")
++        if historico.returncode:
++            return None
++        vistos, ultimo = set(), None
++        for sha in historico.stdout.splitlines():
++            snapshot = git("show", sha+":registro/eventos.jsonl")
++            if snapshot.returncode:
++                continue
++            novos = []
++            for pos, linha in enumerate(snapshot.stdout.splitlines()):
++                try:
++                    ev = json.loads(linha)
++                except json.JSONDecodeError:
++                    continue
++                chave = (pos, json.dumps(ev, sort_keys=True, ensure_ascii=False))
++                if ev.get("evento") == "SeloAplicado" and chave not in vistos:
++                    novos.append(ev)
++                vistos.add(chave)
++            if not novos:
++                continue
++            meta = git("show", "-s", "--format=%an%x00%B", sha)
++            if meta.returncode:
++                continue
++            autor, nota = meta.stdout.split("\0", 1)
++            for ev in novos:
++                if ev.get("autor") == autor and ev.get("nota", "").strip() == nota.strip():
++                    ultimo = {"hash": sha, "data": ev.get("data"), "nota": ev.get("nota")}
++        return ultimo
++    except (OSError, subprocess.SubprocessError, ValueError):
++        return None
++
++
+ def gravar(e):
+     CAMINHO.parent.mkdir(parents=True, exist_ok=True)
+     CAMINHO.write_text(json.dumps(e, indent=2, ensure_ascii=False), encoding="utf-8")
+@@ -112,6 +159,7 @@ if __name__ == "__main__":
+         else:
+             print("Nenhum caso aberto neste diretorio.")
+         sys.exit(0)
++    e["selo"] = ultimo_selo()
+     if "--resumo" in sys.argv:
+         cam = e.get("camada_atual")
+         pb = None
+@@ -129,6 +177,8 @@ if __name__ == "__main__":
+             sentido = " · " + P.natureza(pb, e["etapa_atual"], e.get("nivel"))
+         print(f"Caso {e['caso']} | nivel {nivel} | etapa {e['etapa_atual']} "
+               f"| camada {cam or '?'}{sentido} | modalidade {e.get('modalidade_atual','?')}")
++        selo = e["selo"]
++        print(f"Selo: {selo['hash']} | {selo['data']} | {selo['nota']}" if selo else "Selo: nenhum")
+         if pb:
+             prox = P.proxima_fronteira(pb, e["etapa_atual"], e.get("nivel"))
+             if prox:
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 0b16167..9a095ff 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -23,9 +23,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
+ import decisao_humana as H
++import caminhos as C
+ 
+ 
+-META_SHELL = re.compile(r"(?:\n|\r|&&|\|\||[;|<>`]|\$\()")
+ LEITORES_FONTES = {
+     "cat", "file", "grep", "head", "ls", "rg", "sha256sum",
+     "stat", "tail", "wc",
+@@ -36,43 +36,44 @@ MARCADOR_CONTRASTE = re.compile(
+ 
+ 
+ def negar(motivo, **ctx):
++    ctx.setdefault("autor", (E.ler() or {}).get("responsavel"))
+     E.evento("TentativaNegada", motivo=motivo, **ctx)
+     print(motivo, file=sys.stderr)
+     sys.exit(2)
+ 
+ 
+-def _em_fontes(alvo):
+-    if not alvo:
+-        return False
+-    if "fontes" in pathlib.PurePath(alvo).parts:
+-        return True
+-    caminho = pathlib.Path(alvo)
+-    resolvido = caminho.resolve() if caminho.is_absolute() else (pathlib.Path.cwd() / caminho).resolve()
+-    return "fontes" in resolvido.parts
+-
+-
+-def _bash_menciona_fontes(comando):
+-    if "fontes/" in comando or "/fontes/" in comando:
+-        return True
+-    try:
+-        partes = shlex.split(comando)
+-    except ValueError:
+-        partes = comando.split()
+-    return any(
+-        parte == "fontes" or parte.startswith("fontes/") or "/fontes/" in parte
+-        for parte in partes
+-    )
+-
+-
+-def _bash_leitura_fontes(comando):
+-    """Reconhece somente comandos simples e explicitamente de leitura."""
+-    if not comando.strip() or META_SHELL.search(comando):
+-        return False
+-    try:
+-        partes = shlex.split(comando)
+-    except ValueError:
+-        return False
+-    return bool(partes) and pathlib.Path(partes[0]).name in LEITORES_FONTES
++def nomes_habilidades(ev, entrada, alvo, comando, caminhos):
++    nomes = set()
++    if ev.get("tool_name") == "Skill":
++        nomes.add(str(entrada.get("skill", "")).split(":")[-1])
++    if ev.get("hook_event_name") == "UserPromptExpansion":
++        nomes.add(str(ev.get("command_name", "")).lstrip("/").split(":")[-1])
++    if alvo:
++        nomes.update(caminhos.nomes(alvo))
++    if ev.get("tool_name") == "Bash":
++        for grupo, cwd in C.comandos(comando, caminhos.cwd):
++            for caminho in C.argumentos_caminho(grupo):
++                nomes.update(caminhos.nomes(caminho,cwd))
++    return nomes
++
++
++def _bash_fontes(comando, caminhos):
++    for grupo, cwd in C.comandos(comando,caminhos.cwd):
++        if any(caminhos.em_segmento(p,"fontes",cwd) for p in C.escritas(grupo)):
++            return True
++        argv,_ = C.redirecionamentos(grupo)
++        menciona = any(caminhos.em_segmento(p,"fontes",cwd)
++                      for p in C.argumentos_caminho(argv))
++        # Código arbitrário que toca uma fonte não é reconhecido como
++        # leitor. A inspeção de redirecionamentos não retira essa trava.
++        if menciona and argv and pathlib.Path(argv[0]).name not in LEITORES_FONTES | C.ESCRITORES:
++            return True
++    return False
++
++
++def _bash_em(comando, caminhos, area):
++    return any(caminhos.em(p,area,cwd) for grupo,cwd in C.comandos(comando,caminhos.cwd)
++               for p in C.escritas(grupo))
+ 
+ 
+ def _registro_contraste():
+@@ -98,6 +99,11 @@ def main():
+     except Exception:
+         sys.exit(0)
+ 
++    raiz = C.raiz_caso(ev)
++    if raiz is None:
++        sys.exit(0)
++    caminhos = C.Contexto(raiz, ev.get("cwd") or os.getcwd())
++    os.chdir(raiz)
+     st = E.ler()
+     if not st:
+         sys.exit(0)          # fora de caso, o nucleo nao opina
+@@ -120,7 +126,7 @@ def main():
+ 
+     ferramenta = ev.get("tool_name", "")
+     entrada = ev.get("tool_input", {}) or {}
+-    alvo = str(entrada.get("file_path") or entrada.get("path") or "")
++    alvo = str(entrada.get("file_path") or entrada.get("path") or entrada.get("notebook_path") or "")
+     comando = str(entrada.get("command") or "")
+     etapa_id = st["etapa_atual"]
+     nivel = st.get("nivel")
+@@ -141,53 +147,39 @@ def main():
+                 autor=st.get("responsavel"), etapa=etapa_id, ferramenta=ferramenta,
+             )
+ 
+-    # G1 — habilidade de camada humana nao carrega sem sessao valida
+-    # A camada de uma etapa desloca com o nivel do caso (CAT-01 3.6):
+-    # a mesma etapa pode ser EX2 em N1 e EX3 em N3. Sessao humana
+-    # registrada (por avancar.py --registrar-sessao, caminho autorizado)
+-    # libera o CARREGAMENTO da skill como instrumento de apoio/registro —
+-    # nao libera decisao, aprovacao ou fechamento da etapa por agente,
+-    # que continuam bloqueados por outras regras (delegavel:false em
+-    # avancar.encerrar(), G1 nao muda isso). Sessao de outra etapa, ou
+-    # ausente, nao libera.
+-    for e in pb["etapas"]:
+-        if not e.get("habilidade") or e["habilidade"] not in alvo:
+-            continue
++    # A habilidade é identificada pelo nome declarado, em todas as rotas
++    # de carregamento. O namespace e a localização da instalação não
++    # fazem parte da regra do método.
++    nomes = nomes_habilidades(ev, entrada, alvo, comando, caminhos)
++    habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
++    # G7 continua independente da autorização de carregamento.
++    for e in habilidades:
++        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
++        if not selo_ok:
++            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
++
++    # G1: sessão registrada não delega uma etapa explicitamente humana.
++    # Nas etapas delegáveis de camada humana, mantém-se o uso instrumental
++    # após a sessão da própria etapa, sem delegar a decisão.
++    for e in habilidades:
+         cam = P.camada(pb, e["id"], nivel)
+-        if e.get("delegavel") is False or cam in ("EX3", "EX4"):
+-            sessao_valida = bool(
+-                st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
+-            )
+-            if sessao_valida:
+-                continue
++        sessao = st.get("cumprimentos", {}).get(e["id"], {}).get("sessao")
++        if e.get("delegavel") is False or (P.humana(cam) and not sessao):
+             motivo = ("nao e delegavel a agente" if e.get("delegavel") is False
+                       else f"esta em camada humana ({cam}) para o nivel {nivel or 'nao apurado'}")
+             negar(
+                 f"{cam}: a etapa {e['id']} {motivo}. "
+                 f"Modalidade exigida: {e.get('modalidade','?')}. "
+-                f"Registre a sessao com /eiac-nucleo:registrar-sessao.",
++                "A sessao registrada nao delega uma etapa humana."
++                if e.get("delegavel") is False else
++                f"{cam}: a etapa {e['id']} {motivo}. Registre a sessao com /eiac-nucleo:registrar-sessao.",
+                 etapa=e["id"], camada_exigida=cam, nivel=nivel, ferramenta=ferramenta,
++                habilidade=e["habilidade"], hook_event_name=ev.get("hook_event_name"),
+             )
+ 
+-    # G7 — habilidade de etapa que exige selo posterior a outra etapa nao
+-    # carrega sem esse selo. Generico: qualquer etapa pode declarar
+-    # {"exige_selo_apos": "<id>"} no playbook; o nucleo nao sabe por que
+-    # (nao cita nenhum id de etapa aqui) -- so compara eventos EtapaEncerrada
+-    # e SeloAplicado via playbook.selo_apos_etapa(). Isto cobre a ABERTURA
+-    # da etapa (carregamento da skill); o fechamento e recusado por
+-    # avancar.encerrar() com a mesma checagem.
+-    for e in pb["etapas"]:
+-        if not e.get("habilidade") or e["habilidade"] not in alvo:
+-            continue
+-        selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
+-        if not selo_ok:
+-            negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
+-
+     # G2 — escrita direta no repositorio do caso
+-    escrita = ferramenta in ("Write", "Edit") and alvo.startswith("caso/")
+-    escrita_bash = ferramenta == "Bash" and " caso/" in comando and any(
+-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
+-    )
++    escrita = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"caso")
++    escrita_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"caso")
+     if escrita or escrita_bash:
+         negar(
+             "Escrita direta em caso/ nao e permitida. "
+@@ -197,10 +189,8 @@ def main():
+         )
+ 
+     # G2b — escrita direta na camada de contexto curada
+-    escrita_ctx = ferramenta in ("Write", "Edit") and alvo.startswith("contexto/")
+-    escrita_ctx_bash = ferramenta == "Bash" and " contexto/" in comando and any(
+-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
+-    )
++    escrita_ctx = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"contexto")
++    escrita_ctx_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"contexto")
+     if escrita_ctx or escrita_ctx_bash:
+         negar(
+             "Escrita direta em contexto/ nao e permitida. "
+@@ -217,12 +207,8 @@ def main():
+     # arvore do caso (raiz e contexto/fontes/, esta ultima ja coberta
+     # tambem por G2b). Entrada de documento novo e feita pelo operador,
+     # fora da sessao do agente.
+-    escrita_fontes = ferramenta in ("Write", "Edit") and _em_fontes(alvo)
+-    escrita_fontes_bash = (
+-        ferramenta == "Bash"
+-        and _bash_menciona_fontes(comando)
+-        and not _bash_leitura_fontes(comando)
+-    )
++    escrita_fontes = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em_segmento(alvo,"fontes")
++    escrita_fontes_bash = ferramenta == "Bash" and _bash_fontes(comando,caminhos)
+     if escrita_fontes or escrita_fontes_bash:
+         negar(
+             "Escrita, edicao ou remocao em fontes/ nao e permitida a agente. "
+@@ -243,10 +229,8 @@ def main():
+     # so os scripts do nucleo gravam ali; passar por Write/Edit ou
+     # redirecionamento de shell contorna estado, inegociaveis, portoes e
+     # eventos (2.6-BL17, D-08).
+-    escrita_registro = ferramenta in ("Write", "Edit") and alvo.startswith("registro/")
+-    escrita_registro_bash = ferramenta == "Bash" and " registro/" in comando and any(
+-        t in comando for t in (">", ">>", "tee ", "mv ", "cp ")
+-    )
++    escrita_registro = ferramenta in ("Write", "Edit", "NotebookEdit") and caminhos.em(alvo,"registro")
++    escrita_registro_bash = ferramenta == "Bash" and _bash_em(comando,caminhos,"registro")
+     if escrita_registro or escrita_registro_bash:
+         negar(
+             "Escrita direta em registro/ nao e permitida. "
+@@ -270,4 +254,7 @@ def main():
+ 
+ 
+ if __name__ == "__main__":
+-    main()
++    try:
++        main()
++    except (C.CaminhoInvalido, ValueError) as exc:
++        negar(f"Entrada de caminho/comando invalida: {exc}")
+diff --git a/testes/README.md b/testes/README.md
+index 832f7ea..9cbcc2e 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -75,7 +75,7 @@ As 38 verificações operacionais de P6 e P7 (pacote 2.6.2: especificação
+ operacional, termo de autonomia, fronteira agente×humano em ambos,
+ dependência P7→P6, evidência para o inegociável 2, e a correção de G1
+ em `guarda.py` — sessão humana válida libera carregamento de skill
+-EX3/EX4) rodam separadamente:
++de etapa delegável; não libera habilidade não delegável) rodam separadamente:
+ 
+ ```bash
+ python3 testes/campo_2_6_2.py
+@@ -446,15 +446,16 @@ introduzir semântica de método em `eiac-nucleo/`.
+ | 2.6.2-T28–T30 | Eventos de tentativa de agente, decisão inválida e decisão válida, todos rastreáveis |
+ | 2.6.2-T31 | Ausência de hard-code comportamental de P6/P7/autonomia/E4 no núcleo |
+ | 2.6.2-T32/T33 | Regressão da Ação 2.5 e do pacote 2.6.1 |
+-| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill EX3/EX4 sem sessão bloqueada; com sessão válida da mesma etapa carrega; sessão de outra etapa não libera |
++| 2.6.2-G1a/G1b/G1c | Achado corrigido: skill delegável de camada humana sem sessão bloqueada; com sessão da própria etapa carrega; sessão de outra etapa não libera; 031 impede carregar não delegável mesmo com sessão |
+ 
+ **Achado corrigido neste pacote:** `guarda.py` G1 bloqueava o
+ carregamento do próprio `SKILL.md` para qualquer etapa EX3/EX4,
+ independentemente de sessão humana registrada — comportamento
+ pré-existente (já afetava `hb-confrontar`, `hb-priorizar`,
+ `hb-classificar`), descoberto ao escrever `hb-operacionalizar`/
+-`hb-governar`. G1 agora libera o carregamento quando existe sessão
+-humana válida **para a etapa corrente** — não libera decisão, aprovação
++`hb-governar`. G1 libera o carregamento de habilidade **delegável** quando existe sessão
++humana válida **para a própria etapa**; a decisão 031 recusa sempre o
++carregamento das habilidades não delegáveis — não libera decisão, aprovação
+ ou fechamento de etapa por agente, que continuam bloqueados por outras
+ regras (`delegavel:false` em `avancar.encerrar()`,
+ `operacional.py`/`governanca.py` recusando agente em
+@@ -557,7 +558,7 @@ genérica (capacidade↔papel, sem conhecer HB/AG/EMCIA) fica em
+ | 2.6.4-T31 | Skills que materializam mais de uma HB preservam critério individual por HB |
+ | 2.6.4-T32–T35 | Mecanismo genérico do 2.6.1 recebe HB real sem/com critério; critério recuperável em runtime; não duplicado na etapa do playbook |
+ | 2.6.4-T36–T38 | Nenhum AG tem autoridade sobre a decisão humana de P7 (HB-14) nem de recalibragem em P10 (HB-18); nenhum AG substitui a sessão de P3b |
+-| 2.6.4-T39/T40 | Regressão G1: skill EX3/EX4 sem sessão bloqueada; com sessão válida carrega |
++| 2.6.4-T39/T40 | Regressão G1: skill delegável de camada humana sem sessão bloqueada; com sessão válida carrega |
+ | 2.6.4-T41–T43 | Os 4 AG lógicos resolvem sem exigir 4 arquivos físicos; agentes físicos existentes preservam identidade 1:1; implementação física resolve para arquivo real |
+ | 2.6.4-T44/T45 | `catalogo.py` não expõe caminho de auto-ampliação em runtime; catálogo só muda por edição de arquivo versionado |
+ | 2.6.4-T46 | Ausência de hard-code HB/AG no núcleo |
+@@ -700,3 +701,25 @@ python3 testes/pessoa_a16.py     # 17
+ preparação existentes; não é módulo de verificações. T09b de campo_2_6_5
+ exige recusa do coletivo composto na gravação. As saídas antes/depois e a
+ lista de ajustes ficam em `.projectdocs/evidencias/sprint3/3.6/correcao-A14-A16/`.
++
++## Sprint 3 — ação 3.7: A17–A21
++
++**769 verificações em 33 módulos**, mantendo as 673 anteriores. As 96 novas:
++
++| Módulo | Verificações | Cobertura |
++|---|---:|---|
++| `habilidades_a18.py` | 13 | Skill da sessão real, expansão direta, instalação, Read/Grep/Bash, aliases e níveis |
++| `caminhos_a19.py` | 62 | áreas protegidas × caminhos, Edit/Bash, cwd, links, subshell e pipeline |
++| `redirecionamentos_a20.py` | 12 | destinos de saída, FD, aspas, leitura e rascunho |
++| `recusa_a21.py` | 2 | instrução de recusa por evento e ausência de asserção inventada |
++| `selo_a17.py` | 7 | selo confirmado, falha de commit, último selo, hash estável e resumo |
++
++Execute cada módulo com `python3 testes/<módulo>.py`. A evidência inclui
++[reexecutar-suite.py](../.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/reexecutar-suite.py)
++para a bateria completa, todos os `.py` da raiz de testes/ e negativos.sh.
++
++`apoio/hook_real.py` e `apoio/entradas_sessao_37.json` são preparação e
++parâmetros de ferramentas da sessão sintética controle-37, não módulos de
++verificações. Os campos comuns de hook seguem o contrato oficial. T04 de
++verificacao_por_estados mantém a emissão do selo e o encerramento humano,
++mas agora exige recusa do carregamento não delegável. Nenhum teste é apagado.
+diff --git a/testes/apoio/entradas_sessao_37.json b/testes/apoio/entradas_sessao_37.json
+new file mode 100644
+index 0000000..1170764
+--- /dev/null
++++ b/testes/apoio/entradas_sessao_37.json
+@@ -0,0 +1,11 @@
++{
++  "Skill": {
++    "skill": "eiac-campo:hb-levantar-regras"
++  },
++  "Edit": {
++    "replace_all": false,
++    "file_path": "/tmp/emcia-demos/controle-37/registro/estado.json",
++    "old_string": "  \"etapa_atual\": \"P10\",",
++    "new_string": "  \"etapa_atual\": \"F0\","
++  }
++}
+diff --git a/testes/apoio/hook_real.py b/testes/apoio/hook_real.py
+new file mode 100644
+index 0000000..f31cf34
+--- /dev/null
++++ b/testes/apoio/hook_real.py
+@@ -0,0 +1,63 @@
++"""Caso sintético e entradas no contrato dos hooks do Claude Code."""
++import json, os, pathlib, shutil, subprocess, sys, tempfile, unittest
++RAIZ = pathlib.Path(__file__).resolve().parents[2]
++NUCLEO = RAIZ / 'eiac-nucleo/scripts'
++
++class CasoHook(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.base = pathlib.Path(self.tmp.name)
++        self.caso = self.base / 'controle'
++        shutil.copytree(RAIZ / 'eiac-campo/template-caso', self.caso)
++        self.estado = json.loads((self.caso/'registro/estado.json').read_text())
++        self.estado.update(responsavel='Celso do Vale', nivel='N2')
++        self.salvar()
++        (self.caso/'rascunho').mkdir(exist_ok=True)
++        self.env = dict(os.environ, CLAUDE_PROJECT_DIR=str(self.caso))
++
++    def salvar(self):
++        (self.caso/'registro/estado.json').write_text(json.dumps(self.estado))
++
++    def rodar(self, script, *args, entrada=None, cwd=None):
++        return subprocess.run([sys.executable, str(NUCLEO/script), *args],
++                              cwd=cwd or self.caso, env=self.env, input=entrada,
++                              text=True, capture_output=True)
++
++    def hook(self, ferramenta, entrada, cwd=None, evento='PreToolUse', **campos):
++        entrada = dict(entrada)
++        if ferramenta == 'Edit':
++            entrada.setdefault('old_string', 'P10'); entrada.setdefault('new_string', 'F0')
++        elif ferramenta == 'Write':
++            entrada.setdefault('content', 'controle sintético')
++        payload = dict(session_id='sessao-controle', transcript_path=str(self.base/'sessao.jsonl'),
++                       cwd=str(cwd or self.caso), permission_mode='default', hook_event_name=evento,
++                       tool_name=ferramenta, tool_input=entrada, tool_use_id='toolu_controle')
++        payload.update(campos)
++        return self.rodar('guarda.py', entrada=json.dumps(payload), cwd=cwd)
++
++    def negado(self, ferramenta, entrada, **kwargs):
++        antes = len(self.eventos())
++        r = self.hook(ferramenta, entrada, **kwargs)
++        self.assertEqual(r.returncode, 2, r.stderr)
++        evs = self.eventos()
++        self.assertEqual(len(evs), antes+1)
++        self.assertEqual(evs[-1]['evento'], 'TentativaNegada')
++        self.assertEqual(evs[-1]['autor'], 'Celso do Vale')
++        return r
++
++    def eventos(self):
++        p = self.caso/'registro/eventos.jsonl'
++        return [json.loads(x) for x in p.read_text().splitlines() if x.strip()] if p.exists() else []
++
++    def preparar_habilidade(self):
++        self.estado.update(etapa_atual='P3b', cumprimentos={
++            'P2': {'cumprido': True}, 'P3a': {'cumprido': True},
++            'P3b': {'sessao': {'autor': 'Celso do Vale', 'participantes': 'Marina Prado'}}})
++        self.salvar()
++        log = self.caso/'registro/eventos.jsonl'
++        log.write_text('\n'.join(json.dumps(x) for x in [
++            {'evento': 'EtapaEncerrada', 'etapa': 'P2'}, {'evento': 'SeloAplicado'}])+'\n')
++        self.skill = self.base/'.claude/plugins/cache/emcia/eiac-campo/0.8.5/skills/hb-levantar-regras/SKILL.md'
++        self.skill.parent.mkdir(parents=True)
++        shutil.copyfile(RAIZ/'eiac-campo/skills/hb-levantar-regras/SKILL.md', self.skill)
+diff --git a/testes/caminhos_a19.py b/testes/caminhos_a19.py
+new file mode 100644
+index 0000000..ef7bec3
+--- /dev/null
++++ b/testes/caminhos_a19.py
+@@ -0,0 +1,71 @@
++#!/usr/bin/env python3
++"""A19: caminhos reais e aliases não escapam das zonas protegidas."""
++import json, unittest
++from apoio.hook_real import CasoHook, RAIZ
++
++class Caminhos(CasoHook):
++    pass
++
++def verificar(area, forma, ferramenta):
++    def teste(self):
++        relativo = area+'/arquivo.txt'
++        alvo = self.caso/relativo
++        alvo.parent.mkdir(parents=True, exist_ok=True)
++        if forma == 'relativo': caminho = relativo
++        elif forma == 'absoluto': caminho = str(alvo)
++        elif forma == 'pontos': caminho = 'rascunho/../'+relativo
++        elif forma == 'link':
++            link=self.base/'atalho'
++            link.symlink_to(alvo.parent, target_is_directory=True)
++            caminho=str(link/alvo.name)
++        elif forma == 'subdiretorio': caminho = '../'+relativo
++        entrada = {'file_path': caminho} if ferramenta != 'Bash' else {'command': 'printf x > '+caminho}
++        self.negado(ferramenta, entrada, cwd=self.caso/'rascunho' if forma=='subdiretorio' else None)
++    return teste
++for area in ('registro','caso','contexto','fontes','contexto/fontes'):
++    for forma in ('relativo','absoluto','pontos','link','subdiretorio'):
++        for ferramenta in ('Edit','Bash'):
++            setattr(Caminhos, 'test_'+area.replace('/','_')+'_'+forma+'_'+ferramenta, verificar(area,forma,ferramenta))
++
++class Controles(CasoHook):
++    def test_01_registro_link_para_fora_continua_protegido(self):
++        externo=self.base/'externo.txt'; externo.write_text('controle')
++        link=self.caso/'registro/alias.txt'; link.symlink_to(externo)
++        self.negado('Write', {'file_path':str(link)})
++
++    def test_02_rascunho_absoluto(self):
++        self.assertEqual(self.hook('Write', {'file_path':str(self.caso/'rascunho/x.md')}).returncode,0)
++
++    def test_03_leitura_registro(self):
++        self.assertEqual(self.hook('Read', {'file_path':str(self.caso/'registro/estado.json')}).returncode,0)
++
++    def test_04_arquivo_externo_sem_alias(self):
++        self.assertEqual(self.hook('Write', {'file_path':str(self.base/'registro/x.txt')}).returncode,0)
++
++    def test_05_cd_antes_de_escrever(self):
++        self.negado('Bash', {'command':'cd '+str(self.caso/'registro')+' && printf x > estado.json'})
++
++    def test_06_cp_absoluto(self):
++        self.negado('Bash', {'command':'cp rascunho/x '+str(self.caso/'registro/estado.json')})
++
++    def test_07_mv_absoluto(self):
++        self.negado('Bash', {'command':'mv '+str(self.caso/'registro/estado.json')+' /tmp/retirado.json'})
++
++    def test_08_tee_link(self):
++        link=self.base/'log'; link.symlink_to(self.caso/'registro',target_is_directory=True)
++        self.negado('Bash', {'command':'printf x | tee '+str(link/'estado.json')})
++
++    def test_09_cwd_fora_raiz_projeto_preservada(self):
++        self.negado('Edit', {'file_path':str(self.caso/'registro/estado.json')}, cwd=self.base)
++    def test_10_subshell_nao_muda_diretorio_do_shell_pai(self):
++        self.negado('Bash', {'command':'(cd rascunho); printf x > registro/estado.json'})
++
++    def test_11_pipeline_nao_muda_diretorio_do_shell_pai(self):
++        self.negado('Bash', {'command':'cd rascunho | cat; printf x > registro/estado.json'})
++    def test_12_edit_da_sessao_real(self):
++        entrada=json.loads((RAIZ/'testes/apoio/entradas_sessao_37.json').read_text())['Edit']
++        entrada['file_path']=str(self.caso/'registro/estado.json')
++        self.assertIn('F0',entrada['new_string'])
++        self.negado('Edit',entrada)
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/habilidades_a18.py b/testes/habilidades_a18.py
+new file mode 100644
+index 0000000..0934528
+--- /dev/null
++++ b/testes/habilidades_a18.py
+@@ -0,0 +1,58 @@
++#!/usr/bin/env python3
++"""A18: rotas reais de carregamento, inclusive com sessão e selo."""
++import json, os, unittest
++from apoio.hook_real import CasoHook, RAIZ
++
++class Habilidades(CasoHook):
++    def setUp(self):
++        super().setUp()
++        self.preparar_habilidade()
++
++    def test_01_read_instalado_absoluto(self):
++        self.negado('Read', {'file_path': str(self.skill)})
++
++    def test_02_read_relativo(self):
++        self.negado('Read', {'file_path': os.path.relpath(self.skill, self.caso)})
++
++    def test_03_read_pontos(self):
++        self.negado('Read', {'file_path': str(self.skill.parent/'../hb-levantar-regras/SKILL.md')})
++
++    def test_04_read_link(self):
++        link = self.caso/'rascunho/apoio.md'
++        link.symlink_to(self.skill)
++        self.negado('Read', {'file_path': str(link)})
++
++    def test_05_ferramenta_skill(self):
++        entrada=json.loads((RAIZ/'testes/apoio/entradas_sessao_37.json').read_text())['Skill']
++        self.negado('Skill', entrada)
++
++    def test_06_ferramenta_skill_sem_namespace(self):
++        self.negado('Skill', {'skill': 'hb-levantar-regras'})
++
++    def test_07_expansao_direta(self):
++        self.negado('', {}, evento='UserPromptExpansion', expansion_type='slash_command',
++                    command_name='eiac-campo:hb-levantar-regras', command_args='', command_source='plugin',
++                    prompt='/eiac-campo:hb-levantar-regras')
++
++    def test_08_bash_leitura(self):
++        self.negado('Bash', {'command': 'cat '+str(self.skill)})
++
++    def test_09_grep_conteudo(self):
++        self.negado('Grep', {'path': str(self.skill), 'pattern': '.', 'output_mode': 'content'})
++
++    def test_10_habilidade_delegavel(self):
++        self.assertEqual(self.hook('Skill', {'skill':'eiac-campo:hb-enquadrar'}).returncode, 0)
++
++    def test_11_hooks_instalados_cobrem_rotas(self):
++        hooks = json.loads((RAIZ/'eiac-nucleo/hooks/hooks.json').read_text())['hooks']
++        self.assertIn('Skill', hooks['PreToolUse'][0]['matcher'].split('|'))
++        self.assertIn('UserPromptExpansion', hooks)
++    def test_12_nao_delegavel_n1(self):
++        self.estado['nivel']='N1'; self.salvar()
++        self.negado('Skill', {'skill':'eiac-campo:hb-levantar-regras'})
++
++    def test_13_nao_delegavel_n3(self):
++        self.estado['nivel']='N3'; self.salvar()
++        self.negado('Skill', {'skill':'eiac-campo:hb-levantar-regras'})
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/recusa_a21.py b/testes/recusa_a21.py
+new file mode 100644
+index 0000000..de76042
+--- /dev/null
++++ b/testes/recusa_a21.py
+@@ -0,0 +1,18 @@
++#!/usr/bin/env python3
++"""A21: recusa é evento; não vira asserção com procedência inventada."""
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++
++class Recusa(CasoHook):
++    def test_01_instrucoes_nao_pedem_marca_invalida(self):
++        texto=(RAIZ/'eiac-campo/skills/hb-levantar-regras/SKILL.md').read_text()
++        self.assertNotIn('[tentativa-negada',texto)
++        self.assertIn('TentativaNegada',texto)
++        self.assertNotIn('registre em `caso/log-tentativas.md`',texto)
++    def test_02_recusa_e_evento_sem_assercoes(self):
++        self.preparar_habilidade()
++        antes=set((self.caso/'caso').rglob('*'))
++        self.negado('Read', {'file_path':str(self.skill)})
++        self.assertEqual(set((self.caso/'caso').rglob('*')),antes)
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/redirecionamentos_a20.py b/testes/redirecionamentos_a20.py
+new file mode 100644
+index 0000000..eb29b06
+--- /dev/null
++++ b/testes/redirecionamentos_a20.py
+@@ -0,0 +1,32 @@
++#!/usr/bin/env python3
++"""A20: alvos de redirecionamento e descritores, não o caractere >."""
++import unittest
++from apoio.hook_real import CasoHook
++
++class Redirecionamentos(CasoHook):
++    def test_01_stderr_protegido(self):
++        self.negado('Bash', {'command':'cat rascunho/x 2>registro/erro.txt'})
++    def test_02_append_protegido(self):
++        self.negado('Bash', {'command':'cat rascunho/x >> caso/x.md'})
++    def test_03_caminho_com_espaco(self):
++        self.negado('Bash', {'command':'printf x > "'+str(self.caso/'registro/meu estado.json')+'"'})
++    def test_04_stderr_dev_null(self):
++        self.assertEqual(self.hook('Bash', {'command':'cat registro/estado.json 2>/dev/null'}).returncode,0)
++    def test_05_stdout_dev_null(self):
++        self.assertEqual(self.hook('Bash', {'command':'cat caso/x.md >/dev/null'}).returncode,0)
++    def test_06_fontes_stderr_dev_null(self):
++        self.assertEqual(self.hook('Bash', {'command':'ls fontes/ 2>/dev/null'}).returncode,0)
++    def test_07_duplicacao_descritor(self):
++        self.assertEqual(self.hook('Bash', {'command':'cat contexto/regras/x.yaml 2>&1'}).returncode,0)
++    def test_08_rascunho_redirecionado(self):
++        self.assertEqual(self.hook('Bash', {'command':'cat fontes/x > rascunho/copia.txt 2>/dev/null'}).returncode,0)
++    def test_09_stdout_e_stderr_protegidos(self):
++        self.negado('Bash', {'command':'cat rascunho/x &>registro/erro.txt'})
++    def test_10_fora_do_caso(self):
++        self.assertEqual(self.hook('Bash', {'command':'cat registro/estado.json > '+str(self.base/'copia.txt')}).returncode,0)
++    def test_11_maior_entre_aspas_e_texto(self):
++        self.assertEqual(self.hook('Bash', {'command':"printf '%s' '>' caso/x.md"}).returncode,0)
++    def test_12_caractere_escapado_e_texto(self):
++        self.assertEqual(self.hook('Bash', {'command':'echo \\> registro/x'}).returncode,0)
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/selo_a17.py b/testes/selo_a17.py
+new file mode 100644
+index 0000000..10545fa
+--- /dev/null
++++ b/testes/selo_a17.py
+@@ -0,0 +1,58 @@
++#!/usr/bin/env python3
++"""A17: estado exibe o último selo confirmado pelo histórico do caso."""
++import json, subprocess, unittest
++from apoio.hook_real import CasoHook
++
++class Selo(CasoHook):
++    def git(self,*args):
++        r=subprocess.run(['git',*args],cwd=self.caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,0,r.stderr)
++        return r.stdout.strip()
++    def setUp(self):
++        super().setUp()
++        self.git('init','-q')
++        self.git('config','user.name','Celso do Vale')
++        self.git('config','user.email','controle@exemplo.com')
++        self.git('add','-A'); self.git('commit','-qm','abertura')
++    def estado_exibido(self):
++        r=self.rodar('estado.py'); self.assertEqual(r.returncode,0,r.stderr)
++        return json.loads(r.stdout)
++    def aplicar(self,nota):
++        (self.caso/'rascunho/marcador.txt').write_text(nota)
++        r=self.rodar('selar.py','--nota',nota)
++        self.assertEqual(r.returncode,0,r.stderr)
++        return self.git('rev-parse','HEAD')
++    def test_01_sem_selo_nao_inventa_hash(self):
++        self.assertIsNone(self.estado_exibido().get('selo'))
++    def test_02_commit_recusado_nao_exibe_selo_aplicado(self):
++        hook=self.caso/'.git/hooks/pre-commit'; hook.write_text('#!/bin/sh\nexit 1\n'); hook.chmod(0o755)
++        (self.caso/'rascunho/x').write_text('controle')
++        self.assertNotEqual(self.rodar('selar.py','--nota','recusado').returncode,0)
++        self.assertIsNone(self.estado_exibido().get('selo'))
++    def test_03_hash_data_nota(self):
++        sha=self.aplicar('primeiro selo')
++        selo=self.estado_exibido()['selo']
++        self.assertEqual(selo['hash'],sha); self.assertEqual(selo['nota'],'primeiro selo')
++        self.assertEqual(selo['data'],self.eventos()[-1]['data'])
++        self.assertEqual(self.git('status','--porcelain'),'')
++    def test_04_ultimo_selo(self):
++        self.aplicar('primeiro'); sha=self.aplicar('segundo')
++        self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
++        self.assertEqual(self.estado_exibido()['selo']['nota'],'segundo')
++    def test_05_commit_posterior_nao_troca_hash(self):
++        sha=self.aplicar('selo')
++        (self.caso/'rascunho/extra').write_text('extra')
++        self.git('add','-A'); self.git('commit','-qm','posterior')
++        self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
++    def test_06_resumo_mostra_selo(self):
++        sha=self.aplicar('selo de controle')
++        r=self.rodar('estado.py','--resumo')
++        self.assertIn(sha,r.stdout); self.assertIn('selo de controle',r.stdout)
++    def test_07_tentativa_posterior_nao_apaga_selo(self):
++        sha=self.aplicar('confirmado')
++        hook=self.caso/'.git/hooks/pre-commit'; hook.write_text('#!/bin/sh\nexit 1\n'); hook.chmod(0o755)
++        (self.caso/'rascunho/marcador.txt').write_text('alterado')
++        self.assertNotEqual(self.rodar('selar.py','--nota','falhou').returncode,0)
++        self.assertEqual(self.estado_exibido()['selo']['hash'],sha)
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/verificacao_por_estados.py b/testes/verificacao_por_estados.py
+index 1f646c0..b070c76 100644
+--- a/testes/verificacao_por_estados.py
++++ b/testes/verificacao_por_estados.py
+@@ -18,7 +18,7 @@ para os portoes de emissao (2.6.0).
+ Negativos primeiro (decisao 011): sem selo, e com selo anterior ao
+ encerramento de P2, ambos recusam -- abrir (guarda.py, TentativaNegada) e
+ encerrar (avancar.py, RecusaMaquina). Depois o controle positivo: selo
+-posterior abre e encerra normalmente.
++posterior permite encerrar; A18 mantém o carregamento não delegável recusado.
+ """
+ import json
+ import pathlib
+@@ -98,8 +98,8 @@ def eventos(caso):
+ 
+ def levar_ate_p3b(caso):
+     """F0 -> P1 -> P2 -> P3a, sem selar. Etapa corrente fica P3b, com a
+-    sessao humana ja registrada (P3b e nao delegavel -- G1 recusaria antes
+-    de G7 sequer ser avaliado, sem a sessao)."""
++    sessao humana ja registrada. G7 é conferida independentemente de G1;
++    a sessão não autoriza carregar habilidade não delegável (A18)."""
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+     avancar(caso, encerrar="F0", autor="Celso do Vale")
+     avancar(caso, encerrar="P1", autor="Celso do Vale")
+@@ -177,8 +177,8 @@ with tempfile.TemporaryDirectory() as tmp:
+             falha(f"T03 selo anterior foi aceito indevidamente: exit={codigo} erro={erro}")
+ 
+ # =====================================================================
+-# T04 (positivo, controle) -- selo POSTERIOR ao encerramento de P2 abre
+-# e encerra P3b normalmente
++# T04 (controle) -- selo POSTERIOR ao encerramento de P2 satisfaz G7
++# e permite encerrar P3b pelo engenheiro; o agente continua sem carregar a habilidade
+ # =====================================================================
+ with tempfile.TemporaryDirectory() as tmp:
+     caso = preparar_caso(pathlib.Path(tmp))
+@@ -192,10 +192,10 @@ with tempfile.TemporaryDirectory() as tmp:
+             falha(f"T04 selo posterior falhou ao ser aplicado: {erro_selo}")
+         else:
+             codigo, saida, erro = guarda(caso, "Read", {"file_path": "skills/hb-levantar-regras/SKILL.md"})
+-            if codigo == 0:
+-                ok("T04 P3b abre com selo posterior ao encerramento de P2")
++            if codigo == 2 and "nao e delegavel" in erro:
++                ok("T04 P3b não carrega pelo agente mesmo com sessão e selo posterior (A18)")
+             else:
+-                falha(f"T04 P3b nao abriu com selo posterior valido: exit={codigo} erro={erro}")
++                falha(f"T04 P3b foi delegada apesar da proibição: exit={codigo} erro={erro}")
+ 
+             avancar(caso, registrar_sessao="P3b", autor="Celso do Vale", participantes="Ana, Celso")
+             codigo, saida, erro = avancar(caso, encerrar="P3b", autor="Celso do Vale")
