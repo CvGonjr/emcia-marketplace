@@ -1,0 +1,8 @@
+09:37:21 | Escrita direta em caso/ nao e permitida. Grave pelo validador: python3 scripts/validar.py --arquivo <caminho>.
+09:38:57 | Operacao declarada como decisao humana. A decisao humana e executada pelo engenheiro no proprio terminal, fora
+09:39:27 | Operacao declarada como decisao humana. A decisao humana e executada pelo engenheiro no proprio terminal, fora
+09:40:20 | Candidato rascunho/AUT-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executa
+09:40:45 | Candidato rascunho/CT-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executad
+09:40:57 | Candidato rascunho/CAL-001-C01.yaml: campo decisao caracteriza decisao humana. A decisao humana e executada pe
+09:41:24 | Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar
+09:42:44 | Etapa P10, camada EX4, nivel N2: encerramento humano. A decisao humana e executada pelo engenheiro no proprio 
