@@ -1,0 +1,201 @@
+[01 · infraestrutura] $ git rev-parse --verify 'v-sprint3-poc.7^{commit}'
+c577286c0bad89503f05cf8770ee2e8ef1997e02
+Versão congelada: v-sprint3-poc.7 / c577286c0bad89503f05cf8770ee2e8ef1997e02
+[02 · infraestrutura] $ git worktree add --detach /tmp/emcia-percurso-v7-1r4b8eym/fonte v-sprint3-poc.7
+HEAD is now at c577286 docs(evidence): registrar correção A23 e auditoria de responsabilidades
+[03 · percurso] $ bash /tmp/emcia-percurso-v7-1r4b8eym/fonte/novo-caso.sh percurso-38b --responsavel 'Celso do Vale' /tmp/emcia-demos
+
+caso "percurso-38b" criado em /tmp/emcia-demos/percurso-38b
+
+Falta uma coisa antes de comecar:
+
+  copie os documentos do metodo para /tmp/emcia-demos/percurso-38b/metodo/
+  documento do metodo, glossario, catalogo de delegacao, quadro de
+  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+  verificacao, CTX-01
+
+Os artefatos da organizacao vao para /tmp/emcia-demos/percurso-38b/fontes/ — leia o README
+de la antes de commitar documento de cliente.
+
+Depois:
+
+  cd "/tmp/emcia-demos/percurso-38b" && claude
+
+E confirme com  /eiac-nucleo:estado
+[04 · percurso] $ git config user.name 'Celso do Vale'
+[05 · percurso] $ git config user.email controle@exemplo.com
+[06 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --apurar-nivel N2 --eixos 'DAD 5, GOV 3, CRI 6' --autor 'Celso do Vale'
+ok | etapa atual: F0 | camada: EX1
+[07 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor 'Celso do Vale'
+ok | etapa atual: P1 | camada: EX2
+[08 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/entregaveis.py --renderizar E1 --emitir --autor 'Celso do Vale'
+E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+[09 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F0'
+selado 1a33928 | 3 arquivo(s) | autor Celso do Vale
+[10 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P1 --autor 'Celso do Vale'
+ok | etapa atual: P2 | camada: EX2
+[11 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P2 --autor 'Celso do Vale'
+ok | etapa atual: P3a | camada: EX3
+[12 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'estado declarado depois de P2'
+selado f76df87 | 2 arquivo(s) | autor Celso do Vale
+[13 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/baseline.py --arquivo registro/baseline/BL-001.yaml --ator 'Celso do Vale'
+linha de base gravada: registro/baseline/BL-001.yaml
+[14 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/inegociaveis.py --verificar 1 --arquivo registro/baseline/BL-001.yaml --satisfazer --autor 'Celso do Vale'
+I1 | satisfeito=True | linha de base 'BL-001' registrada em 2026-09-28 (apuracao medido, nivel N2)
+ok | etapa atual: P3a | camada: EX3
+[15 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3a --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3a | camada: EX3
+[16 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3a --autor 'Celso do Vale'
+ok | etapa atual: P3b | camada: EX4
+[17 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3b --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3b | camada: EX4
+[18 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3b --autor 'Celso do Vale'
+ok | etapa atual: P3d | camada: EX3
+[19 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3d --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3d | camada: EX3
+[20 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3d --autor 'Celso do Vale'
+ok | etapa atual: P4 | camada: EX3
+[21 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/entregaveis.py --renderizar E2 --emitir --autor 'Celso do Vale'
+E2 renderizado: caso/entregaveis/E2.md
+E2: ok | etapa atual: P4 | camada: EX3
+[22 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F1'
+selado e492c80 | 5 arquivo(s) | autor Celso do Vale
+[23 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P4 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P4 | camada: EX3
+[24 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P4 --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[25 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-campo P5 --campo classificacao_tecnologica --valor agente --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[26 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P5 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[27 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P5 --autor 'Celso do Vale'
+ok | etapa atual: P6 | camada: EX3
+[28 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/entregaveis.py --renderizar E3 --emitir --autor 'Celso do Vale'
+E3 renderizado: caso/entregaveis/E3.md
+E3-D: ok | etapa atual: P6 | camada: EX3
+E3-E: ok | etapa atual: P6 | camada: EX3
+[29 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F2'
+selado 76a63c2 | 3 arquivo(s) | autor Celso do Vale
+[30 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator 'Celso do Vale'
+especificacao operacional gravada: registro/operacional/OP-001.yaml
+[31 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator 'Celso do Vale'
+especificacao operacional gravada: registro/operacional/OP-001.yaml
+[32 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P6 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P6 | camada: EX3
+[33 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P6 --autor 'Celso do Vale'
+ok | etapa atual: P7 | camada: EX4
+[34 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[35 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[36 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[37 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor 'Celso do Vale'
+I2 | satisfeito=True | termo 'AUT-001' decidido por 'Celso do Vale' em 2026-09-28
+ok | etapa atual: P7 | camada: EX4
+[38 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P7 | camada: EX4
+[39 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P7 --autor 'Celso do Vale'
+ok | etapa atual: P8 | camada: EX3
+[40 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/entregaveis.py --renderizar E4 --emitir --autor 'Celso do Vale'
+E4 renderizado: caso/entregaveis/E4.md
+E4: ok | etapa atual: P8 | camada: EX3
+[41 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F3'
+selado ec46361 | 7 arquivo(s) | autor Celso do Vale
+[42 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/piloto.py --arquivo registro/piloto/CT-001.yaml --ator 'Celso do Vale'
+conjunto de piloto gravado: registro/piloto/CT-001.yaml
+[43 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/piloto.py --arquivo registro/piloto/CT-001.yaml --ator 'Celso do Vale'
+conjunto de piloto gravado: registro/piloto/CT-001.yaml
+[44 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/inegociaveis.py --verificar 3 --arquivo registro/piloto/CT-001.yaml --satisfazer --autor 'Celso do Vale'
+I3 | satisfeito=True | conjunto 'CT-001' revisado com 1 caso(s), todos com saida esperada definida antes da execucao
+ok | etapa atual: P8 | camada: EX3
+[45 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P8 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P8 | camada: EX3
+[46 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P8 --autor 'Celso do Vale'
+ok | etapa atual: P9 | camada: EX3
+[47 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/metrica.py --arquivo registro/metricas/MET-001.yaml --ator 'Celso do Vale'
+metrica gravada: registro/metricas/MET-001.yaml
+[48 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/metrica.py --arquivo registro/metricas/MET-001.yaml --ator 'Celso do Vale'
+metrica gravada: registro/metricas/MET-001.yaml
+[49 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/inegociaveis.py --verificar 4 --arquivo registro/metricas/MET-001.yaml --satisfazer --autor 'Celso do Vale'
+I4 | satisfeito=True | metrica de resultado 'MET-001' apurada: 8 minutos
+ok | etapa atual: P9 | camada: EX3
+[50 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P9 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P9 | camada: EX3
+[51 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P9 --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[52 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001.yaml --ator 'Celso do Vale'
+calibragem gravada: registro/calibragem/CAL-001.yaml
+[53 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001-C01.yaml --ator AG-04 --ciclo
+calibragem gravada: registro/calibragem/CAL-001-C01.yaml
+[54 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001-C01.yaml --ator 'Celso do Vale' --ciclo
+calibragem gravada: registro/calibragem/CAL-001-C01.yaml
+[55 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/inegociaveis.py --verificar 5 --arquivo registro/calibragem/CAL-001.yaml --satisfazer --autor 'Celso do Vale'
+I5 | satisfeito=True | responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal'
+ok | etapa atual: P10 | camada: EX4
+[56 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P10 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[57 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --encerrar P10 --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[58 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/avancar.py --registrar-recorrencia P10 --responsavel 'Marina Prado' --cadencia mensal --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[59 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-campo/scripts/entregaveis.py --renderizar E5 --emitir --autor 'Celso do Vale'
+E5 renderizado: caso/entregaveis/E5.md
+E5: ok | etapa atual: P10 | camada: EX4
+[60 · percurso] $ /usr/bin/python3 /tmp/emcia-percurso-v7-1r4b8eym/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F4'
+selado 189f60b | 10 arquivo(s) | autor Celso do Vale
+[61 · resumo] $ /usr/bin/python3 /home/netiv-dn-1/Projetos/emcia-marketplace/.projectdocs/demos/resumo-percurso.py /tmp/emcia-demos/percurso-38b
+Caso: /tmp/emcia-demos/percurso-38b
+Nível: N2
+Versão do plugin — commits registrados nos eventos:
+  campo: c577286c0bad89503f05cf8770ee2e8ef1997e02 (57 eventos)
+Etapas encerradas: 13/13
+  F0, P1, P2, P3a, P3b, P3d, P4, P5, P6, P7, P8, P9, P10
+Entregáveis emitidos: 5/5
+  E1 — E1: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E1.md, versão 1
+  E2 — E2: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E2.md, versão 1
+  E3 — E3-D: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E3.md, versão 1; E3-E: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E3.md, versão 1
+  E4 — E4: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E4.md, versão 1
+  E5 — E5: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E5.md, versão 1
+Inegociáveis satisfeitos: 5/5
+  I1: inegociaveis.verificar_i1 :: linha de base 'BL-001' registrada em 2026-09-28 (apuracao medido, nivel N2) (ref: registro/baseline/BL-001.yaml)
+  I2: inegociaveis.verificar_i2 :: termo 'AUT-001' decidido por 'Celso do Vale' em 2026-09-28 (ref: registro/governanca/autonomia/AUT-001.yaml)
+  I3: inegociaveis.verificar_i3 :: conjunto 'CT-001' revisado com 1 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-001.yaml)
+  I4: inegociaveis.verificar_i4 :: metrica de resultado 'MET-001' apurada: 8 minutos (ref: registro/metricas/MET-001.yaml)
+  I5: inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-001.yaml)
+Selos: 6
+  fim da fase F0: 1a3392871b7e272db0edc699abf0f51d8e755d6f
+  estado declarado depois de P2: f76df87dd6e2775ac5694d11057c0e82aac0babc
+  fim da fase F1: e492c807efaa516a19ea76eb2c31492ef1f64eff
+  fim da fase F2: 76a63c29c72ceffbb4606108a756741deaba6679
+  fim da fase F3: ec46361c7bd0db068a0c5245608e91a9c8e1a454
+  fim da fase F4: 189f60b73e951c0c061d722eef3a6c8f8cc845ab
+Eventos por tipo — total 57:
+  AutonomiaDecidida: 1
+  CampoRegistrado: 1
+  CasoAberto: 1
+  CicloCalibragemRegistrado: 1
+  ConjuntoPilotoRegistrado: 1
+  ConjuntoPilotoRevisado: 1
+  DecisaoRecalibragemRegistrada: 1
+  EntregavelEmitido: 6
+  EspecificacaoOperacionalRegistrada: 1
+  EspecificacaoOperacionalValidada: 1
+  EtapaEncerrada: 13
+  InegociavelSatisfeito: 5
+  LinhaDeBaseRegistrada: 1
+  MetricaApurada: 1
+  MetricaRegistrada: 1
+  NivelApurado: 1
+  RecorrenciaRegistrada: 1
+  RotinaCalibragemRegistrada: 1
+  SeloAplicado: 6
+  SessaoDeCampoRegistrada: 10
+  TermoAutonomiaRegistrado: 2
+  >>> TentativaNegada: 0 <<<
+Recorrência de P10: responsável Marina Prado; cadência mensal; ciclo 1
+Última decisão de calibragem: recalibrar; ator Celso do Vale; drift detectado True
+[62 · infraestrutura] $ git worktree remove /tmp/emcia-percurso-v7-1r4b8eym/fonte
+Comandos do percurso: 58; infraestrutura: 3; resumo: 1; total de invocações diretas: 62
+Contagem inclui a tentativa que falhou, se houver; não inclui subprocessos internos.

@@ -1,0 +1,7 @@
+189f60b fim da fase F4
+ec46361 fim da fase F3
+76a63c2 fim da fase F2
+e492c80 fim da fase F1
+f76df87 estado declarado depois de P2
+1a33928 fim da fase F0
+cc600eb abertura do caso percurso-38b

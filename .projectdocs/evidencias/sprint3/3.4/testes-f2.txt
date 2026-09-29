@@ -1,0 +1,50 @@
+F2 — verificacoes sobre v-sprint3-poc.3
+
+1. Priorizacao (P4) consome o contexto curado          4
+2. Classificacao (P5) consome as regras estruturadas   5
+3. Classificacao exige sessao humana (EX3)             5
+4. Portao do E3 (Parte A sempre, Parte B so se agente)  17
+5. Correcao A9 e A10                                   0
+TOTAL                                                 31
+falhas: 0
+
+== 1. Priorizacao (P4) consome o contexto curado
+  ok    2.5.5-T06 P4 consome contexto valido via quadro.py
+  ok    2.5.5-T07 P4 com contexto/regras vazio (nenhuma regra curada)
+  ok    2.5.5-T08 P4 nao reinfere frequencia/consequencia (le do YAML)
+  ok    2.5.5-T15 fluxo minimo P2 -> CTX -> P4
+
+== 2. Classificacao (P5) consome as regras estruturadas
+  ok    2.5.5-T09 P5 consome os sete campos centrais
+  ok    2.5.5-T10 P5 com Regra incompleta
+  ok    2.5.5-T11 P5 distingue I de V (I visivel, nao mascarada)
+  ok    2.5.5-T12 P5 com V valida
+  ok    2.5.5-T16 fluxo minimo P3 -> CTX -> P5
+
+== 3. Classificacao exige sessao humana (EX3)
+  ok    2.6.2-G1a EX3 (P5) sem sessao: skill bloqueada (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.2-G1b EX3 (P5) com sessao valida da mesma etapa: skill carrega
+  ok    2.6.2-G1c sessao de OUTRA etapa nao libera EX3 corrente (EX3: a etapa P5 esta em camada humana (EX3) para o nivel N1. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.4-T39 skill EX3/EX4 sem sessao continua bloqueada (regressao G1, EX3: a etapa P5 esta em camada humana (EX3) para o nivel N2. Modalidade exigida: video. Registre a sessao com /eiac-nucleo:registrar-sessao.)
+  ok    2.6.4-T40 skill de apoio com sessao humana valida pode carregar (regressao G1)
+
+== 4. Portao do E3 (Parte A sempre, Parte B so se agente)
+  ok    2.6.0-T16 E3-D depende de P4/P5
+  ok    2.6.0-T17 E3-E depende de P5 e possui condicao declarativa representavel
+  ok    2.6.1-T27b condicao declarativa nao satisfeita e NAO_APLICAVEL, nao recusa (NAO_APLICAVEL | E3-E nao aplicavel a este caso: condicao declarativa nao satisfeita (Somente quando a classificacao tecnologica de P5 determinar solucao agentica))
+  ok    2.6.1-T28 condicao declarativa desconhecida recusada explicitamente no carregamento (entregavel E3-E: condicao usa operador 'operador_desconhecido' desconhecido pelo motor. Esperado um de ['contem', 'diferente', 'igual'].)
+  ok    2.6.5-T20 E3-D sem P5: NEGADO
+  ok    2.6.5-T21 E3-D com P4/P5 validos: AUTORIZADO
+  ok    2.6.5-T22 E3-E sobre caso nao agentico: NAO_APLICAVEL (nao e falha)
+  ok    2.6.5-T23 solucao agentica sem P5 encerrada (insumo insuficiente): materializacao NEGADA
+  ok    2.6.5-T24 solucao agentica com P5 completo: E3-E AUTORIZADO
+  ok    2.6.5-T25 condicao declarativa {campo,etapa,operador,valor} avaliada sem hard-code de 'E3-E' no nucleo (mesmo mecanismo generico do 2.6.1)
+  ok    2.6.5-T26 materializacao E3 nao agentico: E3 valido sem exigir E3-E
+  ok    2.6.5-T27 materializacao E3 agentico: E3 consolida E3-D + E3-E (Parte B presente no mesmo arquivo)
+  ok    2.6.5-T45 E3 contem secoes obrigatorias do modelo oficial
+  ok    2.6.5-T53 E3-E nao aplicavel fica explicitamente registrado (evento EntregavelNaoAplicavel)
+  ok    2.6.6-C30 E3-D autorizado
+  ok    2.6.6-C31 E3-E corretamente avaliado como AUTORIZADO (caso agentico)
+  ok    2.6.6-C32 E3 materializado como arquivo unico (Parte A + Parte B consolidadas)
+
+== 5. Correcao A9 e A10

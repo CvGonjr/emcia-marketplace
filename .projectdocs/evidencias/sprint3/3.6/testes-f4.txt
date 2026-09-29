@@ -1,0 +1,110 @@
+F4 — verificacoes sobre v-sprint3-poc.5
+
+1. Casos de teste (P8)                                    13
+2. Metrica de valor (P9)                                  14
+3. Calibragem (P10)                                       32
+4. Registro protegido                                      3
+5. Portao do E5                                           20
+6. Correcao A14 (etapa encerra so com o produto)           0
+7. Correcao A15 (revisao dos casos so pelo engenheiro)     0
+8. Correcao A16 (responsavel e pessoa nomeada)             0
+TOTAL                                                     82
+falhas: 0
+
+== 1. Casos de teste (P8)
+  ok    2.6.3-T02 P8 sem P7 encerrado (sessao ausente) recusado (P7 | camada EX4 | nivel N2 | modalidade exigida: decisao_humana_registrada; encerramento exige sessao registrada da propria etapa.)
+  ok    2.6.3-T01 P8 com dependencias validas (P7 encerrado corretamente): PASS
+  ok    2.6.3-T03 caso de teste completo (Anexo B) aceito
+  ok    2.6.3-T04 caso sem saida esperada recusado (caso #0 (CT-001-01) sem campos obrigatorios: ['saida_esperada'])
+  ok    2.6.3-T05a saida obtida antes de esperado_definido_em recusada (caso CT-001-01: 'obtido_em' anterior a 'esperado_definido_em' -- saida esperada nao pode ter sido escrita depois da execucao)
+  ok    2.6.3-T05 saida esperada registrada antes da execucao (esperado_definido_em < obtido_em): PASS
+  ok    2.6.3-T06 comparacao esperado x obtido produz resultado deterministico
+  ok    2.6.3-T07 caso com resultado diferente do esperado: FAIL do caso, saida esperada preservada
+  ok    2.6.3-T08 tentativa de forjar 'resultado' aderente sem saida bater: RECUSA (caso CT-001-02: 'resultado' declarado ('aderente') nao corresponde a comparacao determinística esperado x obtido ('divergente'). O resultado e calculado, nunca escrito por decisao manual.)
+  ok    2.6.3-T09 casos com saida esperada produzem evidencia rastreavel para o inegociavel 3 (sem marcar booleano arbitrario)
+  ok    2.6.3-T35 booleano/evidencia vazia nao satisfaz o inegociavel 3 (inegociavel 3 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T36 casos com saida esperada (CT-001.yaml, estado revisado) produzem evidencia real para o inegociavel 3 (reafirma T09)
+  ok    2.6.6-C13 P8 produz casos de teste com saida esperada
+
+== 2. Metrica de valor (P9)
+  ok    2.6.3-T10 P9 com P8 revisado e baseline validos: PASS
+  ok    2.6.3-T11 P9 sem linha de base recusado explicitamente (campo obrigatorio ausente: linha_base_data)
+  ok    2.6.3-T12 metrica de uso aceita como metrica (mas nao satisfaz sozinha o inegociavel 4)
+  ok    2.6.3-T13 metrica de resultado valida gravada com tipo='resultado': PASS
+  ok    2.6.3-T14 nota: 'somente metricas de uso' produz evidencia insuficiente para o inegociavel 4 -- verificacao semantica final do portao pertence ao 2.6.5; este pacote garante que o campo 'tipo' e preservado e distinguivel (T12/T13)
+  ok    2.6.3-T15 pelo menos uma metrica de resultado disponivel (MET-001, tipo=resultado, estado=apurada): evidencia disponivel para o inegociavel 4
+  ok    2.6.3-T16 calculo baseline x piloto presente: 45 minutos -> 32 minutos
+  ok    2.6.3-T17 baseline inventada apos o resultado (data posterior): RECUSA (linha_base_data e posterior a resultado_apurado_data -- a linha de base nao pode ter sido criada depois do resultado que ela deveria comparar)
+  ok    2.6.3-T18 resultado observado com fatores externos declarados explicitamente (sem inferencia causal automatica)
+  ok    2.6.3-T18b apuracao sem declaracao de fatores externos recusada (estado 'apurada' exige 'fatores_externos_declarados' preenchido (mesmo que seja 'nenhum identificado') -- separar efeito da solucao de fator externo e julgamento que precisa ficar registrado, nao implicito)
+  ok    2.6.3-T37 booleano/evidencia vazia nao satisfaz o inegociavel 4 (inegociavel 4 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T38 metrica de resultado apurada produz evidencia real para o inegociavel 4
+  ok    2.6.3-T41 P9 referencia resultados validos de P8 (piloto_ref: CT-001)
+  ok    2.6.6-C14 P9 produz metrica de resultado apurada
+
+== 3. Calibragem (P10)
+  ok    2.6.3-T19 P10 sem responsavel nominal ('equipe') recusado (responsavel precisa ser pessoa nomeada, nao pode ser agente: 'equipe')
+  ok    2.6.3-T20 P10 com responsavel nominal ('Marina Prado'): PASS
+  ok    2.6.3-T21 P10 sem cadencia recusado (campo obrigatorio ausente: cadencia)
+  ok    2.6.3-T22 P10 com cadencia valida ('mensal') aceito (reafirma T20)
+  ok    2.6.3-T23 primeiro ciclo de P10 (sem drift) persistido
+  ok    2.6.3-T24 segundo ciclo (com drift) nao sobrescreve o primeiro
+  ok    2.6.3-T25 historico de ciclos recuperavel (CAL-001-C01 e CAL-001-C02 preservados)
+  ok    2.6.3-T26 P10 permanece recorrente e nao aceita sobrescrever ciclo existente (ciclo CAL-001-C01.yaml ja registrado sem drift -- ciclos anteriores nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T27 ciclo sem drift e caminho positivo legitimo (manter estado atual)
+  ok    2.6.3-T28 agente detecta e descreve drift (ciclo 2)
+  ok    2.6.3-T29 agente registra recomendacao sem decidir (campo 'decisao' ausente)
+  ok    2.6.3-T29b ciclo pendente (drift sem decisao) complementado com a decisao humana no mesmo identificador: PASS
+  ok    2.6.3-T29c ciclo ja decidido nao aceita segunda decisao (sobrescrita) (ciclo CAL-001-C01.yaml ja possui decisao registrada -- ciclos decididos nao sao sobrescritos, use um novo identificador de ciclo)
+  ok    2.6.3-T30 agente tenta decidir recalibragem: RECUSA (agente nao pode decidir recalibragem: a decisao de recalibrar, expandir ou descontinuar exige ator humano nomeado, nunca agente (CAM-01 3.6, CAT-01 3.4.5).)
+  ok    2.6.3-T30b tentativa de agente decidir gera evento CicloCalibragemRecusado
+  ok    2.6.3-T31 humano decide recalibragem: PASS
+  ok    2.6.3-T31b evento DecisaoRecalibragemRegistrada presente
+  ok    2.6.3-T32 decisao 'manter' fora do enum documental (recalibrar/expandir/descontinuar) e recusada, nao inventada: RECUSA (valor invalido em decisao: esperado um de ['recalibrar', 'expandir', 'descontinuar'])
+  ok    2.6.3-T33 decisao humana possui justificativa, decisor e data (rastreavel)
+  ok    2.6.3-T34 drift sem decisao humana permanece pendente (nao tratado como resolvido)
+  ok    2.6.3-T39 booleano/evidencia vazia nao satisfaz o inegociavel 5 (inegociavel 5 exige evidencia nao vazia para ser satisfeito)
+  ok    2.6.3-T40 responsavel nominal + cadencia produzem evidencia real para o inegociavel 5
+  ok    2.6.3-T42 P10 consegue utilizar indicadores de P9 (metricas_ref: [MET-001])
+  ok    2.6.4-T38 nenhum AG possui autorizacao para a decisao humana de recalibragem em P10 (HB-18 e 'Monitoramento de desvio', so deteccao; a skill fisica declara explicitamente que nao decide)
+  ok    2.6.6-C15 P10 e etapa recorrente e registra recorrencia
+  ok    2.6.6-C16 dois ciclos de P10 preservados (nenhum sobrescrito)
+  ok    2.6.6-C17 agente (AG-04) detecta e registra drift no ciclo 2
+  ok    2.6.6-C18 decisao de recalibragem em P10 exige humano (agente recusado, humano aceito)
+  ok    2.6.0-T08 P10 e recorrente
+  ok    2.6.0-T09 P10 declara necessidade de cadencia
+  ok    2.6.0-T10 P10 declara necessidade de responsavel
+  ok    2.6.0-N03 P10 recorrente sem cadencia/responsavel recusado (etapa P10: recorrente exige cadencia e responsavel declarados, senao a etapa desaparece apos a primeira execucao.)
+
+== 4. Registro protegido
+  ok    2.6.3-G5a escrita direta em registro/piloto/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.3-G5b escrita direta em registro/metricas/ recusada pela guarda
+  ok    2.6.3-G5c escrita direta em registro/calibragem/ recusada pela guarda
+
+== 5. Portao do E5
+  ok    2.6.5-T05 I3 sem saida esperada (conjunto so em rascunho): RECUSA
+  ok    2.6.5-T06 I3 com casos validos e conjunto revisado: PASS
+  ok    2.6.5-T07 I4 so com metrica de uso: RECUSA
+  ok    2.6.5-T08 I4 com metrica de resultado: PASS
+  ok    2.6.5-T09 I5 sem pessoa nominal ('equipe'): RECUSA em calibragem.py
+  ok    2.6.5-T10 I5 com pessoa nominal e demais requisitos: PASS
+  ok    2.6.5-T32 E5 sem P8: NEGADO
+  ok    2.6.5-T33 E5 sem I3 (nao satisfeito no nucleo): NEGADO
+  ok    2.6.5-T34 E5 com I3 mas sem I4: NEGADO
+  ok    2.6.5-T35 E5 com I3/I4 mas sem I5: NEGADO
+  ok    2.6.5-T36 E5 com P8/P9/P10 + I3/I4/I5: AUTORIZADO
+  ok    2.6.5-T37 materializacao de E5: Relatorio de Piloto real e rastreavel (/tmp/tmpudep45h8/caso/caso/entregaveis/E5.md)
+  ok    2.6.5-T39 evento aponta para arquivo real (/tmp/tmpudep45h8/caso/caso/entregaveis/E5.md)
+  ok    2.6.5-T41 entregavel possui versao/ID rastreavel: {'arquivo': '/tmp/tmpudep45h8/caso/caso/entregaveis/E5.md', 'versao': 2, 'autor': 'Celso do Vale'}
+  ok    2.6.5-T47 E5 contem secoes obrigatorias do modelo oficial
+  ok    2.6.6-C34 E5 autorizado e materializado (Relatorio de Piloto)
+  ok    2.6.6-C35 cinco entregaveis materiais confirmados (E1-E5, entre os dois casos isolados)
+  ok    2.6.3-T43 P8/P9/P10 geram insumos rastreaveis para E5 (CT-001, MET-001, CAL-001 presentes)
+  ok    2.6.3-T44 E5 nao emite automaticamente neste pacote (E5 exige as etapas ['P10'] encerradas)
+  ok    2.6.0-T19 E5 = P8/P9/P10 + inegociaveis 3/4/5
+
+== 6. Correcao A14 (etapa encerra so com o produto)
+
+== 7. Correcao A15 (revisao dos casos so pelo engenheiro)
+
+== 8. Correcao A16 (responsavel e pessoa nomeada)

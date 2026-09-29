@@ -1,0 +1,21 @@
+10:53:08 | Comando composto pode alterar o candidato antes da decisao. A decisao humana e executada pelo engenheiro no proprio term
+10:53:11 | Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessa
+10:53:12 | Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessa
+10:53:12 | Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessa
+10:53:18 | EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. A sessao registrada nao delega uma etapa huma
+10:53:23 | Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa
+10:53:56 | Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa
+10:56:11 | Candidato rascunho/AUT-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executada pelo en
+10:56:41 | Candidato rascunho/CT-001.yaml: campo estado nao caracteriza preparacao permitida. A decisao humana e executada pelo eng
+10:58:58 | Candidato rascunho/CAL-001-C01.yaml: campo decisao caracteriza decisao humana. A decisao humana e executada pelo engenhe
+{"evento": "TentativaNegada", "data": "2026-09-28T10:53:08", "motivo": "Comando composto pode alterar o candidato antes da decisao. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /tmp/poc/eiac-campo/scripts/governanca.py --help 2>&1; echo \"---\"; python3 /tmp/poc/eiac-campo/scripts/piloto.py --help 2>&1; echo \"---\"; python
+
+{"evento": "TentativaNegada", "data": "2026-09-28T10:53:11", "motivo": "Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /tmp/poc/eiac-campo/scripts/governanca.py --help", "operacao": "decidir-autonomia", "acao_tentada": "decidir-autonomia", "comando": "python3 /tmp/poc/eiac-campo/script
+
+{"evento": "TentativaNegada", "data": "2026-09-28T10:53:12", "motivo": "Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /tmp/poc/eiac-campo/scripts/piloto.py --help", "operacao": "revisar-piloto", "acao_tentada": "revisar-piloto", "comando": "python3 /tmp/poc/eiac-campo/scripts/piloto.p
+
+{"evento": "TentativaNegada", "data": "2026-09-28T10:53:12", "motivo": "Caminho do candidato ausente ou ambiguo. A decisao humana e executada pelo engenheiro no proprio terminal, fora da sessao do Claude Code. Comando exato: python3 /tmp/poc/eiac-campo/scripts/calibragem.py --help", "operacao": "decidir-recalibragem", "acao_tentada": "decidir-recalibragem", "comando": "python3 /tmp/poc/eiac-campo/
+
+11:11:53 | apurar-nivel | Operacao declarada como decisao humana. A decisao humana e executada pelo engenheiro no pr
+11:12:16 | registrar-sessao | Operacao declarada como decisao humana. A decisao humana e executada pelo engenheiro no pr
+11:12:37 | encerrar-camada-humana | Etapa P10, camada EX4, nivel N2: encerramento humano. A decisao humana e executada pelo en

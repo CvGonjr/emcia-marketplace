@@ -1,0 +1,67 @@
+F3 — verificacoes sobre v-sprint3-poc.4
+
+1. Especificacao operacional (P6)                          9
+2. Termo de autonomia (P7): agente prepara, pessoa decide  23
+3. Registro protegido (so pelo caminho autorizado)         3
+4. Portao do E4 e inegociavel 2                           13
+5. Correcao A12                                            0
+TOTAL                                                     48
+falhas: 0
+
+== 1. Especificacao operacional (P6)
+  ok    2.6.2-T01 P6 com entradas validas: PASS
+  ok    2.6.2-T02 P6 sem campo obrigatorio (responsavel_operacional) recusado (campo obrigatorio ausente: responsavel_operacional)
+  ok    2.6.2-T03 P6 nao reexecuta P4/P5 (operacional.py nao invoca outros scripts)
+  ok    2.6.2-T04 P6 gera desenho operacional estruturado com os campos exigidos
+  ok    2.6.2-T05 saida de P6 marcada 'proposta', sem validado_por (nao confundida com aprovacao)
+  ok    2.6.2-T06 P6 produz especificacao (schema so com string/integer/list), nao aciona deployment
+  ok    2.6.2-T24 excecao e fallback presentes na especificacao operacional
+  ok    2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel
+  ok    2.6.6-C09 validacao de P6 exige humano (agente recusado, humano aceito)
+
+== 2. Termo de autonomia (P7): agente prepara, pessoa decide
+  ok    2.6.2-T07 P7 recebe P6 validado: PASS
+  ok    2.6.2-T08 P7 sem P6 (operacional_ref nao resolve) recusado (operacional_ref 'OP-001' nao resolve — registro/operacional/OP-001.yaml nao existe)
+  ok    2.6.2-T09 agente prepara minuta (rascunho -> proposto): PASS
+  ok    2.6.2-T10 agente tenta decidir autonomia: RECUSA (decisor nao pode ser agente: 'AG-03')
+  ok    2.6.2-T10b tentativa de agente decidir gera evento TermoAutonomiaRecusado
+  ok    2.6.2-T11 humano autorizado decide autonomia: PASS + trilha
+  ok    2.6.2-T11b evento AutonomiaDecidida presente
+  ok    2.6.2-T12 decisao sem pessoa nominal ('equipe') recusada (decisao de autonomia exige pessoa nomeada; 'equipe' nao satisfaz (agente, vazio ou coletivo generico nao substitui pessoa).)
+  ok    2.6.2-T14 decisao sem justificativa recusada (estado 'decidido' exige ['justificativa_decisao'] preenchidos)
+  ok    2.6.2-T16 termo possui estrutura minima (tres listas + gatilhos + escopo)
+  ok    2.6.2-T17 agente nao aparece como autor da decisao final (decisor: 'Marina Prado')
+  ok    2.6.2-T20 acao classificada como autonoma (estado decidido) so apos decisao humana registrada
+  ok    2.6.2-T21 minuta nao equivale a autorizacao (T09 aceita preparo, T10 recusa decisao pelo agente)
+  ok    2.6.2-T23 gatilho de escalonamento preservado no termo gravado
+  ok    2.6.2-T28 tentativa de agente decidir autonomia gera evento (reafirma T10b, caso3)
+  ok    2.6.2-T29 decisao invalida (sem justificativa) gera evento
+  ok    2.6.2-T30 decisao valida deixa trilha (AutonomiaDecidida)
+  ok    2.6.4-T36 nenhum AG possui autorizacao para a decisao humana de P7 (HB-14 e hibrida: prepara a minuta; o criterio exige 'decisao humana registrada' -- a decisao em si nunca e a HB automatizada)
+  ok    2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel
+  ok    2.6.6-C11 agente nao decide autonomia (agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).)
+  ok    2.6.6-C12 humano nominal decide autonomia
+  ok    2.6.0-T06 P7 declarada nao delegavel
+  ok    2.6.0-T07 P7 na camada EX4 (humana) em todos os niveis
+
+== 3. Registro protegido (so pelo caminho autorizado)
+  ok    2.6.2-T18 escrita direta em registro/governanca/ recusada pela guarda (Escrita direta em registro/ nao e permitida. Etapa, estado e eventos so mudam pelos scripts do nucleo: avancar.py (etapa/entregavel/inegociavel), curar.py (contexto), validar.py (asserção) ou selar.py (selo). Escrita direta contorna portoes e trilha de eventos.)
+  ok    2.6.2-T19 preparacao de termo proposto (governanca.py via Bash) permitida
+  ok    2.6.2-T27 nota: mero booleano nao e o padrao de evidencia deste pacote (2.6.1-T19 ja recusa evidencia vazia; este pacote sempre referencia arquivo AUT-*/OP-* real como evidencia, nunca um literal solto)
+
+== 4. Portao do E4 e inegociavel 2
+  ok    2.6.2-T25 P7 sem termo decidido: E4 nao emite (E4 exige as etapas ['P7'] encerradas)
+  ok    2.6.2-T26 termo decidido por humano: artefato/evidencia disponivel para o inegociavel 2
+  ok    2.6.2-T27 nota: mero booleano nao e o padrao de evidencia deste pacote (2.6.1-T19 ja recusa evidencia vazia; este pacote sempre referencia arquivo AUT-*/OP-* real como evidencia, nunca um literal solto)
+  ok    2.6.5-T03 I2 com termo apenas proposto: RECUSA (I2 | satisfeito=False | termo em estado 'proposto', nao 'decidido' -- minuta ou proposta nao satisfaz o inegociavel 2)
+  ok    2.6.5-T04 I2 com termo decidido por humano: PASS
+  ok    2.6.5-T28 E4 sem P7: NEGADO
+  ok    2.6.5-T29 E4 com P6/P7 mas termo apenas PROPOSTO (I2 nao verificavel/nao satisfeito): NEGADO
+  ok    2.6.5-T30 E4 com P6/P7 e termo DECIDIDO valido: AUTORIZADO
+  ok    2.6.5-T31 materializacao de E4: Guia Operacional real e rastreavel (/tmp/tmpsx9kr295/caso/caso/entregaveis/E4.md)
+  ok    2.6.5-T46 E4 contem secoes obrigatorias do modelo oficial
+  ok    2.6.6-C24 I2 termo de autonomia: satisfeito
+  ok    2.6.6-C33 E4 autorizado e materializado (Guia Operacional)
+  ok    2.6.0-T18 E4 = P6/P7 + inegociavel 2
+
+== 5. Correcao A12

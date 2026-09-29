@@ -1,0 +1,50 @@
+Caso: /tmp/emcia-demos/percurso-38b
+Nível: N2
+Versão do plugin — commits registrados nos eventos:
+  campo: c577286c0bad89503f05cf8770ee2e8ef1997e02 (57 eventos)
+Etapas encerradas: 13/13
+  F0, P1, P2, P3a, P3b, P3d, P4, P5, P6, P7, P8, P9, P10
+Entregáveis emitidos: 5/5
+  E1 — E1: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E1.md, versão 1
+  E2 — E2: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E2.md, versão 1
+  E3 — E3-D: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E3.md, versão 1; E3-E: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E3.md, versão 1
+  E4 — E4: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E4.md, versão 1
+  E5 — E5: arquivo /tmp/emcia-demos/percurso-38b/caso/entregaveis/E5.md, versão 1
+Inegociáveis satisfeitos: 5/5
+  I1: inegociaveis.verificar_i1 :: linha de base 'BL-001' registrada em 2026-09-28 (apuracao medido, nivel N2) (ref: registro/baseline/BL-001.yaml)
+  I2: inegociaveis.verificar_i2 :: termo 'AUT-001' decidido por 'Celso do Vale' em 2026-09-28 (ref: registro/governanca/autonomia/AUT-001.yaml)
+  I3: inegociaveis.verificar_i3 :: conjunto 'CT-001' revisado com 1 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-001.yaml)
+  I4: inegociaveis.verificar_i4 :: metrica de resultado 'MET-001' apurada: 8 minutos (ref: registro/metricas/MET-001.yaml)
+  I5: inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-001.yaml)
+Selos: 6
+  fim da fase F0: 1a3392871b7e272db0edc699abf0f51d8e755d6f
+  estado declarado depois de P2: f76df87dd6e2775ac5694d11057c0e82aac0babc
+  fim da fase F1: e492c807efaa516a19ea76eb2c31492ef1f64eff
+  fim da fase F2: 76a63c29c72ceffbb4606108a756741deaba6679
+  fim da fase F3: ec46361c7bd0db068a0c5245608e91a9c8e1a454
+  fim da fase F4: 189f60b73e951c0c061d722eef3a6c8f8cc845ab
+Eventos por tipo — total 57:
+  AutonomiaDecidida: 1
+  CampoRegistrado: 1
+  CasoAberto: 1
+  CicloCalibragemRegistrado: 1
+  ConjuntoPilotoRegistrado: 1
+  ConjuntoPilotoRevisado: 1
+  DecisaoRecalibragemRegistrada: 1
+  EntregavelEmitido: 6
+  EspecificacaoOperacionalRegistrada: 1
+  EspecificacaoOperacionalValidada: 1
+  EtapaEncerrada: 13
+  InegociavelSatisfeito: 5
+  LinhaDeBaseRegistrada: 1
+  MetricaApurada: 1
+  MetricaRegistrada: 1
+  NivelApurado: 1
+  RecorrenciaRegistrada: 1
+  RotinaCalibragemRegistrada: 1
+  SeloAplicado: 6
+  SessaoDeCampoRegistrada: 10
+  TermoAutonomiaRegistrado: 2
+  >>> TentativaNegada: 0 <<<
+Recorrência de P10: responsável Marina Prado; cadência mensal; ciclo 1
+Última decisão de calibragem: recalibrar; ator Celso do Vale; drift detectado True
