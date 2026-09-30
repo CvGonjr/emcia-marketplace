@@ -26,11 +26,8 @@ def validar(et):
     return None
 
 
-def conferir(et, responsavel):
-    """Retorna erro e fonte; não altera estado nem grava evento."""
-    r = et.get(CHAVE)
-    if r is None:
-        return None, None
+def selecionar_fonte(r):
+    """Seleciona a fonte vigente pelo contrato, sem depender do consumidor."""
     raiz = pathlib.Path.cwd().resolve()
     fontes = []
     orientacao = r['orientacao_troca']
@@ -60,7 +57,19 @@ def conferir(et, responsavel):
     if len({f['valor'] for f in vigentes}) != 1:
         nomes = '; '.join(f"{f['arquivo']}: {f['valor']}" for f in vigentes)
         return f"fonte vigente ambigua na versao {maior}: {nomes}; {orientacao}", None
-    fonte = vigentes[0]
+    return None, vigentes[0]
+
+
+def conferir(et, responsavel):
+    """Retorna erro e fonte; não altera estado nem grava evento."""
+    r = et.get(CHAVE)
+    if r is None:
+        return None, None
+    erro, fonte = selecionar_fonte(r)
+    if erro:
+        return erro, None
+    maior = fonte['versao']
+    orientacao = r['orientacao_troca']
     if responsavel != fonte['valor']:
         return (f"responsavel da recorrencia '{responsavel}' diverge do responsavel "
                 f"da fonte vigente '{fonte['valor']}' ({fonte['arquivo']}, versao {maior}); {orientacao}"), None

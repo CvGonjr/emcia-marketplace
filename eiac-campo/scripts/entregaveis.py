@@ -30,6 +30,7 @@ import os
 RAIZ_NUCLEO = pathlib.Path(os.environ["EIAC_NUCLEO_SCRIPTS"]) if os.environ.get("EIAC_NUCLEO_SCRIPTS") else pathlib.Path(__file__).resolve().parents[2] / "eiac-nucleo" / "scripts"
 sys.path.insert(0, str(RAIZ_NUCLEO))
 import estrutura as X  # noqa: E402
+import recorrencia as R  # noqa: E402
 
 DIR_ENTREGAVEIS = pathlib.Path("caso/entregaveis")
 DIR_ESTADO = pathlib.Path("registro/estado.json")
@@ -204,14 +205,22 @@ def render_e5(st):
     _exige(metricas_resultado or None,
            "nenhuma metrica de resultado apurada em registro/metricas/ -- "
            "item inegociavel 4 bloqueia E5")
-    rotinas = _listar("registro/calibragem")
-    rotinas = [r for r in rotinas if "-C" not in r.stem]  # exclui ciclos, so a rotina
-    _exige(rotinas or None,
-           "nenhuma rotina de calibragem em registro/calibragem/ -- "
-           "item inegociavel 5 bloqueia E5")
+    try:
+        pb = json.loads(pathlib.Path('registro/playbook.json').read_text(encoding='utf-8'))
+    except (OSError, UnicodeError, json.JSONDecodeError) as erro:
+        raise NaoMaterializavel(f'playbook do caso ilegivel: {erro}') from erro
+    etapa = next((e for e in pb.get('etapas', []) if e.get('id') == 'P10'), None)
+    if etapa is None or R.CHAVE not in etapa:
+        raise NaoMaterializavel('P10 sem regra de fonte vigente no playbook do caso')
+    contrato_invalido = R.validar(etapa)
+    if contrato_invalido:
+        raise NaoMaterializavel(contrato_invalido)
+    erro, fonte = R.selecionar_fonte(etapa[R.CHAVE])
+    if erro:
+        raise NaoMaterializavel(erro)
 
     piloto = _yaml(pilotos[-1])
-    rotina = _yaml(rotinas[-1])
+    rotina = _yaml(fonte['arquivo'])
 
     md = _cabecalho("Relatório de piloto",
                      "O que foi testado, o que resultou contra a linha de base e quem mantém daqui em diante", st)
