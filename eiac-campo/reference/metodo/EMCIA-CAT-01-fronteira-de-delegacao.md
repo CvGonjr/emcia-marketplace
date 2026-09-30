@@ -1,9 +1,9 @@
 # Fronteira de delegação
 ## Camadas de execução e catálogo de agentes e habilidades
 
-| Código | EMCIA-CAT-01 | Versão | 0.2 |
+| Código | EMCIA-CAT-01 | Versão | 0.3 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 14/09/2026 | **Estado** | Em revisão |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
@@ -44,12 +44,14 @@ Uma atividade pode ser delegada a agente se passar nos três testes. Falhar em q
 | :--- | :--- | :--- |
 | **EX1 — Conversacional** | Automatizado e híbrido | Triagem, estruturação da dor, coleta declarativa e apuração do nível. Entrega a ficha de enquadramento. |
 | **EX2 — Analítica** | Automatizado e híbrido | Consulta de referência, mapa de valor, classificação tecnológica, estimativas, minutas e avaliação. Entrega dossiê estruturado, com hipóteses marcadas como hipóteses. |
-| **EX3 — Verificação** | Humano | Confronto entre declarado e observado, levantamento das regras não documentadas, validação da linha de base. Entrega o dossiê verificado, com as correções registradas. |
-| **EX4 — Julgamento** | Humano | Priorização, camada de contexto, autonomia e recomendação assinada. Entrega o blueprint. |
+| **EX3 — Verificação** | Humano | Confronto entre declarado e observado e validação da linha de base. Entrega o dossiê verificado, com as correções registradas. |
+| **EX4 — Julgamento** | Humano | Levantamento das regras não documentadas, priorização, camada de contexto, autonomia e recomendação assinada. Entrega o blueprint. |
 
 > **Alcance desta fronteira.** As quatro camadas descrevem a passagem de trabalho dentro da EMCIA. Não constituem arranjo a reproduzir no processo do cliente: ali a fronteira é desenhada caso a caso, sobre evidência de campo, e fica registrada em B1 do blueprint. Transpõem-se os três testes e as regras; o resultado, nunca.
 
-Nenhum agente opera em EX3 ou EX4. A separação é de camada, não de qualidade do agente: melhorar o modelo não move a fronteira, porque o que falta em EX3 não é capacidade de inferência, e sim acesso ao que ninguém escreveu.
+Nenhum agente decide nem encerra etapa em EX3 ou EX4. Nessas camadas, o agente só prepara: organiza material, minuta e propõe; a decisão e o encerramento são do engenheiro. A separação é de camada, não de qualidade do agente: melhorar o modelo não move a fronteira, porque o que falta em EX3 e EX4 não é capacidade de inferência, e sim acesso ao que ninguém escreveu.
+
+O levantamento das regras não documentadas está em EX4, e não em EX3, porque não confere um conteúdo existente: produz a regra que a camada de contexto vai codificar. Não há declaração anterior a verificar, só o que quem executa sabe e não escreveu.
 
 ### 3.4 Fronteira por passo
 A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A coluna final registra por que a atividade cai de um lado ou de outro — é ela que permite discutir a classificação em vez de aceitá-la.
@@ -59,7 +61,7 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
 | Passo | Atividade | Natureza | Onde está a fronteira |
 | :---: | :--- | :--- | :--- |
 | F0 | Aplicar o instrumento de triagem | Automatizado | Perguntas fechadas sobre fato declarável |
-| F0 | Apurar o nível de complexidade | Automatizado | Aritmética determinística, fora do modelo de linguagem |
+| F0 | Apurar o nível de complexidade | Automatizado | Aritmética determinística, fora do modelo de linguagem; o registro do nível é ato do engenheiro (3.5.5) |
 | F0 | Estruturar a dor em 5W2H | Automatizado | Organização do relato, sem juízo sobre ele |
 | F0 | Conduzir os cinco porquês | Híbrido | Causa raiz declarada não é causa raiz real |
 | F0 | Calcular o custo do problema | Híbrido | O cálculo é auditável; os números de entrada costumam estar errados |
@@ -143,8 +145,13 @@ O levantamento das regras não documentadas é o ponto em que o trabalho automat
 #### 3.5.3 Trava de camada
 Toda habilidade carrega a camada em que opera. Habilidade marcada como híbrida não conclui sem decisão registrada, e a tentativa de execução fora da camada é registrada em log de desvio. A trava é condição de validade, não instrução: não depende de o agente escolher respeitá-la.
 
+A trava considera a origem da chamada, e não o nome informado nela. O que chega pela sessão do agente é do agente, ainda que venha assinado com o nome do engenheiro. Decisão humana só é executada pelo engenheiro, fora da sessão do agente.
+
 #### 3.5.4 Procedência obrigatória
 Toda saída de EX1 e EX2 carrega a procedência de cada informação: declarada, inferida ou verificada. Sem essa marcação, EX3 não tem o que verificar e o dossiê inteiro vira autodeclaração com aparência de diagnóstico. A marca não é atribuída por modelo de linguagem.
+
+#### 3.5.5 Atos sobre o registro
+Além das atividades do percurso, são reservados ao engenheiro os atos que alteram a evidência do caso: registrar o nível, registrar sessão e campo, satisfazer inegociável, registrar recorrência, encerrar etapa em EX3 ou EX4 e alterar o estado do caso. O agente pode preparar o comando; não pode executá-lo. Esses atos não produzem conteúdo, mas decidem o que o registro passa a afirmar, e por isso são os primeiros que um agente tenta contornar.
 
 ### 3.6 Deslocamento da fronteira por nível
 O engenheiro conduz o percurso inteiro nos três níveis. O que muda é até onde a preparação automatizada é admitida antes da verificação obrigatória: quanto maior a consequência do erro, mais cedo o trabalho humano precisa entrar.
@@ -154,6 +161,8 @@ O engenheiro conduz o percurso inteiro nos três níveis. O que muda é até ond
 | **Alcance da preparação automatizada** | Até o passo 4 | Até o passo 2 | Fase F0 apenas |
 | **Verificação obrigatória a partir de** | Passo 5 | Passo 3 | Passo 1 |
 | **Consequência do erro** | Baixa e reversível | Média | Alta e regulada |
+
+O deslocamento altera onde a verificação passa a ser obrigatória, não quem decide. As atividades humanas da seção 3.4 continuam humanas nos três níveis, inclusive nos passos em que a preparação automatizada é admitida: decidir o prosseguimento (F0), avaliar o patrocínio real (passo 1), verificar o dado (passo 2) e decidir a prioridade (passo 4).
 
 ## 4. Condição de aceite
 Este artefato está pronto quando toda atividade dos dez passos tem natureza atribuída e justificativa registrada; quando toda atividade automatizada ou híbrida consta do catálogo com insumo, saída e critério de verificação; e quando um engenheiro que não participou da construção consegue decidir, diante de uma atividade nova, de que lado da fronteira ela cai aplicando os três testes.
@@ -171,11 +180,12 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 10/09/2026 | Celso do Vale | Versão inicial: critério de corte, três naturezas, quatro camadas, fronteira por passo e catálogo | — |
 | 0.2 | 14/09/2026 | Celso do Vale | Habilidades renomeadas para HB; camadas de execução renomeadas para EX; alcance da fronteira delimitado ao trabalho interno | — |
+| 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): trava por origem da chamada (A4); levantamento das regras não documentadas movido para EX4 (D2); agente só prepara em EX3 e EX4 (D3); regra dos atos sobre o registro (D4); decisões humanas mantidas em todos os níveis (D1); situação das habilidades e atividades sem habilidade (D5) | — |
 
 ---
 
 ## Anexo A — Catálogo de agentes e habilidades
-Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de camadas distintas, e nenhum opera em EX3 ou EX4.
+Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de camadas distintas, e nenhum decide ou encerra etapa em EX3 ou EX4.
 
 | Código | Agente | Camada | Habilidades |
 | :--- | :--- | :---: | :--- |
@@ -189,7 +199,7 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
 | Código | Habilidade | Camada | Insumo | Saída | Critério de verificação |
 | :--- | :--- | :---: | :--- | :--- | :--- |
 | **HB-01** | Condução da triagem | EX1 · Aut. | Respostas do cliente ao instrumento | Pontuação por eixo, com a resposta literal preservada | As nove perguntas respondidas e o literal arquivado ao lado da interpretação |
-| **HB-02** | Apuração do nível de complexidade | EX1 · Aut. | Pontuação por eixo | Nível N1, N2 ou N3 | Recálculo manual reproduz o mesmo nível |
+| **HB-02** | Apuração do nível de complexidade | EX1 · Aut. | Pontuação por eixo | Nível N1, N2 ou N3, registrado pelo engenheiro | Recálculo manual reproduz o mesmo nível |
 | **HB-03** | Estruturação da dor | EX1 · Aut. | Relato do patrocinador | Quadro 5W2H preenchido | Cada campo remete a trecho identificável do relato |
 | **HB-04** | Condução dos cinco porquês | EX1 · Híb. | Dor estruturada | Cadeia causal proposta | Cadeia confirmada ou corrigida pelo engenheiro antes de avançar |
 | **HB-05** | Cálculo do custo do problema | EX1 · Híb. | Volumes e tempos informados | Custo estimado, com premissas expostas | Toda premissa visível e cada número com procedência marcada |
@@ -208,3 +218,20 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
 | **HB-18** | Monitoramento de desvio | EX2 · Aut. | Saídas em operação | Alerta de degradação | Limiar definido antes do piloto, não ajustado a posteriori |
 
 *Legenda: EX1 · Aut. = camada conversacional, automatizada. EX1 · Híb. = camada conversacional, híbrida. EX2 = camada analítica. Habilidades híbridas não concluem sem decisão humana registrada.*
+
+**Situação no Estúdio.** HB-04, HB-05, HB-06 e HB-13 estão catalogadas, sem implementação: nenhuma etapa do Estúdio as referencia. HB-09 pertence ao passo 3 neste catálogo e está associada ao passo 1 no Estúdio.
+
+## Anexo B — Atividades delegáveis sem habilidade catalogada
+
+Atividades automatizadas ou híbridas da seção 3.4 que ainda não têm habilidade que as execute. Enquanto não tiverem, são conduzidas pelo engenheiro.
+
+| Passo | Atividade | Natureza |
+| :---: | :--- | :--- |
+| 1 | Levantar objetivos declarados e posicionar nas quatro frentes | Automatizado |
+| 3 | Registrar a linha de base | Híbrido |
+| 4 | Estimar viabilidade técnica | Híbrido |
+| 4 | Classificar na zona de contenção | Híbrido |
+| 6 | Mapear pontos de integração e permissões necessárias | Automatizado |
+| 6 | Documentar o estado futuro | Híbrido |
+| 6 | Redigir o guia operacional e o material de treinamento | Híbrido |
+| 10 | Propor ajuste de regra ou parâmetro | Híbrido |

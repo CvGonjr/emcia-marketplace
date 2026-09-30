@@ -3,8 +3,8 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-TRI-01 | **Versão** | 0.1 |
-| **Data** | 11/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-TRI-01 | **Versão** | 0.2 |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0 — Enquadramento | **Passo** | Triagem |
 
@@ -77,6 +77,8 @@ As três somas ficam registradas na ficha de enquadramento ao lado do nível, id
 
 A apuração é determinística e ocorre fora de qualquer modelo de linguagem. Um terceiro que receba as nove respostas precisa chegar ao mesmo nível.
 
+A regra é conferida, e não apenas declarada. A apuração exige os três eixos, cada um com soma inteira dentro da escala de três a nove pontos. Eixo ausente, repetido, desconhecido ou fora da escala impede a apuração. O nível resulta da conta: se o nível informado divergir do nível calculado pela maior soma, a apuração é recusada, com a conta exposta. O registro do nível apurado é ato do engenheiro, e não do agente que conduziu a triagem.
+
 ### 3.5 Resposta ausente ou incerta
 “Não sei” é resposta legítima e frequente, sobretudo no eixo GOV, cujas perguntas exigem conhecimento que o interlocutor do processo raramente tem. O tratamento é o seguinte:
 
@@ -110,7 +112,7 @@ A triagem não verifica nada — ela declara. A confirmação de cada eixo ocorr
 > **Ponto cego conhecido:** Organizações superestimam a própria maturidade de dados nas três perguntas do eixo DAD. É o trecho do instrumento com maior taxa de erro na autodeclaração, e a razão pela qual esse eixo é o primeiro a ser verificado.
 
 ### 3.8 Reclassificação
-Quando a verificação contradiz o declarado, o nível é recalculado com as respostas corrigidas e a mudança é registrada com data, item alterado e origem da correção. A ficha de enquadramento passa a exibir os dois valores: o nível declarado na triagem e o nível verificado.
+Quando a verificação contradiz o declarado, o nível é recalculado com as respostas corrigidas, pela mesma conferência da seção 3.4, e a mudança é registrada com data, item alterado e origem da correção. A ficha de enquadramento passa a exibir os dois valores: o nível declarado na triagem e o nível verificado.
 
 A reclassificação alcança apenas os passos ainda não encerrados. Passo já encerrado sob o nível anterior permanece válido, e a divergência entre a profundidade aplicada e a profundidade que o novo nível exigiria fica registrada como restrição — o mesmo tratamento dado ao acesso negado no protocolo de habilitação.
 
@@ -132,3 +134,4 @@ Este artefato está pronto quando:
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | **0.1** | 11/09/2026 | Celso do Vale | Versão inicial: nove perguntas com sigla por eixo, regra de leitura, tratamento de resposta ausente, registro obrigatório, verificação posterior e reclassificação | — |
+| **0.2** | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A1): conferência da escala e da regra de leitura; recusa de eixo fora da escala e de nível divergente da conta; registro do nível pelo engenheiro | — |

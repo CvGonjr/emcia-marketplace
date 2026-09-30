@@ -47,7 +47,8 @@ Não são entregues ao cliente e não têm condição de emissão.
 ## Correspondência entregável × passo (resolvida)
 
 A correspondência entre entregáveis e passos foi fixada por
-EMCIA-CAM-01/EMCIA-ESP-01 v0.2 (17/09/2026), coincidindo com o relatório
+EMCIA-CAM-01/EMCIA-ESP-01 v0.2 (17/09/2026) e mantida nas versões
+seguintes (CAM-01 v0.2 e ESP-01 v0.3, de 29/09/2026), coincidindo com o relatório
 do PFC: **E4 = P6, P7**; **E5 = P8, P9, P10**. Ver `decisoes/013` no
 repositório. A tabela acima já reflete essa correspondência.
 

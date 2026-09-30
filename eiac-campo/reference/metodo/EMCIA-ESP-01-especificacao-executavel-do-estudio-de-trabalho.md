@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-ESP-01 | **Versão** | 0.2 |
-| **Data** | 17/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-ESP-01 | **Versão** | 0.3 |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Sprint 1 — Planejamento | **Passo** | Ação 1.9 |
 
@@ -79,6 +79,8 @@ Os códigos HB e AG são obrigatórios na implementação. Nenhuma skill de prod
 
 **P10 — recalibragem.** É recorrente. O agente pode monitorar desvio por HB-18, mas a decisão de recalibrar, expandir ou descontinuar é humana. O estado registra cadência, responsável e última verificação.
 
+**Decisão humana pela origem.** A decisão humana é reconhecida pela origem da chamada, e não pelo nome informado nela: o que chega pela sessão do agente é do agente. São reservados ao engenheiro, fora da sessão do agente, os atos do EMCIA-CAT-01 §3.5.5: registrar o nível, registrar sessão, campo e recorrência, satisfazer inegociável, validar a especificação operacional, decidir a autonomia, revisar o conjunto de casos de teste, definir a rotina e decidir a recalibragem, e encerrar etapa em EX3 ou EX4. O agente prepara o comando; não o executa.
+
 ### 3.6 Procedência D/I/V e escrita
 
 | Marca | Significado | Regra mínima |
@@ -103,10 +105,10 @@ Regras de escrita:
 | Abrir caso | playbook válido | Caso em F0; versão do playbook congelada. |
 | Encerrar F0 | triagem válida e nível apurado | Nível passa a governar as etapas seguintes. |
 | Registrar sessão | atividade humana realizada e responsável nomeado | Dependências humanas podem ser satisfeitas. |
-| Encerrar etapa | critério + dependências atendidos | Estado avança. |
-| Autorizar entregável | portão + inegociáveis satisfeitos | Documento pode ser gerado. |
+| Encerrar etapa | critério + dependências atendidos + produto próprio de encerramento registrado | Estado avança; etapa sem produto não consta como concluída. |
+| Autorizar entregável | portão + inegociáveis satisfeitos + artefato materializado | Documento pode ser gerado; o portão confere o artefato, e não só o estado. |
 | Registrar recorrência | etapa recorrente com cadência, responsável e data | Estado atualiza última verificação sem apagar histórico. |
-| Selar braço declarado | percurso declarado encerrado antes do campo | Conteúdo fica imutável para comparação. |
+| Selar caso | autor nomeado, fora da sessão do agente | Estado corrente fica registrado no histórico; o selo exibido é o último confirmado pelo histórico do caso. |
 
 ### 3.8 Portões de entregáveis
 
@@ -139,6 +141,11 @@ Regras de escrita:
 | G4 | Nenhuma etapa após F0 opera sem nível. | Fronteira indefinida. |
 | G5 | Etapa recorrente exige cadência. | P10 invisível após primeira execução. |
 | G6 | Agente exige critério de verificação. | Skill que produz saída sem regra de conferência. |
+| G7 | Decisão humana é reconhecida pela origem da chamada. | Agente decidir em nome do engenheiro. |
+| G8 | Habilidade não delegável é bloqueada em todas as rotas de carregamento. | Leitura da habilidade por caminho alternativo. |
+| G9 | Caminhos são normalizados em relação à raiz do caso antes da conferência. | Escrita em `registro/` por caminho absoluto ou relativo não previsto. |
+| G10 | Redirecionamento de saída é conferido pelo alvo da escrita. | Escrita em `registro/` por redirecionamento de comando. |
+| G11 | Recusa de habilidade é registrada como evento. | Recusa sem rastro na trilha. |
 
 ### 3.11 Eventos mínimos
 
@@ -160,7 +167,20 @@ Os testes existentes são preservados. A ampliação F0–P10 adiciona, no míni
 
 ### 3.13 Comportamento conservador
 
-Ausência ou ambiguidade nunca resolve para o modo mais permissivo. Sem nível, nenhuma etapa pós-F0 opera; sem procedência, não se grava; sem sessão humana, não se encerra; sem inegociável, não se emite; sem cadência, P10 não carrega; sem critério de verificação, agente não carrega.
+Ausência ou ambiguidade nunca resolve para o modo mais permissivo. Sem nível, nenhuma etapa pós-F0 opera; sem procedência, não se grava; sem sessão humana, não se encerra; sem inegociável, não se emite; sem cadência, P10 não carrega; sem critério de verificação, agente não carrega. Sem fonte vigente única, não se emite: registros concorrentes na mesma versão bloqueiam o entregável até decisão do engenheiro.
+
+### 3.14 Limites declarados desta versão
+
+| Limite | Situação | Previsão |
+|---|---|---|
+| Aparato de isolamento da execução de contraste | Permanece inativo na guarda e no selo; não rege nenhum fluxo do método | Remoção em dezembro de 2026 |
+| Contagem de `TentativaNegada` | A trilha registra também consultas de ajuda e recusas do próprio agente; a contagem não mede a fronteira sem a leitura do motivo de cada registro | Distinção por tipo de evento em dezembro de 2026 |
+| Alcance da guarda | Atua dentro de um caso aberto; operação fora de caso não é conferida | — |
+| Decisões humanas de F0, P1, P2 e P4 em N1 e N2 | Humanas no método (EMCIA-CAT-01 §3.6), sem trava própria nesses níveis | Trava em dezembro de 2026 |
+| Revalidação de inegociável | Satisfação não é reconferida quando o artefato ou o responsável muda (EMCIA-MET-01 §3.6) | Dezembro de 2026 |
+| Registro vigente de piloto, especificação operacional e termo de autonomia | Seleção pela ordem do registro, sem regra de versão vigente (EMCIA-MET-01 §3.7.6) | Dezembro de 2026 |
+| HB-04, HB-05, HB-06 e HB-13 | Catalogadas, sem etapa que as referencie (EMCIA-CAT-01, Anexo A) | A decidir na aplicação em campo |
+| Habilitação | Conduzida fora do Estúdio, pelo EMCIA-HAB-01 | — |
 
 ## 4. Condição de aceite
 
@@ -183,3 +203,4 @@ Este artefato está pronto quando um implementador consegue derivar schemas, val
 |---|---|---|---|---|
 | 0.1 | 17/09/2026 | Celso do Vale | Contratos iniciais do Estúdio. | — |
 | 0.2 | 17/09/2026 | Celso do Vale | Contrato ampliado para F0–P10; D/I/V fixado; portões E4/E5, recorrência e testes 14–20 adicionados. | — |
+| 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): decisão humana pela origem e atos reservados (A4, D4); produto de encerramento e artefato na emissão (A3, A5); selo pelo histórico e guardas G7–G11 (A8); retirada da transição de selagem para comparação; fonte vigente única (C2, C4); limites declarados da versão (B1–B3, B5, C1, D1, D5) | — |

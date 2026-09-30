@@ -1,7 +1,7 @@
 {
   "nome": "Catalogo de agentes logicos",
   "versao": "0.1.0",
-  "referencia": "EMCIA-CAT-01 Anexo A (agentes agrupam habilidades por camada; nenhum agente reune habilidades de camadas distintas; nenhum agente opera em EX3 ou EX4)",
+  "referencia": "EMCIA-CAT-01 Anexo A (agentes agrupam habilidades por camada; nenhum agente reune habilidades de camadas distintas; nenhum agente decide ou encerra etapa em EX3 ou EX4)",
   "agentes": [
     {
       "id": "AG-01",

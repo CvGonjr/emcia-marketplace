@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CAM-01 | **Versão** | 0.1 |
-| **Data** | 17/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-CAM-01 | **Versão** | 0.2 |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Sprint 2 — Implementação | **Passo** | Ação 2.3 |
 
@@ -180,6 +180,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 
 **Fronteira.** HB-18 monitora desvio contra limiar definido previamente. A decisão de recalibrar, expandir ou descontinuar é humana. O estado registra cadência, responsável e data da última verificação — sem esse registro, a etapa desaparece após a primeira execução.
 
+**Responsável vigente.** A rotina de recalibragem e cada registro de recorrência nomeiam a mesma pessoa. Vale a rotina de maior versão; trocar o responsável exige nova versão da rotina, e não edição da existente. Duas rotinas na mesma versão com responsáveis diferentes impedem o registro da recorrência e a emissão do E5 até que o engenheiro resolva qual prevalece. O E5 apresenta o responsável da rotina vigente, e não o do último arquivo registrado.
+
 ### 3.7 Condições executáveis para o Code Plugin
 
 | # | Tentativa | Resultado |
@@ -194,6 +196,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 | M8 | Registrar responsável de P10 como nome de área | Recusa — inegociável 5 |
 | M9 | Carregar P10 sem cadência declarada | Playbook não carrega |
 | M10 | Alterar limiar de desvio após o início do piloto | Recusa; alteração exige nova versão com justificativa |
+| M11 | Registrar recorrência com responsável diferente do da rotina vigente | Recusa; a recorrência segue a rotina de maior versão |
+| M12 | Emitir E5 com duas rotinas na maior versão e responsáveis diferentes | Recusa — fonte ambígua |
 
 ### 3.8 Registro no estado do caso
 
@@ -220,6 +224,7 @@ O protocolo está pronto quando cada um dos cinco passos declara entrada, ativid
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 |---|---|---|---|---|
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: enquadramento comum, protocolo de P6 a P10, condições executáveis M1–M10 e os quatro formatos dos inegociáveis 2 a 5. | — |
+| 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A7, e correção A24): responsável vigente da rotina de recalibragem, vínculo com a recorrência e com o E5; condições M11 e M12; campo de versão no Anexo D | — |
 
 ---
 
@@ -280,6 +285,7 @@ Inegociável 5. O responsável é pessoa nomeada; área não satisfaz.
 
 | Campo | Conteúdo |
 |---|---|
+| Versão | Inteiro positivo; troca de responsável ou de limiar cria nova versão |
 | Responsável | Nome, papel e registro de ciência |
 | Cadência | Conforme o nível, lançada em calendário |
 | Data da primeira revisão | — |

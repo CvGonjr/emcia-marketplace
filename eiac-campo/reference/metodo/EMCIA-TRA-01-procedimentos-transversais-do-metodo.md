@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-TRA-01 | **Versão** | 0.2 |
-| **Data** | 17/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-TRA-01 | **Versão** | 0.3 |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0–F4 (transversal) | **Passo** | Todos |
 
@@ -167,6 +167,9 @@ O indicador mede quanto do que sustenta o processo não pode ser obtido por leit
 | **TRA-V08** | Débito vencido impede encerramento do passo de liquidação | Recusar encerramento com débito em aberto |
 | **TRA-V09** | Pendência bloqueante impede emissão do entregável da fase | Recusar emissão |
 | **TRA-V10** | Pendência não bloqueante consta do entregável como limitação | Recusar emissão que omita pendência registrada |
+| **TRA-V11** | Todo campo que exige pessoa recebe nome com ao menos duas partes e nenhum termo coletivo (área, cargo, equipe, sigla de setor ou equivalente) | Recusar a gravação |
+
+A TRA-V11 aplica a regra de pessoa nomeada do EMCIA-MET-01 §3.7.5 a todo registro do percurso: autoria de asserção, curadoria, leitura de volta, confronto, pendência, sessão e responsáveis dos passos 6 a 10. A condição confere o nome, e não a identidade de quem o informa. A garantia de que a decisão veio do engenheiro, e não do agente, é a trava por origem do EMCIA-CAT-01 §3.5.3.
 
 ## 4. Condição de aceite
 
@@ -188,6 +191,7 @@ O artefato está pronto quando os cinco procedimentos possuem passo a passo apli
 |---|---|---|---|---|
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: leitura de volta, confronto e placar, procedência, débito de julgamento, pendência bloqueante e validações TRA-V01–V10. | — |
 | 0.2 | 17/09/2026 | Celso do Vale | Item de confronto passa a ser aberto para toda regra, não apenas para divergências; nomes de campo alinhados ao EMCIA-CTX-01 0.4; identificador padronizado como `confronto-NNN`; TRA-V01 e TRA-V02 ajustadas. | — |
+| 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A6): condição TRA-V11 de pessoa nomeada, com o limite entre conferência do nome e garantia de origem | — |
 
 ---
 

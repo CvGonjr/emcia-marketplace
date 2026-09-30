@@ -23,7 +23,7 @@
       "camada": "EX1",
       "automatizada": true,
       "insumo": "Pontuacao por eixo",
-      "saida": "Nivel N1, N2 ou N3",
+      "saida": "Nivel N1, N2 ou N3, registrado pelo engenheiro",
       "criterio_de_verificacao": "Recalculo manual reproduz o mesmo nivel",
       "ag_autorizado": "AG-01",
       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",

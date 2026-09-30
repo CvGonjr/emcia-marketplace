@@ -3,12 +3,14 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-VER-01 | **Versão** | 0.1 |
-| **Data** | 13/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-VER-01 | **Versão** | 0.2 |
+| **Data** | 29/09/2026 | **Estado** | Substituído |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Não se aplica | **Passo** | Não se aplica |
 
 ---
+
+> **Documento substituído.** Este plano descreve a verificação por duas execuções sobre a mesma organização, com predições registradas e selamento prévio. Esse desenho não foi executado. A verificação da prova de conceito passou a ser feita por testes de fase e de fronteira sobre o Estúdio, em caso de controle, com os critérios definidos no objetivo SMART do relatório e as provas especificadas no EMCIA-ESP-01 §3.10 e §3.12. A aplicação em organização real fica para o horizonte de dezembro de 2026. O conteúdo abaixo é mantido como registro do desenho original e não deve ser usado como critério vigente.
 
 ## 1. Objetivo e alcance
 Fixar, antes da execução, como o resultado do método será julgado: o que se compara, com que indicadores, sob que critérios de sucesso e de falha, e o que invalida a comparação. O plano é redigido na Sprint 1 justamente para que os critérios não possam ser ajustados depois de conhecidos os resultados.
@@ -156,3 +158,4 @@ Este artefato está pronto quando:
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | **0.1** | 13/09/2026 | Celso do Vale | Versão inicial: desenho das duas execuções, protocolo de selamento, seis predições, cinco indicadores do objetivo e três complementares, critérios de falha e limitações | — |
+| **0.2** | 29/09/2026 | Celso do Vale | Documento marcado como substituído (registro da ação 4.3, item E1): verificação por testes de fase e de fronteira, critérios no objetivo SMART e provas no EMCIA-ESP-01; conteúdo original mantido como registro | — |

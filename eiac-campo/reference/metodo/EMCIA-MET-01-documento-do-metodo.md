@@ -1,9 +1,9 @@
 # Documento do método
 ## Cinco fases, dez passos, calibragem por nível de complexidade e critérios de encerramento
 
-| Código | EMCIA-MET-01 | Versão | 0.1 |
+| Código | EMCIA-MET-01 | Versão | 0.2 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 09/09/2026 | **Estado** | Em revisão |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
@@ -16,6 +16,8 @@ Fixar o percurso que a EMCIA aplica em um engajamento de engenharia de IA de cam
 Aplica-se ao percurso completo, do enquadramento inicial à calibragem posterior, em organizações de qualquer porte. A profundidade de cada passo é calibrada pelo nível de complexidade apurado na Fase 0.
 
 Não se aplica à construção, à implantação nem à sustentação da solução especificada, que permanecem fora do serviço. O método também não decide pela organização: priorização, nível de autonomia e aceitação pertencem ao cliente, e o percurso estrutura essas decisões sem substituí-las.
+
+A habilitação do engajamento, definida no EMCIA-HAB-01, antecede a abertura do caso e não integra o percurso: carta de escopo, confidencialidade e consentimento são tratados antes da Fase 0.
 
 ## 3. Conteúdo
 
@@ -69,7 +71,7 @@ O instrumento com as nove perguntas e a regra de pontuação está no artefato E
 | **Risco dominante** | Falta de dado confiável | Adoção e integração | Conformidade e auditoria |
 
 #### 3.3.3 Encerramento da Fase 0
-> **Encerramento.** A ficha de enquadramento existe com dor delimitada, causa raiz identificada, custo do problema estimado, nível apurado pelos três eixos e objetivo mensurável definido; o patrocinador confirmou o enquadramento; cada número tem origem registrada como declarada, inferida ou verificada.
+> **Encerramento.** A ficha de enquadramento existe com dor delimitada, causa raiz identificada, custo do problema estimado, nível apurado pelos três eixos, conforme a regra de leitura do EMCIA-TRI-01, e registrado pelo engenheiro e objetivo mensurável definido; o patrocinador confirmou o enquadramento; cada número tem origem registrada como declarada, inferida ou verificada.
 
 ### 3.4 Os dez passos
 Cada passo apresenta a calibragem por nível, o corte e o critério de encerramento. O corte responde à pergunta “devo continuar?”; o encerramento responde a “este passo terminou?”. São perguntas distintas e ambas precisam de resposta antes de avançar.
@@ -222,6 +224,8 @@ Cinco exigências não escalam para baixo. Se alguma faltar, o método não foi 
 | **4** | Ao menos uma métrica de resultado, e não apenas de uso | Passo 9 |
 | **5** | Um responsável nomeado pela recalibragem | Passo 10 |
 
+Satisfazer um inegociável é um ato datado. A satisfação vale para a versão do artefato e para o responsável que a comprovaram; se um dos dois mudar, o item é conferido de novo antes da emissão do entregável.
+
 ### 3.7 Regras do método
 
 #### 3.7.1 Procedência da informação
@@ -234,6 +238,18 @@ Classificação de complexidade, custo do problema e indicadores são apurados p
 
 #### 3.7.3 Modalidade de contato
 O enquadramento admite trabalho assíncrono e a calibragem posterior é remota e recorrente. O levantamento das regras não documentadas, no passo 3, exige presença física: videoconferência produz concordância nominal, enquanto a presença produz decisão assumida.
+
+#### 3.7.4 Comprovação do encerramento e da emissão
+Um passo se encerra pelo produto que declara, e não pela declaração de que terminou. Cada passo tem produto próprio de encerramento, e o estado do caso não registra como concluído um passo sem esse produto. Os passos cujo encerramento é humano exigem sessão registrada com quem executa o processo. Nenhum entregável é emitido sem o artefato que o materializa: o portão confere o artefato, e não apenas o estado do caso.
+
+#### 3.7.5 Pessoa nomeada
+
+Todo campo de responsável recebe o nome de uma pessoa, e não de área, cargo ou coletivo. Papéis distintos, como o responsável operacional do passo 6, o responsável pela apuração do passo 9 e o responsável pela calibragem do passo 10, podem recair sobre pessoas diferentes; o método não exige que coincidam. Quando o mesmo papel aparece em mais de um registro, como a rotina de calibragem e sua recorrência, os registros nomeiam a mesma pessoa.
+
+#### 3.7.6 Versão do método e registro vigente
+
+Cada caso é conduzido na versão do método em que foi aberto. Atualizá-lo para versão posterior é ato explícito do engenheiro, registrado no caso; o caso não muda de versão porque o método mudou.
+Quando um passo tiver mais de um registro do mesmo artefato, vale o de maior versão. Registros concorrentes na mesma versão impedem a emissão até que o engenheiro resolva qual prevalece.
 
 ## 4. Condição de aceite
 Este artefato está pronto quando as cinco fases e os dez passos estão descritos com calibragem, corte e critério de encerramento; quando o vocabulário empregado é o do glossário EMCIA-GLO-01; e quando um engenheiro que não participou da construção consegue, lendo apenas este documento, identificar em que passo está e o que falta para encerrá-lo.
@@ -252,3 +268,4 @@ Este artefato está pronto quando as cinco fases e os dez passos estão descrito
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 09/09/2026 | Celso do Vale | Versão inicial: consolidação das cinco fases, dez passos, calibragem e critérios de encerramento | — |
+| 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): habilitação fora do percurso (B2); registro do nível pelo engenheiro (A1); satisfação de inegociável como ato datado (C1); comprovação do encerramento e da emissão (A2, A3, A5); pessoa nomeada e papéis distintos (A6, C3); versão do método por caso e registro vigente (B4, C4) | — |

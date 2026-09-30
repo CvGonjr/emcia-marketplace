@@ -1,9 +1,9 @@
 # Glossário do método
 ## Vocabulário padronizado do percurso, índice de artefatos e índice de siglas
 
-| Código | EMCIA-GLO-01 | Versão | 0.1 |
+| Código | EMCIA-GLO-01 | Versão | 0.2 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 14/09/2026 | **Estado** | Em revisão |
+| **Data** | 29/09/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Todas | **Passo** | Todos |
 
@@ -87,6 +87,8 @@ Cada entrada tem quatro campos, e o terceiro é o que faz o trabalho. A maior pa
 
 ### 3.6 Verificação
 
+> Os termos **execução declarada**, **execução de campo**, **selamento** e **predição registrada** pertencem ao plano de verificação por duas execuções (EMCIA-VER-01), substituído na versão 0.2 daquele documento. Ficam neste glossário como registro, para leitura dos artefatos que os empregam, e não designam procedimento vigente do método. **Indicador** permanece vigente.
+
 | Termo | Definição | O que não é | Onde aparece |
 | :--- | :--- | :--- | :--- |
 | **Execução declarada** | Execução do método apoiada apenas no que a organização informa, conduzida sem intervenção humana nas etapas de produção | Execução malfeita ou apressada | VER-01 · Sprint 2 |
@@ -144,6 +146,7 @@ Este artefato está pronto quando todo termo empregado nos demais artefatos com 
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 14/09/2026 | Celso do Vale | Versão inicial: 77 termos em seis grupos, quatro anexos, índice de artefatos e índice de siglas | — |
+| 0.2 | 29/09/2026 | Celso do Vale | Termos da verificação por duas execuções marcados como históricos, em razão da substituição do EMCIA-VER-01 (registro da ação 4.3, item E1) | — |
 
 ---
 
