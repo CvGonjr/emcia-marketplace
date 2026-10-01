@@ -1,7 +1,7 @@
 {
-  "versao": 2,
-  "origem_controlada": "emcia-artefatos (github.com/CvGonjr/emcia-artefatos), commit 91053af",
-  "empacotado_em": "2026-09-29",
+  "versao": 3,
+  "origem_controlada": "emcia-artefatos (github.com/CvGonjr/emcia-artefatos), commit 1f0c051",
+  "empacotado_em": "2026-10-01",
   "documentos": {
     "EMCIA-CAM-01-protocolo-de-campo-por-passo.md": "a0771c8dac0ea024a068f82065f1a4a14caf79d39b0aca55959ab4ddccf17c4a",
     "EMCIA-CAT-01-fronteira-de-delegacao.md": "29f421bc592b465b61c9f00e608ae32b831c6bd76cc91f3cb9cedab71f081e39",
@@ -11,9 +11,10 @@
     "EMCIA-E3-blueprint-da-solucao.md": "312304c5b9e63915ccf1b7180298e916124ee9f851754120ba9fd2a77ccfeb21",
     "EMCIA-E4-guia-operacional.md": "4cd5dfcb5523a01c910056d6b0ed197285b9e752a0290b49149326d2a93f9c52",
     "EMCIA-E5-relatorio-de-piloto.md": "1a9fcfbbc3936ea2de45972972dbad9f1d3da5f985fa4e2535df1d1753b67e54",
-    "EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md": "98a19db34f636f1b250bf9aa3f4185c6e9c37df468282c5fa31e57aba82f35a3",
+    "EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md": "36f83b92a6ef5deec4582406f7991f7e5b8b297caa0bc89cb6c205740fa7f974",
     "EMCIA-FER-01-quadro-de-ferramentas.md": "5c95d581fcb28f8b12a402a94b3fda7d9b1e44bc56fdf13bf9c0b385d3b92726",
     "EMCIA-GLO-01-glossario-do-metodo.md": "605dbc422e0456cc9142e2e310cd679e161341fe9ad422a7cbc2646859bde440",
+    "EMCIA-MAN-01-manual-de-aplicacao.md": "a8267f5b132a52e1f6731b53bbc4bb08debc8e43b1ed8fd5d755826a7ecc55dd",
     "EMCIA-MET-01-documento-do-metodo.md": "cf237af2d8e128073beb51af680f036c81a079ab299e69389b76352534b9eaf2",
     "EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md": "db7d0ab05ecf4d28f263819305c1ae7a194b5cf404182446d5c2366e9f4cf2e3",
     "EMCIA-TRA-01-procedimentos-transversais-do-metodo.md": "f3d7ee486a462cedeeb0839cb69b7707377029bf6605ead25ca9c7bf2eca32a1",

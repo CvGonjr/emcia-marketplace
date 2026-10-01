@@ -22,6 +22,7 @@ DOCUMENTOS = {
     "EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md",
     "EMCIA-FER-01-quadro-de-ferramentas.md",
     "EMCIA-GLO-01-glossario-do-metodo.md",
+    "EMCIA-MAN-01-manual-de-aplicacao.md",
     "EMCIA-MET-01-documento-do-metodo.md",
     "EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md",
     "EMCIA-TRA-01-procedimentos-transversais-do-metodo.md",

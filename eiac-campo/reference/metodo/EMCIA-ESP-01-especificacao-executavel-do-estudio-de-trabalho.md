@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-ESP-01 | **Versão** | 0.3 |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-ESP-01 | **Versão** | 0.4 |
+| **Data** | 01/10/2026 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Sprint 1 — Planejamento | **Passo** | Ação 1.9 |
 
@@ -177,6 +177,7 @@ Ausência ou ambiguidade nunca resolve para o modo mais permissivo. Sem nível, 
 | Contagem de `TentativaNegada` | A trilha registra também consultas de ajuda e recusas do próprio agente; a contagem não mede a fronteira sem a leitura do motivo de cada registro | Distinção por tipo de evento em dezembro de 2026 |
 | Alcance da guarda | Atua dentro de um caso aberto; operação fora de caso não é conferida | — |
 | Decisões humanas de F0, P1, P2 e P4 em N1 e N2 | Humanas no método (EMCIA-CAT-01 §3.6), sem trava própria nesses níveis | Trava em dezembro de 2026 |
+| Produto de encerramento de F0, P1, P2, P3b, P3d e P4 | O playbook não declara produto próprio para essas etapas; o Estúdio confere o nível ou a sessão (EMCIA-MET-01 §3.7.4) | Dezembro de 2026 |
 | Revalidação de inegociável | Satisfação não é reconferida quando o artefato ou o responsável muda (EMCIA-MET-01 §3.6) | Dezembro de 2026 |
 | Registro vigente de piloto, especificação operacional e termo de autonomia | Seleção pela ordem do registro, sem regra de versão vigente (EMCIA-MET-01 §3.7.6) | Dezembro de 2026 |
 | HB-04, HB-05, HB-06 e HB-13 | Catalogadas, sem etapa que as referencie (EMCIA-CAT-01, Anexo A) | A decidir na aplicação em campo |
@@ -204,3 +205,4 @@ Este artefato está pronto quando um implementador consegue derivar schemas, val
 | 0.1 | 17/09/2026 | Celso do Vale | Contratos iniciais do Estúdio. | — |
 | 0.2 | 17/09/2026 | Celso do Vale | Contrato ampliado para F0–P10; D/I/V fixado; portões E4/E5, recorrência e testes 14–20 adicionados. | — |
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): decisão humana pela origem e atos reservados (A4, D4); produto de encerramento e artefato na emissão (A3, A5); selo pelo histórico e guardas G7–G11 (A8); retirada da transição de selagem para comparação; fonte vigente única (C2, C4); limites declarados da versão (B1–B3, B5, C1, D1, D5) | — |
+| 0.4 | 01/10/2026 | Celso do Vale | Limite declarado: etapas sem produto de encerramento declarado no playbook (achado C5, ação 4.5) | — |

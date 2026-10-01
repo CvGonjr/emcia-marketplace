@@ -43,3 +43,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |
 | 036 | Responsável da recorrência conferido com a fonte vigente (A23) | firme |
 | 037 | E5 usa a rotina de calibragem vigente (A24) | firme |
+| 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |

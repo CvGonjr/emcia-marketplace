@@ -1,5 +1,7 @@
 # emcia — marketplace de plugins
 
+Para aplicar o método, comece pelo manual: `eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md`.
+
 Dois plugins, e a separação entre eles é o argumento arquitetural do projeto.
 
 | Plugin | Contém | Conhece o método |
