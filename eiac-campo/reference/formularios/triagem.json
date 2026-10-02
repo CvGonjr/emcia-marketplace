@@ -1,0 +1,173 @@
+{
+  "finalidade": "triagem",
+  "proprietario": "emcia",
+  "instrumento": "EMCIA-TRI-01-instrumento-de-triagem.md",
+  "secao_perguntas": "3.3",
+  "secao_pontuacao": "3.4",
+  "campo_oculto": "caso",
+  "perguntas": [
+    {
+      "id": "DAD-1",
+      "pergunta": "Quantos sistemas-fonte relevantes alimentam o processo-alvo?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Até três"
+        },
+        {
+          "pontos": 2,
+          "texto": "De quatro a dez"
+        },
+        {
+          "pontos": 3,
+          "texto": "Mais de dez"
+        }
+      ]
+    },
+    {
+      "id": "DAD-2",
+      "pergunta": "Há integração entre esses sistemas?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Nenhuma, ou por planilhas"
+        },
+        {
+          "pontos": 2,
+          "texto": "Parcial"
+        },
+        {
+          "pontos": 3,
+          "texto": "Repositório analítico central em uso"
+        }
+      ]
+    },
+    {
+      "id": "DAD-3",
+      "pergunta": "Há área ou responsável formal por dados?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não há"
+        },
+        {
+          "pontos": 2,
+          "texto": "Existe, de modo informal"
+        },
+        {
+          "pontos": 3,
+          "texto": "Área constituída"
+        }
+      ]
+    },
+    {
+      "id": "GOV-1",
+      "pergunta": "As políticas de segurança e de acesso estão documentadas?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não estão"
+        },
+        {
+          "pontos": 2,
+          "texto": "Parcialmente"
+        },
+        {
+          "pontos": 3,
+          "texto": "Formais e auditadas"
+        }
+      ]
+    },
+    {
+      "id": "GOV-2",
+      "pergunta": "Há encarregado, comitê ou responsável por proteção de dados?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não há"
+        },
+        {
+          "pontos": 2,
+          "texto": "A função é acumulada"
+        },
+        {
+          "pontos": 3,
+          "texto": "Função dedicada"
+        }
+      ]
+    },
+    {
+      "id": "GOV-3",
+      "pergunta": "Há trilha de auditoria nos sistemas críticos?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não há"
+        },
+        {
+          "pontos": 2,
+          "texto": "Parcial"
+        },
+        {
+          "pontos": 3,
+          "texto": "Completa"
+        }
+      ]
+    },
+    {
+      "id": "CRI-1",
+      "pergunta": "O processo-alvo afeta dinheiro, crédito ou contrato?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não afeta"
+        },
+        {
+          "pontos": 2,
+          "texto": "Afeta indiretamente"
+        },
+        {
+          "pontos": 3,
+          "texto": "Afeta diretamente"
+        }
+      ]
+    },
+    {
+      "id": "CRI-2",
+      "pergunta": "Há exigência regulatória sobre o processo?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "Não há"
+        },
+        {
+          "pontos": 2,
+          "texto": "Setorial, de baixa intensidade"
+        },
+        {
+          "pontos": 3,
+          "texto": "Setor regulado"
+        }
+      ]
+    },
+    {
+      "id": "CRI-3",
+      "pergunta": "Um erro no processo é detectado com que rapidez?",
+      "alternativas": [
+        {
+          "pontos": 1,
+          "texto": "De imediato"
+        },
+        {
+          "pontos": 2,
+          "texto": "Em dias"
+        },
+        {
+          "pontos": 3,
+          "texto": "Pode passar despercebido"
+        }
+      ]
+    }
+  ],
+  "workspace_por_canal": true
+}

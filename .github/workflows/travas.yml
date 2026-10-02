@@ -68,6 +68,9 @@ jobs:
       - name: Canais declarados e autoria
         run: python3 testes/canais.py
 
+      - name: Formulários e redação fixa
+        run: python3 testes/formularios.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

@@ -1,0 +1,10 @@
+test_01_formulario_alheio (__main__.Formularios.test_01_formulario_alheio) ... ok
+test_20_outro_caso_ignorado_sem_registro (__main__.Formularios.test_20_outro_caso_ignorado_sem_registro) ... ok
+test_21_link_com_caso_sem_envio (__main__.Formularios.test_21_link_com_caso_sem_envio) ... ok
+test_01_divergencia_reprova (__main__.Redacao.test_01_divergencia_reprova) ... ok
+test_20_redacao_exata_perguntas_e_alternativas (__main__.Redacao.test_20_redacao_exata_perguntas_e_alternativas) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.467s
+
+OK

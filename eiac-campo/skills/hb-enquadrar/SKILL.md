@@ -10,7 +10,8 @@ description: Estrutura a dor declarada e calcula o nivel de complexidade da orga
 # Enquadramento e triagem — F0 · EX1
 
 **Procedimento:** documento do método, Fase 0. Não reproduza aqui.
-**Instrumento:** EMCIA-TRI-01, seção 3.4, no pacote controlado em `reference/metodo/`.
+**Instrumento:** EMCIA-TRI-01, seção 3.3 para as perguntas e seção 3.4 para
+a pontuação, no pacote controlado em `reference/metodo/`.
 As nove perguntas têm redação fixa e não podem ser reformuladas.
 
 Registre as somas dos eixos na escala de 3 a 9 indicada pelo instrumento.

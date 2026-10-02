@@ -1,0 +1,38 @@
+{
+  "finalidade": "ciclo",
+  "proprietario": "emcia",
+  "campo_oculto": "caso",
+  "instrumento": "EMCIA-CAM-01-protocolo-de-campo-por-passo.md",
+  "preparacao": "Engenheiro define o conteúdo conforme o instrumento; não publicar nem enviar sem instrução expressa.",
+  "campos": [
+    {
+      "id": "rotina_id",
+      "tipo": "texto"
+    },
+    {
+      "id": "respondente",
+      "tipo": "pessoa_nomeada"
+    },
+    {
+      "id": "data_verificacao",
+      "tipo": "data"
+    },
+    {
+      "id": "drift_detectado",
+      "tipo": "booleano"
+    },
+    {
+      "id": "drift_descricao",
+      "tipo": "texto"
+    },
+    {
+      "id": "drift_quantificacao",
+      "tipo": "texto"
+    },
+    {
+      "id": "evidencia",
+      "tipo": "texto"
+    }
+  ],
+  "decisao": "Separada, humana, fora do formulário de monitoramento"
+}
