@@ -1,0 +1,21 @@
+{
+  "claude_version": "2.1.283",
+  "codigo": 0,
+  "chamada_mcp_efetuada": false,
+  "eventos": [
+    {
+      "evento": "TentativaNegada",
+      "data": "2026-10-02T17:19:17",
+      "componente": {
+        "variante": "campo",
+        "commit": "82d9c9e7f0a8bf148a49d2c627680646830e7328"
+      },
+      "motivo": "ferramenta externa não declarada ou ambígua",
+      "ferramenta": "mcp__controle__ping",
+      "operacao": "escopo-externo",
+      "autor": "Celso do Vale"
+    }
+  ],
+  "saida": "NEGADO\n",
+  "erro": ""
+}

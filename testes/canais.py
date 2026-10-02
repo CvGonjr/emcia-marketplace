@@ -121,6 +121,13 @@ class Canais(CasoHook):
         self.assertEqual(evento['autor'], 'Celso do Vale')
         self.assertEqual(evento['decidido_por'], 'Pessoa Engenheira')
 
+    def test_23_escopo_humano_documentado(self):
+        pb = json.loads((self.caso/'registro/playbook.json').read_text())
+        externo = {r['id'] for r in pb['decisoes_humanas'] if r.get('escopo') == 'fronteira_externa'}
+        documento = (RAIZ/'eiac-campo/reference/canais.md').read_text()
+        import re
+        documentados = set(re.findall(r'^\| `([^`]+)` \| Engenheiro', documento, re.M))
+        self.assertEqual(externo, documentados)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

@@ -1,0 +1,167 @@
+$ bash testes/negativos.sh
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 caso com responsavel agente recusado na abertura
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    G6a Write em fontes/ negado
+  ok    G6b Edit em fontes/ negado
+  ok    G6c bash redirecionando para fontes/ negado
+  ok    G6d bash removendo de fontes/ negado
+  ok    G6e bash mv para fontes/ negado
+  ok    G6f Write em contexto/fontes/ negado
+  ok    G6g tentativa negada em fontes/ gera evento
+  ok    G6h leitura em fontes/ permanece permitida
+  ok    G6i cd seguido de rm em fontes/ negado
+  ok    G6j sed -i em fontes/ negado
+  ok    G6k remocao indireta por Python negada
+  ok    G6l leitura simples por Bash permanece permitida
+  ok    ISO2 núcleo recusa registro de execução de contraste
+  ok    ISO-controle núcleo opera em caso de campo isolado
+  ok    ISO-selo-1 selo recusa evento carimbado variante contraste
+  ok    ISO-selo-2 selo recusa evento sem carimbo de componente
+  ok    ISO-selo-controle trilha homogênea de campo sela normalmente
+  ok    ISO-selo-controle eventos reais carregam componente.variante=campo (plugin.json real)
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem
+
+$ python3 testes/contexto.py
+== objetos CTX — pacote 2.5.1
+  ok    2.5.1-T01 Termo válido
+  ok    2.5.1-T02 Entidade válida
+  ok    2.5.1-T03 Regra válida
+  ok    2.5.1-T04 Fonte válida
+  ok    2.5.1-T05 Termo sem significado
+  ok    2.5.1-T06 Entidade sem nome
+  ok    2.5.1-T07 Regra sem estabilidade
+  ok    2.5.1-T08 Fonte sem contrato.significado
+  ok    2.5.1-T09 D/I/V nos quatro objetos
+  ok    2.5.1-T10 Taxonomias obsoletas
+  ok    2.5.1-T11 Sete campos centrais da Regra
+
+11 testes estruturais aprovados
+
+$ python3 testes/escopo_mcp.py
+test_01_busca_global (__main__.Escopo.test_01_busca_global) ... ok
+test_02_busca_com_or (__main__.Escopo.test_02_busca_com_or) ... ok
+test_03_formulario_alheio (__main__.Escopo.test_03_formulario_alheio) ... ok
+test_04_destino_entrada (__main__.Escopo.test_04_destino_entrada) ... ok
+test_05_leitura_sem_listagem (__main__.Escopo.test_05_leitura_sem_listagem) ... ok
+test_06_ferramenta_desconhecida (__main__.Escopo.test_06_ferramenta_desconhecida) ... ok
+test_07_manifesto_adulterado (__main__.Escopo.test_07_manifesto_adulterado) ... ok
+test_08_controle_listagem_alheia (__main__.Escopo.test_08_controle_listagem_alheia) ... ok
+test_20_lista_e_le_por_id (__main__.Escopo.test_20_lista_e_le_por_id) ... ok
+test_21_envio_destino_correto (__main__.Escopo.test_21_envio_destino_correto) ... ok
+test_22_formulario_correto (__main__.Escopo.test_22_formulario_correto) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.765s
+
+OK
+
+$ python3 testes/canais.py
+test_01_id_vazio (__main__.Canais.test_01_id_vazio) ... ok
+test_02_finalidade_desconhecida (__main__.Canais.test_02_finalidade_desconhecida) ... ok
+test_03_ferramenta_desconhecida (__main__.Canais.test_03_ferramenta_desconhecida) ... ok
+test_04_autor_agente (__main__.Canais.test_04_autor_agente) ... ok
+test_05_sessao_agente (__main__.Canais.test_05_sessao_agente) ... ok
+test_06_resolver_ausente (__main__.Canais.test_06_resolver_ausente) ... ok
+test_07_caso_alheio (__main__.Canais.test_07_caso_alheio) ... ok
+test_08_etapa_fora_contrato (__main__.Canais.test_08_etapa_fora_contrato) ... ok
+test_09_filtro_alheio (__main__.Canais.test_09_filtro_alheio) ... ok
+test_10_ids_com_caminho (__main__.Canais.test_10_ids_com_caminho) ... ok
+test_11_versao_repetida (__main__.Canais.test_11_versao_repetida) ... ok
+test_12_entrada_malformada (__main__.Canais.test_12_entrada_malformada) ... ok
+test_13_adulteracao (__main__.Canais.test_13_adulteracao) ... ok
+test_14_etapa_sem_canal_recusa_com_evento (__main__.Canais.test_14_etapa_sem_canal_recusa_com_evento) ... ok
+test_15_finalidade_exigida_ausente (__main__.Canais.test_15_finalidade_exigida_ausente) ... ok
+test_20_planejar_somente_leitura (__main__.Canais.test_20_planejar_somente_leitura) ... ok
+test_21_definir_resolver_historico (__main__.Canais.test_21_definir_resolver_historico) ... ok
+test_22_decisor_distinto_autoria_fixa (__main__.Canais.test_22_decisor_distinto_autoria_fixa) ... ok
+test_23_escopo_humano_documentado (__main__.Canais.test_23_escopo_humano_documentado) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 1.831s
+
+OK
+
+$ python3 testes/canais_percurso.py
+test_20_habilitacao_canais_triagem_documento_emissao_entrega (__main__.Percurso.test_20_habilitacao_canais_triagem_documento_emissao_entrega) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.028s
+
+OK
+
+$ python3 testes/decisao_a12.py
+test_00_governanca_decidido_nome_humano (__main__.DecisaoA12.test_00_governanca_decidido_nome_humano) ... ok
+test_01_operacional_validado_nome_humano (__main__.DecisaoA12.test_01_operacional_validado_nome_humano) ... ok
+test_02_calibragem_com_decisao (__main__.DecisaoA12.test_02_calibragem_com_decisao) ... ok
+test_03_apurar_nivel (__main__.DecisaoA12.test_03_apurar_nivel) ... ok
+test_04_registrar_sessao (__main__.DecisaoA12.test_04_registrar_sessao) ... ok
+test_05_registrar_campo (__main__.DecisaoA12.test_05_registrar_campo) ... ok
+test_06_registrar_recorrencia (__main__.DecisaoA12.test_06_registrar_recorrencia) ... ok
+test_07_satisfazer_inegociavel (__main__.DecisaoA12.test_07_satisfazer_inegociavel) ... ok
+test_08_encerrar_ex3 (__main__.DecisaoA12.test_08_encerrar_ex3) ... ok
+test_09_encerrar_ex4 (__main__.DecisaoA12.test_09_encerrar_ex4) ... ok
+test_10_camada_da_etapa_alvo_nao_cache (__main__.DecisaoA12.test_10_camada_da_etapa_alvo_nao_cache) ... ok
+test_11_opcao_com_igual (__main__.DecisaoA12.test_11_opcao_com_igual) ... ok
+test_12_cadeia_de_comandos (__main__.DecisaoA12.test_12_cadeia_de_comandos) ... ok
+test_13_shell_interno (__main__.DecisaoA12.test_13_shell_interno) ... ok
+test_14_rascunho_ausente (__main__.DecisaoA12.test_14_rascunho_ausente) ... ok
+test_15_rascunho_ilegivel (__main__.DecisaoA12.test_15_rascunho_ilegivel) ... ok
+test_16_regra_ausente_nao_desativa_guarda (__main__.DecisaoA12.test_16_regra_ausente_nao_desativa_guarda) ... ok
+test_17_condicao_desconhecida (__main__.DecisaoA12.test_17_condicao_desconhecida) ... ok
+test_18_mudar_rascunho_na_mesma_chamada (__main__.DecisaoA12.test_18_mudar_rascunho_na_mesma_chamada) ... ok
+test_19_contrato_alternativo_sem_vocabulario_do_metodo (__main__.DecisaoA12.test_19_contrato_alternativo_sem_vocabulario_do_metodo) ... ok
+test_20_governanca_proposto (__main__.DecisaoA12.test_20_governanca_proposto) ... ok
+test_21_operacional_proposta (__main__.DecisaoA12.test_21_operacional_proposta) ... ok
+test_22_calibragem_recomendacao_sem_decisao (__main__.DecisaoA12.test_22_calibragem_recomendacao_sem_decisao) ... ok
+test_23_leitura (__main__.DecisaoA12.test_23_leitura) ... ok
+test_24_validador_curador_emissao (__main__.DecisaoA12.test_24_validador_curador_emissao) ... ok
+test_25_encerrar_ex2 (__main__.DecisaoA12.test_25_encerrar_ex2) ... ok
+test_26_mesma_etapa_ex2_em_n1 (__main__.DecisaoA12.test_26_mesma_etapa_ex2_em_n1) ... ok
+test_27_texto_nao_e_execucao (__main__.DecisaoA12.test_27_texto_nao_e_execucao) ... ok
+test_28_terminal_direto_apura_nivel (__main__.DecisaoA12.test_28_terminal_direto_apura_nivel) ... ok
+test_29_template_declara_lista (__main__.DecisaoA12.test_29_template_declara_lista) ... ok
+test_30_satisfacao_por_wrapper_campo (__main__.DecisaoA12.test_30_satisfacao_por_wrapper_campo) ... ok
+test_31_auxiliar_automatico_exige_terminal (__main__.DecisaoA12.test_31_auxiliar_automatico_exige_terminal) ... ok
+test_32_verificar_inegociavel_sem_satisfazer (__main__.DecisaoA12.test_32_verificar_inegociavel_sem_satisfazer) ... ok
+test_33_encerramento_composto_contexto_incerto (__main__.DecisaoA12.test_33_encerramento_composto_contexto_incerto) ... ok
+test_34_opcao_interpretador_com_valor (__main__.DecisaoA12.test_34_opcao_interpretador_com_valor) ... ok
+test_35_execucao_por_modulo (__main__.DecisaoA12.test_35_execucao_por_modulo) ... ok
+test_36_codigo_inline_invoca_script_de_decisao (__main__.DecisaoA12.test_36_codigo_inline_invoca_script_de_decisao) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 2.396s
+
+OK

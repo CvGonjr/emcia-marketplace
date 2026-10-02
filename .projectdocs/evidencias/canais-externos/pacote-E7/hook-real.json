@@ -1,0 +1,14 @@
+{
+  "claude_version": "2.1.283",
+  "codigo": 0,
+  "chamada_mcp_real": true,
+  "hooks": [
+    {
+      "hook_event_name": "PreToolUse",
+      "tool_name": "mcp__controle__ping",
+      "tool_input": {}
+    }
+  ],
+  "saida": "CONTROLE-MCP-LOCAL\n",
+  "erro": ""
+}

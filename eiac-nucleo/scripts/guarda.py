@@ -25,6 +25,7 @@ import playbook as P
 import decisao_humana as H
 import caminhos as C
 import canais_registro as K
+import escopo_externo as S
 
 
 LEITORES_FONTES = {
@@ -127,6 +128,9 @@ def main():
 
     ferramenta = ev.get("tool_name", "")
     entrada = ev.get("tool_input", {}) or {}
+    erro_escopo = S.conferir(pb, ferramenta, entrada)
+    if erro_escopo:
+        negar(erro_escopo, ferramenta=ferramenta, operacao='escopo-externo')
     alvo = str(entrada.get("file_path") or entrada.get("path") or entrada.get("notebook_path") or "")
     comando = str(entrada.get("command") or "")
     etapa_id = st["etapa_atual"]

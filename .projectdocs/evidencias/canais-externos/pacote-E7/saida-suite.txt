@@ -1,0 +1,16 @@
+test_01_busca_global (__main__.Escopo.test_01_busca_global) ... ok
+test_02_busca_com_or (__main__.Escopo.test_02_busca_com_or) ... ok
+test_03_formulario_alheio (__main__.Escopo.test_03_formulario_alheio) ... ok
+test_04_destino_entrada (__main__.Escopo.test_04_destino_entrada) ... ok
+test_05_leitura_sem_listagem (__main__.Escopo.test_05_leitura_sem_listagem) ... ok
+test_06_ferramenta_desconhecida (__main__.Escopo.test_06_ferramenta_desconhecida) ... ok
+test_07_manifesto_adulterado (__main__.Escopo.test_07_manifesto_adulterado) ... ok
+test_08_controle_listagem_alheia (__main__.Escopo.test_08_controle_listagem_alheia) ... ok
+test_20_lista_e_le_por_id (__main__.Escopo.test_20_lista_e_le_por_id) ... ok
+test_21_envio_destino_correto (__main__.Escopo.test_21_envio_destino_correto) ... ok
+test_22_formulario_correto (__main__.Escopo.test_22_formulario_correto) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.767s
+
+OK

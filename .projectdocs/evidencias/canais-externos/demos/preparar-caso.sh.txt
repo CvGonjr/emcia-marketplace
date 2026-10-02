@@ -1,0 +1,4 @@
+Caso de controle: /tmp/emcia-canais-demos-fy75o57t/canais-preparo
+Etapa final: P2 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.

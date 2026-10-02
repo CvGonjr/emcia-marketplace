@@ -81,8 +81,9 @@ argumentos, contêiner e canal, fixa o hash e emite `ListagemRegistrada`.
 Registro não autentica a resposta remota. Coleta segue em preparação até o
 recebimento humano; listagem não autoriza escrita em `fontes/`.
 
-Para provisionar, declare primeiro um contêiner EMCIA já existente como
-endereço do caso. O agente cria divisões dentro desse id apenas com confirmação;
+Para provisionar, declare primeiro um contêiner EMCIA já existente e exclusivo
+do caso como endereço inicial. Não use o espaço compartilhado de outros casos
+como canal de leitura. O agente cria divisões dentro desse id apenas com confirmação;
 o engenheiro então define a versão com os ids provisionados. Sem endereço
 inicial declarado ou sem regra compatível, use a interface externa.
 Provisionamento de estrutura tem regra própria; escrita de material só vai

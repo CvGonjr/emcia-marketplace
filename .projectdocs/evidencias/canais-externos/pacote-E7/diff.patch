@@ -1,0 +1,516 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index dd7ec36..1ba37ff 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -80,6 +80,9 @@ jobs:
+       - name: Referência externa de sessão
+         run: python3 testes/sessao_externa.py
+ 
++      - name: Escopo de ferramentas MCP
++        run: python3 testes/escopo_mcp.py
++
+       - name: Percurso sintético de canais
+         run: python3 testes/canais_percurso.py
+ 
+diff --git a/decisoes/040-canais-externos.md b/decisoes/040-canais-externos.md
+index 6abccd1..788730c 100644
+--- a/decisoes/040-canais-externos.md
++++ b/decisoes/040-canais-externos.md
+@@ -47,7 +47,25 @@ permissões efetivas, recebimento pelo destinatário ou realização da sessão.
+ SHA-256 fixa os bytes registrados, sem provar veracidade. Como em 022, acesso
+ humano de escrita ao disco é a fronteira de confiança.
+ 
+-E7 depende de teste real dos hooks PreToolUse em uma ferramenta MCP local sintética. Sem comprovação de disparo, não se apresenta trava de escopo como implementada.
++E7 foi habilitado após teste real em ferramenta MCP stdio local sintética no
++Claude Code 2.1.283. Houve chamada real e disparo de PreToolUse; depois, o
++plugin real recusou ferramenta não declarada, produziu TentativaNegada e
++impediu a chamada. Evidências e programa de reprodução estão no pacote E7.
++A guarda inclui ferramentas MCP e lê padrões/argumentos declarados no caso.
++Ferramenta sem regra coerente recusa; o engenheiro precisa ajustar os dados
++à assinatura do conector instalado. Simular payload não substitui esse teste.
++O resultado não comprova suporte a hooks em outro cliente de execução.
++
++Leitura por id exige registro humano de listagem limitada a contêiner declarado,
++com hash e evento. O registro confere a declaração da coleta; não autentica
++a resposta remota. Provisionamento da estrutura usa operação própria dentro
++de contêiner já declarado. Escrita de material só vai ao canal de entregas.
++Cada efeito externo ainda requer confirmação explícita; a guarda de escopo
++não comprova que a confirmação ocorreu.
++
++A referência de sessão é opcional no template. O caso pode exigir referência
++por camada com `exige_referencia_externa_por_camada`; quando informada, a
++referência sempre precisa corresponder ao id do canal e ao marcador do caso.
+ 
+ ## Consequências
+ 
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 595396f..ecd331b 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.18",
++  "version": "0.8.19",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/scripts/registrar_listagem.py b/eiac-campo/scripts/registrar_listagem.py
+new file mode 100644
+index 0000000..2146334
+--- /dev/null
++++ b/eiac-campo/scripts/registrar_listagem.py
+@@ -0,0 +1,54 @@
++"""Registro humano de listagem MCP limitada a contêiner declarado."""
++import argparse
++import datetime
++import fcntl
++import hashlib
++import json
++import re
++import canais as K
++import escopo_externo as S
++
++
++def registrar(entrada, autor=None):
++    st, pb = K.contexto(autor)
++    dados = json.loads(K.seguro(entrada, 'rascunho/entrada').read_text())
++    K.exigir(isinstance(dados, dict) and set(dados) == {'ferramenta_externa', 'argumentos', 'conteiner_id', 'objetos', 'coletado_em'}, 'manifesto de listagem inválido')
++    cfg = S.contrato(pb)
++    regras = [r for r in cfg['regras'] if re.fullmatch(r['padrao'], dados['ferramenta_externa']) and r.get('operacao') == 'listar']
++    K.exigir(len(regras) == 1, 'ferramenta não declarada como listagem')
++    erro = S.conferir(pb, dados['ferramenta_externa'], dados['argumentos'])
++    K.exigir(erro is None, erro)
++    escopos = [a for a in regras[0]['argumentos'] if a['tipo'] in ('id_de_canal', 'expressao')]
++    K.exigir(any(dados['conteiner_id'] in S.ids(pb, a) and (
++        S.argumento(dados['argumentos'], a['campo']) == dados['conteiner_id'] if a['tipo'] == 'id_de_canal'
++        else bool(re.fullmatch(a['expressao'].replace('{id}', re.escape(dados['conteiner_id'])), S.argumento(dados['argumentos'], a['campo'])))) for a in escopos),
++        'contêiner não corresponde à chamada de listagem')
++    K.exigir(isinstance(dados['objetos'], list) and len(set(dados['objetos'])) == len(dados['objetos']), 'lista de objetos inválida')
++    for ident in dados['objetos']: K.id_externo(ident)
++    instante = datetime.datetime.fromisoformat(dados['coletado_em'].replace('Z', '+00:00'))
++    K.exigir(instante.tzinfo is not None, 'data da listagem exige fuso')
++    p = K.seguro(pb['escopo_ferramentas_externas']['listagens'])
++    if p.exists(): S.ids_listados(pb)
++    reg = json.loads(p.read_text()) if p.exists() else {'schema': 1, 'listagens': []}
++    reg['listagens'].append(dict(dados, autor=st['responsavel']))
++    K.escrever(p, reg)
++    K.E.evento(pb['escopo_ferramentas_externas']['evento_listagem'], autor=st['responsavel'],
++               conteiner_id=dados['conteiner_id'], sha256=hashlib.sha256(p.read_bytes()).hexdigest())
++    return dados
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--entrada', required=True); ap.add_argument('--autor')
++    a = ap.parse_args()
++    try:
++        with K.seguro('registro/.canais.lock').open('a') as lock:
++            fcntl.flock(lock, fcntl.LOCK_EX)
++            resultado = registrar(a.entrada, a.autor)
++        print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
++        K.E.evento('TentativaNegada', autor=(K.E.ler() or {}).get('responsavel'), operacao='registrar-listagem', motivo=str(exc))
++        ap.exit(1, 'Recusado: '+str(exc)+'\n')
++
++
++if __name__ == '__main__': main()
+diff --git a/eiac-campo/template-caso/registro/ferramentas-externas.json b/eiac-campo/template-caso/registro/ferramentas-externas.json
+new file mode 100644
+index 0000000..bae265f
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/ferramentas-externas.json
+@@ -0,0 +1,104 @@
++{
++  "versao": 1,
++  "regras": [
++    {
++      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:search_files|list_files)",
++      "operacao": "listar",
++      "argumentos": [
++        {
++          "campo": "q",
++          "tipo": "expressao",
++          "campo_id": "pasta_id",
++          "expressao": "'{id}' in parents(?: and trashed = false)?"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:get_file|download_file)",
++      "operacao": "ler",
++      "argumentos": [
++        {
++          "campo": "file_id",
++          "tipo": "id_listado"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:tally)__(?:get_submissions|list_submissions)",
++      "operacao": "ler",
++      "argumentos": [
++        {
++          "campo": "form_id",
++          "tipo": "id_de_canal",
++          "campo_id": "formulario_id",
++          "direcao": "entrada"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:google_drive|gdrive|drive)__upload_file",
++      "operacao": "escrever",
++      "argumentos": [
++        {
++          "campo": "parent_id",
++          "tipo": "id_de_canal",
++          "campo_id": "pasta_id",
++          "finalidade": "entregas",
++          "direcao": "saida"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:google_calendar|calendar)__(?:create_event|list_events)",
++      "operacao": "agenda",
++      "argumentos": [
++        {
++          "campo": "calendar_id",
++          "tipo": "id_de_canal",
++          "campo_id": "calendario_id",
++          "finalidade": "sessoes",
++          "direcao": "agenda"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:tally)__(?:create_form|publish_form)",
++      "operacao": "provisionar",
++      "argumentos": [
++        {
++          "campo": "workspace_id",
++          "tipo": "id_de_canal",
++          "campo_id": "workspace_id"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:create_folder|share_folder)",
++      "operacao": "provisionar",
++      "argumentos": [
++        {
++          "campo": "parent_id",
++          "tipo": "id_de_canal",
++          "campo_id": "pasta_id"
++        }
++      ]
++    },
++    {
++      "padrao": "mcp__(?:google_drive|gdrive|drive)__update_file",
++      "operacao": "escrever",
++      "argumentos": [
++        {
++          "campo": "parent_id",
++          "tipo": "id_de_canal",
++          "campo_id": "pasta_id",
++          "finalidade": "entregas",
++          "direcao": "saida"
++        },
++        {
++          "campo": "file_id",
++          "tipo": "id_listado"
++        }
++      ]
++    }
++  ]
++}
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 550c584..e1ef1dd 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.16",
++  "versao": "0.4.17",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+   "referencia_integridade": {
+     "diretorio": "metodo",
+@@ -186,6 +186,14 @@
+       "condicao": {
+         "tipo": "sempre"
+       }
++    },
++    {
++      "id": "registrar-listagem",
++      "script": "registrar_listagem.py",
++      "escopo": "fronteira_externa",
++      "condicao": {
++        "tipo": "sempre"
++      }
+     }
+   ],
+   "apuracao_nivel": {
+@@ -897,5 +905,11 @@
+     "direcao": "agenda",
+     "campo_id": "calendario_id"
+   },
+-  "exige_referencia_externa_por_camada": []
++  "exige_referencia_externa_por_camada": [],
++  "escopo_ferramentas_externas": {
++    "arquivo": "registro/ferramentas-externas.json",
++    "padrao": "mcp__.*",
++    "listagens": "registro/listagens.json",
++    "evento_listagem": "ListagemRegistrada"
++  }
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 9c19991..02d2a36 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.40",
++  "version": "0.2.41",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/hooks/hooks.json b/eiac-nucleo/hooks/hooks.json
+index 3ad4620..71056a8 100644
+--- a/eiac-nucleo/hooks/hooks.json
++++ b/eiac-nucleo/hooks/hooks.json
+@@ -2,7 +2,7 @@
+   "hooks": {
+     "PreToolUse": [
+       {
+-        "matcher": "Read|Write|Edit|Bash|Skill|Grep|NotebookEdit",
++        "matcher": "Read|Write|Edit|Bash|Skill|Grep|NotebookEdit|mcp__.*",
+         "hooks": [
+           {
+             "type": "command",
+diff --git a/eiac-nucleo/scripts/escopo_externo.py b/eiac-nucleo/scripts/escopo_externo.py
+new file mode 100644
+index 0000000..91aaf59
+--- /dev/null
++++ b/eiac-nucleo/scripts/escopo_externo.py
+@@ -0,0 +1,90 @@
++"""Trava genérica de argumentos externos conforme contrato local do caso."""
++import hashlib
++import json
++import pathlib
++import re
++import canais_registro as K
++import estado as E
++
++
++def contrato(pb):
++    valor = pb.get('escopo_ferramentas_externas')
++    if not valor: return None
++    p = pathlib.Path(valor['arquivo'])
++    if p.is_absolute() or '..' in p.parts or not p.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++        raise ValueError('contrato externo fora do caso')
++    if any(x.is_symlink() for x in [p, *p.parents]):
++        raise ValueError('contrato externo contém link')
++    dados = json.loads(p.read_text())
++    if not isinstance(dados.get('regras'), list) or not dados['regras']:
++        raise ValueError('contrato externo sem regras')
++    return dados
++
++
++def argumento(dados, campo):
++    valor = dados
++    for parte in campo.split('.'):
++        if not isinstance(valor, dict) or parte not in valor:
++            raise ValueError('argumento externo ausente: '+campo)
++        valor = valor[parte]
++    return valor
++
++
++def ids(pb, regra):
++    canais = K.carregar(pb)['canais']
++    return [c['ids'][regra['campo_id']] for c in canais if regra['campo_id'] in c['ids']
++            and (not regra.get('finalidade') or c['finalidade'] == regra['finalidade'])
++            and (not regra.get('direcao') or c['direcao'] == regra['direcao'])]
++
++
++def ids_listados(pb):
++    declaracao = pb['escopo_ferramentas_externas']
++    p = pathlib.Path(declaracao['listagens'])
++    if p.is_absolute() or '..' in p.parts or not p.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++        raise ValueError('manifesto externo fora do caso')
++    if any(x.is_symlink() for x in [p, *p.parents]):
++        raise ValueError('manifesto externo contém link')
++    conteudo = p.read_bytes(); reg = json.loads(conteudo)
++    evs = [e for e in E.eventos() if e.get('evento') == declaracao['evento_listagem']]
++    if not evs or evs[-1].get('sha256') != hashlib.sha256(conteudo).hexdigest():
++        raise ValueError('manifesto externo sem integridade na trilha')
++    declarados = {v for c in K.carregar(pb)['canais'] for v in c['ids'].values()}
++    encontrados = []
++    for r in reg['listagens']:
++        if r['conteiner_id'] in declarados:
++            encontrados.extend(r['objetos'])
++    return encontrados
++
++
++def conferir(pb, ferramenta, entrada):
++    try:
++        declaracao = pb.get('escopo_ferramentas_externas')
++        if not declaracao:
++            return None
++        if not re.fullmatch(declaracao['padrao'], ferramenta):
++            return None
++        dados = contrato(pb)
++        regras = [r for r in dados['regras'] if re.fullmatch(r['padrao'], ferramenta)]
++        if len(regras) != 1:
++            raise ValueError('ferramenta externa não declarada ou ambígua')
++        regra = regras[0]
++        if not isinstance(regra.get('argumentos'), list) or not regra['argumentos']:
++            raise ValueError('regra externa sem argumentos de escopo')
++        for a in regra['argumentos']:
++            valor = argumento(entrada, a['campo'])
++            tipo = a['tipo']
++            if tipo == 'constante':
++                if valor != a['valor']: raise ValueError('argumento externo diverge da constante declarada')
++                continue
++            valores = ids_listados(pb) if tipo == 'id_listado' else ids(pb, a)
++            if tipo in ('id_de_canal', 'id_listado'):
++                if not isinstance(valor, str) or valor not in valores:
++                    raise ValueError('id externo fora do escopo declarado/listado')
++            elif tipo == 'expressao':
++                if not isinstance(valor, str) or not any(re.fullmatch(a['expressao'].replace('{id}', re.escape(v)), valor) for v in valores):
++                    raise ValueError('expressão externa sem restrição declarada')
++            else:
++                raise ValueError('tipo de argumento externo desconhecido')
++    except (OSError, ValueError, KeyError, TypeError, AttributeError, re.error) as exc:
++        return str(exc)
++    return None
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 8337a7d..165d4d2 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -25,6 +25,7 @@ import playbook as P
+ import decisao_humana as H
+ import caminhos as C
+ import canais_registro as K
++import escopo_externo as S
+ 
+ 
+ LEITORES_FONTES = {
+@@ -127,6 +128,9 @@ def main():
+ 
+     ferramenta = ev.get("tool_name", "")
+     entrada = ev.get("tool_input", {}) or {}
++    erro_escopo = S.conferir(pb, ferramenta, entrada)
++    if erro_escopo:
++        negar(erro_escopo, ferramenta=ferramenta, operacao='escopo-externo')
+     alvo = str(entrada.get("file_path") or entrada.get("path") or entrada.get("notebook_path") or "")
+     comando = str(entrada.get("command") or "")
+     etapa_id = st["etapa_atual"]
+diff --git a/testes/canais.py b/testes/canais.py
+index c85215a..13acc58 100644
+--- a/testes/canais.py
++++ b/testes/canais.py
+@@ -121,6 +121,13 @@ class Canais(CasoHook):
+         self.assertEqual(evento['autor'], 'Celso do Vale')
+         self.assertEqual(evento['decidido_por'], 'Pessoa Engenheira')
+ 
++    def test_23_escopo_humano_documentado(self):
++        pb = json.loads((self.caso/'registro/playbook.json').read_text())
++        externo = {r['id'] for r in pb['decisoes_humanas'] if r.get('escopo') == 'fronteira_externa'}
++        documento = (RAIZ/'eiac-campo/reference/canais.md').read_text()
++        import re
++        documentados = set(re.findall(r'^\| `([^`]+)` \| Engenheiro', documento, re.M))
++        self.assertEqual(externo, documentados)
+ 
+ 
+ if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index af0dbcd..250ee6b 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -198,7 +198,7 @@ class DecisaoA12(unittest.TestCase):
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+         self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material"})
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material", "registrar-listagem"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/escopo_mcp.py b/testes/escopo_mcp.py
+new file mode 100644
+index 0000000..1efa49a
+--- /dev/null
++++ b/testes/escopo_mcp.py
+@@ -0,0 +1,69 @@
++"""Escopo MCP sobre ids declarados; negativas verificam TentativaNegada."""
++import json
++import subprocess
++import sys
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.canais import definir
++
++
++class Escopo(CasoHook):
++    def setUp(self):
++        super().setUp(); definir(self.caso)
++        self.entrada = self.caso/'rascunho/entrada/listagem.json'; self.entrada.parent.mkdir()
++        self.pasta = 'SINTETICO-documentos-pasta_id'
++
++    def listar(self):
++        self.entrada.write_text(json.dumps(dict(ferramenta_externa='mcp__drive__list_files',
++            argumentos={'q': f"'{self.pasta}' in parents"}, conteiner_id=self.pasta,
++            objetos=['ARQUIVO-SINTETICO'], coletado_em='2026-10-02T10:00:00Z')))
++        return subprocess.run([sys.executable, str(RAIZ/'eiac-campo/scripts/registrar_listagem.py'),
++                               '--entrada', str(self.entrada)], cwd=self.caso, text=True, capture_output=True)
++
++    def test_01_busca_global(self):
++        self.negado('mcp__drive__list_files', {'q': "name contains 'cliente'"})
++
++    def test_02_busca_com_or(self):
++        self.negado('mcp__drive__list_files', {'q': f"'{self.pasta}' in parents or true"})
++
++    def test_03_formulario_alheio(self):
++        self.negado('mcp__tally__get_submissions', {'form_id': 'ALHEIO'})
++
++    def test_04_destino_entrada(self):
++        self.negado('mcp__drive__upload_file', {'parent_id': self.pasta})
++
++    def test_05_leitura_sem_listagem(self):
++        self.negado('mcp__drive__get_file', {'file_id': 'ARQUIVO-SINTETICO'})
++
++    def test_06_ferramenta_desconhecida(self):
++        self.negado('mcp__drive__global_search', {})
++
++    def test_07_manifesto_adulterado(self):
++        r = self.listar(); self.assertEqual(r.returncode, 0, r.stderr)
++        p = self.caso/'registro/listagens.json'; d = json.loads(p.read_text())
++        d['listagens'][0]['objetos'].append('ALHEIO'); p.write_text(json.dumps(d))
++        self.negado('mcp__drive__get_file', {'file_id': 'ALHEIO'})
++
++    def test_08_controle_listagem_alheia(self):
++        self.entrada.write_text(json.dumps(dict(ferramenta_externa='mcp__drive__list_files',
++            argumentos={'q': f"'{self.pasta}' in parents"}, conteiner_id='ALHEIO',
++            objetos=['ARQUIVO-SINTETICO'], coletado_em='2026-10-02T10:00:00Z')))
++        antes = len(self.eventos())
++        r = subprocess.run([sys.executable, str(RAIZ/'eiac-campo/scripts/registrar_listagem.py'), '--entrada', str(self.entrada)], cwd=self.caso, text=True, capture_output=True)
++        self.assertNotEqual(r.returncode, 0)
++        self.assertEqual(self.eventos()[antes]['evento'], 'TentativaNegada')
++
++    def test_20_lista_e_le_por_id(self):
++        r = self.hook('mcp__drive__list_files', {'q': f"'{self.pasta}' in parents"})
++        self.assertEqual(r.returncode, 0, r.stderr)
++        r = self.listar(); self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertEqual(self.hook('mcp__drive__get_file', {'file_id': 'ARQUIVO-SINTETICO'}).returncode, 0)
++
++    def test_21_envio_destino_correto(self):
++        self.assertEqual(self.hook('mcp__drive__upload_file', {'parent_id': 'SINTETICO-entregas-pasta_id'}).returncode, 0)
++
++    def test_22_formulario_correto(self):
++        self.assertEqual(self.hook('mcp__tally__get_submissions', {'form_id': 'SINTETICO-triagem-formulario_id'}).returncode, 0)
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)

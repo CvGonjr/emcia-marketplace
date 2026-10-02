@@ -1,0 +1,4 @@
+$ grep -RniE "Tally|Drive|Google|Calendar|formul[aá]rio|pasta" eiac-nucleo --exclude="*.pyc"
+
+Código de saída: 1
+Nenhuma ocorrência.

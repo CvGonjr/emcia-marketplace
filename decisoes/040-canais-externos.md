@@ -47,7 +47,25 @@ permissões efetivas, recebimento pelo destinatário ou realização da sessão.
 SHA-256 fixa os bytes registrados, sem provar veracidade. Como em 022, acesso
 humano de escrita ao disco é a fronteira de confiança.
 
-E7 depende de teste real dos hooks PreToolUse em uma ferramenta MCP local sintética. Sem comprovação de disparo, não se apresenta trava de escopo como implementada.
+E7 foi habilitado após teste real em ferramenta MCP stdio local sintética no
+Claude Code 2.1.283. Houve chamada real e disparo de PreToolUse; depois, o
+plugin real recusou ferramenta não declarada, produziu TentativaNegada e
+impediu a chamada. Evidências e programa de reprodução estão no pacote E7.
+A guarda inclui ferramentas MCP e lê padrões/argumentos declarados no caso.
+Ferramenta sem regra coerente recusa; o engenheiro precisa ajustar os dados
+à assinatura do conector instalado. Simular payload não substitui esse teste.
+O resultado não comprova suporte a hooks em outro cliente de execução.
+
+Leitura por id exige registro humano de listagem limitada a contêiner declarado,
+com hash e evento. O registro confere a declaração da coleta; não autentica
+a resposta remota. Provisionamento da estrutura usa operação própria dentro
+de contêiner já declarado. Escrita de material só vai ao canal de entregas.
+Cada efeito externo ainda requer confirmação explícita; a guarda de escopo
+não comprova que a confirmação ocorreu.
+
+A referência de sessão é opcional no template. O caso pode exigir referência
+por camada com `exige_referencia_externa_por_camada`; quando informada, a
+referência sempre precisa corresponder ao id do canal e ao marcador do caso.
 
 ## Consequências
 
@@ -57,3 +75,12 @@ ficam nas evidências de cada pacote. A referência do pedido ao TRI-01 foi
 corrigida por confirmação expressa: §3.3 para perguntas, §3.4 para pontuação.
 
 Evidências: `.projectdocs/evidencias/canais-externos/`.
+
+### Implementação concluída
+
+E1–E7 concluídos. Núcleo 0.2.41, campo 0.8.19 e playbook 0.4.17.
+894 verificações distintas em 44 módulos aprovadas; cada pacote também
+validado em árvore isolada antes de seu commit. As duas demonstrações
+passaram pela versão final commitada, com canais sintéticos e sem dispensa.
+A confirmação de §3.3/§3.4 e a correção da habilidade estão na evidência E3.
+Documentos controlados permanecem intactos; propostas estão por pacote.

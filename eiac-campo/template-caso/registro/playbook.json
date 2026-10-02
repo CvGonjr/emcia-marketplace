@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.16",
+  "versao": "0.4.17",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -182,6 +182,14 @@
     {
       "id": "entregar-material",
       "script": "entregar.py",
+      "escopo": "fronteira_externa",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "registrar-listagem",
+      "script": "registrar_listagem.py",
       "escopo": "fronteira_externa",
       "condicao": {
         "tipo": "sempre"
@@ -897,5 +905,11 @@
     "direcao": "agenda",
     "campo_id": "calendario_id"
   },
-  "exige_referencia_externa_por_camada": []
+  "exige_referencia_externa_por_camada": [],
+  "escopo_ferramentas_externas": {
+    "arquivo": "registro/ferramentas-externas.json",
+    "padrao": "mcp__.*",
+    "listagens": "registro/listagens.json",
+    "evento_listagem": "ListagemRegistrada"
+  }
 }

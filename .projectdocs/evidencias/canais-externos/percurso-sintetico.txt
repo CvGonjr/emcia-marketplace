@@ -1,0 +1,6 @@
+test_20_habilitacao_canais_triagem_documento_emissao_entrega (__main__.Percurso.test_20_habilitacao_canais_triagem_documento_emissao_entrega) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.040s
+
+OK
