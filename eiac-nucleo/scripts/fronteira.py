@@ -4,7 +4,7 @@ Uso:  python3 fronteira.py
 
 Nao decide nada. Le a camada que o playbook declara para cada etapa,
 resolvida pelo nivel apurado do caso, e imprime. A mesma etapa pode ser
-delegavel em um nivel e humana em outro (CAT-01 3.6) — por isso a tabela
+delegavel em um nivel e humana em outro (contrato do caso) — por isso a tabela
 so faz sentido depois da triagem.
 """
 import pathlib, sys

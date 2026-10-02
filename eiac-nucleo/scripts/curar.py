@@ -41,7 +41,7 @@ def checar_autoria(dados):
     """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
 
     Nem todo objeto declara os mesmos campos de autoria (Fonte nao tem
-    autoria_conteudo; um registro de confronto P3d usa so `autor`). Confere
+    autoria_conteudo; um registro de confronto etapa de confronto usa so `autor`). Confere
     qualquer um desses campos que o objeto de fato declarar.
     """
     erros = []
@@ -62,7 +62,7 @@ def checar_versao(anterior, candidato, tipo):
 
     ``anterior`` e o dict ja gravado em contexto/ (ou None se e registro
     novo). ``candidato`` e o dict lido do rascunho. Objetos que nao
-    declaram `versao` (como o registro de confronto P3d, que e observacional
+    declaram `versao` (como o registro de confronto etapa de confronto, que e observacional
     e nao iterativo) nao entram nesta checagem — o campo e a marca de que
     o objeto participa do regime de versionamento do CTX-01 3.11-3.13.
     """
@@ -202,7 +202,7 @@ DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
 
 def checar_confronto(candidato):
     """CTX-V11: toda classificacao_confronto possui classe e referencia_p3d
-    resolvivel quando a classe exige vinculo com P3d. So a classe
+    resolvivel quando a classe exige vinculo com etapa de confronto. So a classe
     `divergente` e verificada aqui — e a unica para a qual o CTX-01 3.5
     descreve o conteudo minimo exigido do registro referenciado.
     """

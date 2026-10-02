@@ -58,13 +58,11 @@ def eventos():
     return lidos
 
 
-def ultimo_selo():
-    """Deriva hash/data/nota do selo que entrou em um commit do caso.
+def selos_confirmados():
+    """Deriva selos e snapshots pela primeira introdução no histórico Git.
 
-    O evento é escrito antes do commit para integrar o próprio selo.
-    Eventos ainda não commitados não comprovam aplicação. A primeira
-    introdução do evento no Git deve ter a nota e a autoria do selo;
-    commits posteriores de outros arquivos não mudam seu hash.
+    Retorna (lista, erro). Eventos fora de commit não comprovam aplicação.
+    A introdução precisa ter autoria e nota correspondentes ao evento.
     """
     def git(*args):
         return subprocess.run(["git", *args], capture_output=True, text=True, timeout=5)
@@ -72,37 +70,48 @@ def ultimo_selo():
     try:
         raiz = git("rev-parse", "--show-toplevel")
         if raiz.returncode or pathlib.Path(raiz.stdout.strip()).resolve() != pathlib.Path.cwd().resolve():
-            return None
+            return [], "histórico Git inacessível ou fora da raiz do caso"
         historico = git("log", "--reverse", "--format=%H", "--", "registro/eventos.jsonl")
         if historico.returncode:
-            return None
-        vistos, ultimo = set(), None
+            return [], "histórico Git inacessível: " + historico.stderr.strip()
+        vistos, selos = set(), []
         for sha in historico.stdout.splitlines():
             snapshot = git("show", sha+":registro/eventos.jsonl")
             if snapshot.returncode:
-                continue
-            novos = []
+                return [], "snapshot da trilha inacessível no histórico Git"
+            novos, eventos_snapshot = [], []
             for pos, linha in enumerate(snapshot.stdout.splitlines()):
                 try:
                     ev = json.loads(linha)
                 except json.JSONDecodeError:
+                    eventos_snapshot.append(None)
                     continue
+                eventos_snapshot.append(ev)
                 chave = (pos, json.dumps(ev, sort_keys=True, ensure_ascii=False))
                 if ev.get("evento") == "SeloAplicado" and chave not in vistos:
-                    novos.append(ev)
+                    novos.append((pos,ev))
                 vistos.add(chave)
             if not novos:
                 continue
             meta = git("show", "-s", "--format=%an%x00%B", sha)
             if meta.returncode:
-                continue
+                return [], "metadados do commit inacessíveis no histórico Git"
             autor, nota = meta.stdout.split("\0", 1)
-            for ev in novos:
+            for pos,ev in novos:
                 if ev.get("autor") == autor and ev.get("nota", "").strip() == nota.strip():
-                    ultimo = {"hash": sha, "data": ev.get("data"), "nota": ev.get("nota")}
-        return ultimo
-    except (OSError, subprocess.SubprocessError, ValueError):
+                    selos.append({"hash":sha,"data":ev.get("data"),"nota":ev.get("nota"),
+                                  "posicao":pos,"eventos":eventos_snapshot,"linhas":snapshot.stdout.splitlines()})
+        return selos, None
+    except (OSError, subprocess.SubprocessError, ValueError, AttributeError, TypeError) as exc:
+        return [], "histórico Git inacessível: " + str(exc)
+
+
+def ultimo_selo():
+    """Apresentação somente leitura: último selo comprovado no histórico."""
+    selos, erro = selos_confirmados()
+    if erro or not selos:
         return None
+    return {k:selos[-1][k] for k in ("hash","data","nota")}
 
 
 def gravar(e):
@@ -129,7 +138,7 @@ def autor_e_agente(nome):
     O nucleo ainda nao tem identidade tipada de ator; esta e a forma minima
     consistente com o que ja e verificado em selar.py, validar.py e
     avancar.py. O separador entre "ag" e o numero (hifen, espaco ou nada)
-    e ignorado, para nao deixar passar "AG-01" so porque nao e "AG01".
+    e ignorado, para nao deixar passar "papel-01" so porque nao e "AG01".
     Limitacao: um nome humano que comece por essas silabas seria recusado;
     nenhum caso assim foi observado no metodo ate aqui.
     """
@@ -191,7 +200,7 @@ if __name__ == "__main__":
                           f"({pcam}), {motivo}.")
                 else:
                     print(f"Proxima fronteira: {pid} ({pcam}) {motivo}.")
-        if not e.get("nivel") and e["etapa_atual"] != "F0":
+        if not e.get("nivel") and pb and e["etapa_atual"] != pb["etapas"][0]["id"]:
             print("ATENCAO: nivel nao apurado. A camada das etapas depende dele.")
     else:
         print(json.dumps(e, indent=2, ensure_ascii=False))

@@ -3,10 +3,10 @@
 Uso:
   python3 catalogo.py --capacidades <arquivo.json> --papeis <arquivo.json>
   python3 catalogo.py --capacidades <arquivo.json> --papeis <arquivo.json> \
-      --resolver-papel-capacidade AG-01 HB-03
+      --resolver-papel-capacidade <papel> <capacidade>
   python3 catalogo.py --capacidades <arquivo.json> --playbook <playbook.json>
 
-Este script nao sabe o que e HB, AG, "habilidade" ou "agente" -- conhece
+Este script nao sabe o que e capacidade, papel, "habilidade" ou "agente" -- conhece
 apenas dois tipos de objeto genericos:
 
   capacidade: {id, camada, automatizado, criterio_de_verificacao, ...}
@@ -21,11 +21,11 @@ e duas relacoes:
                           do playbook, precisa resolver contra ids
                           existentes no catalogo de capacidades)
 
-Reaproveita playbook.capacidade_valida() (2.6.1/ESP-01 G6): toda
+Reaproveita playbook.capacidade_valida() (2.6.1/contrato de capacidade): toda
 capacidade automatizada precisa de criterio_de_verificacao nao vazio
 para ser valida.
 
-O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")
+O vocabulario método específico (capacidades declaradas, papéis declarados, "habilidade", "agente")
 vive inteiramente em eiac-campo/reference/*.json -- este script so le o
 campo "id" de cada objeto.
 """
@@ -117,8 +117,8 @@ def resolver_papel_capacidade(dados_papeis, papel_id, capacidade_id,
                                chave_lista="papeis", chave_autorizadas="capacidades_autorizadas"):
     """Um papel esta autorizado a executar uma capacidade? Retorna
     (True, None) ou (False, motivo). Nao decide nada alem de
-    pertencimento de conjunto -- a semantica de "o que e uma HB" ou
-    "o que e um AG" nunca entra aqui.
+    pertencimento de conjunto -- a semantica de "o que e uma capacidade" ou
+    "o que e um papel" nunca entra aqui.
     """
     papel = next((p for p in dados_papeis.get(chave_lista, [])
                   if p.get("id") == papel_id), None)
@@ -134,7 +134,7 @@ def resolver_papel_capacidade(dados_papeis, papel_id, capacidade_id,
 def resolver_referencias_playbook(dados_capacidades, pb, chave_lista="capacidades",
                                    campo_referencia="hb"):
     """Toda referencia (campo declarado em cada etapa do playbook, por
-    exemplo "hb": ["HB-01"]) precisa resolver contra um id existente no
+    exemplo "hb": ["<capacidade>"]) precisa resolver contra um id existente no
     catalogo de capacidades. Retorna lista de erros (vazia se tudo
     resolve).
     """

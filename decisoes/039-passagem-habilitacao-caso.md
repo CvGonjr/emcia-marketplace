@@ -69,3 +69,24 @@ termos no núcleo exigirá tratar essas referências; a busca foi preservada
 na evidência. Isso não foi corrigido neste levantamento.
 
 Evidências: `.projectdocs/evidencias/habilitacao-0d/`.
+
+### Pacote B
+
+O campo declara `exige_evento_selado` em F0; o núcleo verifica o último evento
+exigido e um selo confirmado no Git que contém o prefixo exato da trilha,
+com nota e autor correspondentes. Guarda de carregamento e encerramento
+recusam com TentativaNegada, incluindo indisponibilidade do Git. A apresentação
+do selo reutiliza a mesma derivação de histórico. `selar.py` não mudou;
+a regra antiga `exige_selo_apos` mantém o comportamento anterior.
+
+As fixtures de percurso e as duas demonstrações passaram a importar expediente
+sintético, validar o desfecho e selar, sem sinalizador de dispensa. O percurso
+completo congela o HEAD commitado em worktree separado, em vez da antiga tag.
+As demais condições negativas continuam sendo verificadas.
+
+Os identificadores antes fixados no núcleo para a etapa inicial passam a vir
+da primeira etapa do playbook. Exemplos e comentários foram generalizados.
+**Limite do grep literal:** permanece a referência histórica F0/E1 no exemplo
+da docstring de `selar.py`, pois a decisão expressa exige não alterar esse arquivo.
+Não é usada em nenhuma regra e nenhum vocabulário administrativo entrou no núcleo.
+A exceção textual é informada na evidência, sem alegar resultado vazio no grep.

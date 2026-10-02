@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.10",
+  "versao": "0.4.11",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
 
   "niveis": ["N1", "N2", "N3"],
@@ -186,6 +186,7 @@
 
   "etapas": [
     {
+      "exige_evento_selado": "HabilitacaoImportada",
       "id": "F0", "nome": "Enquadramento e triagem",
       "modalidade": "assincrono", "habilidade": "hb-enquadrar",
       "hb": ["HB-01", "HB-02", "HB-03"],

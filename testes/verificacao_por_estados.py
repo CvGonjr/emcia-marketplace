@@ -65,6 +65,9 @@ def preparar_caso(tmp, responsavel="Celso do Vale"):
     subprocess.run(["git", "config", "user.email", "maquina@exemplo.com"], cwd=caso, check=False)
     subprocess.run(["git", "add", "-A"], cwd=caso, check=False)
     subprocess.run(["git", "commit", "-qm", "estado inicial do caso"], cwd=caso, check=False)
+    if responsavel is not None:
+        from apoio.habilitacao_0d import preparar as preparar_habilitacao
+        preparar_habilitacao(caso)
     return caso
 
 

@@ -1,0 +1,109 @@
+test_01_habilidade_sem_evento (__main__.SeloConfirmado.test_01_habilidade_sem_evento) ... FAIL
+test_02_importacao_sem_selo (__main__.SeloConfirmado.test_02_importacao_sem_selo) ... FAIL
+test_03_encerrar_sem_selo (__main__.SeloConfirmado.test_03_encerrar_sem_selo) ... FAIL
+test_04_commit_recusado_nao_libera (__main__.SeloConfirmado.test_04_commit_recusado_nao_libera) ... FAIL
+test_05_selo_anterior_nao_libera (__main__.SeloConfirmado.test_05_selo_anterior_nao_libera) ... FAIL
+test_06_git_inacessivel_recusa (__main__.SeloConfirmado.test_06_git_inacessivel_recusa) ... FAIL
+test_07_reimportacao_exige_novo_selo (__main__.SeloConfirmado.test_07_reimportacao_exige_novo_selo) ... FAIL
+
+======================================================================
+FAIL: test_01_habilidade_sem_evento (__main__.SeloConfirmado.test_01_habilidade_sem_evento)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 134, in test_01_habilidade_sem_evento
+    r=self.bloqueado(); self.assertIn('HabilitacaoImportada',r.stderr)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_02_importacao_sem_selo (__main__.SeloConfirmado.test_02_importacao_sem_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 137, in test_02_importacao_sem_selo
+    self.importar(); r=self.bloqueado(); self.assertIn('SeloAplicado',r.stderr)
+                       ~~~~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_03_encerrar_sem_selo (__main__.SeloConfirmado.test_03_encerrar_sem_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 142, in test_03_encerrar_sem_selo
+    self.assertNotEqual(r.returncode,0,r.stdout); self.assertIn('SeloAplicado',r.stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 : ok | etapa atual: P1 | camada: EX2
+
+
+======================================================================
+FAIL: test_04_commit_recusado_nao_libera (__main__.SeloConfirmado.test_04_commit_recusado_nao_libera)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 150, in test_04_commit_recusado_nao_libera
+    r=self.bloqueado(); self.assertIn('confirmado',r.stderr)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_05_selo_anterior_nao_libera (__main__.SeloConfirmado.test_05_selo_anterior_nao_libera)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 154, in test_05_selo_anterior_nao_libera
+    self.importar(); self.bloqueado()
+                     ~~~~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_06_git_inacessivel_recusa (__main__.SeloConfirmado.test_06_git_inacessivel_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 159, in test_06_git_inacessivel_recusa
+    r=self.bloqueado(); self.assertIn('Git',r.stderr)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_07_reimportacao_exige_novo_selo (__main__.SeloConfirmado.test_07_reimportacao_exige_novo_selo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 168, in test_07_reimportacao_exige_novo_selo
+    self.assertEqual(r.returncode,0,r.stderr);self.bloqueado()
+                                              ~~~~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 131, in bloqueado
+    return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.654s
+
+FAILED (failures=7)

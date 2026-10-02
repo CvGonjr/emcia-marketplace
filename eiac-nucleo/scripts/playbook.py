@@ -38,13 +38,16 @@ def carregar():
         return None, "playbook com id de etapa duplicado"
 
     for e in pb["etapas"]:
+        if 'exige_evento_selado' in e and (not isinstance(e['exige_evento_selado'],str)
+                                          or not e['exige_evento_selado'].strip()):
+            return None, f"etapa {e.get('id','?')}: exige_evento_selado precisa declarar um evento"
         faltando = OBRIGATORIO_ETAPA - set(e)
         if faltando:
             return None, f"etapa {e.get('id','?')} sem {sorted(faltando)}"
         c = e["camada"]
         if not isinstance(c, dict):
             return None, (f"etapa {e['id']}: camada precisa ser um mapa por nivel. "
-                          f"A fronteira de delegacao desloca com o nivel (CAT-01 3.6).")
+                          f"A fronteira de delegacao desloca com o nivel (contrato do caso).")
         faltam = [n for n in niveis if n not in c]
         if faltam:
             return None, f"etapa {e['id']}: camada nao declarada para {faltam}"
@@ -190,16 +193,9 @@ def natureza(pb, etapa_id, nivel):
 
 
 def capacidade_valida(capacidade):
-    """Mecanismo generico de criterio de verificacao (ESP-01 G6).
+    """Capacidade automatizada exige critério de verificação declarado.
 
-    Recebe um dict {automatizado: bool, criterio_de_verificacao: str|None,
-    ...} e devolve (True, None) ou (False, motivo). Nao sabe o que e HB,
-    AG ou qualquer semantica EMCIA — so aplica a regra "capacidade
-    automatizada sem criterio de verificacao nao e valida para carregamento".
-
-    A integracao com as 18 HB e 4 AG reais, estruturados no playbook
-    oficial, pertence ao pacote 2.6.4. Este pacote (2.6.1) so constroi e
-    testa o mecanismo, isolado de qualquer contrato concreto.
+    A função só confere dados estruturados, sem interpretar o método.
     """
     if not isinstance(capacidade, dict):
         return False, "capacidade precisa ser um objeto com 'automatizado' e 'criterio_de_verificacao'"
@@ -223,7 +219,7 @@ def selo_apos_etapa(pb, etapa_id, trilha):
     O nucleo nao sabe por que -- so compara a ORDEM de dois tipos de evento
     genericos contra um campo declarativo do contrato, do mesmo jeito que
     _avaliar_condicao() em avancar.py compara campo/etapa/valor sem saber
-    o que "P2" ou "P3b" significam.
+    o que "etapa origem" ou "etapa destino" significam.
 
     "Posterior" e definido pela POSICAO do evento na trilha (a ordem em
     que estado.evento() gravou cada linha), nao pelo campo `data`: dois
@@ -262,6 +258,38 @@ def selo_apos_etapa(pb, etapa_id, trilha):
                         f"{referencia}. Nenhum SeloAplicado encontrado depois "
                         f"desse encerramento -- sele o caso antes de prosseguir.")
     return True, None
+
+
+def selo_confirmado_apos_evento(pb, etapa_id, trilha):
+    """Exigência declarativa de selo Git posterior ao último evento do tipo.
+
+    Compara posições na trilha e o prefixo exato no snapshot confirmado.
+    Não interpreta o evento declarado nem altera qualquer arquivo.
+    """
+    referencia=(etapa(pb,etapa_id) or {}).get('exige_evento_selado')
+    if referencia is None:
+        return True,None
+    posicoes=[i for i,e in enumerate(trilha) if e.get('evento')==referencia]
+    if not posicoes:
+        return False,f"{etapa_id}: evento {referencia} ausente; exige SeloAplicado confirmado posterior a esse evento."
+    import estado as E
+    selos,erro=E.selos_confirmados()
+    if erro:
+        return False,f"{etapa_id}: {referencia} exige SeloAplicado confirmado; {erro}."
+    try:
+        linhas=pathlib.Path('registro/eventos.jsonl').read_text().splitlines()
+        atual=[json.loads(x) for x in linhas]
+    except (OSError,ValueError) as exc:
+        return False,f"{etapa_id}: trilha inválida para confirmar {referencia}: {exc}"
+    if atual!=trilha:
+        return False,f"{etapa_id}: trilha divergente durante confirmação de {referencia}."
+    pos=posicoes[-1]
+    for selo in selos:
+        fim=selo['posicao']
+        if fim>pos and selo['eventos'][:fim+1]==trilha[:fim+1] and selo['linhas'][:fim+1]==linhas[:fim+1]:
+            return True,None
+    return False,(f"{etapa_id}: nenhum SeloAplicado confirmado no Git posterior ao último "
+                  f"{referencia}, contendo esse evento no commit. Sele o caso antes de prosseguir.")
 
 
 def proxima_fronteira(pb, etapa_id, nivel):

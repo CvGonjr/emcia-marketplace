@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Demonstração sintética da ação 3.8, pela tag v-sprint3-poc.7.
+# Demonstração sintética pela versão commitada vigente; fonte congelada no Git.
 # Executar pelo engenheiro no próprio terminal; inclui decisões humanas
 # fictícias de controle. Não é um roteiro para aplicar decisões a clientes.
 # Conta invocações diretas: não soma subprocessos internos dos plugins,
@@ -18,7 +18,7 @@ raiz = pathlib.Path(sys.argv[1])
 base = pathlib.Path(sys.argv[2]).expanduser().resolve()
 nome = sys.argv[3]
 pessoa = 'Celso do Vale'
-tag = 'v-sprint3-poc.7'
+tag = 'HEAD'
 caso = base / nome
 contagens = collections.Counter()
 
@@ -87,6 +87,13 @@ def executar(fonte):
     rodar(['bash', str(fonte/'novo-caso.sh'), nome, '--responsavel', pessoa, str(base)])
     for chave, valor in [('user.name', pessoa), ('user.email', 'controle@exemplo.com')]:
         rodar(['git', 'config', chave, valor], caso)
+    sys.path.insert(0, str(fonte/'testes'))
+    from apoio.habilitacao_0d import criar as criar_expediente
+    with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
+        exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+        rodar([sys.executable, str(campo_scripts/'importar_habilitacao.py'), '--expediente', str(exp)], caso)
+        rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/00-habilitacao.md'], caso)
+        rodar([sys.executable, str(nucleo/'selar.py'), '--nota', 'habilitação sintética importada e conferida'], caso)
     pb = json.loads((caso/'registro/playbook.json').read_text())
 
     def avancar(*args):

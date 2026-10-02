@@ -5,7 +5,7 @@ Regras, sem ordem fixa exigida entre si:
   G2  escrita direta em caso/ e negada; toda assercao passa pelo validador
   G2b escrita direta em contexto/ e negada; todo objeto passa pelo curador
   G3  etapa dependente exige o cumprimento declarado no playbook
-  G4  nivel nao apurado apos F0 bloqueia a etapa
+  G4  nivel nao apurado apos etapa inicial bloqueia a etapa
   G5  escrita direta em registro/ e negada; apenas os scripts do nucleo
       (avancar.py, curar.py, validar.py, selar.py) gravam ali, via
       estado.gravar()/estado.evento(), nunca por Write/Edit/redirecionamento
@@ -154,6 +154,9 @@ def main():
     habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
     # G7 continua independente da autorização de carregamento.
     for e in habilidades:
+        confirmado,motivo=P.selo_confirmado_apos_evento(pb,e['id'],E.eventos())
+        if not confirmado:
+            negar(motivo,etapa=e['id'],ferramenta=ferramenta)
         selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
         if not selo_ok:
             negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
@@ -217,11 +220,11 @@ def main():
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 
-    # G4 — nivel nao apurado apos F0
-    if etapa_id != "F0" and not nivel:
+    # G4 — nivel nao apurado apos etapa inicial
+    if etapa_id != pb["etapas"][0]["id"] and not nivel:
         negar(
             f"Nivel do caso nao apurado. A camada de {etapa_id} depende dele "
-            f"(CAT-01 3.6). Encerre F0 antes de prosseguir.",
+            f"Encerre {pb['etapas'][0]['id']} antes de prosseguir.",
             etapa=etapa_id,
         )
 

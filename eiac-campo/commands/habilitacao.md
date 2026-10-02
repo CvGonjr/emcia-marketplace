@@ -27,3 +27,5 @@ A assinatura ocorre exclusivamente pelo painel escolhido pelo cliente, sem API, 
 
 
 A importação é humana: apresente `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/importar_habilitacao.py" --expediente "<caminho>"` para execução no terminal do engenheiro, no diretório do caso, fora da sessão. Não execute essa decisão pela sessão. Depois da importação, o rascunho passa pelo validador; a selagem é um ato deliberado conforme o roteiro canônico.
+
+Em caso aberto com o novo template, a habilidade de F0 e seu encerramento exigem importação com selo confirmado no Git. Após gravar `caso/00-habilitacao.md` pelo validador, apresente a selagem ao engenheiro. Evento `SeloAplicado` sem commit confirmado mantém a passagem bloqueada. Casos antigos seguem seu próprio playbook.

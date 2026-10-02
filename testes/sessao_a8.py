@@ -153,6 +153,8 @@ class SessaoA8(unittest.TestCase):
 
     def test_16_ex1_sem_sessao(self):
         self.posicionar("F0", "N2")
+        from apoio.habilitacao_0d import preparar as preparar_habilitacao
+        preparar_habilitacao(self.caso)
         self.encerramento("F0")
 
     def test_17_regra_alternativa_lida_do_caso(self):

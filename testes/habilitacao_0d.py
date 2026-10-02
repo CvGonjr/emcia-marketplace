@@ -104,4 +104,93 @@ class Importacao(CasoHook):
         self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
 
 
+class SeloConfirmado(CasoHook):
+    def setUp(self):
+        super().setUp()
+        self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
+        self.git('init','-q'); self.git('config','user.name','Celso do Vale')
+        self.git('config','user.email','sintetico@example.invalid')
+        self.git('config','commit.gpgsign','false')
+        self.git('config','core.hooksPath',str(self.caso/'.git/hooks'))
+        self.git('add','-A'); self.git('commit','-qm','abertura sintética')
+
+    def git(self,*args):
+        r=subprocess.run(['git',*args],cwd=self.caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr); return r.stdout.strip()
+
+    def importar(self):
+        r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
+                         cwd=self.caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr)
+
+    def selar(self):
+        (self.caso/'rascunho/marcador').write_text(str(len(self.eventos())))
+        return self.rodar('selar.py','--nota','selo sintético confirmado')
+
+    def bloqueado(self):
+        return self.negado('Skill',{'skill':'eiac-campo:hb-enquadrar'})
+
+    def test_01_habilidade_sem_evento(self):
+        r=self.bloqueado(); self.assertIn('HabilitacaoImportada',r.stderr)
+
+    def test_02_importacao_sem_selo(self):
+        self.importar(); r=self.bloqueado(); self.assertIn('SeloAplicado',r.stderr)
+
+    def test_03_encerrar_sem_selo(self):
+        self.importar(); antes=len(self.eventos())
+        r=self.rodar('avancar.py','--encerrar','F0','--autor','Celso do Vale')
+        self.assertNotEqual(r.returncode,0,r.stdout); self.assertIn('SeloAplicado',r.stderr)
+        self.assertEqual(len(self.eventos()),antes+1)
+        self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
+
+    def test_04_commit_recusado_nao_libera(self):
+        self.importar()
+        hook=self.caso/'.git/hooks/pre-commit';hook.write_text('#!/bin/sh\nexit 1\n');hook.chmod(0o755)
+        self.assertNotEqual(self.selar().returncode,0)
+        r=self.bloqueado(); self.assertIn('confirmado',r.stderr)
+
+    def test_05_selo_anterior_nao_libera(self):
+        self.assertEqual(self.selar().returncode,0)
+        self.importar(); self.bloqueado()
+
+    def test_06_git_inacessivel_recusa(self):
+        self.importar(); self.assertEqual(self.selar().returncode,0)
+        (self.caso/'.git').rename(self.caso/'.git-indisponivel')
+        r=self.bloqueado(); self.assertIn('Git',r.stderr)
+
+    def test_07_reimportacao_exige_novo_selo(self):
+        self.importar();self.assertEqual(self.selar().returncode,0)
+        ident=json.loads((self.caso/'registro/habilitacao.json').read_text())['vigente']['id']
+        p=self.base/'decisao.json';p.write_text(json.dumps(dict(decisor='Celso do Vale',motivo='Nova conferência',
+            data='2026-10-02',importacao_anterior=ident)))
+        r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp),
+            '--decisao-reimportacao',str(p)],cwd=self.caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr);self.bloqueado()
+
+    def test_08_commit_comum_nao_confirma_tentativa_recusada(self):
+        self.importar()
+        hook=self.caso/'.git/hooks/pre-commit';hook.write_text('#!/bin/sh\nexit 1\n');hook.chmod(0o755)
+        self.assertNotEqual(self.selar().returncode,0);hook.unlink()
+        self.git('add','-A');self.git('commit','-qm','commit comum, sem aplicação de selo')
+        self.bloqueado()
+
+    def test_20_selo_posterior_libera_habilidade_e_encerramento(self):
+        self.importar()
+        r=self.rodar('validar.py','--arquivo','caso/00-habilitacao.md');self.assertEqual(r.returncode,0,r.stderr)
+        r=self.selar();self.assertEqual(r.returncode,0,r.stderr)
+        r=self.hook('Skill',{'skill':'eiac-campo:hb-enquadrar'});self.assertEqual(r.returncode,0,r.stderr)
+        r=self.rodar('avancar.py','--encerrar','F0','--autor','Celso do Vale');self.assertEqual(r.returncode,0,r.stderr)
+
+    def test_21_contrato_alternativo_generico(self):
+        self.importar()
+        p=self.caso/'registro/playbook.json';pb=json.loads(p.read_text())
+        pb['etapas'][0]['exige_evento_selado']='FontePreparada';p.write_text(json.dumps(pb))
+        log=self.caso/'registro/eventos.jsonl';evs=self.eventos()
+        for e in evs:
+            if e['evento']=='HabilitacaoImportada':e['evento']='FontePreparada'
+        log.write_text(''.join(json.dumps(e,ensure_ascii=False)+'\n' for e in evs))
+        r=self.selar();self.assertEqual(r.returncode,0,r.stderr)
+        r=self.hook('Skill',{'skill':'eiac-campo:hb-enquadrar'});self.assertEqual(r.returncode,0,r.stderr)
+
+
 if __name__=='__main__': unittest.main(verbosity=2)

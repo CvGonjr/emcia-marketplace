@@ -1,0 +1,2 @@
+selar.py preservado byte a byte; SHA-256: 222ac24d7c43ab81b60818820263a65fd59c59bed1edd868713f5bb71b4eac5d
+selo_apos_etapa: AST executável idêntica; somente exemplos documentais generalizados.

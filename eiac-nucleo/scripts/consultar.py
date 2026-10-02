@@ -8,7 +8,7 @@ diretorio a partir do prefixo do id (o mesmo mecanismo que curar.py usa
 para resolver `entradas`/`onde_vive`), valida o objeto contra o proprio
 schema e imprime seus campos em JSON.
 
-Nao decide merito nem grava nada. Existe para que P4/P5 leiam o contexto
+Nao decide merito nem grava nada. Existe para que etapas seguintes leiam o contexto
 ja curado como dado estruturado, em vez de reinterpretar prosa ou abrir
 arquivos por caminho fixo espalhado pelas skills.
 """

@@ -1,6 +1,6 @@
 """Validador de procedencia documental. Unico caminho de escrita em caso/.
 
-Uso:  python3 validar.py --arquivo caso/P2-regras.md
+Uso:  python3 validar.py --arquivo caso/etapa origem-regras.md
 A autoria do registro nao vem de --autor: e sempre `responsavel` de
 registro/estado.json, fixado pelo operador em novo-caso.sh, fora da sessao
 do agente (nenhuma habilidade instrui a chamar validar.py diretamente, so

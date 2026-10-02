@@ -148,6 +148,8 @@ class CamposA10(unittest.TestCase):
         self.estado = self.caso / 'registro/estado.json'
         for key, value in [('user.name', 'Celso do Vale'), ('user.email', 'teste@exemplo.com')]:
             subprocess.run(['git', 'config', key, value], cwd=self.caso, check=True)
+        from apoio.habilitacao_0d import preparar as preparar_habilitacao
+        preparar_habilitacao(self.caso)
         r = self.executar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
         self.assertEqual(r.returncode, 0, r.stderr)
         pb = json.loads((self.caso / 'registro/playbook.json').read_text())

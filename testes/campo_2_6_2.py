@@ -68,6 +68,8 @@ def preparar_caso():
                     ["git", "config", "user.name", "Celso do Vale"],
                     ["git", "config", "user.email", "caso-sintetico@exemplo.com"]):
         subprocess.run(comando, cwd=caso, check=True, capture_output=True)
+    from apoio.habilitacao_0d import preparar as preparar_habilitacao
+    preparar_habilitacao(caso)
     return caso
 
 

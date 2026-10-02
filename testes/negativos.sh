@@ -173,6 +173,14 @@ rastro=$?
 [ $gravou -eq 0 ] && [ $rastro -eq 0 ] \
   && ok "16 nivel apurado grava com evento" || falha "16 nivel apurado SEM gravar ou SEM evento"
 
+# Pré-condição real da habilitação para o controle de encerramento.
+python3 - "$RAIZ" "$PWD" <<'PY_HAB'
+import pathlib,sys
+sys.path.insert(0,str(pathlib.Path(sys.argv[1])/'testes'))
+from apoio.habilitacao_0d import preparar
+preparar(sys.argv[2])
+PY_HAB
+
 # 17 com o nivel apurado pelo comando, F0 encerra
 python3 "$S/avancar.py" --encerrar F0 --autor "Celso do Vale" >/dev/null 2>&1
 [ $? -eq 0 ] && ok "17 F0 encerra apos nivel apurado" || falha "17 F0 NAO encerrou com nivel apurado"
@@ -189,9 +197,13 @@ saida="$("$RAIZ/novo-caso.sh" "teste-18-$$" --responsavel "AG05" "$TMP" 2>&1)"
 rm -rf "${TMP:?}/teste-18-$$"
 
 # 19 selo fora de repositorio git e recusado, e pelo motivo certo
+mv .git .git-controle
 saida="$(python3 "$S/selar.py" --autor "Celso do Vale" --nota "teste" 2>&1)"
 [ $? -ne 0 ] && echo "$saida" | grep -q "repositorio git" \
   && ok "19 selo sem repositorio recusado" || falha "19 selo sem repositorio ACEITO ou recusado por outro motivo"
+
+# Restabelece o repositório da fixture depois do teste de ausência.
+mv .git-controle .git
 
 # 20 selo valido commita com o autor nomeado e deixa rastro (controle positivo)
 git init -q . 2>/dev/null

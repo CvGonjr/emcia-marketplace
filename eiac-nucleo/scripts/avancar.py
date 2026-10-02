@@ -2,10 +2,10 @@
 
 Uso:
   python3 avancar.py --apurar-nivel <nivel> --autor "Nome" --eixos "<eixos declarados>"
-  python3 avancar.py --encerrar P2 --autor "Nome"
+  python3 avancar.py --encerrar etapa origem --autor "Nome"
   python3 avancar.py --registrar-campo <etapa> --campo <nome> --valor <valor> --autor "Nome"
-  python3 avancar.py --registrar-sessao P3b --autor "Nome" --participantes "A, B"
-  python3 avancar.py --registrar-recorrencia P10 --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
+  python3 avancar.py --registrar-sessao etapa destino --autor "Nome" --participantes "A, B"
+  python3 avancar.py --registrar-recorrencia etapa recorrente --autor "Nome" --cadencia "trimestral" --responsavel "Nome"
   python3 avancar.py --satisfazer-inegociavel 2 --autor "Nome" --evidencia "caminho ou descricao"
   python3 avancar.py --emitir E2 --autor "Nome"
 
@@ -44,7 +44,7 @@ def apurar_nivel(st, pb, nivel, autor, eixos):
     st["nivel"] = nivel
     st["camada_atual"] = P.camada(pb, st["etapa_atual"], nivel)
     if eixos:
-        st["cumprimentos"].setdefault("F0", {})["eixos"] = eixos
+        st["cumprimentos"].setdefault(pb["etapas"][0]["id"], {})["eixos"] = eixos
     E.evento("NivelApurado", nivel=nivel, anterior=anterior, autor=autor, eixos=eixos)
     return None
 
@@ -62,9 +62,13 @@ def encerrar(st, pb, etapa_id, autor):
         return (f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
                 f"So a etapa corrente pode ser encerrada.")
 
-    if etapa_id == "F0" and not st.get("nivel"):
-        return ("F0 nao encerra sem o nivel apurado. A camada das etapas seguintes "
-                "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
+    confirmado,motivo=P.selo_confirmado_apos_evento(pb,etapa_id,E.eventos())
+    if not confirmado:
+        return _RecusaSessao(motivo)
+
+    if etapa_id == pb["etapas"][0]["id"] and not st.get("nivel"):
+        return (f"{etapa_id} nao encerra sem o nivel apurado. A camada das etapas seguintes "
+                "depende dele. Grave o nivel em registro/estado.json.")
     if st.get("nivel") and st["nivel"] not in pb["niveis"]:
         return f"nivel '{st['nivel']}' nao existe no playbook: {pb['niveis']}"
     cam = P.camada(pb, etapa_id, st.get("nivel"))

@@ -9,7 +9,7 @@ fi
 raiz_demo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 base_demo="${EMCIA_DEMO_BASE:-/tmp/emcia-demos}"
 python3 - "$raiz_demo" "$base_demo" "$1" "$2" <<'PY'
-import datetime, json, pathlib, subprocess, sys
+import datetime, json, pathlib, subprocess, sys, tempfile
 raiz, base, nome, ate = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3], sys.argv[4]
 pb = json.loads((raiz / 'eiac-campo/template-caso/registro/playbook.json').read_text())
 if ate not in [e['id'] for e in pb['etapas']]:
@@ -26,6 +26,15 @@ def rodar(comando, cwd=None):
 rodar(['bash', str(raiz / 'novo-caso.sh'), nome, '--responsavel', pessoa, str(base)])
 for chave, valor in [('user.name', pessoa), ('user.email', 'controle@exemplo.com')]:
     rodar(['git', 'config', chave, valor], caso)
+
+# Expediente e PDFs exclusivamente sintéticos; importação/validação/selo reais.
+sys.path.insert(0, str(raiz / 'testes'))
+from apoio.habilitacao_0d import criar as criar_expediente
+with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
+    exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+    rodar([sys.executable, str(raiz/'eiac-campo/scripts/importar_habilitacao.py'), '--expediente', str(exp)], caso)
+    rodar([sys.executable, str(raiz/'eiac-nucleo/scripts/validar.py'), '--arquivo', 'caso/00-habilitacao.md'], caso)
+    rodar([sys.executable, str(raiz/'eiac-nucleo/scripts/selar.py'), '--nota', 'habilitação sintética importada e conferida'], caso)
 
 def avancar(*args):
     return rodar([sys.executable, str(raiz / 'eiac-nucleo/scripts/avancar.py'), *args, '--autor', pessoa], caso)

@@ -353,3 +353,15 @@ O engenheiro importa o expediente no terminal, no diretório do caso, com
 A operação prepara `rascunho/00-habilitacao.md` para validação e preserva
 os documentos assinados, evidências e matriz administrativa. Consulte a
 [interface de habilitação](eiac-campo/reference/habilitacao.md).
+
+Antes de carregar ou encerrar F0, o novo playbook exige `HabilitacaoImportada`
+e selo posterior confirmado pelo histórico Git, cujo commit contém a linha
+importada. Após a importação, grave o rascunho pelo validador e sele:
+
+```bash
+python3 /caminho/eiac-nucleo/scripts/validar.py --arquivo caso/00-habilitacao.md
+python3 /caminho/eiac-nucleo/scripts/selar.py --nota "habilitação importada e conferida"
+```
+
+Sem histórico acessível ou após falha no commit do selo, F0 continua bloqueado.
+Casos existentes conservam seu playbook; a mudança alcança novos casos.

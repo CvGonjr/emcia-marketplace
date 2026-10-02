@@ -41,6 +41,9 @@ class Habilidades(CasoHook):
         self.negado('Grep', {'path': str(self.skill), 'pattern': '.', 'output_mode': 'content'})
 
     def test_10_habilidade_delegavel(self):
+        CasoHook.setUp(self)  # Novo caso; este controle exercita F0.
+        from apoio.habilitacao_0d import preparar as preparar_habilitacao
+        preparar_habilitacao(self.caso)
         self.assertEqual(self.hook('Skill', {'skill':'eiac-campo:hb-enquadrar'}).returncode, 0)
 
     def test_11_hooks_instalados_cobrem_rotas(self):
