@@ -254,11 +254,33 @@ saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" 2>&
   && ok "24 documento citado ausente recusado" \
   || falha "24 documento ausente ACEITO ou recusado por outro motivo"
 
-# 25 com o documento presente, grava e registra o hash (controle positivo)
-echo "conteudo" > fontes/ausente.xlsx
+# 25 o documento recebido pelo ato humano grava e fixa o hash (controle positivo)
+python3 - "$RAIZ" <<'PY_RECEBIDO'
+import json,pathlib,subprocess,sys
+raiz=pathlib.Path(sys.argv[1]);st=json.loads(pathlib.Path('registro/estado.json').read_text())
+# A coleta precisa corresponder à etapa corrente; este controle documental
+# ocorre depois de F0. P2 é a entrada declarada para o documento sintético.
+etapa_anterior=st['etapa_atual'];st['etapa_atual']='P2';pathlib.Path('registro/estado.json').write_text(json.dumps(st))
+p=pathlib.Path('rascunho/entrada');p.mkdir(parents=True,exist_ok=True)
+(p/'ausente.xlsx').write_text('conteudo')
+(p/'coleta.json').write_text(json.dumps(dict(ferramenta='drive',objeto_id='OBJ-CONTROLE',conteiner_id='SINTETICO-documentos-pasta_id',modificado_em='2026-10-02T10:00:00Z',coletado_em='2026-10-02T11:00:00Z')))
+r=subprocess.run(['python3',str(raiz/'eiac-campo/scripts/receber.py'),'--arquivo',str(p/'ausente.xlsx'),'--manifesto',str(p/'coleta.json')],text=True,capture_output=True)
+if r.returncode:sys.exit(r.stderr)
+ref=json.loads(r.stdout);doc=ref['arquivo'].removeprefix('fontes/')
+pathlib.Path('rascunho/d.md').write_text(f'- [V · documento: {doc} p.2 · fonte: {ref["id"]} · 2026-09-15 · Celso do Vale] regra\n')
+st['etapa_atual']=etapa_anterior;pathlib.Path('registro/estado.json').write_text(json.dumps(st))
+# Arquivo usado apenas nas negativas de escrita abaixo, sem servir de fonte.
+pathlib.Path('fontes/ausente.xlsx').write_text('controle de escrita negada')
+PY_RECEBIDO
 python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" >/dev/null 2>&1
 gravou=$?
-grep -q '"documentos": {"ausente.xlsx"' registro/eventos.jsonl 2>/dev/null
+python3 - <<'PY_HASH'
+import json,pathlib,sys
+reg=json.loads(pathlib.Path('registro/recebimentos.json').read_text())['recebimentos'][-1]
+evs=[json.loads(x) for x in pathlib.Path('registro/eventos.jsonl').read_text().splitlines()]
+ultimo=evs[-1];doc=reg['arquivo'].removeprefix('fontes/')
+sys.exit(not (ultimo['evento']=='AssercaoRegistrada' and ultimo['documentos'][doc]==reg['sha256'][:12] and ultimo['fontes'][reg['id']]==reg['sha256']))
+PY_HASH
 rastro=$?
 [ $gravou -eq 0 ] && [ $rastro -eq 0 ] \
   && ok "25 documento presente grava com hash na trilha" \

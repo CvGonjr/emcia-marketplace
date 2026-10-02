@@ -1,0 +1,527 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 73f2ec1..d46706d 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -71,6 +71,9 @@ jobs:
+       - name: Formulários e redação fixa
+         run: python3 testes/formularios.py
+ 
++      - name: Recebimento e procedência de origem
++        run: python3 testes/receber.py
++
+       - name: Versão do plugin mudou junto com o núcleo
+         if: github.event_name == 'pull_request'
+         run: |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 4ad5784..144db10 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.15",
++  "version": "0.8.16",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/scripts/receber.py b/eiac-campo/scripts/receber.py
+new file mode 100644
+index 0000000..ee104d3
+--- /dev/null
++++ b/eiac-campo/scripts/receber.py
+@@ -0,0 +1,101 @@
++"""Recebimento humano de material preparado; não consulta APIs externas."""
++import argparse
++import datetime
++import fcntl
++import hashlib
++import json
++import pathlib
++import re
++import canais as K
++
++
++def instante(valor):
++    K.texto(valor)
++    data = datetime.datetime.fromisoformat(valor.replace('Z', '+00:00'))
++    K.exigir(data.tzinfo is not None, 'data da origem/coleta precisa ter fuso')
++    return data
++
++
++def receber(arquivo, manifesto, autor=None, nova_versao=None):
++    st, pb = K.contexto(autor)
++    origem = json.loads(K.seguro(manifesto, 'rascunho/entrada').read_text())
++    K.exigir(isinstance(origem, dict), 'manifesto precisa ser objeto')
++    obrigatorios = {'ferramenta', 'objeto_id', 'conteiner_id', 'modificado_em', 'coletado_em'}
++    K.exigir(obrigatorios <= set(origem) <= obrigatorios | {'submissao_id', 'campos_ocultos'}, 'campos do manifesto inválidos')
++    K.exigir(origem['ferramenta'] in K.CONTEINER and origem['ferramenta'] != 'calendar', 'ferramenta de entrada inválida')
++    K.id_externo(origem['objeto_id']); K.id_externo(origem['conteiner_id'])
++    K.exigir(instante(origem['coletado_em']) >= instante(origem['modificado_em']), 'coleta anterior à modificação')
++    candidatos = [c for c in K.G.selecionar(pb, st['etapa_atual'], 'entrada')
++                  if c['ferramenta'] == origem['ferramenta']
++                  and c['ids'][K.CONTEINER[c['ferramenta']]] == origem['conteiner_id']]
++    K.exigir(len(candidatos) == 1, 'origem não declarada para entrada na etapa corrente')
++    canal = candidatos[0]
++    if canal['filtro']:
++        K.exigir(isinstance(origem.get('campos_ocultos'), dict)
++                 and origem['campos_ocultos'].get(canal['filtro']['campo']) == canal['filtro']['valor'], 'filtro de outro caso ou ausente')
++        K.id_externo(origem.get('submissao_id'))
++    else:
++        K.exigir('submissao_id' not in origem and 'campos_ocultos' not in origem, 'metadados de formulário incompatíveis')
++    p = K.seguro(arquivo, 'rascunho/entrada')
++    K.exigir(p.is_file(), 'arquivo ausente')
++    conteudo = p.read_bytes(); sha = hashlib.sha256(conteudo).hexdigest()
++    index = K.seguro('registro/recebimentos.json')
++    registro = json.loads(index.read_text()) if index.exists() else {'schema': 1, 'recebimentos': []}
++    eventos = [e for e in K.E.eventos() if e.get('evento') == 'MaterialRecebido']
++    K.exigir(isinstance(registro, dict) and registro.get('schema') == 1
++             and isinstance(registro.get('recebimentos'), list), 'manifesto de recebimentos inválido')
++    K.exigir(bool(index.exists()) == bool(eventos), 'manifesto e trilha de recebimento divergentes')
++    if eventos:
++        K.exigir(eventos[-1].get('registro_sha256') == hashlib.sha256(index.read_bytes()).hexdigest(), 'manifesto de recebimentos adulterado')
++    anteriores = [r for r in registro['recebimentos'] if r['sha256'] == sha
++                  or (r['origem']['conteiner_id'], r['origem']['objeto_id']) == (origem['conteiner_id'], origem['objeto_id'])]
++    decisao = None
++    if anteriores:
++        K.exigir(nova_versao is not None, 'hash ou objeto já recebido; nova versão exige decisão humana')
++        decisao = json.loads(K.seguro(nova_versao, 'rascunho').read_text())
++        K.exigir(isinstance(decisao, dict) and decisao.get('decisor') == st['responsavel'], 'decisor deve ser responsável nomeado')
++        K.texto(decisao.get('motivo')); datetime.date.fromisoformat(decisao['data'])
++        K.exigir(decisao.get('recebimento_anterior') == anteriores[-1]['id'], 'decisão não identifica o recebimento anterior vigente')
++    else:
++        K.exigir(nova_versao is None, 'nova versão sem recebimento anterior')
++    agora = datetime.datetime.now(datetime.timezone.utc).isoformat()
++    ident = f"REC-{len(registro['recebimentos'])+1:06d}"
++    K.exigir(bool(re.fullmatch('[a-z0-9-]+', canal['finalidade'])), 'finalidade incompatível com destino estável')
++    extensao = p.suffix.lower() if re.fullmatch(r'\.[a-zA-Z0-9]{1,10}', p.suffix) else '.bin'
++    destino = K.seguro(f"fontes/{canal['finalidade']}/{agora[:10]}-{ident}{extensao}")
++    K.exigir(not destino.exists(), 'destino já existe')
++    ref = dict(id=ident, arquivo=str(destino), sha256=sha, finalidade=canal['finalidade'],
++               etapa=st['etapa_atual'], origem=origem, autor=st['responsavel'], data=agora,
++               canais_versao=K.G.carregar(pb)['versao'], decisao_nova_versao=decisao)
++    backup = index.read_bytes() if index.exists() else None
++    destino.parent.mkdir(parents=True, exist_ok=True)
++    try:
++        with destino.open('xb') as f: f.write(conteudo)
++        K.exigir(hashlib.sha256(destino.read_bytes()).hexdigest() == sha, 'hash diverge após cópia')
++        registro['recebimentos'].append(ref); K.escrever(index, registro)
++        K.E.evento('MaterialRecebido', autor=st['responsavel'], recebimento=ident, arquivo=str(destino),
++                   sha256=sha, origem=origem, registro_sha256=hashlib.sha256(index.read_bytes()).hexdigest())
++    except Exception:
++        destino.unlink(missing_ok=True)
++        if backup is None: index.unlink(missing_ok=True)
++        else: index.write_bytes(backup)
++        raise
++    return ref
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--arquivo', required=True); ap.add_argument('--manifesto', required=True)
++    ap.add_argument('--autor'); ap.add_argument('--nova-versao')
++    a = ap.parse_args()
++    try:
++        with K.seguro('registro/.canais.lock').open('a') as lock:
++            fcntl.flock(lock, fcntl.LOCK_EX)
++            resultado = receber(a.arquivo, a.manifesto, a.autor, a.nova_versao)
++        print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
++        K.E.evento('TentativaNegada', autor=(K.E.ler() or {}).get('responsavel'), operacao='receber-material', motivo=str(exc))
++        ap.exit(1, 'Recusado: '+str(exc)+'\n')
++
++
++if __name__ == '__main__': main()
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 516780c..c83f4f0 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.13",
++  "versao": "0.4.14",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+   "referencia_integridade": {
+     "diretorio": "metodo",
+@@ -170,6 +170,14 @@
+       "condicao": {
+         "tipo": "sempre"
+       }
++    },
++    {
++      "id": "receber-material",
++      "script": "receber.py",
++      "escopo": "fronteira_externa",
++      "condicao": {
++        "tipo": "sempre"
++      }
+     }
+   ],
+   "apuracao_nivel": {
+@@ -861,5 +869,19 @@
+         "direcao": "saida"
+       }
+     ]
++  },
++  "registro_fontes": {
++    "arquivo": "registro/recebimentos.json",
++    "campo": "recebimentos",
++    "id": "id",
++    "caminho": "arquivo",
++    "hash": "sha256",
++    "evento": "MaterialRecebido",
++    "registros_adicionais": [
++      {
++        "arquivo": "registro/habilitacao.json",
++        "evento": "HabilitacaoImportada"
++      }
++    ]
+   }
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index ebd848c..2d40e0b 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.37",
++  "version": "0.2.38",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/scripts/fontes_registro.py b/eiac-nucleo/scripts/fontes_registro.py
+new file mode 100644
+index 0000000..0f12ac1
+--- /dev/null
++++ b/eiac-nucleo/scripts/fontes_registro.py
+@@ -0,0 +1,53 @@
++"""Resolve ids de recebimento e confere bytes com a origem registrada."""
++import hashlib
++import json
++import pathlib
++import estado as E
++
++
++def caminho(valor):
++    p = pathlib.Path(valor)
++    if p.is_absolute() or '..' in p.parts or not p.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++        raise ValueError('fonte fora do caso')
++    if any(x.is_symlink() for x in [p, *p.parents]):
++        raise ValueError('fonte contém link')
++    return p
++
++
++def conferir(pb, identificador=None, documento=None):
++    contrato = pb.get('registro_fontes')
++    if not contrato:
++        if identificador: raise ValueError('registro de fontes não declarado')
++        return None
++    p = caminho(contrato['arquivo'])
++    refs = json.loads(p.read_text())[contrato['campo']] if p.exists() else []
++    encontrados = [r for r in refs if (r[contrato['id']] == identificador if identificador
++                                     else r[contrato['caminho']] == 'fontes/'+documento)]
++    if encontrados:
++        ref = encontrados[-1]
++        eventos = [e for e in E.eventos() if e.get('evento') == contrato['evento']]
++        if not eventos or eventos[-1].get('registro_sha256') != hashlib.sha256(p.read_bytes()).hexdigest():
++            raise ValueError('registro de fontes sem integridade na trilha')
++        if not any(e.get('recebimento') == ref[contrato['id']] and e.get('sha256') == ref[contrato['hash']]
++                   for e in eventos):
++            raise ValueError('fonte sem evento de recebimento correspondente')
++        origem = caminho(ref[contrato['caminho']])
++        if hashlib.sha256(origem.read_bytes()).hexdigest() != ref[contrato['hash']]:
++            raise ValueError('hash da fonte diverge do recebimento')
++        return ref
++    # Importações anteriores ao percurso possuem seu próprio registro.
++    # Nome do evento e caminho do manifesto vêm do contrato do caso.
++    if documento:
++        for origem in contrato.get('registros_adicionais', []):
++            p = caminho(origem['arquivo'])
++            if not p.exists(): continue
++            reg = json.loads(p.read_text()); refs_adicionais = reg['vigente']['arquivos'].values()
++            for r in refs_adicionais:
++                if r['caminho'] == 'fontes/'+documento:
++                    eventos = [e for e in E.eventos() if e.get('evento') == origem['evento']]
++                    if not eventos or eventos[-1].get('registro_sha256') != hashlib.sha256(p.read_bytes()).hexdigest():
++                        raise ValueError('registro adicional sem integridade na trilha')
++                    if hashlib.sha256(caminho(r['caminho']).read_bytes()).hexdigest() != r['sha256']:
++                        raise ValueError('hash da fonte diverge da importação')
++                    return r
++    raise ValueError('fonte sem recebimento registrado')
+diff --git a/eiac-nucleo/scripts/validar.py b/eiac-nucleo/scripts/validar.py
+index fde5e81..ddbaa74 100644
+--- a/eiac-nucleo/scripts/validar.py
++++ b/eiac-nucleo/scripts/validar.py
+@@ -13,10 +13,15 @@ import argparse, hashlib, pathlib, re, sys
+ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+ import playbook as P
++import fontes_registro as F
+ 
+ LINHA = re.compile(r"^\s*-\s*\[(?P<marca>[^\]]+)\]")
+ 
+ 
++class _RecusaOrigem(str):
++    """Recusa nova de vínculo de origem, registrada como TentativaNegada."""
++
++
+ def campos(marca):
+     return [p.strip() for p in marca.split("·")]
+ 
+@@ -54,7 +59,7 @@ def validar_linha(marca, pb, n):
+     if procedencia == "I" and not any(x.startswith("premissa:") for x in c):
+         return f"linha {n}: procedencia I exige premissa"
+     if procedencia == "V" and not any(
+-        x.startswith(("observacao:", "documento:", "leitura_de_volta:")) for x in c
++        x.startswith(("observacao:", "documento:", "leitura_de_volta:", "fonte:")) for x in c
+     ):
+         return (f"linha {n}: procedencia V exige evidencia de observacao, "
+                 "documento ou leitura de volta")
+@@ -73,6 +78,14 @@ def validar_linha(marca, pb, n):
+     if doc and not (pathlib.Path("fontes") / doc).exists():
+         return (f"linha {n}: documento citado '{doc}' nao esta em fontes/. "
+                 f"Citacao que aponta para fora do caso nao e verificavel.")
++    fonte = valor_campo(c, 'fonte')
++    if fonte or doc:
++        try:
++            ref = F.conferir(pb, fonte, doc)
++            if fonte and doc and ref.get('arquivo') != 'fontes/'+doc:
++                return _RecusaOrigem(f'linha {n}: documento diverge da fonte registrada')
++        except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
++            return _RecusaOrigem(f'linha {n}: {exc}')
+     apur = valor_campo(c, "apuracao")
+     apuracoes = dimensoes.get("apuracao", [])
+     if apur and apur not in apuracoes:
+@@ -115,7 +128,7 @@ def main():
+               file=sys.stderr)
+         sys.exit(1)
+ 
+-    erros, total, docs = [], 0, {}
++    erros, total, docs, fontes = [], 0, {}, {}
+     for n, linha in enumerate(rascunho.read_text(encoding="utf-8").splitlines(), 1):
+         m = LINHA.match(linha)
+         if not m:
+@@ -131,20 +144,24 @@ def main():
+         if doc and doc not in docs:
+             caminho = pathlib.Path("fontes") / doc
+             docs[doc] = hashlib.sha256(caminho.read_bytes()).hexdigest()[:12]
++        fonte = valor_campo(campos(m.group('marca')), 'fonte')
++        if fonte:
++            ref = F.conferir(pb, fonte)
++            fontes[fonte] = ref['sha256']
+ 
+     if total == 0:
+         print("nenhuma assercao marcada encontrada", file=sys.stderr); sys.exit(1)
+     if erros:
+         for e in erros:
+             print(e, file=sys.stderr)
+-        E.evento("AssercaoRecusada", arquivo=a.arquivo, erros=len(erros),
++        E.evento("TentativaNegada" if any(isinstance(e, _RecusaOrigem) for e in erros) else "AssercaoRecusada", arquivo=a.arquivo, erros=len(erros),
+                  autor=responsavel, autor_informado=a.autor)
+         sys.exit(1)
+ 
+     destino.parent.mkdir(parents=True, exist_ok=True)
+     destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
+     E.evento("AssercaoRegistrada", arquivo=a.arquivo, assercoes=total,
+-             autor=responsavel, autor_informado=a.autor, documentos=docs or None)
++             autor=responsavel, autor_informado=a.autor, documentos=docs or None, fontes=fontes or None)
+     print(f"{total} assercoes gravadas em {a.arquivo}"
+           + (f" | documentos: {', '.join(docs)}" if docs else ""))
+ 
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index 19895b8..3d4589d 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -198,7 +198,7 @@ class DecisaoA12(unittest.TestCase):
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+         self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais"})
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/manual_a25.py b/testes/manual_a25.py
+index ad4012d..02e3707 100644
+--- a/testes/manual_a25.py
++++ b/testes/manual_a25.py
+@@ -67,7 +67,7 @@ def conferir(linhas, playbook, comandos, transversais):
+     # Seções 3.3/3.4 cobrem o percurso; abertura anterior pertence a §3.2.
+     # Atualização de §3.2 proposta na evidência 039, sem editar o pacote canônico.
+     atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']
+-                       if ato.get('escopo') != 'antes_do_percurso'}
++                       if ato.get('escopo') not in ('antes_do_percurso', 'fronteira_externa')}
+     atos_usados = set(transversais)
+     comandos_usados = {}
+ 
+diff --git a/testes/negativos.sh b/testes/negativos.sh
+index 57dda52..d0819de 100644
+--- a/testes/negativos.sh
++++ b/testes/negativos.sh
+@@ -254,11 +254,33 @@ saida="$(python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" 2>&
+   && ok "24 documento citado ausente recusado" \
+   || falha "24 documento ausente ACEITO ou recusado por outro motivo"
+ 
+-# 25 com o documento presente, grava e registra o hash (controle positivo)
+-echo "conteudo" > fontes/ausente.xlsx
++# 25 o documento recebido pelo ato humano grava e fixa o hash (controle positivo)
++python3 - "$RAIZ" <<'PY_RECEBIDO'
++import json,pathlib,subprocess,sys
++raiz=pathlib.Path(sys.argv[1]);st=json.loads(pathlib.Path('registro/estado.json').read_text())
++# A coleta precisa corresponder à etapa corrente; este controle documental
++# ocorre depois de F0. P2 é a entrada declarada para o documento sintético.
++etapa_anterior=st['etapa_atual'];st['etapa_atual']='P2';pathlib.Path('registro/estado.json').write_text(json.dumps(st))
++p=pathlib.Path('rascunho/entrada');p.mkdir(parents=True,exist_ok=True)
++(p/'ausente.xlsx').write_text('conteudo')
++(p/'coleta.json').write_text(json.dumps(dict(ferramenta='drive',objeto_id='OBJ-CONTROLE',conteiner_id='SINTETICO-documentos-pasta_id',modificado_em='2026-10-02T10:00:00Z',coletado_em='2026-10-02T11:00:00Z')))
++r=subprocess.run(['python3',str(raiz/'eiac-campo/scripts/receber.py'),'--arquivo',str(p/'ausente.xlsx'),'--manifesto',str(p/'coleta.json')],text=True,capture_output=True)
++if r.returncode:sys.exit(r.stderr)
++ref=json.loads(r.stdout);doc=ref['arquivo'].removeprefix('fontes/')
++pathlib.Path('rascunho/d.md').write_text(f'- [V · documento: {doc} p.2 · fonte: {ref["id"]} · 2026-09-15 · Celso do Vale] regra\n')
++st['etapa_atual']=etapa_anterior;pathlib.Path('registro/estado.json').write_text(json.dumps(st))
++# Arquivo usado apenas nas negativas de escrita abaixo, sem servir de fonte.
++pathlib.Path('fontes/ausente.xlsx').write_text('controle de escrita negada')
++PY_RECEBIDO
+ python3 "$S/validar.py" --arquivo caso/d.md --autor "Celso do Vale" >/dev/null 2>&1
+ gravou=$?
+-grep -q '"documentos": {"ausente.xlsx"' registro/eventos.jsonl 2>/dev/null
++python3 - <<'PY_HASH'
++import json,pathlib,sys
++reg=json.loads(pathlib.Path('registro/recebimentos.json').read_text())['recebimentos'][-1]
++evs=[json.loads(x) for x in pathlib.Path('registro/eventos.jsonl').read_text().splitlines()]
++ultimo=evs[-1];doc=reg['arquivo'].removeprefix('fontes/')
++sys.exit(not (ultimo['evento']=='AssercaoRegistrada' and ultimo['documentos'][doc]==reg['sha256'][:12] and ultimo['fontes'][reg['id']]==reg['sha256']))
++PY_HASH
+ rastro=$?
+ [ $gravou -eq 0 ] && [ $rastro -eq 0 ] \
+   && ok "25 documento presente grava com hash na trilha" \
+diff --git a/testes/receber.py b/testes/receber.py
+new file mode 100644
+index 0000000..a5ee8f5
+--- /dev/null
++++ b/testes/receber.py
+@@ -0,0 +1,123 @@
++"""Recebimento humano: negativas conferem a trilha e preservam fontes."""
++import hashlib
++import json
++import subprocess
++import sys
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.canais import definir
++
++SCRIPT = RAIZ/'eiac-campo/scripts/receber.py'
++
++
++class Receber(CasoHook):
++    def setUp(self):
++        super().setUp(); definir(self.caso)
++        self.estado['etapa_atual'] = 'P2'; self.salvar()
++        self.arquivo = self.caso/'rascunho/entrada/amostra.txt'
++        self.arquivo.parent.mkdir(parents=True); self.arquivo.write_text('documento sintético')
++        self.manifesto = self.caso/'rascunho/entrada/coleta.json'
++        self.dados = dict(ferramenta='drive', objeto_id='OBJ-SINTETICO',
++                          conteiner_id='SINTETICO-documentos-pasta_id',
++                          modificado_em='2026-10-02T10:00:00Z', coletado_em='2026-10-02T11:00:00Z')
++
++    def executar(self, *args):
++        self.manifesto.write_text(json.dumps(self.dados))
++        return subprocess.run([sys.executable, str(SCRIPT), '--arquivo', str(self.arquivo),
++                               '--manifesto', str(self.manifesto), *args], cwd=self.caso,
++                              text=True, capture_output=True)
++
++    def recusa(self, *args):
++        antes = len(self.eventos()); originais = list((self.caso/'fontes').rglob('*'))
++        r = self.executar(*args); self.assertNotEqual(r.returncode, 0, r.stdout)
++        self.assertEqual(len(self.eventos()), antes+1)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++        self.assertEqual(list((self.caso/'fontes').rglob('*')), originais)
++
++    def test_01_origem_nao_declarada(self):
++        self.dados['conteiner_id'] = 'ALHEIO'; self.recusa()
++
++    def test_02_etapa_errada(self):
++        self.estado['etapa_atual'] = 'P9'; self.salvar(); self.recusa()
++
++    def test_03_filtro_alheio(self):
++        self.estado['etapa_atual'] = 'F0'; self.salvar()
++        self.dados.update(ferramenta='tally', conteiner_id='SINTETICO-triagem-formulario_id',
++                          submissao_id='SUB-01', campos_ocultos={'caso': 'outro'})
++        self.recusa()
++
++    def test_04_ausente(self):
++        self.arquivo.unlink(); self.recusa()
++
++    def test_05_hash_duplicado(self):
++        self.assertEqual(self.executar().returncode, 0); self.recusa()
++
++    def test_06_autor_agente(self):
++        self.recusa('--autor', 'AG-01')
++
++    def test_07_symlink_externo(self):
++        self.arquivo.unlink(); self.arquivo.symlink_to('/etc/hosts'); self.recusa()
++
++    def test_08_fora_preparacao(self):
++        self.arquivo = self.caso/'arquivo.txt'; self.arquivo.write_text('controle'); self.recusa()
++
++    def test_09_sem_submissao(self):
++        self.estado['etapa_atual'] = 'F0'; self.salvar()
++        self.dados.update(ferramenta='tally', conteiner_id='SINTETICO-triagem-formulario_id',
++                          campos_ocultos={'caso': self.estado['caso']}); self.recusa()
++
++    def test_10_sessao_agente(self):
++        self.negado('Bash', {'command': f'python3 {SCRIPT} --arquivo {self.arquivo} --manifesto {self.manifesto}'})
++
++    def test_11_data_invalida(self):
++        self.dados['coletado_em'] = 'ontem'; self.recusa()
++
++    def test_12_decisao_versao_alheia(self):
++        self.assertEqual(self.executar().returncode, 0)
++        p = self.caso/'rascunho/decisao.json'
++        p.write_text(json.dumps(dict(decisor='Celso do Vale', motivo='Revisão', data='2026-10-02',
++                                    recebimento_anterior='alheio')))
++        self.recusa('--nova-versao', str(p))
++
++    def test_13_assercao_fonte_inexistente(self):
++        (self.caso/'rascunho/a.md').write_text('- [D · fonte: REC-999999 · Celso do Vale] Controle.\n')
++        r = self.rodar('validar.py', '--arquivo', 'caso/a.md')
++        self.assertNotEqual(r.returncode, 0)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++
++    def test_14_fonte_adulterada(self):
++        r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
++        ref = json.loads(r.stdout); (self.caso/ref['arquivo']).write_text('adulterado')
++        (self.caso/'rascunho/a.md').write_text(f"- [V · fonte: {ref['id']} · Celso do Vale] Controle.\n")
++        r = self.rodar('validar.py', '--arquivo', 'caso/a.md')
++        self.assertNotEqual(r.returncode, 0)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++
++    def test_22_assercao_com_fonte_registrada(self):
++        r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
++        ref = json.loads(r.stdout)
++        (self.caso/'rascunho/a.md').write_text(f"- [V · fonte: {ref['id']} · Celso do Vale] Documento recebido.\n")
++        r = self.rodar('validar.py', '--arquivo', 'caso/a.md')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertEqual(self.eventos()[-1]['fontes'], {ref['id']: ref['sha256']})
++
++    def test_20_recebe_hash_origem(self):
++        r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
++        ref = json.loads(r.stdout)
++        self.assertEqual(ref['sha256'], hashlib.sha256(self.arquivo.read_bytes()).hexdigest())
++        self.assertEqual((self.caso/ref['arquivo']).read_bytes(), self.arquivo.read_bytes())
++        self.assertEqual(ref['origem'], self.dados)
++        self.assertEqual(self.eventos()[-1]['evento'], 'MaterialRecebido')
++
++    def test_21_nova_versao_decidida(self):
++        r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
++        antigo = json.loads(r.stdout)
++        p = self.caso/'rascunho/decisao.json'
++        p.write_text(json.dumps(dict(decisor='Celso do Vale', motivo='Revisão', data='2026-10-02',
++                                    recebimento_anterior=antigo['id'])))
++        r = self.executar('--nova-versao', str(p)); self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertNotEqual(json.loads(r.stdout)['arquivo'], antigo['arquivo'])
++        self.assertTrue((self.caso/antigo['arquivo']).exists())
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)

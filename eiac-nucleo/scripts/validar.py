@@ -13,8 +13,13 @@ import argparse, hashlib, pathlib, re, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
 import playbook as P
+import fontes_registro as F
 
 LINHA = re.compile(r"^\s*-\s*\[(?P<marca>[^\]]+)\]")
+
+
+class _RecusaOrigem(str):
+    """Recusa nova de vínculo de origem, registrada como TentativaNegada."""
 
 
 def campos(marca):
@@ -54,7 +59,7 @@ def validar_linha(marca, pb, n):
     if procedencia == "I" and not any(x.startswith("premissa:") for x in c):
         return f"linha {n}: procedencia I exige premissa"
     if procedencia == "V" and not any(
-        x.startswith(("observacao:", "documento:", "leitura_de_volta:")) for x in c
+        x.startswith(("observacao:", "documento:", "leitura_de_volta:", "fonte:")) for x in c
     ):
         return (f"linha {n}: procedencia V exige evidencia de observacao, "
                 "documento ou leitura de volta")
@@ -73,6 +78,14 @@ def validar_linha(marca, pb, n):
     if doc and not (pathlib.Path("fontes") / doc).exists():
         return (f"linha {n}: documento citado '{doc}' nao esta em fontes/. "
                 f"Citacao que aponta para fora do caso nao e verificavel.")
+    fonte = valor_campo(c, 'fonte')
+    if fonte or doc:
+        try:
+            ref = F.conferir(pb, fonte, doc)
+            if fonte and doc and ref.get('arquivo') != 'fontes/'+doc:
+                return _RecusaOrigem(f'linha {n}: documento diverge da fonte registrada')
+        except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+            return _RecusaOrigem(f'linha {n}: {exc}')
     apur = valor_campo(c, "apuracao")
     apuracoes = dimensoes.get("apuracao", [])
     if apur and apur not in apuracoes:
@@ -115,7 +128,7 @@ def main():
               file=sys.stderr)
         sys.exit(1)
 
-    erros, total, docs = [], 0, {}
+    erros, total, docs, fontes = [], 0, {}, {}
     for n, linha in enumerate(rascunho.read_text(encoding="utf-8").splitlines(), 1):
         m = LINHA.match(linha)
         if not m:
@@ -131,20 +144,24 @@ def main():
         if doc and doc not in docs:
             caminho = pathlib.Path("fontes") / doc
             docs[doc] = hashlib.sha256(caminho.read_bytes()).hexdigest()[:12]
+        fonte = valor_campo(campos(m.group('marca')), 'fonte')
+        if fonte:
+            ref = F.conferir(pb, fonte)
+            fontes[fonte] = ref['sha256']
 
     if total == 0:
         print("nenhuma assercao marcada encontrada", file=sys.stderr); sys.exit(1)
     if erros:
         for e in erros:
             print(e, file=sys.stderr)
-        E.evento("AssercaoRecusada", arquivo=a.arquivo, erros=len(erros),
+        E.evento("TentativaNegada" if any(isinstance(e, _RecusaOrigem) for e in erros) else "AssercaoRecusada", arquivo=a.arquivo, erros=len(erros),
                  autor=responsavel, autor_informado=a.autor)
         sys.exit(1)
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(rascunho.read_text(encoding="utf-8"), encoding="utf-8")
     E.evento("AssercaoRegistrada", arquivo=a.arquivo, assercoes=total,
-             autor=responsavel, autor_informado=a.autor, documentos=docs or None)
+             autor=responsavel, autor_informado=a.autor, documentos=docs or None, fontes=fontes or None)
     print(f"{total} assercoes gravadas em {a.arquivo}"
           + (f" | documentos: {', '.join(docs)}" if docs else ""))
 

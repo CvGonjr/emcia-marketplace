@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.13",
+  "versao": "0.4.14",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -167,6 +167,14 @@
       "script": "canais.py",
       "argumento": "--entrada",
       "escopo": "antes_do_percurso",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "receber-material",
+      "script": "receber.py",
+      "escopo": "fronteira_externa",
       "condicao": {
         "tipo": "sempre"
       }
@@ -859,6 +867,20 @@
       {
         "finalidade": "entregas",
         "direcao": "saida"
+      }
+    ]
+  },
+  "registro_fontes": {
+    "arquivo": "registro/recebimentos.json",
+    "campo": "recebimentos",
+    "id": "id",
+    "caminho": "arquivo",
+    "hash": "sha256",
+    "evento": "MaterialRecebido",
+    "registros_adicionais": [
+      {
+        "arquivo": "registro/habilitacao.json",
+        "evento": "HabilitacaoImportada"
       }
     ]
   }

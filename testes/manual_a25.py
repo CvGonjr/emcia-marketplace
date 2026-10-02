@@ -67,7 +67,7 @@ def conferir(linhas, playbook, comandos, transversais):
     # Seções 3.3/3.4 cobrem o percurso; abertura anterior pertence a §3.2.
     # Atualização de §3.2 proposta na evidência 039, sem editar o pacote canônico.
     atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']
-                       if ato.get('escopo') != 'antes_do_percurso'}
+                       if ato.get('escopo') not in ('antes_do_percurso', 'fronteira_externa')}
     atos_usados = set(transversais)
     comandos_usados = {}
 

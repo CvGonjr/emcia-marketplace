@@ -1,0 +1,22 @@
+test_01_origem_nao_declarada (__main__.Receber.test_01_origem_nao_declarada) ... ok
+test_02_etapa_errada (__main__.Receber.test_02_etapa_errada) ... ok
+test_03_filtro_alheio (__main__.Receber.test_03_filtro_alheio) ... ok
+test_04_ausente (__main__.Receber.test_04_ausente) ... ok
+test_05_hash_duplicado (__main__.Receber.test_05_hash_duplicado) ... ok
+test_06_autor_agente (__main__.Receber.test_06_autor_agente) ... ok
+test_07_symlink_externo (__main__.Receber.test_07_symlink_externo) ... ok
+test_08_fora_preparacao (__main__.Receber.test_08_fora_preparacao) ... ok
+test_09_sem_submissao (__main__.Receber.test_09_sem_submissao) ... ok
+test_10_sessao_agente (__main__.Receber.test_10_sessao_agente) ... ok
+test_11_data_invalida (__main__.Receber.test_11_data_invalida) ... ok
+test_12_decisao_versao_alheia (__main__.Receber.test_12_decisao_versao_alheia) ... ok
+test_13_assercao_fonte_inexistente (__main__.Receber.test_13_assercao_fonte_inexistente) ... ok
+test_14_fonte_adulterada (__main__.Receber.test_14_fonte_adulterada) ... ok
+test_20_recebe_hash_origem (__main__.Receber.test_20_recebe_hash_origem) ... ok
+test_21_nova_versao_decidida (__main__.Receber.test_21_nova_versao_decidida) ... ok
+test_22_assercao_com_fonte_registrada (__main__.Receber.test_22_assercao_com_fonte_registrada) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 3.078s
+
+OK

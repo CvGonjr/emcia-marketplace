@@ -71,6 +71,9 @@ jobs:
       - name: Formulários e redação fixa
         run: python3 testes/formularios.py
 
+      - name: Recebimento e procedência de origem
+        run: python3 testes/receber.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

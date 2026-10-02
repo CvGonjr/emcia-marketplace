@@ -1,0 +1,177 @@
+test_01_origem_nao_declarada (__main__.Receber.test_01_origem_nao_declarada) ... FAIL
+test_02_etapa_errada (__main__.Receber.test_02_etapa_errada) ... FAIL
+test_03_filtro_alheio (__main__.Receber.test_03_filtro_alheio) ... FAIL
+test_04_ausente (__main__.Receber.test_04_ausente) ... FAIL
+test_05_hash_duplicado (__main__.Receber.test_05_hash_duplicado) ... FAIL
+test_06_autor_agente (__main__.Receber.test_06_autor_agente) ... FAIL
+test_07_symlink_externo (__main__.Receber.test_07_symlink_externo) ... FAIL
+test_08_fora_preparacao (__main__.Receber.test_08_fora_preparacao) ... FAIL
+test_09_sem_submissao (__main__.Receber.test_09_sem_submissao) ... FAIL
+test_10_sessao_agente (__main__.Receber.test_10_sessao_agente) ... FAIL
+test_11_data_invalida (__main__.Receber.test_11_data_invalida) ... FAIL
+test_12_decisao_versao_alheia (__main__.Receber.test_12_decisao_versao_alheia) ... FAIL
+test_20_recebe_hash_origem (__main__.Receber.test_20_recebe_hash_origem) ... FAIL
+test_21_nova_versao_decidida (__main__.Receber.test_21_nova_versao_decidida) ... FAIL
+
+======================================================================
+FAIL: test_01_origem_nao_declarada (__main__.Receber.test_01_origem_nao_declarada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 38, in test_01_origem_nao_declarada
+    self.dados['conteiner_id'] = 'ALHEIO'; self.recusa()
+                                           ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_02_etapa_errada (__main__.Receber.test_02_etapa_errada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 41, in test_02_etapa_errada
+    self.estado['etapa_atual'] = 'P9'; self.salvar(); self.recusa()
+                                                      ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_03_filtro_alheio (__main__.Receber.test_03_filtro_alheio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 47, in test_03_filtro_alheio
+    self.recusa()
+    ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_04_ausente (__main__.Receber.test_04_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 50, in test_04_ausente
+    self.arquivo.unlink(); self.recusa()
+                           ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_05_hash_duplicado (__main__.Receber.test_05_hash_duplicado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 53, in test_05_hash_duplicado
+    self.assertEqual(self.executar().returncode, 0); self.recusa()
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_06_autor_agente (__main__.Receber.test_06_autor_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 56, in test_06_autor_agente
+    self.recusa('--autor', 'AG-01')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_07_symlink_externo (__main__.Receber.test_07_symlink_externo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 59, in test_07_symlink_externo
+    self.arquivo.unlink(); self.arquivo.symlink_to('/etc/hosts'); self.recusa()
+                                                                  ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_08_fora_preparacao (__main__.Receber.test_08_fora_preparacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 62, in test_08_fora_preparacao
+    self.arquivo = self.caso/'arquivo.txt'; self.arquivo.write_text('controle'); self.recusa()
+                                                                                 ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_09_sem_submissao (__main__.Receber.test_09_sem_submissao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 67, in test_09_sem_submissao
+    campos_ocultos={'caso': self.estado['caso']}); self.recusa()
+                                                   ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_10_sessao_agente (__main__.Receber.test_10_sessao_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 70, in test_10_sessao_agente
+    self.negado('Bash', {'command': f'python3 {SCRIPT} --arquivo {self.arquivo} --manifesto {self.manifesto}'})
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_11_data_invalida (__main__.Receber.test_11_data_invalida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 73, in test_11_data_invalida
+    self.dados['coletado_em'] = 'ontem'; self.recusa()
+                                         ~~~~~~~~~~~^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 33, in recusa
+    self.assertEqual(len(self.eventos()), antes+1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_12_decisao_versao_alheia (__main__.Receber.test_12_decisao_versao_alheia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 76, in test_12_decisao_versao_alheia
+    self.assertEqual(self.executar().returncode, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_20_recebe_hash_origem (__main__.Receber.test_20_recebe_hash_origem)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 83, in test_20_recebe_hash_origem
+    r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
+                         ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : /usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/receber.py': [Errno 2] No such file or directory
+
+
+======================================================================
+FAIL: test_21_nova_versao_decidida (__main__.Receber.test_21_nova_versao_decidida)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/receber.py", line 91, in test_21_nova_versao_decidida
+    r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
+                         ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : /usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/receber.py': [Errno 2] No such file or directory
+
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.403s
+
+FAILED (failures=14)
