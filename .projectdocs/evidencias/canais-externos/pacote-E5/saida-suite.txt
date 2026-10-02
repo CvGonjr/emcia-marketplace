@@ -1,0 +1,15 @@
+test_01_nao_emitido (__main__.Entregar.test_01_nao_emitido) ... ok
+test_02_versao_divergente (__main__.Entregar.test_02_versao_divergente) ... ok
+test_03_hash_divergente (__main__.Entregar.test_03_hash_divergente) ... ok
+test_04_destino_alheio (__main__.Entregar.test_04_destino_alheio) ... ok
+test_05_destinatario_agente (__main__.Entregar.test_05_destinatario_agente) ... ok
+test_06_arquivo_alterado_apos_emissao (__main__.Entregar.test_06_arquivo_alterado_apos_emissao) ... ok
+test_07_autor_agente (__main__.Entregar.test_07_autor_agente) ... ok
+test_08_sessao_agente (__main__.Entregar.test_08_sessao_agente) ... ok
+test_09_destino_entrada (__main__.Entregar.test_09_destino_entrada) ... ok
+test_20_entrega_emitida (__main__.Entregar.test_20_entrega_emitida) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.177s
+
+OK

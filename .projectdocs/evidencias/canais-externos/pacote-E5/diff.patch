@@ -1,0 +1,339 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index d46706d..be5ce4d 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -74,6 +74,12 @@ jobs:
+       - name: Recebimento e procedência de origem
+         run: python3 testes/receber.py
+ 
++      - name: Entrega com emissão e destino
++        run: python3 testes/entregar.py
++
++      - name: Percurso sintético de canais
++        run: python3 testes/canais_percurso.py
++
+       - name: Versão do plugin mudou junto com o núcleo
+         if: github.event_name == 'pull_request'
+         run: |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 144db10..a1080fb 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.16",
++  "version": "0.8.17",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/scripts/entregar.py b/eiac-campo/scripts/entregar.py
+new file mode 100644
+index 0000000..d8f8fa1
+--- /dev/null
++++ b/eiac-campo/scripts/entregar.py
+@@ -0,0 +1,66 @@
++"""Registra a entrega publicada e conferida pelo engenheiro, sem API ou aceite."""
++import argparse
++import datetime
++import fcntl
++import hashlib
++import json
++import canais as K
++
++
++def entregar(entrada, autor=None):
++    st, pb = K.contexto(autor)
++    dados = json.loads(K.seguro(entrada, 'rascunho').read_text())
++    K.exigir(isinstance(dados, dict) and set(dados) == {'entregavel', 'versao', 'sha256', 'arquivo_id',
++                                                      'destino_id', 'destinatario', 'data'}, 'campos da entrega inválidos')
++    emissao = st.get('entregaveis_emitidos', {}).get(dados['entregavel'])
++    K.exigir(isinstance(emissao, dict), 'entregável não emitido pelo núcleo')
++    K.exigir(type(dados['versao']) is int and dados['versao'] == emissao.get('versao'), 'versão diferente da emitida')
++    arquivo = K.seguro(emissao['arquivo'], 'caso')
++    K.exigir(arquivo.is_file(), 'arquivo emitido ausente')
++    sha = hashlib.sha256(arquivo.read_bytes()).hexdigest()
++    K.exigir(dados['sha256'] == emissao.get('sha256') == sha, 'hash divergente da emissão; emita novamente após revisão')
++    eventos = [e for e in K.E.eventos() if e.get('evento') == 'EntregavelEmitido'
++               and e.get('entregavel') == dados['entregavel']]
++    K.exigir(bool(eventos) and eventos[-1].get('sha256') == sha
++             and eventos[-1].get('versao') == dados['versao'], 'emissão sem evento coerente')
++    canal = K.resolver(pb, dados['entregavel'], 'saida')
++    K.exigir(canal['finalidade'] == 'entregas' and canal['ferramenta'] == 'drive', 'canal de entregas não declarado')
++    K.exigir(dados['destino_id'] == canal['ids']['pasta_id'], 'destino não declarado para entregas')
++    K.id_externo(dados['arquivo_id']); K.id_externo(dados['destino_id'])
++    K.exigir(K.E.pessoa_nomeada(dados['destinatario']), 'destinatário precisa ser pessoa nomeada')
++    datetime.date.fromisoformat(dados['data'])
++    p = K.seguro('registro/entregas.json')
++    registro = json.loads(p.read_text()) if p.exists() else {'schema': 1, 'entregas': []}
++    evs = [e for e in K.E.eventos() if e.get('evento') == 'EntregavelEntregue']
++    K.exigir(bool(p.exists()) == bool(evs), 'registro de entregas e trilha divergentes')
++    if evs:
++        K.exigir(evs[-1].get('registro_sha256') == hashlib.sha256(p.read_bytes()).hexdigest(), 'registro de entregas adulterado')
++    K.exigir(isinstance(registro.get('entregas'), list), 'registro de entregas inválido')
++    ref = dict(dados, id=f"ENT-{len(registro['entregas'])+1:06d}", autor=st['responsavel'],
++               canais_versao=K.G.carregar(pb)['versao'], registrado_em=datetime.datetime.now(datetime.timezone.utc).isoformat())
++    backup = p.read_bytes() if p.exists() else None
++    try:
++        registro['entregas'].append(ref); K.escrever(p, registro)
++        K.E.evento('EntregavelEntregue', **ref, registro_sha256=hashlib.sha256(p.read_bytes()).hexdigest())
++    except Exception:
++        if backup is None: p.unlink(missing_ok=True)
++        else: p.write_bytes(backup)
++        raise
++    return ref
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--entrada', required=True); ap.add_argument('--autor')
++    a = ap.parse_args()
++    try:
++        with K.seguro('registro/.canais.lock').open('a') as lock:
++            fcntl.flock(lock, fcntl.LOCK_EX)
++            resultado = entregar(a.entrada, a.autor)
++        print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
++        K.E.evento('TentativaNegada', autor=(K.E.ler() or {}).get('responsavel'), operacao='entregar-material', motivo=str(exc))
++        ap.exit(1, 'Recusado: '+str(exc)+'\n')
++
++
++if __name__ == '__main__': main()
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index c83f4f0..a6ba298 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.14",
++  "versao": "0.4.15",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+   "referencia_integridade": {
+     "diretorio": "metodo",
+@@ -178,6 +178,14 @@
+       "condicao": {
+         "tipo": "sempre"
+       }
++    },
++    {
++      "id": "entregar-material",
++      "script": "entregar.py",
++      "escopo": "fronteira_externa",
++      "condicao": {
++        "tipo": "sempre"
++      }
+     }
+   ],
+   "apuracao_nivel": {
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index 2d40e0b..d04d27a 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.38",
++  "version": "0.2.39",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index ca11081..2b7a66e 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -14,7 +14,7 @@ RecusaMaquina ou RecusaEmissao,
+ com a acao tentada, o motivo e o estado relevante no momento da recusa —
+ recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
+ """
+-import argparse, datetime, pathlib, sys
++import argparse, datetime, hashlib, pathlib, sys
+ 
+ sys.path.insert(0, str(pathlib.Path(__file__).parent))
+ import estado as E
+@@ -327,10 +327,11 @@ def emitir(st, pb, ent_id, autor, materializar=None):
+     versao = (anterior.get("versao") + 1) if anterior else 1
+     registro_emissao[ent_id] = {
+         "arquivo": arquivo, "versao": versao, "autor": autor,
++        "sha256": hashlib.sha256(caminho.read_bytes()).hexdigest(),
+     }
+ 
+     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor,
+-             arquivo=arquivo, versao=versao)
++             arquivo=arquivo, versao=versao, sha256=registro_emissao[ent_id]['sha256'])
+     return None, None
+ 
+ 
+diff --git a/testes/canais_percurso.py b/testes/canais_percurso.py
+new file mode 100644
+index 0000000..795a864
+--- /dev/null
++++ b/testes/canais_percurso.py
+@@ -0,0 +1,71 @@
++"""Percurso completo exclusivamente sintético, pelos comandos reais."""
++import hashlib
++import json
++import subprocess
++import sys
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.habilitacao_0d import criar
++from apoio.canais import dados
++
++
++class Percurso(CasoHook):
++    def chamar(self, script, *args):
++        r = subprocess.run([sys.executable, str(RAIZ/script), *args], cwd=self.caso,
++                           text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        return r
++
++    def git(self, *args):
++        r = subprocess.run(['git', *args], cwd=self.caso, text=True, capture_output=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++
++    def test_20_habilitacao_canais_triagem_documento_emissao_entrega(self):
++        exp = criar(self.base/'expediente', self.estado['caso'], 'Celso do Vale')
++        self.git('init', '-q'); self.git('config', 'user.name', 'Celso do Vale')
++        self.git('config', 'user.email', 'sintetico@example.invalid')
++        canais = self.caso/'rascunho/canais.json'; canais.write_text(json.dumps(dados(self.caso)))
++        self.chamar('eiac-campo/scripts/importar_habilitacao.py', '--expediente', str(exp), '--canais', str(canais))
++        reg = json.loads((self.caso/'registro/canais.json').read_text())
++        h = next(c for c in reg['canais'] if c['finalidade'] == 'habilitacao')
++        self.assertEqual(h['ids']['formulario_id'], 'FORM-SINTETICO')
++        self.assertEqual(h['origem']['habilitacao'], 'HAB-CONTROLE')
++        self.chamar('eiac-nucleo/scripts/validar.py', '--arquivo', 'caso/00-habilitacao.md')
++        self.chamar('eiac-nucleo/scripts/selar.py', '--nota', 'habilitação sintética com canais')
++        self.assertEqual(self.hook('Skill', {'skill': 'eiac-campo:hb-enquadrar'}).returncode, 0)
++        entrada = self.caso/'rascunho/entrada'; entrada.mkdir()
++        triagem = entrada/'triagem.json'
++        modelo = json.loads((RAIZ/'eiac-campo/reference/formularios/triagem.json').read_text())
++        triagem.write_text(json.dumps(dict(formulario_id='SINTETICO-triagem-formulario_id',
++            submissao_id='SUB-TRIAGEM', campos_ocultos={'caso': self.estado['caso']},
++            perguntas=modelo['perguntas'], respostas=[1,1,3,1,1,1,2,2,2])))
++        manifesto = entrada/'coleta.json'
++        manifesto.write_text(json.dumps(dict(ferramenta='tally', objeto_id='SUB-TRIAGEM',
++            conteiner_id='SINTETICO-triagem-formulario_id', submissao_id='SUB-TRIAGEM',
++            campos_ocultos={'caso': self.estado['caso']}, modificado_em='2026-10-02T10:00:00Z',
++            coletado_em='2026-10-02T11:00:00Z')))
++        ref = json.loads(self.chamar('eiac-campo/scripts/receber.py', '--arquivo', str(triagem), '--manifesto', str(manifesto)).stdout)
++        (self.caso/'rascunho/triagem.md').write_text(f"- [D · fonte: {ref['id']} · Celso do Vale · 2026-10-02] Respostas declaradas preservadas.\n")
++        self.chamar('eiac-nucleo/scripts/validar.py', '--arquivo', 'caso/triagem.md')
++        self.chamar('eiac-nucleo/scripts/avancar.py', '--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6', '--autor', 'Celso do Vale')
++        for etapa in ['F0', 'P1']:
++            self.chamar('eiac-nucleo/scripts/avancar.py', '--encerrar', etapa, '--autor', 'Celso do Vale')
++        documento = entrada/'documento.txt'; documento.write_text('Documento sintético do processo.')
++        manifesto.write_text(json.dumps(dict(ferramenta='drive', objeto_id='OBJ-DOC',
++            conteiner_id='SINTETICO-documentos-pasta_id', modificado_em='2026-10-02T10:00:00Z',
++            coletado_em='2026-10-02T11:00:00Z')))
++        self.chamar('eiac-campo/scripts/receber.py', '--arquivo', str(documento), '--manifesto', str(manifesto))
++        self.chamar('eiac-campo/scripts/entregaveis.py', '--renderizar', 'E1', '--emitir', '--autor', 'Celso do Vale')
++        st = json.loads((self.caso/'registro/estado.json').read_text()); emitido = st['entregaveis_emitidos']['E1']
++        self.assertEqual(hashlib.sha256((self.caso/'caso/entregaveis/E1.md').read_bytes()).hexdigest(), emitido['sha256'])
++        entrega = self.caso/'rascunho/entrega.json'
++        entrega.write_text(json.dumps(dict(entregavel='E1', versao=emitido['versao'], sha256=emitido['sha256'],
++            arquivo_id='DEST-E1', destino_id='SINTETICO-entregas-pasta_id', destinatario='Pessoa Cliente', data='2026-10-02')))
++        self.chamar('eiac-campo/scripts/entregar.py', '--entrada', str(entrega))
++        eventos = [e['evento'] for e in self.eventos()]
++        for tipo in ['HabilitacaoImportada', 'CanaisDefinidos', 'MaterialRecebido', 'EntregavelEmitido', 'EntregavelEntregue']:
++            self.assertIn(tipo, eventos)
++        self.assertEqual(eventos.count('MaterialRecebido'), 2)
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index 3d4589d..af0dbcd 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -198,7 +198,7 @@ class DecisaoA12(unittest.TestCase):
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+         self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material"})
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/entregar.py b/testes/entregar.py
+new file mode 100644
+index 0000000..f83ac27
+--- /dev/null
++++ b/testes/entregar.py
+@@ -0,0 +1,77 @@
++"""Entrega: negativas antes do controle de emissão e registro humano."""
++import hashlib
++import json
++import subprocess
++import sys
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.canais import definir
++
++SCRIPT = RAIZ/'eiac-campo/scripts/entregar.py'
++
++
++class Entregar(CasoHook):
++    def setUp(self):
++        super().setUp(); definir(self.caso)
++        self.arquivo = self.caso/'caso/entregaveis/E1.md'
++        self.arquivo.parent.mkdir(parents=True); self.arquivo.write_text('entregável sintético')
++        self.estado['cumprimentos']['F0'] = {'cumprido': True}
++        self.salvar()
++        self.entrada = self.caso/'rascunho/entrega.json'
++        self.dados = dict(entregavel='E1', versao=1,
++                          sha256=hashlib.sha256(self.arquivo.read_bytes()).hexdigest(),
++                          arquivo_id='DEST-SINTETICO', destino_id='SINTETICO-entregas-pasta_id',
++                          destinatario='Pessoa Cliente', data='2026-10-02')
++
++    def emitir(self):
++        r = self.rodar('avancar.py', '--emitir', 'E1', '--autor', 'Celso do Vale')
++        self.assertEqual(r.returncode, 0, r.stderr)
++
++    def executar(self, *args):
++        self.entrada.write_text(json.dumps(self.dados))
++        return subprocess.run([sys.executable, str(SCRIPT), '--entrada', str(self.entrada), *args],
++                              cwd=self.caso, text=True, capture_output=True)
++
++    def recusa(self, *args):
++        antes = len(self.eventos()); r = self.executar(*args)
++        self.assertNotEqual(r.returncode, 0, r.stdout)
++        self.assertEqual(len(self.eventos()), antes+1)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++
++    def test_01_nao_emitido(self):
++        self.recusa()
++
++    def test_02_versao_divergente(self):
++        self.emitir(); self.dados['versao'] = 2; self.recusa()
++
++    def test_03_hash_divergente(self):
++        self.emitir(); self.dados['sha256'] = '0'*64; self.recusa()
++
++    def test_04_destino_alheio(self):
++        self.emitir(); self.dados['destino_id'] = 'ALHEIO'; self.recusa()
++
++    def test_05_destinatario_agente(self):
++        self.emitir(); self.dados['destinatario'] = 'AG-01'; self.recusa()
++
++    def test_06_arquivo_alterado_apos_emissao(self):
++        self.emitir(); self.arquivo.write_text('outro conteúdo')
++        self.dados['sha256'] = hashlib.sha256(self.arquivo.read_bytes()).hexdigest(); self.recusa()
++
++    def test_07_autor_agente(self):
++        self.emitir(); self.recusa('--autor', 'AG-01')
++
++    def test_08_sessao_agente(self):
++        self.negado('Bash', {'command': f'python3 {SCRIPT} --entrada {self.entrada}'})
++
++    def test_09_destino_entrada(self):
++        self.emitir(); self.dados['destino_id'] = 'SINTETICO-documentos-pasta_id'; self.recusa()
++
++    def test_20_entrega_emitida(self):
++        self.emitir(); r = self.executar(); self.assertEqual(r.returncode, 0, r.stderr)
++        reg = json.loads(r.stdout)
++        self.assertEqual(reg['sha256'], self.dados['sha256'])
++        self.assertEqual(self.eventos()[-1]['evento'], 'EntregavelEntregue')
++        self.assertNotIn('aceite', reg)
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)

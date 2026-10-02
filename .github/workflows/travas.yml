@@ -74,6 +74,12 @@ jobs:
       - name: Recebimento e procedência de origem
         run: python3 testes/receber.py
 
+      - name: Entrega com emissão e destino
+        run: python3 testes/entregar.py
+
+      - name: Percurso sintético de canais
+        run: python3 testes/canais_percurso.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

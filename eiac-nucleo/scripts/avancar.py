@@ -14,7 +14,7 @@ RecusaMaquina ou RecusaEmissao,
 com a acao tentada, o motivo e o estado relevante no momento da recusa —
 recusa silenciosa nao e aceitavel aqui do mesmo jeito que nao e em guarda.py.
 """
-import argparse, datetime, pathlib, sys
+import argparse, datetime, hashlib, pathlib, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import estado as E
@@ -327,10 +327,11 @@ def emitir(st, pb, ent_id, autor, materializar=None):
     versao = (anterior.get("versao") + 1) if anterior else 1
     registro_emissao[ent_id] = {
         "arquivo": arquivo, "versao": versao, "autor": autor,
+        "sha256": hashlib.sha256(caminho.read_bytes()).hexdigest(),
     }
 
     E.evento("EntregavelEmitido", entregavel=ent_id, autor=autor,
-             arquivo=arquivo, versao=versao)
+             arquivo=arquivo, versao=versao, sha256=registro_emissao[ent_id]['sha256'])
     return None, None
 
 
