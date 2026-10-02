@@ -30,6 +30,8 @@ for chave, valor in [('user.name', pessoa), ('user.email', 'controle@exemplo.com
 # Expediente e PDFs exclusivamente sintéticos; importação/validação/selo reais.
 sys.path.insert(0, str(raiz / 'testes'))
 from apoio.habilitacao_0d import criar as criar_expediente
+from apoio.canais import definir as definir_canais
+definir_canais(caso)
 with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
     exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
     rodar([sys.executable, str(raiz/'eiac-campo/scripts/importar_habilitacao.py'), '--expediente', str(exp)], caso)

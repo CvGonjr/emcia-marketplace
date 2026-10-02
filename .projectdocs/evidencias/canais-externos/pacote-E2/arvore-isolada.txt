@@ -1,0 +1,144 @@
+$ bash testes/negativos.sh
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 caso com responsavel agente recusado na abertura
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    G6a Write em fontes/ negado
+  ok    G6b Edit em fontes/ negado
+  ok    G6c bash redirecionando para fontes/ negado
+  ok    G6d bash removendo de fontes/ negado
+  ok    G6e bash mv para fontes/ negado
+  ok    G6f Write em contexto/fontes/ negado
+  ok    G6g tentativa negada em fontes/ gera evento
+  ok    G6h leitura em fontes/ permanece permitida
+  ok    G6i cd seguido de rm em fontes/ negado
+  ok    G6j sed -i em fontes/ negado
+  ok    G6k remocao indireta por Python negada
+  ok    G6l leitura simples por Bash permanece permitida
+  ok    ISO2 núcleo recusa registro de execução de contraste
+  ok    ISO-controle núcleo opera em caso de campo isolado
+  ok    ISO-selo-1 selo recusa evento carimbado variante contraste
+  ok    ISO-selo-2 selo recusa evento sem carimbo de componente
+  ok    ISO-selo-controle trilha homogênea de campo sela normalmente
+  ok    ISO-selo-controle eventos reais carregam componente.variante=campo (plugin.json real)
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem
+
+$ python3 testes/contexto.py
+== objetos CTX — pacote 2.5.1
+  ok    2.5.1-T01 Termo válido
+  ok    2.5.1-T02 Entidade válida
+  ok    2.5.1-T03 Regra válida
+  ok    2.5.1-T04 Fonte válida
+  ok    2.5.1-T05 Termo sem significado
+  ok    2.5.1-T06 Entidade sem nome
+  ok    2.5.1-T07 Regra sem estabilidade
+  ok    2.5.1-T08 Fonte sem contrato.significado
+  ok    2.5.1-T09 D/I/V nos quatro objetos
+  ok    2.5.1-T10 Taxonomias obsoletas
+  ok    2.5.1-T11 Sete campos centrais da Regra
+
+11 testes estruturais aprovados
+
+$ python3 testes/habilitacao.py
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 0.113s
+
+OK
+
+$ python3 testes/habilitacao_0d.py
+test_01_manifesto_divergente (__main__.Abertura.test_01_manifesto_divergente) ... ok
+test_02_identificador_divergente_antes_da_abertura (__main__.Abertura.test_02_identificador_divergente_antes_da_abertura) ... ok
+test_03_expediente_incompleto (__main__.Abertura.test_03_expediente_incompleto) ... ok
+test_20_percurso_desde_novo_caso (__main__.Abertura.test_20_percurso_desde_novo_caso) ... ok
+test_21_diagnostico_de_integridade_nao_bloqueia (__main__.Abertura.test_21_diagnostico_de_integridade_nao_bloqueia) ... ok
+test_01_sem_formalizacao (__main__.Importacao.test_01_sem_formalizacao) ... ok
+test_02_sem_acessos (__main__.Importacao.test_02_sem_acessos) ... ok
+test_03_caso_divergente (__main__.Importacao.test_03_caso_divergente) ... ok
+test_04_responsavel_divergente (__main__.Importacao.test_04_responsavel_divergente) ... ok
+test_05_nao_prosseguir (__main__.Importacao.test_05_nao_prosseguir) ... ok
+test_06_pdf_adulterado (__main__.Importacao.test_06_pdf_adulterado) ... ok
+test_07_sessao_do_agente (__main__.Importacao.test_07_sessao_do_agente) ... ok
+test_08_segunda_importacao (__main__.Importacao.test_08_segunda_importacao) ... ok
+test_09_autor_agente (__main__.Importacao.test_09_autor_agente) ... ok
+test_10_etapa_encerrada (__main__.Importacao.test_10_etapa_encerrada) ... ok
+test_11_matriz_adulterada (__main__.Importacao.test_11_matriz_adulterada) ... ok
+test_12_workspace_divergente_recusa_com_evento (__main__.Importacao.test_12_workspace_divergente_recusa_com_evento) ... ok
+test_13_canais_ausentes_recusa_com_evento (__main__.Importacao.test_13_canais_ausentes_recusa_com_evento) ... ok
+test_20_importa_apenas_artefatos_autorizados (__main__.Importacao.test_20_importa_apenas_artefatos_autorizados) ... ok
+test_21_reimportacao_decidida_preserva_historico (__main__.Importacao.test_21_reimportacao_decidida_preserva_historico) ... ok
+test_22_migra_formulario_com_vinculo (__main__.Importacao.test_22_migra_formulario_com_vinculo) ... ok
+test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) ... ok
+test_02_recusa_nao_sobrescreve_entregavel_anterior (__main__.Restricoes.test_02_recusa_nao_sobrescreve_entregavel_anterior) ... ok
+test_20_sem_restricao_materializa_comportamento_existente (__main__.Restricoes.test_20_sem_restricao_materializa_comportamento_existente) ... ok
+test_01_habilidade_sem_evento (__main__.SeloConfirmado.test_01_habilidade_sem_evento) ... ok
+test_02_importacao_sem_selo (__main__.SeloConfirmado.test_02_importacao_sem_selo) ... ok
+test_03_encerrar_sem_selo (__main__.SeloConfirmado.test_03_encerrar_sem_selo) ... ok
+test_04_commit_recusado_nao_libera (__main__.SeloConfirmado.test_04_commit_recusado_nao_libera) ... ok
+test_05_selo_anterior_nao_libera (__main__.SeloConfirmado.test_05_selo_anterior_nao_libera) ... ok
+test_06_git_inacessivel_recusa (__main__.SeloConfirmado.test_06_git_inacessivel_recusa) ... ok
+test_07_reimportacao_exige_novo_selo (__main__.SeloConfirmado.test_07_reimportacao_exige_novo_selo) ... ok
+test_08_commit_comum_nao_confirma_tentativa_recusada (__main__.SeloConfirmado.test_08_commit_comum_nao_confirma_tentativa_recusada) ... ok
+test_20_selo_posterior_libera_habilidade_e_encerramento (__main__.SeloConfirmado.test_20_selo_posterior_libera_habilidade_e_encerramento) ... ok
+test_21_contrato_alternativo_generico (__main__.SeloConfirmado.test_21_contrato_alternativo_generico) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 9.046s
+
+OK
+
+$ python3 testes/canais.py
+test_01_id_vazio (__main__.Canais.test_01_id_vazio) ... ok
+test_02_finalidade_desconhecida (__main__.Canais.test_02_finalidade_desconhecida) ... ok
+test_03_ferramenta_desconhecida (__main__.Canais.test_03_ferramenta_desconhecida) ... ok
+test_04_autor_agente (__main__.Canais.test_04_autor_agente) ... ok
+test_05_sessao_agente (__main__.Canais.test_05_sessao_agente) ... ok
+test_06_resolver_ausente (__main__.Canais.test_06_resolver_ausente) ... ok
+test_07_caso_alheio (__main__.Canais.test_07_caso_alheio) ... ok
+test_08_etapa_fora_contrato (__main__.Canais.test_08_etapa_fora_contrato) ... ok
+test_09_filtro_alheio (__main__.Canais.test_09_filtro_alheio) ... ok
+test_10_ids_com_caminho (__main__.Canais.test_10_ids_com_caminho) ... ok
+test_11_versao_repetida (__main__.Canais.test_11_versao_repetida) ... ok
+test_12_entrada_malformada (__main__.Canais.test_12_entrada_malformada) ... ok
+test_13_adulteracao (__main__.Canais.test_13_adulteracao) ... ok
+test_14_etapa_sem_canal_recusa_com_evento (__main__.Canais.test_14_etapa_sem_canal_recusa_com_evento) ... ok
+test_15_finalidade_exigida_ausente (__main__.Canais.test_15_finalidade_exigida_ausente) ... ok
+test_20_planejar_somente_leitura (__main__.Canais.test_20_planejar_somente_leitura) ... ok
+test_21_definir_resolver_historico (__main__.Canais.test_21_definir_resolver_historico) ... ok
+test_22_decisor_distinto_autoria_fixa (__main__.Canais.test_22_decisor_distinto_autoria_fixa) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.835s
+
+OK

@@ -259,6 +259,8 @@ def aplicar(root, s, action, p):
                                   respondente=pessoa(p.get("respondente")),
                                   versao_perguntas=texto(p.get("versao_perguntas")),
                                   recebido_em=agora(), arquivo=importar(root, p.get("arquivo")))
+        if p.get('workspace_id') is not None:
+            s['fontes'][ident]['workspace_id'] = texto(p['workspace_id'])
         invalidar(s)
     elif action == "pendencia":
         ident = identificador(p.get("id"))

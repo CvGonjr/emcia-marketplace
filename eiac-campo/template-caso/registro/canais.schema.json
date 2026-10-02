@@ -134,6 +134,33 @@
               null,
               "[{caso}/{etapa}]"
             ]
+          },
+          "origem": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "habilitacao",
+              "expediente_sha256",
+              "fontes"
+            ],
+            "properties": {
+              "habilitacao": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expediente_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "fontes": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         },
         "allOf": [

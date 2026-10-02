@@ -89,6 +89,11 @@ def executar(fonte):
         rodar(['git', 'config', chave, valor], caso)
     sys.path.insert(0, str(fonte/'testes'))
     from apoio.habilitacao_0d import criar as criar_expediente
+    from apoio.canais import dados as dados_canais
+    declaracao = caso/'rascunho/canais-sinteticos.json'
+    declaracao.parent.mkdir(exist_ok=True)
+    declaracao.write_text(json.dumps(dados_canais(caso), ensure_ascii=False))
+    rodar([sys.executable, str(campo_scripts/'canais.py'), 'definir', '--entrada', str(declaracao)], caso)
     with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
         exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
         rodar([sys.executable, str(campo_scripts/'importar_habilitacao.py'), '--expediente', str(exp)], caso)

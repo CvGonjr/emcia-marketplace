@@ -84,7 +84,15 @@ def validar(dados, st, pb):
     vistos = set()
     for c in dados['canais']:
         exigir(isinstance(c, dict), 'canal precisa ser objeto')
-        exigir(set(c) == {'finalidade', 'ferramenta', 'direcao', 'etapas', 'entregaveis', 'proprietario', 'ids', 'acesso_cliente', 'sensivel', 'filtro', 'marcador'}, 'campos de canal inválidos')
+        obrigatorios = {'finalidade', 'ferramenta', 'direcao', 'etapas', 'entregaveis', 'proprietario',
+                        'ids', 'acesso_cliente', 'sensivel', 'filtro', 'marcador'}
+        exigir(obrigatorios <= set(c) <= obrigatorios | {'origem'}, 'campos de canal inválidos')
+        if 'origem' in c:
+            o = c['origem']
+            exigir(isinstance(o, dict) and set(o) == {'habilitacao', 'expediente_sha256', 'fontes'}, 'vínculo de origem inválido')
+            texto(o['habilitacao'])
+            exigir(isinstance(o['expediente_sha256'], str) and bool(re.fullmatch('[a-f0-9]{64}', o['expediente_sha256'])), 'hash de expediente inválido')
+            exigir(isinstance(o['fontes'], list) and bool(o['fontes']) and all(isinstance(x, str) and x for x in o['fontes']), 'fontes de origem ausentes')
         f = c['finalidade']; ferramenta = c['ferramenta']
         exigir(f in previstos, 'finalidade não prevista no playbook')
         exigir(ferramenta in IDS, 'ferramenta desconhecida')
@@ -109,6 +117,38 @@ def validar(dados, st, pb):
         else:
             exigir(c['filtro'] is None and c['marcador'] is None, 'filtro/marcador incompatível')
     return dados
+
+
+def migrar_origens(dados, expediente, hash_expediente):
+    """Endereços da habilitação: o workspace faltante vem da decisão humana.
+
+    Nunca inventa ids nem consulta a ferramenta por nome.
+    """
+    import copy
+    resultado = copy.deepcopy(dados)
+    bases = [c for c in resultado['canais'] if c['finalidade'] == 'habilitacao']
+    exigir(bool(bases), 'defina o workspace de habilitação em canais.py definir antes de importar')
+    bases_por_form = {c['ids']['formulario_id']: c for c in bases}
+    novos = []
+    agrupadas = {}
+    for ident, fonte in expediente['fontes'].items():
+        agrupadas.setdefault(fonte['formulario'], []).append((ident, fonte))
+    for form, fontes in agrupadas.items():
+        base = bases_por_form.get(form)
+        if base is None:
+            exigir(len({c['ids']['workspace_id'] for c in bases}) == 1,
+                   'workspace ambíguo: declare cada formulário antes da importação')
+            base = bases[0]
+        canal = copy.deepcopy(base)
+        canal['ids']['formulario_id'] = id_externo(form)
+        for _, fonte in fontes:
+            if fonte.get('workspace_id'):
+                exigir(canal['ids']['workspace_id'] == fonte['workspace_id'], 'workspace diverge do expediente')
+        canal['origem'] = dict(habilitacao=expediente['habilitacao'], expediente_sha256=hash_expediente,
+                               fontes=[ident for ident, _ in fontes])
+        novos.append(canal)
+    resultado['canais'] = [c for c in resultado['canais'] if c['finalidade'] != 'habilitacao']+novos
+    return resultado
 
 
 def planejar(st, pb):

@@ -19,6 +19,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]/'eiac-nucleo/
 import estado as E
 import playbook as P
 import habilitacao as H
+import canais as K
 
 
 def serializar(dados):
@@ -84,7 +85,7 @@ def caminho_seguro(relativo):
     return p
 
 
-def importar(expediente, autor=None, decisao=None):
+def importar(expediente, autor=None, decisao=None, canais_entrada=None):
     st=E.ler(); pb,erro=P.carregar()
     H.exigir(st is not None and not erro,erro or 'caso ausente')
     pessoa=st.get('responsavel')
@@ -109,6 +110,24 @@ def importar(expediente, autor=None, decisao=None):
                  'decisão não identifica importação anterior')
     else: H.exigir(decisao is None,'decisão de reimportação sem importação anterior')
     s,pronto,arquivos,hash_expediente=conferir(expediente,st['caso'],pessoa)
+    canais_propostos = None
+    canais_path = None
+    canais_backup = None
+    if pb.get('registro_canais'):
+        canais_path = caminho_seguro(pb['registro_canais']['arquivo'])
+        if canais_entrada:
+            canais_base = json.loads(pathlib.Path(canais_entrada).read_text())
+        else:
+            H.exigir(canais_path.exists(), 'canais ausentes: execute canais.py definir --entrada <json> ou importe com --canais <json>')
+            canais_base = K.G.carregar(pb)
+            canais_base['versao'] += 1
+            canais_base['data'] = datetime.date.today().isoformat()
+            canais_base['decidido_por'] = pessoa
+        canais_propostos = K.migrar_origens(canais_base, s, hash_expediente)
+        K.validar(canais_propostos, st, pb)
+        vigente_canais = K.G.carregar(pb) if canais_path.exists() else None
+        H.exigir(canais_propostos['versao'] == (vigente_canais['versao']+1 if vigente_canais else 1), 'versão de canais deve suceder a vigente')
+        canais_backup = canais_path.read_bytes() if canais_path.exists() else None
     agora=datetime.datetime.now(datetime.timezone.utc).isoformat()
     ident=f"importacao-{len(historico)+1:03d}-{agora[:10]}"
     destino=caminho_seguro('fontes/habilitacao/'+ident)
@@ -161,6 +180,8 @@ def importar(expediente, autor=None, decisao=None):
             os.replace(folder,destino)
             os.replace(stage/'rascunho.md',draft)
             os.replace(stage/'registro.json',registro)
+            if canais_propostos:
+                K.definir(canais_propostos, st, pb)
             E.evento('HabilitacaoImportada',autor=pessoa,importacao=ident,habilitacao=s['habilitacao'],
                      desfecho=vigente['desfecho'],arquivos=refs,registro_sha256=H.digest(registro.read_bytes()))
         except Exception:
@@ -168,6 +189,9 @@ def importar(expediente, autor=None, decisao=None):
             for p,backup in ((registro,backup_reg),(draft,backup_draft)):
                 if backup is None: p.unlink(missing_ok=True)
                 else: p.write_bytes(backup)
+            if canais_path:
+                if canais_backup is None: canais_path.unlink(missing_ok=True)
+                else: canais_path.write_bytes(canais_backup)
             raise
     return vigente
 
@@ -177,13 +201,14 @@ def main():
     ap.add_argument('--expediente',required=True,type=pathlib.Path)
     ap.add_argument('--decisao-reimportacao',type=pathlib.Path)
     ap.add_argument('--autor',help='recusado: autoria é fixada no caso')
+    ap.add_argument('--canais', type=pathlib.Path, help='declaração humana completa de canais, com ids provisionados')
     a=ap.parse_args()
     try:
         caminho_seguro('registro')
-        lock=caminho_seguro('registro/.importacao.lock')
+        lock=caminho_seguro('registro/.canais.lock')
         with lock.open('a') as f:
             fcntl.flock(f,fcntl.LOCK_EX)
-            resultado=importar(a.expediente,a.autor,a.decisao_reimportacao)
+            resultado=importar(a.expediente,a.autor,a.decisao_reimportacao,a.canais)
         print(json.dumps(resultado,ensure_ascii=False,indent=2))
     except (ValueError,OSError,KeyError,TypeError,AttributeError) as exc:
         E.evento('TentativaNegada',autor=(E.ler() or {}).get('responsavel'),

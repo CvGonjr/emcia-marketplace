@@ -1,0 +1,435 @@
+diff --git a/.projectdocs/demos/percurso-completo.sh b/.projectdocs/demos/percurso-completo.sh
+index eefb05b..6d5acc7 100755
+--- a/.projectdocs/demos/percurso-completo.sh
++++ b/.projectdocs/demos/percurso-completo.sh
+@@ -89,6 +89,11 @@ def executar(fonte):
+         rodar(['git', 'config', chave, valor], caso)
+     sys.path.insert(0, str(fonte/'testes'))
+     from apoio.habilitacao_0d import criar as criar_expediente
++    from apoio.canais import dados as dados_canais
++    declaracao = caso/'rascunho/canais-sinteticos.json'
++    declaracao.parent.mkdir(exist_ok=True)
++    declaracao.write_text(json.dumps(dados_canais(caso), ensure_ascii=False))
++    rodar([sys.executable, str(campo_scripts/'canais.py'), 'definir', '--entrada', str(declaracao)], caso)
+     with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
+         exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+         rodar([sys.executable, str(campo_scripts/'importar_habilitacao.py'), '--expediente', str(exp)], caso)
+diff --git a/.projectdocs/demos/preparar-caso.sh b/.projectdocs/demos/preparar-caso.sh
+index 315a70e..1f82759 100755
+--- a/.projectdocs/demos/preparar-caso.sh
++++ b/.projectdocs/demos/preparar-caso.sh
+@@ -30,6 +30,8 @@ for chave, valor in [('user.name', pessoa), ('user.email', 'controle@exemplo.com
+ # Expediente e PDFs exclusivamente sintéticos; importação/validação/selo reais.
+ sys.path.insert(0, str(raiz / 'testes'))
+ from apoio.habilitacao_0d import criar as criar_expediente
++from apoio.canais import definir as definir_canais
++definir_canais(caso)
+ with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
+     exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+     rodar([sys.executable, str(raiz/'eiac-campo/scripts/importar_habilitacao.py'), '--expediente', str(exp)], caso)
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 21a2ac6..cfb4edc 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.13",
++  "version": "0.8.14",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/canais.md b/eiac-campo/commands/canais.md
+new file mode 100644
+index 0000000..61e2c01
+--- /dev/null
++++ b/eiac-campo/commands/canais.md
+@@ -0,0 +1,42 @@
++---
++description: Planeja e resolve canais externos do caso; definição e registros são humanos.
++argument-hint: "planejar | resolver <etapa|entregavel> <direcao>"
++---
++
++Consulte `reference/canais.md`, `reference/habilitacao.md` e o roteiro canônico
++de 0d no repositório emcia-artefatos. O procedimento do método permanece lá.
++
++Execute `scripts/canais.py planejar` para preparar o provisionamento. Apresente
++o id do drive compartilhado EMCIA e os nomes propostos. Peça confirmação
++explícita antes de criar qualquer divisão pelo MCP. Não faça busca por nome.
++Se faltarem ids, peça-os ao engenheiro e espere. Registre os ids retornados
++somente no rascunho da declaração; o engenheiro define pelo terminal.
++
++Antes de **cada** compartilhamento, liste a pessoa que receberá acesso,
++seu endereço, id do destino e papel proposto. Peça confirmação própria para
++esse compartilhamento. Sem confirmação, o engenheiro usa a interface do Drive.
++`trabalho-interno` permanece sem acesso do cliente.
++
++Use `scripts/canais.py resolver <alvo> <entrada|saida|agenda>` antes de consultar
++ou preparar envio. Consulte somente ids retornados. Nunca liste todo o espaço
++do cliente nem procure por nome. A leitura de arquivo por id exige listagem
++prévia do contêiner declarado registrada pelo engenheiro no manifesto local.
++
++Para receber, baixe para `rascunho/entrada/` e prepare o manifesto de coleta.
++Para entregar, confira a emissão e o hash antes de propor upload à finalidade
++`entregas`. Upload nessa finalidade publica para o cliente: peça confirmação
++explícita do engenheiro. Depois entregue o comando humano de registro.
++
++Preparar um formulário não autoriza publicação nem envio de link. Ambos exigem
++instrução expressa. Links carregam `caso=<id>`; filtre submissões pelo mesmo
++campo, ignorando respostas de outros casos antes de preparar material local.
++Sem MCP Tally, use exportação manual com ids de formulário e submissão.
++Perguntas de F0 vêm de `reference/formularios/triagem.json`, sem reescrita.
++
++Na agenda, apresente calendário por id, participantes, data, horário, fuso e
++marcador `[<caso>/<etapa>]`. Peça confirmação explícita antes de criar evento
++ou enviar convite. Não leia gravações nem transcrições.
++
++Não execute `definir`, `receber.py`, `entregar.py` ou registro de sessão pela
++sessão do agente. Entregue caminhos absolutos e argumentos conferidos ao
++engenheiro. Confirmação no chat não substitui esses atos no próprio terminal.
+diff --git a/eiac-campo/reference/canais.md b/eiac-campo/reference/canais.md
+new file mode 100644
+index 0000000..4909bd9
+--- /dev/null
++++ b/eiac-campo/reference/canais.md
+@@ -0,0 +1,99 @@
++# Interface dos canais externos
++
++O playbook declara finalidades e direções; `registro/canais.json` declara ids.
++`canais.schema.json` documenta o contrato; o script aplica as mesmas condições
++e as relações com o playbook, sem bibliotecas novas nem chamadas de API.
++
++`canais.py planejar` é somente leitura e propõe no drive compartilhado EMCIA
++`<caso>/00-habilitacao`, `entrada-documentos`, `entrada-amostras`, `entregas`
++e `trabalho-interno`. Os nomes não são referências de roteamento.
++
++No terminal humano, use `canais.py definir --entrada <json>`. Declare `versao`
++inteira sequencial, `caso`, `decidido_por` nominal, `data` ISO e `canais`.
++Cada canal contém os campos da especificação em `registro/canais.schema.json`.
++Tally usa `workspace_id`/`formulario_id`; Drive, `drive_id`/`pasta_id`;
++Calendar, `calendario_id`. Proprietário é `emcia` ou `cliente`. Filtro Tally
++é `{"campo":"caso","valor":"<id-do-caso>"}`; marcador da agenda é
++`[{caso}/{etapa}]`, expandido ao registrar a sessão. Todos os ids são reais
++informados pelo engenheiro ou retornados pelo conector; não substitua por nomes.
++
++Versões anteriores ficam em `registro/canais/versao-NNNN.json`. O evento
++`CanaisDefinidos` fixa o SHA-256 da versão vigente. `resolver <alvo> <direcao>`
++recusa ausência, ambiguidade ou adulteração, indicando a definição humana.
++O núcleo exige o canal ao carregar e encerrar etapas que o declaram.
++
++## Passagem em 0d
++
++Prepare os endereços com `/eiac-campo:canais`, com as confirmações de criação
++e compartilhamento. O engenheiro define os canais e importa a habilitação.
++Alternativamente, `importar_habilitacao.py --expediente <dir> --canais <json>`
++usa a declaração humana na própria importação. Antes de F0, valide o desfecho
++e sele conforme a decisão 039. Sem canais definidos, F0 continua bloqueado.
++
++Na importação, os ids dos formulários registrados no expediente substituem
++os endereços de habilitação, preservando `origem` com id da habilitação, fontes
++e hash do expediente. Workspace conhecido no expediente é conferido contra
++a declaração humana; quando o expediente antigo não o contém, ele precisa
++vir da declaração. Nenhum id é inventado. Rodadas conservam seus formulários.
++
++## Coleta e publicação
++
++Downloads e manifestos são preparação em `rascunho/entrada/`. O engenheiro
++executa `receber.py --arquivo <caminho> --manifesto <json>` no caso. O manifesto
++traz `ferramenta`, `objeto_id`, `conteiner_id`, `modificado_em` e `coletado_em`;
++Tally acrescenta `submissao_id` e `campos_ocultos`. As datas são ISO com fuso.
++Novas versões requerem `--nova-versao <json>` com decisor, motivo, data e id
++do recebimento anterior. Arquivos e manifestos anteriores ficam preservados.
++
++O engenheiro registra a publicação com `entregar.py --entrada <json>`:
++`entregavel`, `versao`, `sha256`, `arquivo_id`, `destino_id`, `destinatario`
++nominal e `data`. O destino precisa ser o canal `entregas`. O hash é conferido
++contra a emissão e os bytes locais. Esse registro não é aceite.
++
++Scripts conferem os dados trazidos pelo agente contra a declaração; não
++autenticam conteúdo remoto, identidade ou acesso efetivo. Confirmações no
++chat são requisitos operacionais do comando, não credenciais dos scripts.
++
++Asserções sobre material recebido usam `fonte: REC-NNNNNN` na marca de
++procedência. O validador encontra a origem e confere o hash completo. A marca
++de procedência continua dependendo do instrumento: recebimento não transforma
++automaticamente uma declaração em verificação.
++
++## Sessões e escopo MCP
++
++Registro de sessão aceita `--referencia-externa <id>` junto com
++`--canal-externo <id>` e `--marcador "[<caso>/<etapa>]"`. No template a referência
++é opcional; `exige_referencia_externa_por_camada` pode torná-la obrigatória
++no playbook do caso. Referência informada sempre exige canal e marcador coerentes.
++
++O teste real confirmou hooks MCP no Claude Code 2.1.283. Os hooks do núcleo
++incluem `mcp__.*` e leem `registro/ferramentas-externas.json`. As regras padrão
++mostram nomes e argumentos de interfaces MCP; o engenheiro ajusta esses dados
++aos nomes e argumentos efetivos do conector instalado, no terminal, sem
++afrouxar o escopo. Ferramenta desconhecida recusa. Não existe uma interface
++universal de argumentos MCP. A confirmação em chat permanece necessária.
++
++Leitura por id exige manifesto de listagem prévia. O agente prepara JSON em
++`rascunho/entrada/` com `ferramenta_externa`, `argumentos`, `conteiner_id`,
++`objetos` (lista de ids) e `coletado_em`; o engenheiro confere e executa
++`registrar_listagem.py --entrada <json>`. O script exige correspondência entre
++argumentos, contêiner e canal, fixa o hash e emite `ListagemRegistrada`.
++Registro não autentica a resposta remota. Coleta segue em preparação até o
++recebimento humano; listagem não autoriza escrita em `fontes/`.
++
++Para provisionar, declare primeiro um contêiner EMCIA já existente como
++endereço do caso. O agente cria divisões dentro desse id apenas com confirmação;
++o engenheiro então define a versão com os ids provisionados. Sem endereço
++inicial declarado ou sem regra compatível, use a interface externa.
++Provisionamento de estrutura tem regra própria; escrita de material só vai
++para `entregas`. Cada compartilhamento continua exigindo confirmação própria.
++
++Essas guardas dependem do runtime que executa os hooks. Não foi comprovado
++disparo em outro ambiente; o resultado do Claude Code não é garantia para
++conectores executados por clientes que não suportem esses hooks.
++
++| Ato na fronteira externa | Executor |
++|---|---|
++| `receber-material` | Engenheiro no terminal, após conferir a coleta |
++| `entregar-material` | Engenheiro no terminal, após conferir a publicação |
++| `registrar-listagem` | Engenheiro no terminal, após conferir a listagem |
+diff --git a/eiac-campo/reference/habilitacao.md b/eiac-campo/reference/habilitacao.md
+index 1fed51a..5ae593c 100644
+--- a/eiac-campo/reference/habilitacao.md
++++ b/eiac-campo/reference/habilitacao.md
+@@ -230,6 +230,15 @@ nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
+ 
+ ## Importação humana no caso
+ 
++Nos casos novos com canais externos, prepare a declaração com
++`/eiac-campo:canais` e confira `reference/canais.md`. No terminal humano,
++defina os endereços por ids antes de importar, ou acrescente
++`--canais /caminho/declaracao.json` ao importador. A declaração identifica
++o workspace da habilitação; a importação migra os ids dos formulários e
++seu vínculo com o expediente, preservando o hash. Não invente workspace
++ausente em expediente antigo: ele precisa vir da declaração humana.
++Sem declaração coerente, a importação e o acesso a F0 recusam.
++
+ Depois de abrir o caso com o identificador reservado, no terminal do engenheiro,
+ fora da sessão do agente e no diretório do caso:
+ 
+diff --git a/eiac-campo/scripts/canais.py b/eiac-campo/scripts/canais.py
+index 21bfe57..3d5695e 100644
+--- a/eiac-campo/scripts/canais.py
++++ b/eiac-campo/scripts/canais.py
+@@ -84,7 +84,15 @@ def validar(dados, st, pb):
+     vistos = set()
+     for c in dados['canais']:
+         exigir(isinstance(c, dict), 'canal precisa ser objeto')
+-        exigir(set(c) == {'finalidade', 'ferramenta', 'direcao', 'etapas', 'entregaveis', 'proprietario', 'ids', 'acesso_cliente', 'sensivel', 'filtro', 'marcador'}, 'campos de canal inválidos')
++        obrigatorios = {'finalidade', 'ferramenta', 'direcao', 'etapas', 'entregaveis', 'proprietario',
++                        'ids', 'acesso_cliente', 'sensivel', 'filtro', 'marcador'}
++        exigir(obrigatorios <= set(c) <= obrigatorios | {'origem'}, 'campos de canal inválidos')
++        if 'origem' in c:
++            o = c['origem']
++            exigir(isinstance(o, dict) and set(o) == {'habilitacao', 'expediente_sha256', 'fontes'}, 'vínculo de origem inválido')
++            texto(o['habilitacao'])
++            exigir(isinstance(o['expediente_sha256'], str) and bool(re.fullmatch('[a-f0-9]{64}', o['expediente_sha256'])), 'hash de expediente inválido')
++            exigir(isinstance(o['fontes'], list) and bool(o['fontes']) and all(isinstance(x, str) and x for x in o['fontes']), 'fontes de origem ausentes')
+         f = c['finalidade']; ferramenta = c['ferramenta']
+         exigir(f in previstos, 'finalidade não prevista no playbook')
+         exigir(ferramenta in IDS, 'ferramenta desconhecida')
+@@ -111,6 +119,38 @@ def validar(dados, st, pb):
+     return dados
+ 
+ 
++def migrar_origens(dados, expediente, hash_expediente):
++    """Endereços da habilitação: o workspace faltante vem da decisão humana.
++
++    Nunca inventa ids nem consulta a ferramenta por nome.
++    """
++    import copy
++    resultado = copy.deepcopy(dados)
++    bases = [c for c in resultado['canais'] if c['finalidade'] == 'habilitacao']
++    exigir(bool(bases), 'defina o workspace de habilitação em canais.py definir antes de importar')
++    bases_por_form = {c['ids']['formulario_id']: c for c in bases}
++    novos = []
++    agrupadas = {}
++    for ident, fonte in expediente['fontes'].items():
++        agrupadas.setdefault(fonte['formulario'], []).append((ident, fonte))
++    for form, fontes in agrupadas.items():
++        base = bases_por_form.get(form)
++        if base is None:
++            exigir(len({c['ids']['workspace_id'] for c in bases}) == 1,
++                   'workspace ambíguo: declare cada formulário antes da importação')
++            base = bases[0]
++        canal = copy.deepcopy(base)
++        canal['ids']['formulario_id'] = id_externo(form)
++        for _, fonte in fontes:
++            if fonte.get('workspace_id'):
++                exigir(canal['ids']['workspace_id'] == fonte['workspace_id'], 'workspace diverge do expediente')
++        canal['origem'] = dict(habilitacao=expediente['habilitacao'], expediente_sha256=hash_expediente,
++                               fontes=[ident for ident, _ in fontes])
++        novos.append(canal)
++    resultado['canais'] = [c for c in resultado['canais'] if c['finalidade'] != 'habilitacao']+novos
++    return resultado
++
++
+ def planejar(st, pb):
+     return dict(caso=st['caso'], canais_necessarios=pb.get('canais_previstos', []),
+                 arvore_proposta=dict(proprietario='emcia', raiz=st['caso'], roteamento='somente ids',
+diff --git a/eiac-campo/scripts/habilitacao.py b/eiac-campo/scripts/habilitacao.py
+index c438e50..dd9903e 100644
+--- a/eiac-campo/scripts/habilitacao.py
++++ b/eiac-campo/scripts/habilitacao.py
+@@ -259,6 +259,8 @@ def aplicar(root, s, action, p):
+                                   respondente=pessoa(p.get("respondente")),
+                                   versao_perguntas=texto(p.get("versao_perguntas")),
+                                   recebido_em=agora(), arquivo=importar(root, p.get("arquivo")))
++        if p.get('workspace_id') is not None:
++            s['fontes'][ident]['workspace_id'] = texto(p['workspace_id'])
+         invalidar(s)
+     elif action == "pendencia":
+         ident = identificador(p.get("id"))
+diff --git a/eiac-campo/scripts/importar_habilitacao.py b/eiac-campo/scripts/importar_habilitacao.py
+index fc6d6c1..1c0f4c9 100644
+--- a/eiac-campo/scripts/importar_habilitacao.py
++++ b/eiac-campo/scripts/importar_habilitacao.py
+@@ -19,6 +19,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]/'eiac-nucleo/
+ import estado as E
+ import playbook as P
+ import habilitacao as H
++import canais as K
+ 
+ 
+ def serializar(dados):
+@@ -84,7 +85,7 @@ def caminho_seguro(relativo):
+     return p
+ 
+ 
+-def importar(expediente, autor=None, decisao=None):
++def importar(expediente, autor=None, decisao=None, canais_entrada=None):
+     st=E.ler(); pb,erro=P.carregar()
+     H.exigir(st is not None and not erro,erro or 'caso ausente')
+     pessoa=st.get('responsavel')
+@@ -109,6 +110,24 @@ def importar(expediente, autor=None, decisao=None):
+                  'decisão não identifica importação anterior')
+     else: H.exigir(decisao is None,'decisão de reimportação sem importação anterior')
+     s,pronto,arquivos,hash_expediente=conferir(expediente,st['caso'],pessoa)
++    canais_propostos = None
++    canais_path = None
++    canais_backup = None
++    if pb.get('registro_canais'):
++        canais_path = caminho_seguro(pb['registro_canais']['arquivo'])
++        if canais_entrada:
++            canais_base = json.loads(pathlib.Path(canais_entrada).read_text())
++        else:
++            H.exigir(canais_path.exists(), 'canais ausentes: execute canais.py definir --entrada <json> ou importe com --canais <json>')
++            canais_base = K.G.carregar(pb)
++            canais_base['versao'] += 1
++            canais_base['data'] = datetime.date.today().isoformat()
++            canais_base['decidido_por'] = pessoa
++        canais_propostos = K.migrar_origens(canais_base, s, hash_expediente)
++        K.validar(canais_propostos, st, pb)
++        vigente_canais = K.G.carregar(pb) if canais_path.exists() else None
++        H.exigir(canais_propostos['versao'] == (vigente_canais['versao']+1 if vigente_canais else 1), 'versão de canais deve suceder a vigente')
++        canais_backup = canais_path.read_bytes() if canais_path.exists() else None
+     agora=datetime.datetime.now(datetime.timezone.utc).isoformat()
+     ident=f"importacao-{len(historico)+1:03d}-{agora[:10]}"
+     destino=caminho_seguro('fontes/habilitacao/'+ident)
+@@ -161,6 +180,8 @@ def importar(expediente, autor=None, decisao=None):
+             os.replace(folder,destino)
+             os.replace(stage/'rascunho.md',draft)
+             os.replace(stage/'registro.json',registro)
++            if canais_propostos:
++                K.definir(canais_propostos, st, pb)
+             E.evento('HabilitacaoImportada',autor=pessoa,importacao=ident,habilitacao=s['habilitacao'],
+                      desfecho=vigente['desfecho'],arquivos=refs,registro_sha256=H.digest(registro.read_bytes()))
+         except Exception:
+@@ -168,6 +189,9 @@ def importar(expediente, autor=None, decisao=None):
+             for p,backup in ((registro,backup_reg),(draft,backup_draft)):
+                 if backup is None: p.unlink(missing_ok=True)
+                 else: p.write_bytes(backup)
++            if canais_path:
++                if canais_backup is None: canais_path.unlink(missing_ok=True)
++                else: canais_path.write_bytes(canais_backup)
+             raise
+     return vigente
+ 
+@@ -177,13 +201,14 @@ def main():
+     ap.add_argument('--expediente',required=True,type=pathlib.Path)
+     ap.add_argument('--decisao-reimportacao',type=pathlib.Path)
+     ap.add_argument('--autor',help='recusado: autoria é fixada no caso')
++    ap.add_argument('--canais', type=pathlib.Path, help='declaração humana completa de canais, com ids provisionados')
+     a=ap.parse_args()
+     try:
+         caminho_seguro('registro')
+-        lock=caminho_seguro('registro/.importacao.lock')
++        lock=caminho_seguro('registro/.canais.lock')
+         with lock.open('a') as f:
+             fcntl.flock(f,fcntl.LOCK_EX)
+-            resultado=importar(a.expediente,a.autor,a.decisao_reimportacao)
++            resultado=importar(a.expediente,a.autor,a.decisao_reimportacao,a.canais)
+         print(json.dumps(resultado,ensure_ascii=False,indent=2))
+     except (ValueError,OSError,KeyError,TypeError,AttributeError) as exc:
+         E.evento('TentativaNegada',autor=(E.ler() or {}).get('responsavel'),
+diff --git a/eiac-campo/template-caso/registro/canais.schema.json b/eiac-campo/template-caso/registro/canais.schema.json
+index 98dcb33..064176a 100644
+--- a/eiac-campo/template-caso/registro/canais.schema.json
++++ b/eiac-campo/template-caso/registro/canais.schema.json
+@@ -134,6 +134,33 @@
+               null,
+               "[{caso}/{etapa}]"
+             ]
++          },
++          "origem": {
++            "type": "object",
++            "additionalProperties": false,
++            "required": [
++              "habilitacao",
++              "expediente_sha256",
++              "fontes"
++            ],
++            "properties": {
++              "habilitacao": {
++                "type": "string",
++                "minLength": 1
++              },
++              "expediente_sha256": {
++                "type": "string",
++                "pattern": "^[a-f0-9]{64}$"
++              },
++              "fontes": {
++                "type": "array",
++                "minItems": 1,
++                "items": {
++                  "type": "string",
++                  "minLength": 1
++                }
++              }
++            }
+           }
+         },
+         "allOf": [
+diff --git a/testes/habilitacao_0d.py b/testes/habilitacao_0d.py
+index 9fbbaa2..548592d 100644
+--- a/testes/habilitacao_0d.py
++++ b/testes/habilitacao_0d.py
+@@ -105,8 +105,23 @@ class Importacao(CasoHook):
+         self.assertNotEqual(reg['vigente']['id'],antigo['id'])
+         self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
+ 
++    def test_22_migra_formulario_com_vinculo(self):
++        r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
++        canais=json.loads((self.caso/'registro/canais.json').read_text())
++        canal=next(c for c in canais['canais'] if c['finalidade']=='habilitacao')
++        self.assertEqual(canal['ids']['formulario_id'],'FORM-SINTETICO')
++        self.assertEqual(canal['origem']['fontes'],['S1'])
++        self.assertEqual(canal['origem']['habilitacao'],'HAB-CONTROLE')
++        import hashlib
++        self.assertEqual(canal['origem']['expediente_sha256'],hashlib.sha256((self.exp/'expediente.json').read_bytes()).hexdigest())
+ 
++    def test_12_workspace_divergente_recusa_com_evento(self):
++        self.alterar(lambda s:s['fontes']['S1'].update(workspace_id='WORKSPACE-ALHEIO'))
++        self.recusa('workspace')
+ 
++    def test_13_canais_ausentes_recusa_com_evento(self):
++        (self.caso/'registro/canais.json').unlink()
++        self.recusa('canais ausentes')
+ 
+ 
+ class SeloConfirmado(CasoHook):

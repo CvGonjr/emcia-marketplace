@@ -105,8 +105,23 @@ class Importacao(CasoHook):
         self.assertNotEqual(reg['vigente']['id'],antigo['id'])
         self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
 
+    def test_22_migra_formulario_com_vinculo(self):
+        r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
+        canais=json.loads((self.caso/'registro/canais.json').read_text())
+        canal=next(c for c in canais['canais'] if c['finalidade']=='habilitacao')
+        self.assertEqual(canal['ids']['formulario_id'],'FORM-SINTETICO')
+        self.assertEqual(canal['origem']['fontes'],['S1'])
+        self.assertEqual(canal['origem']['habilitacao'],'HAB-CONTROLE')
+        import hashlib
+        self.assertEqual(canal['origem']['expediente_sha256'],hashlib.sha256((self.exp/'expediente.json').read_bytes()).hexdigest())
 
+    def test_12_workspace_divergente_recusa_com_evento(self):
+        self.alterar(lambda s:s['fontes']['S1'].update(workspace_id='WORKSPACE-ALHEIO'))
+        self.recusa('workspace')
 
+    def test_13_canais_ausentes_recusa_com_evento(self):
+        (self.caso/'registro/canais.json').unlink()
+        self.recusa('canais ausentes')
 
 
 class SeloConfirmado(CasoHook):

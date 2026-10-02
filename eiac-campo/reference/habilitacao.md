@@ -230,6 +230,15 @@ nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
 
 ## Importação humana no caso
 
+Nos casos novos com canais externos, prepare a declaração com
+`/eiac-campo:canais` e confira `reference/canais.md`. No terminal humano,
+defina os endereços por ids antes de importar, ou acrescente
+`--canais /caminho/declaracao.json` ao importador. A declaração identifica
+o workspace da habilitação; a importação migra os ids dos formulários e
+seu vínculo com o expediente, preservando o hash. Não invente workspace
+ausente em expediente antigo: ele precisa vir da declaração humana.
+Sem declaração coerente, a importação e o acesso a F0 recusam.
+
 Depois de abrir o caso com o identificador reservado, no terminal do engenheiro,
 fora da sessão do agente e no diretório do caso:
 
