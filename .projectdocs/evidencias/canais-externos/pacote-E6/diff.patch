@@ -1,0 +1,237 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index be5ce4d..dd7ec36 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -77,6 +77,9 @@ jobs:
+       - name: Entrega com emissão e destino
+         run: python3 testes/entregar.py
+ 
++      - name: Referência externa de sessão
++        run: python3 testes/sessao_externa.py
++
+       - name: Percurso sintético de canais
+         run: python3 testes/canais_percurso.py
+ 
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index a1080fb..595396f 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.17",
++  "version": "0.8.18",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index a6ba298..550c584 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.15",
++  "versao": "0.4.16",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+   "referencia_integridade": {
+     "diretorio": "metodo",
+@@ -891,5 +891,11 @@
+         "evento": "HabilitacaoImportada"
+       }
+     ]
+-  }
++  },
++  "referencia_externa_sessao": {
++    "finalidade": "sessoes",
++    "direcao": "agenda",
++    "campo_id": "calendario_id"
++  },
++  "exige_referencia_externa_por_camada": []
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index d04d27a..9c19991 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.39",
++  "version": "0.2.40",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/commands/registrar-sessao.md b/eiac-nucleo/commands/registrar-sessao.md
+index 7d0f30c..edff70d 100644
+--- a/eiac-nucleo/commands/registrar-sessao.md
++++ b/eiac-nucleo/commands/registrar-sessao.md
+@@ -20,3 +20,8 @@ Prepare e entregue ao engenheiro este comando:
+ `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-sessao <etapa> --autor "<nome da pessoa>" --participantes "<lista>"`
+ 
+ O autor é sempre pessoa nomeada. Nunca preencha com identificador de agente.
++
++Se houver referência externa, acrescente `--referencia-externa <id>` junto
++com `--canal-externo <id>` e `--marcador "[<caso>/<etapa>]"`. Os três valores
++precisam corresponder ao canal declarado; um id isolado não satisfaz a regra.
++Se o playbook exigir referência para a camada resolvida, sua ausência recusa.
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 2b7a66e..d9ad534 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -108,19 +108,25 @@ def encerrar(st, pb, etapa_id, autor):
+     return None
+ 
+ 
+-def registrar_sessao(st, etapa_id, autor, participantes):
++def registrar_sessao(st, etapa_id, autor, participantes, pb=None, referencia=None):
+     if etapa_id != st["etapa_atual"]:
+         return _RecusaSessao(
+             f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
+             "So a etapa corrente pode receber sessao.")
+     if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
+         return _RecusaSessao(f"{etapa_id} ja encerrada; sessao nao pode ser registrada.")
++    if pb is None:
++        pb, erro = P.carregar()
++        if erro: return _RecusaSessao(erro)
++    erro = K.conferir_referencia(pb, etapa_id, P.camada(pb, etapa_id, st.get('nivel')), referencia)
++    if erro: return _RecusaSessao(erro)
+     st["cumprimentos"].setdefault(etapa_id, {})
+     st["cumprimentos"][etapa_id]["sessao"] = {
+-        "autor": autor, "participantes": participantes
++        "autor": autor, "participantes": participantes,
++        **({'referencia_externa': referencia} if referencia else {})
+     }
+     E.evento("SessaoDeCampoRegistrada", etapa=etapa_id, autor=autor,
+-             participantes=participantes)
++             participantes=participantes, **({'referencia_externa': referencia} if referencia else {}))
+     return None
+ 
+ 
+@@ -357,6 +363,9 @@ def main():
+     ap.add_argument("--satisfazer-inegociavel")
+     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
+     ap.add_argument("--participantes", default="")
++    ap.add_argument('--referencia-externa')
++    ap.add_argument('--canal-externo')
++    ap.add_argument('--marcador')
+     ap.add_argument("--eixos", default="")
+     ap.add_argument("--cadencia", default="")
+     ap.add_argument("--responsavel", default="")
+@@ -397,7 +406,9 @@ def main():
+         err = registrar_campo(st, pb, a.registrar_campo, a.campo, a.valor, a.autor)
+     elif a.registrar_sessao:
+         acao, alvo = "registrar_sessao", a.registrar_sessao
+-        err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
++        referencia = dict(id=a.referencia_externa, canal_id=a.canal_externo, marcador=a.marcador) if any(
++            v is not None for v in (a.referencia_externa, a.canal_externo, a.marcador)) else None
++        err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes, pb, referencia)
+     elif a.registrar_recorrencia:
+         acao, alvo = "registrar_recorrencia", a.registrar_recorrencia
+         err = registrar_recorrencia(st, pb, a.registrar_recorrencia, a.autor,
+diff --git a/eiac-nucleo/scripts/canais_registro.py b/eiac-nucleo/scripts/canais_registro.py
+index c1f44be..ccf0756 100644
+--- a/eiac-nucleo/scripts/canais_registro.py
++++ b/eiac-nucleo/scripts/canais_registro.py
+@@ -76,6 +76,48 @@ def validar_contrato(pb):
+         if not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip()
+                                               for k in ('arquivo', 'evento', 'comando_definicao')):
+             return 'registro_canais precisa declarar arquivo, evento e comando_definicao'
+-
++    camadas = pb.get('exige_referencia_externa_por_camada', [])
++    if not isinstance(camadas, list) or any(c not in ('EX1', 'EX2', 'EX3', 'EX4') for c in camadas):
++        return 'exige_referencia_externa_por_camada inválida'
++    contrato = pb.get('referencia_externa_sessao')
++    if camadas or contrato is not None:
++        if (not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip()
++                                                for k in ('finalidade', 'direcao', 'campo_id'))
++                or contrato['direcao'] not in ('entrada', 'saida', 'agenda')):
++            return 'referencia_externa_sessao inválida'
++    for chave, campos in [('registro_fontes', ('arquivo', 'campo', 'id', 'caminho', 'hash', 'evento')),
++                           ('escopo_ferramentas_externas', ('arquivo', 'padrao', 'listagens', 'evento_listagem'))]:
++        contrato = pb.get(chave)
++        if contrato is None: continue
++        if not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip() for k in campos):
++            return chave+' inválido'
++        for campo in ('arquivo', 'listagens'):
++            if campo in contrato:
++                p = pathlib.Path(contrato[campo])
++                if p.is_absolute() or '..' in p.parts: return chave+': caminho fora do caso'
++        if 'padrao' in contrato:
++            try: re.compile(contrato['padrao'])
++            except re.error: return chave+': padrão inválido'
+     return None
+ 
++
++def conferir_referencia(pb, etapa, camada, referencia):
++    contrato = pb.get('referencia_externa_sessao', {})
++    obrigatoria = camada in pb.get('exige_referencia_externa_por_camada', [])
++    if not referencia:
++        return 'referência externa exigida para a camada' if obrigatoria else None
++    try:
++        if not isinstance(referencia, dict) or set(referencia) != {'id', 'canal_id', 'marcador'}:
++            raise ValueError('referência externa inválida')
++        if not all(isinstance(v, str) and v.strip() for v in referencia.values()):
++            raise ValueError('referência externa incompleta')
++        canais = selecionar(pb, etapa, contrato['direcao'], contrato['finalidade'])
++        candidatos = [c for c in canais if c['ids'].get(contrato['campo_id']) == referencia['canal_id']]
++        if len(candidatos) != 1:
++            raise ValueError('referência externa fora do canal declarado')
++        esperado = candidatos[0]['marcador'].format(caso=(E.ler() or {})['caso'], etapa=etapa)
++        if referencia['marcador'] != esperado:
++            raise ValueError('marcador externo diverge do caso/etapa')
++    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
++        return str(exc)
++    return None
+diff --git a/testes/sessao_externa.py b/testes/sessao_externa.py
+new file mode 100644
+index 0000000..6fa98a7
+--- /dev/null
++++ b/testes/sessao_externa.py
+@@ -0,0 +1,47 @@
++"""Referência de sessão genérica: camada, id declarado e marcador."""
++import json
++import unittest
++from apoio.hook_real import CasoHook
++from apoio.canais import definir
++
++
++class Referencia(CasoHook):
++    def setUp(self):
++        super().setUp(); definir(self.caso)
++        self.estado['etapa_atual'] = 'P3a'; self.salvar()
++        self.pb = self.caso/'registro/playbook.json'
++
++    def registrar(self, *args):
++        return self.rodar('avancar.py', '--registrar-sessao', 'P3a', '--autor', 'Celso do Vale', *args)
++
++    def argumentos(self, marcador=None):
++        return ['--referencia-externa', 'EVENTO-SINTETICO', '--canal-externo', 'SINTETICO-sessoes-calendario_id',
++                '--marcador', marcador or f"[{self.estado['caso']}/P3a]"]
++
++    def recusa(self, *args):
++        antes = len(self.eventos()); r = self.registrar(*args)
++        self.assertNotEqual(r.returncode, 0)
++        self.assertEqual(self.eventos()[antes]['evento'], 'TentativaNegada')
++
++    def test_01_obrigatoria_ausente(self):
++        pb = json.loads(self.pb.read_text()); pb['exige_referencia_externa_por_camada'] = ['EX3']; self.pb.write_text(json.dumps(pb))
++        self.recusa()
++
++    def test_02_marcador_alheio(self):
++        self.recusa(*self.argumentos('[outro/P3a]'))
++
++    def test_03_canal_alheio(self):
++        args = self.argumentos(); args[3] = 'ALHEIO'; self.recusa(*args)
++
++    def test_04_referencia_incompleta(self):
++        self.recusa('--referencia-externa', 'EVENTO-SINTETICO')
++
++    def test_20_opcional_sem_referencia(self):
++        r = self.registrar(); self.assertEqual(r.returncode, 0, r.stderr)
++
++    def test_21_referencia_coerente(self):
++        r = self.registrar(*self.argumentos()); self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertEqual(self.eventos()[-1]['referencia_externa']['id'], 'EVENTO-SINTETICO')
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)

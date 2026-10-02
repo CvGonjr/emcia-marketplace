@@ -77,6 +77,9 @@ jobs:
       - name: Entrega com emissão e destino
         run: python3 testes/entregar.py
 
+      - name: Referência externa de sessão
+        run: python3 testes/sessao_externa.py
+
       - name: Percurso sintético de canais
         run: python3 testes/canais_percurso.py
 

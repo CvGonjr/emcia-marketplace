@@ -108,19 +108,25 @@ def encerrar(st, pb, etapa_id, autor):
     return None
 
 
-def registrar_sessao(st, etapa_id, autor, participantes):
+def registrar_sessao(st, etapa_id, autor, participantes, pb=None, referencia=None):
     if etapa_id != st["etapa_atual"]:
         return _RecusaSessao(
             f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
             "So a etapa corrente pode receber sessao.")
     if st["cumprimentos"].get(etapa_id, {}).get("cumprido"):
         return _RecusaSessao(f"{etapa_id} ja encerrada; sessao nao pode ser registrada.")
+    if pb is None:
+        pb, erro = P.carregar()
+        if erro: return _RecusaSessao(erro)
+    erro = K.conferir_referencia(pb, etapa_id, P.camada(pb, etapa_id, st.get('nivel')), referencia)
+    if erro: return _RecusaSessao(erro)
     st["cumprimentos"].setdefault(etapa_id, {})
     st["cumprimentos"][etapa_id]["sessao"] = {
-        "autor": autor, "participantes": participantes
+        "autor": autor, "participantes": participantes,
+        **({'referencia_externa': referencia} if referencia else {})
     }
     E.evento("SessaoDeCampoRegistrada", etapa=etapa_id, autor=autor,
-             participantes=participantes)
+             participantes=participantes, **({'referencia_externa': referencia} if referencia else {}))
     return None
 
 
@@ -357,6 +363,9 @@ def main():
     ap.add_argument("--satisfazer-inegociavel")
     ap.add_argument("--emitir"); ap.add_argument("--autor", required=True)
     ap.add_argument("--participantes", default="")
+    ap.add_argument('--referencia-externa')
+    ap.add_argument('--canal-externo')
+    ap.add_argument('--marcador')
     ap.add_argument("--eixos", default="")
     ap.add_argument("--cadencia", default="")
     ap.add_argument("--responsavel", default="")
@@ -397,7 +406,9 @@ def main():
         err = registrar_campo(st, pb, a.registrar_campo, a.campo, a.valor, a.autor)
     elif a.registrar_sessao:
         acao, alvo = "registrar_sessao", a.registrar_sessao
-        err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes)
+        referencia = dict(id=a.referencia_externa, canal_id=a.canal_externo, marcador=a.marcador) if any(
+            v is not None for v in (a.referencia_externa, a.canal_externo, a.marcador)) else None
+        err = registrar_sessao(st, a.registrar_sessao, a.autor, a.participantes, pb, referencia)
     elif a.registrar_recorrencia:
         acao, alvo = "registrar_recorrencia", a.registrar_recorrencia
         err = registrar_recorrencia(st, pb, a.registrar_recorrencia, a.autor,

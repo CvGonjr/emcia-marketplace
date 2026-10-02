@@ -20,3 +20,8 @@ Prepare e entregue ao engenheiro este comando:
 `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/avancar.py" --registrar-sessao <etapa> --autor "<nome da pessoa>" --participantes "<lista>"`
 
 O autor é sempre pessoa nomeada. Nunca preencha com identificador de agente.
+
+Se houver referência externa, acrescente `--referencia-externa <id>` junto
+com `--canal-externo <id>` e `--marcador "[<caso>/<etapa>]"`. Os três valores
+precisam corresponder ao canal declarado; um id isolado não satisfaz a regra.
+Se o playbook exigir referência para a camada resolvida, sua ausência recusa.

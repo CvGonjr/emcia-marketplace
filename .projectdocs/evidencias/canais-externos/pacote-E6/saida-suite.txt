@@ -1,0 +1,11 @@
+test_01_obrigatoria_ausente (__main__.Referencia.test_01_obrigatoria_ausente) ... ok
+test_02_marcador_alheio (__main__.Referencia.test_02_marcador_alheio) ... ok
+test_03_canal_alheio (__main__.Referencia.test_03_canal_alheio) ... ok
+test_04_referencia_incompleta (__main__.Referencia.test_04_referencia_incompleta) ... ok
+test_20_opcional_sem_referencia (__main__.Referencia.test_20_opcional_sem_referencia) ... ok
+test_21_referencia_coerente (__main__.Referencia.test_21_referencia_coerente) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.946s
+
+OK

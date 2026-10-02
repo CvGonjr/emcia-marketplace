@@ -76,6 +76,48 @@ def validar_contrato(pb):
         if not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip()
                                               for k in ('arquivo', 'evento', 'comando_definicao')):
             return 'registro_canais precisa declarar arquivo, evento e comando_definicao'
-
+    camadas = pb.get('exige_referencia_externa_por_camada', [])
+    if not isinstance(camadas, list) or any(c not in ('EX1', 'EX2', 'EX3', 'EX4') for c in camadas):
+        return 'exige_referencia_externa_por_camada inválida'
+    contrato = pb.get('referencia_externa_sessao')
+    if camadas or contrato is not None:
+        if (not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip()
+                                                for k in ('finalidade', 'direcao', 'campo_id'))
+                or contrato['direcao'] not in ('entrada', 'saida', 'agenda')):
+            return 'referencia_externa_sessao inválida'
+    for chave, campos in [('registro_fontes', ('arquivo', 'campo', 'id', 'caminho', 'hash', 'evento')),
+                           ('escopo_ferramentas_externas', ('arquivo', 'padrao', 'listagens', 'evento_listagem'))]:
+        contrato = pb.get(chave)
+        if contrato is None: continue
+        if not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip() for k in campos):
+            return chave+' inválido'
+        for campo in ('arquivo', 'listagens'):
+            if campo in contrato:
+                p = pathlib.Path(contrato[campo])
+                if p.is_absolute() or '..' in p.parts: return chave+': caminho fora do caso'
+        if 'padrao' in contrato:
+            try: re.compile(contrato['padrao'])
+            except re.error: return chave+': padrão inválido'
     return None
 
+
+def conferir_referencia(pb, etapa, camada, referencia):
+    contrato = pb.get('referencia_externa_sessao', {})
+    obrigatoria = camada in pb.get('exige_referencia_externa_por_camada', [])
+    if not referencia:
+        return 'referência externa exigida para a camada' if obrigatoria else None
+    try:
+        if not isinstance(referencia, dict) or set(referencia) != {'id', 'canal_id', 'marcador'}:
+            raise ValueError('referência externa inválida')
+        if not all(isinstance(v, str) and v.strip() for v in referencia.values()):
+            raise ValueError('referência externa incompleta')
+        canais = selecionar(pb, etapa, contrato['direcao'], contrato['finalidade'])
+        candidatos = [c for c in canais if c['ids'].get(contrato['campo_id']) == referencia['canal_id']]
+        if len(candidatos) != 1:
+            raise ValueError('referência externa fora do canal declarado')
+        esperado = candidatos[0]['marcador'].format(caso=(E.ler() or {})['caso'], etapa=etapa)
+        if referencia['marcador'] != esperado:
+            raise ValueError('marcador externo diverge do caso/etapa')
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        return str(exc)
+    return None

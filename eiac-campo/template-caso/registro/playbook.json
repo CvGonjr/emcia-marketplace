@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.15",
+  "versao": "0.4.16",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -891,5 +891,11 @@
         "evento": "HabilitacaoImportada"
       }
     ]
-  }
+  },
+  "referencia_externa_sessao": {
+    "finalidade": "sessoes",
+    "direcao": "agenda",
+    "campo_id": "calendario_id"
+  },
+  "exige_referencia_externa_por_camada": []
 }
