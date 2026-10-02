@@ -1,0 +1,14 @@
+eiac-nucleo/scripts/selar.py:3:Uso:  python3 selar.py --nota "F0 encerrada, E1 emitido"
+eiac-nucleo/scripts/fronteira.py:7:delegavel em um nivel e humana em outro (CAT-01 3.6) — por isso a tabela
+eiac-nucleo/scripts/guarda.py:8:  G4  nivel nao apurado apos F0 bloqueia a etapa
+eiac-nucleo/scripts/guarda.py:220:    # G4 — nivel nao apurado apos F0
+eiac-nucleo/scripts/guarda.py:221:    if etapa_id != "F0" and not nivel:
+eiac-nucleo/scripts/guarda.py:224:            f"(CAT-01 3.6). Encerre F0 antes de prosseguir.",
+eiac-nucleo/scripts/avancar.py:47:        st["cumprimentos"].setdefault("F0", {})["eixos"] = eixos
+eiac-nucleo/scripts/avancar.py:65:    if etapa_id == "F0" and not st.get("nivel"):
+eiac-nucleo/scripts/avancar.py:66:        return ("F0 nao encerra sem o nivel apurado. A camada das etapas seguintes "
+eiac-nucleo/scripts/avancar.py:67:                "depende dele (CAT-01 3.6). Grave o nivel em registro/estado.json.")
+eiac-nucleo/scripts/playbook.py:47:                          f"A fronteira de delegacao desloca com o nivel (CAT-01 3.6).")
+eiac-nucleo/scripts/playbook.py:197:    AG ou qualquer semantica EMCIA — so aplica a regra "capacidade
+eiac-nucleo/scripts/estado.py:194:        if not e.get("nivel") and e["etapa_atual"] != "F0":
+eiac-nucleo/scripts/catalogo.py:28:O vocabulario EMCIA (HB-01..HB-18, AG-01..AG-04, "habilidade", "agente")

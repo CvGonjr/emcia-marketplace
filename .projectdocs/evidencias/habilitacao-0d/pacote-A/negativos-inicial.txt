@@ -1,0 +1,54 @@
+== testes negativos
+  ok    1 habilidade EX4 negada
+  ok    2 escrita direta negada
+  ok    2b bash para caso/ negado
+  ok    3 assercao sem procedencia recusada
+  ok    4 assercao valida gravada
+  ok    2.5.0-T01 D valido aceito
+  ok    2.5.0-T02 I sem premissa recusado
+  ok    2.5.0-T03 I com premissa aceito
+  ok    2.5.0-T04 V sem evidencia recusado
+  ok    2.5.0-T05 V com evidencia aceito
+  ok    2.5.0-T06 X/campo/externo recusados como procedencia
+  ok    2.5.0-T07 V coexiste com apuracao separada
+  ok    5 encerramento sem sessao recusado
+  ok    6 autor agente recusado
+  ok    7 emissao com portao fechado recusada
+  ok    9 P1 em N3 negada (EX3)
+  ok    10 P1 em N1 permitida (EX2)
+  ok    11 etapa sem nivel apurado negada
+  ok    12 F0 sem nivel nao encerra
+  ok    13 camada plana recusada
+  ok    14 nivel fora do playbook recusado
+  ok    15 nivel apurado por agente recusado
+  ok    16 nivel apurado grava com evento
+  ok    17 F0 encerra apos nivel apurado
+  ok    18 caso com responsavel agente recusado na abertura
+  ok    19 selo sem repositorio recusado
+  ok    20 selo commita com autor nomeado e evento
+  ok    21 selo sem mudanca recusado
+  ok    22 fronteira acompanha o nivel
+  ok    23 P3b marcada nao delegavel nos dois niveis
+  ok    24 documento citado ausente recusado
+  ok    25 documento presente grava com hash na trilha
+  ok    G6a Write em fontes/ negado
+  ok    G6b Edit em fontes/ negado
+  ok    G6c bash redirecionando para fontes/ negado
+  ok    G6d bash removendo de fontes/ negado
+  ok    G6e bash mv para fontes/ negado
+  ok    G6f Write em contexto/fontes/ negado
+  ok    G6g tentativa negada em fontes/ gera evento
+  ok    G6h leitura em fontes/ permanece permitida
+  ok    G6i cd seguido de rm em fontes/ negado
+  ok    G6j sed -i em fontes/ negado
+  ok    G6k remocao indireta por Python negada
+  ok    G6l leitura simples por Bash permanece permitida
+  ok    ISO2 núcleo recusa registro de execução de contraste
+  ok    ISO-controle núcleo opera em caso de campo isolado
+  ok    ISO-selo-1 selo recusa evento carimbado variante contraste
+  ok    ISO-selo-2 selo recusa evento sem carimbo de componente
+  ok    ISO-selo-controle trilha homogênea de campo sela normalmente
+  ok    ISO-selo-controle eventos reais carregam componente.variante=campo (plugin.json real)
+  ok    8 playbook incompleto recusado
+
+todas as travas recusam como devem

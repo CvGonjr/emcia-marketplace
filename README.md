@@ -344,3 +344,12 @@ arquivo de estado nem cria uma mudança após o selo.
 Versão desta correção: `v-sprint3-poc.6` (núcleo 0.2.32, campo 0.8.6).
 Decisões 031–035 e evidência em
 [correcao-A17-A21](.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/resultado.md).
+
+
+## Importação da habilitação
+
+O engenheiro importa o expediente no terminal, no diretório do caso, com
+`eiac-campo/scripts/importar_habilitacao.py --expediente <caminho>`.
+A operação prepara `rascunho/00-habilitacao.md` para validação e preserva
+os documentos assinados, evidências e matriz administrativa. Consulte a
+[interface de habilitação](eiac-campo/reference/habilitacao.md).

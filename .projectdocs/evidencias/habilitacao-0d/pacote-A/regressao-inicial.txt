@@ -1,0 +1,145 @@
+test_01_sem_formalizacao (__main__.Importacao.test_01_sem_formalizacao) ... FAIL
+test_02_sem_acessos (__main__.Importacao.test_02_sem_acessos) ... FAIL
+test_03_caso_divergente (__main__.Importacao.test_03_caso_divergente) ... FAIL
+test_04_responsavel_divergente (__main__.Importacao.test_04_responsavel_divergente) ... FAIL
+test_05_nao_prosseguir (__main__.Importacao.test_05_nao_prosseguir) ... FAIL
+test_06_pdf_adulterado (__main__.Importacao.test_06_pdf_adulterado) ... FAIL
+test_07_sessao_do_agente (__main__.Importacao.test_07_sessao_do_agente) ... FAIL
+test_08_segunda_importacao (__main__.Importacao.test_08_segunda_importacao) ... FAIL
+test_09_autor_agente (__main__.Importacao.test_09_autor_agente) ... FAIL
+test_10_etapa_encerrada (__main__.Importacao.test_10_etapa_encerrada) ... FAIL
+test_11_matriz_adulterada (__main__.Importacao.test_11_matriz_adulterada) ... FAIL
+
+======================================================================
+FAIL: test_01_sem_formalizacao (__main__.Importacao.test_01_sem_formalizacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 38, in test_01_sem_formalizacao
+    self.recusa('formalização')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'formalização' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_02_sem_acessos (__main__.Importacao.test_02_sem_acessos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 41, in test_02_sem_acessos
+    self.alterar(lambda s:s.update(acessos=None)); self.recusa('acessos')
+                                                   ~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'acessos' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_03_caso_divergente (__main__.Importacao.test_03_caso_divergente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 44, in test_03_caso_divergente
+    self.alterar(lambda s:s.update(caso_reservado='outro')); self.recusa('reservado')
+                                                             ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'reservado' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_04_responsavel_divergente (__main__.Importacao.test_04_responsavel_divergente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 47, in test_04_responsavel_divergente
+    self.alterar(lambda s:s.update(responsavel='Outra Pessoa')); self.recusa('responsável')
+                                                                 ~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'responsável' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_05_nao_prosseguir (__main__.Importacao.test_05_nao_prosseguir)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 52, in test_05_nao_prosseguir
+    self.recusa('não prosseguir')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'não prosseguir' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_06_pdf_adulterado (__main__.Importacao.test_06_pdf_adulterado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 58, in test_06_pdf_adulterado
+    self.recusa('integridade')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'integridade' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_07_sessao_do_agente (__main__.Importacao.test_07_sessao_do_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 61, in test_07_sessao_do_agente
+    r=self.negado('Bash',{'command':f'python3 {IMPORTADOR} --expediente {self.exp}'})
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 :
+
+======================================================================
+FAIL: test_08_segunda_importacao (__main__.Importacao.test_08_segunda_importacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 66, in test_08_segunda_importacao
+    r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : /usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory
+
+
+======================================================================
+FAIL: test_09_autor_agente (__main__.Importacao.test_09_autor_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 70, in test_09_autor_agente
+    self.recusa('autor','--autor','AG-01')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'autor' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_10_etapa_encerrada (__main__.Importacao.test_10_etapa_encerrada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 74, in test_10_etapa_encerrada
+    self.recusa('etapa encerrada')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'etapa encerrada' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_11_matriz_adulterada (__main__.Importacao.test_11_matriz_adulterada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 78, in test_11_matriz_adulterada
+    self.recusa('matriz')
+    ~~~~~~~~~~~^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 30, in recusa
+    self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 'matriz' not found in "/usr/bin/python3: can't open file '/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py': [Errno 2] No such file or directory\n"
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.581s
+
+FAILED (failures=11)

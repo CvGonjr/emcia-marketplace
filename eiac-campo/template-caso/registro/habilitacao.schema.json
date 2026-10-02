@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Importação administrativa anterior ao percurso",
+  "type": "object",
+  "required": ["schema", "vigente", "historico"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 1},
+    "vigente": {"$ref": "#/$defs/importacao"},
+    "historico": {"type": "array", "items": {"$ref": "#/$defs/importacao"}}
+  },
+  "$defs": {
+    "importacao": {
+      "type": "object",
+      "required": ["id", "habilitacao", "caso_reservado", "expediente", "expediente_sha256", "desfecho", "patrocinador", "executor", "data_sessao", "restricoes", "arquivos", "autor", "data", "decisao_reimportacao"],
+      "properties": {
+        "id": {"type": "string"},
+        "habilitacao": {"type": "string"},
+        "caso_reservado": {"type": "string"},
+        "expediente": {"type": "string"},
+        "expediente_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "desfecho": {"enum": ["prosseguir", "prosseguir com restrição"]},
+        "patrocinador": {"type": "string"},
+        "executor": {"type": "string"},
+        "data_sessao": {"type": "string", "format": "date"},
+        "autor": {"type": "string"},
+        "data": {"type": "string", "format": "date-time"},
+        "decisao_reimportacao": {"type": ["object", "null"]},
+        "restricoes": {"type": "array", "items": {"type": "object", "required": ["id", "item", "motivo", "restricao"], "properties": {"id": {"type": "string", "pattern": "^RH-[0-9]+$"}, "item": {"type": "string"}, "motivo": {"type": "string"}, "restricao": {"type": "string"}}}},
+        "arquivos": {"type": "object", "additionalProperties": {"type": "object", "required": ["caminho", "sha256"], "properties": {"caminho": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}
+      }
+    }
+  }
+}

@@ -64,7 +64,10 @@ def conferir(linhas, playbook, comandos, transversais):
     if [linha['etapa'] for linha in linhas] != ids:
         erros.append('etapas diferentes do playbook ou fora de ordem')
     por_id = {etapa['id']: etapa for etapa in etapas}
-    atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']}
+    # Seções 3.3/3.4 cobrem o percurso; abertura anterior pertence a §3.2.
+    # Atualização de §3.2 proposta na evidência 039, sem editar o pacote canônico.
+    atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']
+                       if ato.get('escopo') != 'antes_do_percurso'}
     atos_usados = set(transversais)
     comandos_usados = {}
 

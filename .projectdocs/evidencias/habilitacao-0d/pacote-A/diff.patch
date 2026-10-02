@@ -1,0 +1,649 @@
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index fd23598..af97744 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -424,0 +425,12 @@ hash; uma tentativa de commit recusada não aparece como selo aplicado.
++
++
++## Passagem da habilitação ao caso
++
++No terminal do engenheiro, no diretório do caso e fora da sessão:
++
++```bash
++python3 /caminho/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py --expediente /caminho/expediente
++```
++
++O caso e o expediente precisam ter o mesmo identificador reservado e responsável.
++Consulte `eiac-campo/reference/habilitacao.md` para condições e reimportação.
+diff --git a/README.md b/README.md
+index 6ebb15f..c15e0a7 100644
+--- a/README.md
++++ b/README.md
+@@ -346,0 +347,9 @@ Decisões 031–035 e evidência em
++
++
++## Importação da habilitação
++
++O engenheiro importa o expediente no terminal, no diretório do caso, com
++`eiac-campo/scripts/importar_habilitacao.py --expediente <caminho>`.
++A operação prepara `rascunho/00-habilitacao.md` para validação e preserva
++os documentos assinados, evidências e matriz administrativa. Consulte a
++[interface de habilitação](eiac-campo/reference/habilitacao.md).
+diff --git a/decisoes/039-passagem-habilitacao-caso.md b/decisoes/039-passagem-habilitacao-caso.md
+new file mode 100644
+index 0000000..9011101
+--- /dev/null
++++ b/decisoes/039-passagem-habilitacao-caso.md
+@@ -0,0 +1,71 @@
++# 039 — Passagem da habilitação ao caso
++
++**Data:** 02/10/2026 · **Estado:** decisão aprovada; implementação por pacotes
++
++## Contexto
++
++A solicitação prevê importação humana do expediente, pré-condição declarativa
++de evento selado para F0, cópia conferida do método e restrições nos entregáveis.
++A decisão 022 estabelece o expediente separado; a 021 estabelece comparação
++por ordem de eventos para o selo posterior. A decisão 035 confirma o selo
++exibido pelo histórico Git e declara expressamente que não altera a máquina
++de etapas nem G7.
++
++O protocolo canônico EMCIA-HAB-01 v0.2, §3.3.4, exige estado inicial selado.
++O roteiro canônico exige gravar o desfecho e selar antes de F0. O checkout
++consultado de emcia-artefatos está no commit `ab09abe`.
++
++Foi reproduzida uma divergência: `selar.py` registra `SeloAplicado` antes do
++commit; quando o commit falha, o evento permanece. `estado.ultimo_selo()`
++corretamente devolve ausência de selo confirmado, enquanto
++`playbook.selo_apos_etapa()` aceita esse mesmo evento para autorizar passagem.
++Reutilizar somente esse padrão na nova pré-condição permitiria passagem sem
++estado efetivamente selado. A reprodução usa exclusivamente dados sintéticos.
++
++## Decisão
++
++A implementação foi inicialmente interrompida para registrar a divergência.
++Em seguida o usuário aprovou expressamente a confirmação pelo histórico Git
++para a nova trava e autorizou prosseguir com os pacotes A–D.
++
++**Decisão aprovada:** a nova exigência `exige_evento_selado` deve conferir
++um selo confirmado no histórico Git, posterior ao evento exigido, incluindo
++esse evento no conteúdo versionado. Evento deixado por commit recusado não
++satisfaz essa exigência. A ordem da trilha continua sendo o ordenador, sem
++comparação por timestamps. A regra anterior `exige_selo_apos` permanece com
++o alcance registrado em 021 e 035 até decisão específica sobre sua mudança.
++
++Sem histórico Git acessível, a nova trava recusa com TentativaNegada e motivo.
++`selar.py` permanece inalterado. A confirmação é genérica, sem vocabulário do
++método. A derivação do selo exibido em 035 é reutilizada.
++
++**Achado próprio em P3b:** `exige_selo_apos` tem a mesma falha de aceitar
++evento deixado por commit recusado. Por decisão expressa, permanece inalterado
++neste pacote; migrá-lo para confirmação pelo Git exige pacote posterior e
++decisão específica. Esta decisão não altera a regra anterior de 021.
++
++O conflito de códigos entre o roteiro `EMCIA-HAB-02` e o template
++`HAB-02-acordo-confidencialidade.md` permanece registrado. Nenhum documento
++é renomeado nem sua correspondência é resolvida por inferência.
++
++## Consequência
++
++Pacote A: importação pelo terminal humano, declarada em `decisoes_humanas`.
++Originais pertinentes entram em diretório por importação; nenhuma resposta
++bruta ou documento operacional é copiado. A matriz exportada é conferida
++contra o hash da entrada já preservada no expediente. O rascunho segue o
++validador; não há escrita direta em caso/. Recusas produzem TentativaNegada.
++Reimportação exige decisão que cite a importação anterior, antes de encerrar
++qualquer etapa; mantém histórico e arquivos. Não implementa retomada durante
++o percurso. O responsável fixado é autor de todos os eventos da importação.
++
++O ato anterior ao percurso tem `escopo: antes_do_percurso`. A conferência do
++manual §3.3/3.4 continua verificando os atos do percurso; o novo ato pertence
++a §3.2, cuja atualização é proposta na evidência, sem editar o pacote controlado.
++
++Há também referências preexistentes ao método no núcleo, incluindo `F0` em
++`avancar.py`, `guarda.py` e `estado.py`. O critério literal de ausência de
++termos no núcleo exigirá tratar essas referências; a busca foi preservada
++na evidência. Isso não foi corrigido neste levantamento.
++
++Evidências: `.projectdocs/evidencias/habilitacao-0d/`.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 075e3c7..f9b3c38 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -46,0 +47 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
++| 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; implementação por pacotes; P3b permanece para pacote posterior |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index a1a54b6..f8affa1 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -3 +3 @@
+-  "version": "0.8.8",
++  "version": "0.8.9",
+diff --git a/eiac-campo/commands/habilitacao.md b/eiac-campo/commands/habilitacao.md
+index 8b7200f..15c3f0c 100644
+--- a/eiac-campo/commands/habilitacao.md
++++ b/eiac-campo/commands/habilitacao.md
+@@ -26,0 +27,3 @@ A assinatura ocorre exclusivamente pelo painel escolhido pelo cliente, sem API,
++
++
++A importação é humana: apresente `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/importar_habilitacao.py" --expediente "<caminho>"` para execução no terminal do engenheiro, no diretório do caso, fora da sessão. Não execute essa decisão pela sessão. Depois da importação, o rascunho passa pelo validador; a selagem é um ato deliberado conforme o roteiro canônico.
+diff --git a/eiac-campo/reference/habilitacao.md b/eiac-campo/reference/habilitacao.md
+index d2a518c..2a399c7 100644
+--- a/eiac-campo/reference/habilitacao.md
++++ b/eiac-campo/reference/habilitacao.md
+@@ -228,0 +229,31 @@ nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
++
++
++## Importação humana no caso
++
++Depois de abrir o caso com o identificador reservado, no terminal do engenheiro,
++fora da sessão do agente e no diretório do caso:
++
++```bash
++python3 /caminho/eiac-campo/scripts/importar_habilitacao.py --expediente /caminho/expediente
++```
++
++O importador exige formalização vigente, acesso efetivo, qualificação registrada,
++integridade, mesmo caso reservado e mesmo responsável. Recusa expediente com
++decisão de não prosseguir e caso com etapa encerrada. A guarda recusa essa
++operação pela sessão e devolve o comando exato para o terminal humano.
++
++Somente os três PDFs assinados, suas evidências e a matriz entram em
++`fontes/habilitacao/importacao-NNN-AAAA-MM-DD/`. A matriz é conferida contra o
++hash da entrada administrativa preservada no histórico do expediente.
++`registro/habilitacao.json` conserva origem, desfecho, restrições RH-xx e hashes.
++O schema está em `registro/habilitacao.schema.json`.
++
++O rascunho `rascunho/00-habilitacao.md` usa marcas determinísticas V para
++os documentos conferidos e D para declarações e desfecho. A marca V da matriz
++identifica o documento registrado, sem transformar suas declarações em prova
++independente do acesso. Gravar pelo validador e selar são atos separados.
++
++Reimportação antes de encerrar qualquer etapa exige `--decisao-reimportacao`
++apontando para JSON com `decisor` igual ao responsável, `motivo`, `data` e
++`importacao_anterior` igual ao id vigente. Preserva registros e arquivos anteriores.
++Não é mecanismo de retomada após perda de pré-requisito durante o percurso.
+diff --git a/eiac-campo/scripts/importar_habilitacao.py b/eiac-campo/scripts/importar_habilitacao.py
+new file mode 100644
+index 0000000..fc6d6c1
+--- /dev/null
++++ b/eiac-campo/scripts/importar_habilitacao.py
+@@ -0,0 +1,194 @@
++"""Importação humana do expediente administrativo no caso, antes do percurso.
++
++Executar no terminal do engenheiro. A guarda bloqueia sua chamada pela sessão.
++Não grava em caso/: prepara o rascunho para o validador de procedência.
++"""
++import argparse
++import copy
++import datetime
++import fcntl
++import hashlib
++import json
++import os
++import pathlib
++import shutil
++import sys
++import tempfile
++
++sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]/'eiac-nucleo/scripts'))
++import estado as E
++import playbook as P
++import habilitacao as H
++
++
++def serializar(dados):
++    return json.dumps(dados, sort_keys=True, ensure_ascii=False).encode()
++
++
++def conferir(expediente, caso=None, responsavel=None):
++    """Leitura sob lock; não executa operações nem altera o expediente."""
++    root=H.local_externo(expediente)
++    p=root/'expediente.json'
++    H.exigir(p.is_file() and not p.is_symlink(), 'expediente ausente ou inválido')
++    H.exigir(not (root/'.lock').is_symlink(), 'lock inválido')
++    with (root/'.lock').open('a') as lock:
++        fcntl.flock(lock,fcntl.LOCK_SH)
++        s=json.loads(p.read_text(encoding='utf-8'))
++        H.exigir(isinstance(s,dict) and s.get('schema')==1, 'schema do expediente inválido')
++        H.REGRA_PESSOA.set(s.get('pessoa_nomeada'))
++        H.pessoa(s['responsavel'])
++        H.identificador(s['habilitacao']); H.identificador(s['caso_reservado'])
++        H.exigir(s.get('caso_aberto') is False, 'expediente inválido: caso já aberto')
++        H.exigir(not s.get('recusa'), 'desfecho não prosseguir; retomada exige decisão própria')
++        H.integridade(root,s)
++        H.exigir(H.completa(s), 'formalização incompleta: 0b não concluída')
++        H.exigir(isinstance(s.get('acessos'),dict), 'acessos ausentes: 0c não concluída')
++        H.exigir(not any(p.get('estado')=='aberta' for p in s['pendencias'].values()), 'pendência aberta')
++        revisoes=[e for e in s['eventos'] if e.get('tipo')=='OperacaoRegistrada' and e.get('operacao')=='revisar']
++        H.exigir(bool(s.get('revisao')) and bool(revisoes)
++                 and revisoes[-1]['entrada'].get('qualificacao_0a') is True, 'qualificação ausente')
++        if caso is not None: H.exigir(s['caso_reservado']==caso,'identificador reservado diverge do caso')
++        if responsavel is not None: H.exigir(s['responsavel']==responsavel,'responsável diverge do caso')
++        # A matriz deriva da entrada com hash já preservada na operação acessos.
++        entradas=[e for e in s['eventos'] if e.get('tipo')=='OperacaoRegistrada' and e.get('operacao')=='acessos']
++        H.exigir(bool(entradas),'matriz sem origem registrada')
++        ev=entradas[-1]; matriz=ev['entrada']
++        H.exigir(H.digest(serializar(matriz))==ev['entrada_sha256'],'integridade da matriz divergente')
++        atual={k:v for k,v in s['acessos'].items() if k!='data_registro'}
++        H.exigir(matriz==atual,'matriz diverge da entrada preservada')
++        # Reaplica as condições administrativas puras sobre uma cópia.
++        H.aplicar(root,copy.deepcopy(s),'acessos',copy.deepcopy(matriz))
++        pronto=H.aplicar(root,copy.deepcopy(s),'preparar-0d',{})
++        arquivos={}
++        for doc in H.TEMPLATES:
++            v=s['documentos'][doc][-1]; assinatura=v['assinatura']
++            H.exigir(v['revisao']==s['revisao'],'revisão do documento diverge da vigente')
++            esperado={(x['nome'],x['papel']) for x in v['liberacao']['signatarios']}
++            assinado={(x['nome'],x['papel']) for x in assinatura['signatarios']}
++            H.exigir(esperado==assinado and {x[1] for x in esperado}=={'organizacao','emcia'},
++                     'assinaturas incompletas ou divergentes')
++            for nome,_ in esperado: H.pessoa(nome)
++            for x in assinatura['signatarios']: datetime.date.fromisoformat(x['data'])
++            pdf=H.ler_arquivo(root,assinatura['arquivo'])
++            H.exigir(pdf.startswith(b'%PDF-') and b'%%EOF' in pdf[-2048:],'PDF assinado inválido')
++            arquivos[doc+'-assinado.pdf']=(pdf,assinatura['arquivo']['sha256'])
++            arquivos[doc+'-evidencia.bin']=(H.ler_arquivo(root,assinatura['evidencia']),assinatura['evidencia']['sha256'])
++        arquivos['matriz-de-acessos.json']=(serializar(matriz),ev['entrada_sha256'])
++        return s,pronto,arquivos,H.digest(p.read_bytes())
++
++
++def caminho_seguro(relativo):
++    raiz=pathlib.Path.cwd().resolve(); p=raiz/relativo
++    H.exigir(p.resolve().is_relative_to(raiz),'destino fora do caso')
++    H.exigir(not any(x.is_symlink() for x in [p,*p.parents] if x.is_relative_to(raiz)), 'destino contém symlink')
++    return p
++
++
++def importar(expediente, autor=None, decisao=None):
++    st=E.ler(); pb,erro=P.carregar()
++    H.exigir(st is not None and not erro,erro or 'caso ausente')
++    pessoa=st.get('responsavel')
++    H.exigir(E.pessoa_nomeada(pessoa),'responsável do caso inválido')
++    H.exigir(autor is None,'autor vem do responsável fixado no caso; argumento recusado')
++    H.exigir(not any(x.get('cumprido') for x in st['cumprimentos'].values())
++             and not any(x.get('evento')=='EtapaEncerrada' for x in E.eventos()), 'caso já tem etapa encerrada')
++    for area in ('registro','fontes','rascunho'): caminho_seguro(area)
++    registro=caminho_seguro('registro/habilitacao.json')
++    anterior=json.loads(registro.read_text()) if registro.exists() else None
++    historico=copy.deepcopy(anterior.get('historico',[]))+[anterior['vigente']] if anterior else []
++    evs=[e for e in E.eventos() if e.get('evento')=='HabilitacaoImportada']
++    H.exigir(bool(anterior)==bool(evs), 'registro e evento de importação divergentes')
++    decisao_registrada=None
++    if anterior:
++        H.exigir(decisao is not None,'importação anterior; reimportação exige decisão explícita')
++        decisao_registrada=json.loads(pathlib.Path(decisao).read_text())
++        H.exigir(decisao_registrada.get('decisor')==pessoa,'decisor da reimportação diverge do responsável')
++        H.texto(decisao_registrada.get('motivo'))
++        datetime.date.fromisoformat(decisao_registrada['data'])
++        H.exigir(decisao_registrada.get('importacao_anterior')==anterior['vigente']['id'],
++                 'decisão não identifica importação anterior')
++    else: H.exigir(decisao is None,'decisão de reimportação sem importação anterior')
++    s,pronto,arquivos,hash_expediente=conferir(expediente,st['caso'],pessoa)
++    agora=datetime.datetime.now(datetime.timezone.utc).isoformat()
++    ident=f"importacao-{len(historico)+1:03d}-{agora[:10]}"
++    destino=caminho_seguro('fontes/habilitacao/'+ident)
++    H.exigir(not destino.exists(),'destino de importação já existe')
++    H.exigir(len({i['item'] for i in s['acessos']['itens']})==len(s['acessos']['itens']),
++             'matriz contém itens duplicados; identifique cada fonte sem ambiguidade')
++    ids={r['item']:r['id'] for v in historico for r in v['restricoes']}
++    sequencia=max([int(r[3:]) for r in ids.values()]+[0])
++    restricoes=[]
++    for i in s['acessos']['itens']:
++        if i['status']!='negado': continue
++        if i['item'] not in ids:
++            sequencia+=1; ids[i['item']]=f'RH-{sequencia:02d}'
++        restricoes.append(dict(id=ids[i['item']],item=i['item'],motivo=i['motivo'],restricao=i['restricao']))
++    refs={nome:dict(caminho=str((destino/nome).relative_to(pathlib.Path.cwd())),sha256=sha)
++          for nome,(_,sha) in arquivos.items()}
++    vigente=dict(id=ident,habilitacao=s['habilitacao'],caso_reservado=s['caso_reservado'],
++                 expediente=str(pathlib.Path(expediente).resolve()),expediente_sha256=hash_expediente,
++                 desfecho=pronto['desfecho_proposto'],patrocinador=s['acessos']['patrocinador'],
++                 executor=s['acessos']['executor'],data_sessao=s['acessos']['data_sessao'],
++                 restricoes=restricoes,arquivos=refs,autor=pessoa,data=agora,
++                 decisao_reimportacao=decisao_registrada)
++    md=[]
++    for doc in H.TEMPLATES:
++        ref=refs[doc+'-assinado.pdf']['caminho'].removeprefix('fontes/')
++        md.append(f"- [V · documento: {ref} · {agora[:10]} · {pessoa}] {doc}: documento assinado; conferência humana preservada nas evidências.\n")
++    md.append(f"- [D · {vigente['patrocinador']} · {agora[:10]}] Patrocinador: {vigente['patrocinador']}. Executor: {vigente['executor']}; sessão em {vigente['data_sessao']}.\n")
++    ref=refs['matriz-de-acessos.json']['caminho'].removeprefix('fontes/')
++    for i in s['acessos']['itens']:
++        md.append(f"- [V · documento: {ref} · {agora[:10]} · {pessoa}] Matriz registrada: {i['status']} — {i['item']}.\n")
++    for r in restricoes:
++        md.append(f"- [D · {pessoa} · {agora[:10]}] {r['id']}: {r['item']}; motivo: {r['motivo']}; restrição: {r['restricao']}.\n")
++    md.append(f"- [D · {pessoa} · {agora[:10]}] Desfecho: {vigente['desfecho']}.\n")
++    # Texto administrativo não pode introduzir linhas/colchetes de marcação.
++    for valor in [vigente['patrocinador'],vigente['executor'],pessoa,*[r[k] for r in restricoes for k in ('item','motivo','restricao')],*[i['item'] for i in s['acessos']['itens']]]:
++        H.exigir(not any(c in valor for c in '\n\r[]·'),'texto incompatível com marcação de procedência')
++    destino.parent.mkdir(parents=True,exist_ok=True)
++    draft=caminho_seguro('rascunho/00-habilitacao.md'); draft.parent.mkdir(exist_ok=True)
++    backup_reg=registro.read_bytes() if registro.exists() else None
++    backup_draft=draft.read_bytes() if draft.exists() else None
++    with tempfile.TemporaryDirectory(prefix='.importacao-',dir=pathlib.Path.cwd()) as tmp:
++        stage=pathlib.Path(tmp); folder=stage/'fontes'; folder.mkdir()
++        for nome,(data,sha) in arquivos.items():
++            H.exigir(H.digest(data)==sha,'hash divergente na cópia: '+nome)
++            (folder/nome).write_bytes(data)
++            H.exigir(H.digest((folder/nome).read_bytes())==sha,'hash divergente após cópia: '+nome)
++        (stage/'registro.json').write_text(json.dumps(dict(schema=1,vigente=vigente,historico=historico),indent=2,ensure_ascii=False)+'\n')
++        (stage/'rascunho.md').write_text(''.join(md),encoding='utf-8')
++        try:
++            os.replace(folder,destino)
++            os.replace(stage/'rascunho.md',draft)
++            os.replace(stage/'registro.json',registro)
++            E.evento('HabilitacaoImportada',autor=pessoa,importacao=ident,habilitacao=s['habilitacao'],
++                     desfecho=vigente['desfecho'],arquivos=refs,registro_sha256=H.digest(registro.read_bytes()))
++        except Exception:
++            shutil.rmtree(destino,ignore_errors=True)
++            for p,backup in ((registro,backup_reg),(draft,backup_draft)):
++                if backup is None: p.unlink(missing_ok=True)
++                else: p.write_bytes(backup)
++            raise
++    return vigente
++
++
++def main():
++    ap=argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--expediente',required=True,type=pathlib.Path)
++    ap.add_argument('--decisao-reimportacao',type=pathlib.Path)
++    ap.add_argument('--autor',help='recusado: autoria é fixada no caso')
++    a=ap.parse_args()
++    try:
++        caminho_seguro('registro')
++        lock=caminho_seguro('registro/.importacao.lock')
++        with lock.open('a') as f:
++            fcntl.flock(f,fcntl.LOCK_EX)
++            resultado=importar(a.expediente,a.autor,a.decisao_reimportacao)
++        print(json.dumps(resultado,ensure_ascii=False,indent=2))
++    except (ValueError,OSError,KeyError,TypeError,AttributeError) as exc:
++        E.evento('TentativaNegada',autor=(E.ler() or {}).get('responsavel'),
++                 operacao='importar-habilitacao',motivo=str(exc))
++        ap.exit(1,'Recusado: '+str(exc)+'\n')
++
++
++if __name__=='__main__': main()
+diff --git a/eiac-campo/template-caso/registro/habilitacao.schema.json b/eiac-campo/template-caso/registro/habilitacao.schema.json
+new file mode 100644
+index 0000000..6713653
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/habilitacao.schema.json
+@@ -0,0 +1,34 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "title": "Importação administrativa anterior ao percurso",
++  "type": "object",
++  "required": ["schema", "vigente", "historico"],
++  "additionalProperties": false,
++  "properties": {
++    "schema": {"const": 1},
++    "vigente": {"$ref": "#/$defs/importacao"},
++    "historico": {"type": "array", "items": {"$ref": "#/$defs/importacao"}}
++  },
++  "$defs": {
++    "importacao": {
++      "type": "object",
++      "required": ["id", "habilitacao", "caso_reservado", "expediente", "expediente_sha256", "desfecho", "patrocinador", "executor", "data_sessao", "restricoes", "arquivos", "autor", "data", "decisao_reimportacao"],
++      "properties": {
++        "id": {"type": "string"},
++        "habilitacao": {"type": "string"},
++        "caso_reservado": {"type": "string"},
++        "expediente": {"type": "string"},
++        "expediente_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
++        "desfecho": {"enum": ["prosseguir", "prosseguir com restrição"]},
++        "patrocinador": {"type": "string"},
++        "executor": {"type": "string"},
++        "data_sessao": {"type": "string", "format": "date"},
++        "autor": {"type": "string"},
++        "data": {"type": "string", "format": "date-time"},
++        "decisao_reimportacao": {"type": ["object", "null"]},
++        "restricoes": {"type": "array", "items": {"type": "object", "required": ["id", "item", "motivo", "restricao"], "properties": {"id": {"type": "string", "pattern": "^RH-[0-9]+$"}, "item": {"type": "string"}, "motivo": {"type": "string"}, "restricao": {"type": "string"}}}},
++        "arquivos": {"type": "object", "additionalProperties": {"type": "object", "required": ["caminho", "sha256"], "properties": {"caminho": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}
++      }
++    }
++  }
++}
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 3d227af..baf5fae 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -3 +3 @@
+-  "versao": "0.4.9",
++  "versao": "0.4.10",
+@@ -149,0 +150,6 @@
++    },
++    {
++      "id": "importar-habilitacao",
++      "script": "importar_habilitacao.py",
++      "escopo": "antes_do_percurso",
++      "condicao": {"tipo": "sempre"}
+diff --git a/testes/README.md b/testes/README.md
+index 595fe43..5aceae6 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -737,0 +738,7 @@ fonte ilegível. As recusas preservam o estado e deixam evento.
++
++
++## Passagem 0d
++
++`python3 testes/habilitacao_0d.py` verifica a importação humana do expediente:
++recusas com evento, integridade, identidade reservada, histórico de reimportação,
++gravação pelo validador e preservação exclusiva dos artefatos administrativos.
+diff --git a/testes/apoio/habilitacao_0d.py b/testes/apoio/habilitacao_0d.py
+new file mode 100644
+index 0000000..8bd4c7a
+--- /dev/null
++++ b/testes/apoio/habilitacao_0d.py
+@@ -0,0 +1,82 @@
++"""Expedientes exclusivamente sintéticos, construídos pelas operações reais.
++
++O renderizador é substituído somente nesta fixture por um PDF de controle;
++nenhuma guarda, assinatura ou condição de passagem é desativada.
++"""
++import importlib.util
++import json
++import pathlib
++import subprocess
++import sys
++import tempfile
++from unittest.mock import patch
++
++RAIZ = pathlib.Path(__file__).resolve().parents[2]
++spec = importlib.util.spec_from_file_location('expediente_sintetico', RAIZ/'eiac-campo/scripts/habilitacao.py')
++H = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(H)
++
++
++def criar(root, caso, responsavel, acessos=True, assinaturas=True, restricao=False):
++    root = pathlib.Path(root)
++    H.iniciar(root, 'HAB-CONTROLE', responsavel, caso)
++    with tempfile.TemporaryDirectory(prefix='emcia-insumos-sinteticos-') as tmp:
++        insumos = pathlib.Path(tmp)
++        origem = insumos/'declaracao.json'
++        origem.write_text('{"tipo":"controle exclusivamente sintético"}')
++        def op(nome, **dados):
++            return H.executar(root, nome, dados)
++        op('receber', id='S1', arquivo=str(origem), formulario='FORM-SINTETICO',
++           submissao='SUB-SINTETICA', respondente='Pessoa Patrocinadora',
++           versao_perguntas='controle-1', rodada=0, escopo='administrativo')
++        op('consolidar', campos={'organizacao': {'valor': 'Organização Sintética', 'fonte': 'S1'}})
++        op('revisar', decisor=responsavel, motivo='Revisão exclusivamente sintética',
++           qualificacao_0a=True, conteudo_conferido=True, evidencia=str(origem))
++        templates = insumos/'templates'
++        templates.mkdir()
++        for doc, filename in H.TEMPLATES.items():
++            (templates/filename).write_text('# Controle sintético '+doc+'\n{{organizacao}} {{caso_id}}\n')
++        with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\ncontrole sintetico\n%%EOF'):
++            op('gerar', templates=str(templates))
++        if assinaturas:
++            pdf = insumos/'assinado.pdf'
++            pdf.write_bytes(b'%PDF-1.7\nassinatura exclusivamente sintetica\n%%EOF')
++            for doc in H.TEMPLATES:
++                signers = [{'nome':'Pessoa Patrocinadora','papel':'organizacao','competencia':'Controle sintético'},
++                           {'nome':responsavel,'papel':'emcia','competencia':'Controle sintético'}]
++                op('liberar', documento=doc, versao=1, decisor=responsavel, pdf_conferido=True,
++                   ferramenta='Painel sintético', operador=responsavel, signatarios=signers)
++                op('assinatura', documento=doc, versao=1, decisor=responsavel,
++                   conteudo_conferido=True, evidencias_conferidas=True, arquivo=str(pdf),
++                   evidencia=str(origem), referencia='Controle sintético',
++                   signatarios=[dict(nome=s['nome'],papel=s['papel'],data='2026-10-02') for s in signers])
++            op('concluir-0b')
++        if acessos and assinaturas:
++            itens=[{'item':'Fonte sintética A','status':'concedido','evidencia':'Conferência sintética'}]
++            if restricao:
++                itens.append({'item':'Fonte sintética B','status':'negado','evidencia':'Declaração sintética',
++                              'motivo':'Amostra indisponível','restricao':'Sem verificação dessa fonte'})
++            op('acessos', patrocinador='Pessoa Patrocinadora', executor='Pessoa Executora',
++               decisor=responsavel, autoridade_patrocinador='Controle sintético',
++               executor_liberado=True, agenda_reservada=True, data_sessao='2026-10-15', itens=itens)
++            op('preparar-0d')
++    return root
++
++
++def preparar(caso):
++    """Importa, valida e sela uma fixture de caso antes do percurso."""
++    caso=pathlib.Path(caso).resolve()
++    st=json.loads((caso/'registro/estado.json').read_text())
++    if (caso/'registro/habilitacao.json').exists():
++        return
++    with tempfile.TemporaryDirectory(prefix='emcia-expediente-fixture-') as tmp:
++        root=criar(pathlib.Path(tmp)/'expediente', st['caso'], st['responsavel'])
++        def rodar(*args):
++            r=subprocess.run(args, cwd=caso, text=True, capture_output=True)
++            if r.returncode: raise RuntimeError(r.stderr or r.stdout)
++        if not (caso/'.git').exists(): rodar('git','init','-q')
++        rodar('git','config','user.name',st['responsavel'])
++        rodar('git','config','user.email','sintetico@example.invalid')
++        rodar(sys.executable,str(RAIZ/'eiac-campo/scripts/importar_habilitacao.py'),'--expediente',str(root))
++        rodar(sys.executable,str(RAIZ/'eiac-nucleo/scripts/validar.py'),'--arquivo','caso/00-habilitacao.md')
++        rodar(sys.executable,str(RAIZ/'eiac-nucleo/scripts/selar.py'),'--nota','habilitação sintética importada e conferida')
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index 543ee89..574a088 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -201 +201 @@ class DecisaoA12(unittest.TestCase):
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina"})
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao"})
+diff --git a/testes/habilitacao_0d.py b/testes/habilitacao_0d.py
+new file mode 100644
+index 0000000..c74ae7f
+--- /dev/null
++++ b/testes/habilitacao_0d.py
+@@ -0,0 +1,107 @@
++"""Passagem 0d: negativas primeiro, sobre componentes reais e dados sintéticos."""
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++from apoio.habilitacao_0d import criar, H, RAIZ
++from apoio.hook_real import CasoHook
++
++IMPORTADOR=RAIZ/'eiac-campo/scripts/importar_habilitacao.py'
++
++
++class Importacao(CasoHook):
++    def setUp(self):
++        super().setUp()
++        self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
++
++    def importar(self, *args):
++        return subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp),*args],
++                              cwd=self.caso,text=True,capture_output=True)
++
++    def alterar(self, fn):
++        p=self.exp/'expediente.json'; s=json.loads(p.read_text()); fn(s); p.write_text(json.dumps(s))
++
++    def recusa(self, trecho, *args):
++        antes=len(self.eventos()); r=self.importar(*args)
++        self.assertNotEqual(r.returncode,0,r.stdout)
++        self.assertIn(trecho,r.stderr)
++        self.assertEqual(len(self.eventos()),antes+1)
++        self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
++        self.assertEqual(self.eventos()[-1]['autor'],'Celso do Vale')
++        return r
++
++    def test_01_sem_formalizacao(self):
++        self.alterar(lambda s:s['documentos']['HAB-01'][-1].update(assinatura=None))
++        self.recusa('formalização')
++
++    def test_02_sem_acessos(self):
++        self.alterar(lambda s:s.update(acessos=None)); self.recusa('acessos')
++
++    def test_03_caso_divergente(self):
++        self.alterar(lambda s:s.update(caso_reservado='outro')); self.recusa('reservado')
++
++    def test_04_responsavel_divergente(self):
++        self.alterar(lambda s:s.update(responsavel='Outra Pessoa')); self.recusa('responsável')
++
++    def test_05_nao_prosseguir(self):
++        H.executar(self.exp,'nao-prosseguir',{'decisor':'Celso do Vale','motivo':'Controle negativo',
++                                         'condicao_retomada':'Nova decisão necessária'})
++        self.recusa('não prosseguir')
++
++    def test_06_pdf_adulterado(self):
++        s=json.loads((self.exp/'expediente.json').read_text())
++        ref=s['documentos']['HAB-01'][-1]['assinatura']['arquivo']
++        (self.exp/ref['caminho']).write_bytes(b'%PDF-1.7\nadulterado\n%%EOF')
++        self.recusa('integridade')
++
++    def test_07_sessao_do_agente(self):
++        r=self.negado('Bash',{'command':f'python3 {IMPORTADOR} --expediente {self.exp}'})
++        self.assertIn('Comando exato:',r.stderr)
++        self.assertEqual(self.eventos()[-1]['operacao'],'importar-habilitacao')
++
++    def test_08_segunda_importacao(self):
++        r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
++        self.recusa('importação anterior')
++
++    def test_09_autor_agente(self):
++        self.recusa('autor','--autor','AG-01')
++
++    def test_10_etapa_encerrada(self):
++        self.estado['cumprimentos']['F0']={'cumprido':True}; self.salvar()
++        self.recusa('etapa encerrada')
++
++    def test_11_matriz_adulterada(self):
++        self.alterar(lambda s:s['acessos']['itens'][0].update(item='Outra fonte'))
++        self.recusa('matriz')
++
++    def test_20_importa_apenas_artefatos_autorizados(self):
++        r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
++        reg=json.loads((self.caso/'registro/habilitacao.json').read_text())
++        v=reg['vigente']; self.assertEqual(v['desfecho'],'prosseguir')
++        self.assertEqual(len(v['arquivos']),7)
++        self.assertEqual(self.eventos()[-1]['evento'],'HabilitacaoImportada')
++        self.assertFalse((self.caso/'caso/00-habilitacao.md').exists())
++        draft=self.caso/'rascunho/00-habilitacao.md'
++        self.assertTrue(all(x.startswith('- [') for x in draft.read_text().splitlines()))
++        r=self.rodar('validar.py','--arquivo','caso/00-habilitacao.md')
++        self.assertEqual(r.returncode,0,r.stderr)
++        import hashlib
++        for ref in v['arquivos'].values():
++            self.assertEqual(hashlib.sha256((self.caso/ref['caminho']).read_bytes()).hexdigest(),ref['sha256'])
++
++    def test_21_reimportacao_decidida_preserva_historico(self):
++        r=self.importar(); self.assertEqual(r.returncode,0,r.stderr)
++        antigo=json.loads((self.caso/'registro/habilitacao.json').read_text())['vigente']
++        p=self.base/'decisao.json'; p.write_text(json.dumps(dict(decisor='Celso do Vale',
++            motivo='Nova conferência sintética',data='2026-10-02',importacao_anterior=antigo['id'])))
++        r=self.importar('--decisao-reimportacao',str(p)); self.assertEqual(r.returncode,0,r.stderr)
++        reg=json.loads((self.caso/'registro/habilitacao.json').read_text())
++        self.assertEqual(reg['historico'],[antigo])
++        self.assertNotEqual(reg['vigente']['id'],antigo['id'])
++        self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
++
++
++if __name__=='__main__': unittest.main(verbosity=2)
+diff --git a/testes/manual_a25.py b/testes/manual_a25.py
+index d3fdb14..ad4012d 100644
+--- a/testes/manual_a25.py
++++ b/testes/manual_a25.py
+@@ -67 +67,4 @@ def conferir(linhas, playbook, comandos, transversais):
+-    atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']}
++    # Seções 3.3/3.4 cobrem o percurso; abertura anterior pertence a §3.2.
++    # Atualização de §3.2 proposta na evidência 039, sem editar o pacote canônico.
++    atos_declarados = {ato['id'] for ato in playbook['decisoes_humanas']
++                       if ato.get('escopo') != 'antes_do_percurso'}

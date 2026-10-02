@@ -1,0 +1,8 @@
+{
+  "commit_recusado": true,
+  "erro": "git recusou o commit: ",
+  "evento_selo_na_trilha": true,
+  "selo_confirmado": null,
+  "regra_atual_aceita": true,
+  "motivo_regra": null
+}

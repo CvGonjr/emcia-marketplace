@@ -24,3 +24,6 @@ Execute as operações documentadas com `--entrada <arquivo.json>`. Para gerar d
 A assinatura ocorre exclusivamente pelo painel escolhido pelo cliente, sem API, MCP ou webhook de assinatura. Registre os PDFs assinados e as evidências devolvidas, após conferência humana. Uma imagem de assinatura ou uma resposta “sim” não substitui esse retorno.
 
 `concluir-0b` apenas confere a formalização. `acessos` registra a verificação humana de 0c e `preparar-0d` confere prontidão; nenhum deles abre caso, sela ou libera F0. A passagem para o caso segue o roteiro canônico e os mecanismos autorizados existentes. Preserve o expediente para importação e não escreva diretamente em `fontes/`, `registro/` ou `caso/` de um caso pelo chat.
+
+
+A importação é humana: apresente `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/importar_habilitacao.py" --expediente "<caminho>"` para execução no terminal do engenheiro, no diretório do caso, fora da sessão. Não execute essa decisão pela sessão. Depois da importação, o rascunho passa pelo validador; a selagem é um ato deliberado conforme o roteiro canônico.

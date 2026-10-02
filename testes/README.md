@@ -735,3 +735,10 @@ ciclos excluídos; versão inválida; empate ambíguo; link externo; contrato
 inválido; mesmo responsável com fonte rastreável; troca por nova versão
 gravada pelo script de campo; contrato com outra etapa/campo/caminho;
 fonte ilegível. As recusas preservam o estado e deixam evento.
+
+
+## Passagem 0d
+
+`python3 testes/habilitacao_0d.py` verifica a importação humana do expediente:
+recusas com evento, integridade, identidade reservada, histórico de reimportação,
+gravação pelo validador e preservação exclusiva dos artefatos administrativos.

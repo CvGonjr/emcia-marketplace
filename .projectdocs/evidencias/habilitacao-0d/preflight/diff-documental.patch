@@ -1,0 +1,202 @@
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 075e3c7..6dcd175 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -44,3 +44,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 036 | Responsável da recorrência conferido com a fonte vigente (A23) | firme |
+ | 037 | E5 usa a rotina de calibragem vigente (A24) | firme |
+ | 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |
++| 039 | Passagem da habilitação ao caso; divergência sobre confirmação do selo | pendente de decisão humana; implementação interrompida |
+diff --git a/decisoes/039-passagem-habilitacao-caso.md b/decisoes/039-passagem-habilitacao-caso.md
+new file mode 100644
+index 0000000..e167afe
+--- /dev/null
++++ b/decisoes/039-passagem-habilitacao-caso.md
+@@ -0,0 +1,57 @@
++# 039 — Passagem da habilitação ao caso
++
++**Data:** 02/10/2026 · **Estado:** implementação interrompida; decisão sobre selo pendente
++
++## Contexto
++
++A solicitação prevê importação humana do expediente, pré-condição declarativa
++de evento selado para F0, cópia conferida do método e restrições nos entregáveis.
++A decisão 022 estabelece o expediente separado; a 021 estabelece comparação
++por ordem de eventos para o selo posterior. A decisão 035 confirma o selo
++exibido pelo histórico Git e declara expressamente que não altera a máquina
++de etapas nem G7.
++
++O protocolo canônico EMCIA-HAB-01 v0.2, §3.3.4, exige estado inicial selado.
++O roteiro canônico exige gravar o desfecho e selar antes de F0. O checkout
++consultado de emcia-artefatos está no commit `ab09abe`.
++
++Foi reproduzida uma divergência: `selar.py` registra `SeloAplicado` antes do
++commit; quando o commit falha, o evento permanece. `estado.ultimo_selo()`
++corretamente devolve ausência de selo confirmado, enquanto
++`playbook.selo_apos_etapa()` aceita esse mesmo evento para autorizar passagem.
++Reutilizar somente esse padrão na nova pré-condição permitiria passagem sem
++estado efetivamente selado. A reprodução usa exclusivamente dados sintéticos.
++
++## Decisão
++
++A implementação dos pacotes A–D foi interrompida antes de alterar código,
++conforme o limite expresso da solicitação: divergência entre documentos
++canônicos e código deve ser registrada, sem resolução por inferência.
++
++**Proposta pendente:** a nova exigência `exige_evento_selado` deve conferir
++um selo confirmado no histórico Git, posterior ao evento exigido, incluindo
++esse evento no conteúdo versionado. Evento deixado por commit recusado não
++satisfaz essa exigência. A ordem da trilha continua sendo o ordenador, sem
++comparação por timestamps. A regra anterior `exige_selo_apos` permanece com
++o alcance registrado em 021 e 035 até decisão específica sobre sua mudança.
++
++É necessária decisão humana sobre essa proposta antes da implementação.
++Este registro não declara a proposta aprovada nem supersede 021, 022 ou 035.
++
++O conflito de códigos entre o roteiro `EMCIA-HAB-02` e o template
++`HAB-02-acordo-confidencialidade.md` permanece registrado. Nenhum documento
++é renomeado nem sua correspondência é resolvida por inferência.
++
++## Consequência
++
++Não foram implementados importador, nova guarda, cópia do método ou transporte
++de restrições. Versões e playbook permanecem sem alteração. Os testes de
++aceite de `habilitacao_0d.py` ainda não foram escritos; a reprodução anexada
++é diagnóstico da divergência anterior, não teste de aceite dos pacotes.
++
++Há também referências preexistentes ao método no núcleo, incluindo `F0` em
++`avancar.py`, `guarda.py` e `estado.py`. O critério literal de ausência de
++termos no núcleo exigirá tratar essas referências; a busca foi preservada
++na evidência. Isso não foi corrigido neste levantamento.
++
++Evidências: `.projectdocs/evidencias/habilitacao-0d/preflight/`.
+diff --git a/.projectdocs/evidencias/habilitacao-0d/preflight/resultado.md b/.projectdocs/evidencias/habilitacao-0d/preflight/resultado.md
+new file mode 100644
+index 0000000..5a9d017
+--- /dev/null
++++ b/.projectdocs/evidencias/habilitacao-0d/preflight/resultado.md
+@@ -0,0 +1,46 @@
++# Passagem habilitação → caso — levantamento inicial
++
++**Data:** 02/10/2026. **Base:** `3b38101ce1d294cb33cea261178b211cfea40964`.
++**Fonte canônica consultada:** emcia-artefatos `ab09abe`.
++**Estado:** interrompido antes dos pacotes A–D por divergência documentada em 039.
++
++## Linha de base
++
++- `bash testes/negativos.sh`: todas as travas aprovadas.
++- `python3 testes/contexto.py`: 11 verificações aprovadas.
++- `python3 testes/habilitacao.py`: 19 testes aprovados.
++
++Saídas integrais nos arquivos `*-inicial.txt`. Não houve modificação de código,
++fixtures, templates ou versões. A pasta preexistente `.projectdocs/figuras/`
++foi preservada.
++
++## Divergência reproduzida
++
++`python3 .projectdocs/evidencias/habilitacao-0d/preflight/reproduzir-selo.py`
++cria um repositório sintético temporário e configura um hook que recusa o
++commit. A reprodução chama os componentes reais de selo, estado e playbook:
++
++- commit recusado;
++- `SeloAplicado` presente na trilha;
++- nenhum selo confirmado pelo Git;
++- regra atual de passagem aceita o evento.
++
++Saída em `reproducao-selo.txt`. Reutilizar esse comportamento na nova regra
++não assegura o estado inicial selado exigido em HAB-01 §3.3.4. A decisão 035
++limita sua correção à exibição do selo, mantendo G7 inalterada.
++
++Proposta para decisão: a nova exigência de evento selado deve conferir o
++histórico Git, com selo confirmado posterior que inclua o evento exigido.
++Não foi implementada por inferência. A regra antiga requer decisão própria
++se também for modificada.
++
++## Escopo da entrega neste levantamento
++
++Foram preservadas a linha de base, a reprodução e a busca de vocabulário
++preexistente no núcleo. A decisão 039 registra a pendência e o conflito de
++código documental HAB-02. Não há implementação funcional, teste de aceite
++novo, incremento de versão ou commit de pacote. README, instalação e
++interfaces não anunciam funcionalidades ainda inexistentes.
++
++As saídas finais das três suítes constam em `*-final.txt`; verificam apenas
++que o levantamento documental não alterou o comportamento existente.
+diff --git a/.projectdocs/evidencias/habilitacao-0d/preflight/propostas-artefatos.md b/.projectdocs/evidencias/habilitacao-0d/preflight/propostas-artefatos.md
+new file mode 100644
+index 0000000..71f60e3
+--- /dev/null
++++ b/.projectdocs/evidencias/habilitacao-0d/preflight/propostas-artefatos.md
+@@ -0,0 +1,17 @@
++# Propostas para a fonte canônica — pendentes
++
++O pacote controlado `eiac-campo/reference/metodo/` não foi editado.
++
++Antes de implementar a passagem ao caso, decidir se a nova exigência de selo
++inclui confirmação do commit Git. Proposta: explicitar que o evento de tentativa
++de selo, isolado após falha de commit, não comprova estado inicial selado.
++
++Após essa decisão e a implementação, propor ajustes em MAN-01 §3.2 e §3.6
++para descrever as operações efetivamente entregues de abertura com método
++conferido e importação humana, mantendo o procedimento no repositório canônico.
++No ESP-01, propor o contrato genérico de evento selado, seu comportamento de
++recusa e a confirmação de integridade somente leitura. Não se declara aqui
++que esses ajustes foram aprovados ou implementados.
++
++O conflito entre o código do roteiro EMCIA-HAB-02 e o template HAB-02 de
++confidencialidade aguarda decisão documental; nenhum nome foi alterado.
+diff --git a/.projectdocs/evidencias/habilitacao-0d/preflight/reproduzir-selo.py b/.projectdocs/evidencias/habilitacao-0d/preflight/reproduzir-selo.py
+new file mode 100644
+index 0000000..868b2bc
+--- /dev/null
++++ b/.projectdocs/evidencias/habilitacao-0d/preflight/reproduzir-selo.py
+@@ -0,0 +1,49 @@
++"""Diagnóstico sintético: evento de selo não equivale a commit confirmado.
++Executar da raiz: python3 .projectdocs/evidencias/habilitacao-0d/preflight/reproduzir-selo.py
++Não é teste de aceite da implementação solicitada.
++"""
++import json
++import os
++import pathlib
++import subprocess
++import sys
++import tempfile
++
++raiz = pathlib.Path(__file__).resolve().parents[4]
++sys.path.insert(0, str(raiz / 'eiac-nucleo/scripts'))
++import estado as E
++import playbook as P
++import selar as S
++
++with tempfile.TemporaryDirectory(prefix='emcia-selo-sintetico-') as tmp:
++    os.chdir(tmp)
++    def git(*args):
++        return subprocess.run(['git', *args], check=True, capture_output=True, text=True).stdout.strip()
++    git('init', '-q')
++    git('config', 'user.name', 'Pessoa Sintetica')
++    git('config', 'user.email', 'sintetico@example.invalid')
++    pathlib.Path('registro').mkdir()
++    E.evento('CasoAberto', autor='Pessoa Sintetica')
++    git('add', '-A')
++    git('-c', 'core.hooksPath=/dev/null', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'abertura sintetica')
++    hooks = pathlib.Path('hooks-controle').resolve()
++    hooks.mkdir()
++    hook = hooks / 'pre-commit'
++    hook.write_text('#!/bin/sh\nexit 1\n')
++    hook.chmod(0o755)
++    git('config', 'core.hooksPath', str(hooks))
++    git('config', 'commit.gpgsign', 'false')
++    E.evento('EtapaEncerrada', etapa='etapa-origem', autor='Pessoa Sintetica')
++    erro = S.selar('Pessoa Sintetica', 'selo sintético recusado')
++    contrato = {'etapas': [{'id': 'etapa-destino', 'exige_selo_apos': 'etapa-origem'}]}
++    aceito, motivo = P.selo_apos_etapa(contrato, 'etapa-destino', E.eventos())
++    resultado = {
++        'commit_recusado': bool(erro),
++        'erro': erro,
++        'evento_selo_na_trilha': any(e['evento'] == 'SeloAplicado' for e in E.eventos()),
++        'selo_confirmado': E.ultimo_selo(),
++        'regra_atual_aceita': aceito,
++        'motivo_regra': motivo,
++    }
++    print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    assert erro and aceito and resultado['selo_confirmado'] is None

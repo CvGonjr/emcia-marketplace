@@ -422,3 +422,15 @@ para rascunho/ devem passar pela guarda. `2>registro/erro.txt` deve recusar.
 Após selar, `/eiac-nucleo:estado` e o resumo mostram hash completo, data e
 nota do último selo confirmado. Um commit posterior comum não muda esse
 hash; uma tentativa de commit recusada não aparece como selo aplicado.
+
+
+## Passagem da habilitação ao caso
+
+No terminal do engenheiro, no diretório do caso e fora da sessão:
+
+```bash
+python3 /caminho/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py --expediente /caminho/expediente
+```
+
+O caso e o expediente precisam ter o mesmo identificador reservado e responsável.
+Consulte `eiac-campo/reference/habilitacao.md` para condições e reimportação.

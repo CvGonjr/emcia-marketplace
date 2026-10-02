@@ -226,3 +226,34 @@ válido geram evento atribuído ao responsável. Falhas anteriores à existênci
 um expediente válido são erros de inicialização, sem autoria inventada.
 Arquivos sem referência, deixados por falha de operação, não contam como evidência
 nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
+
+
+## Importação humana no caso
+
+Depois de abrir o caso com o identificador reservado, no terminal do engenheiro,
+fora da sessão do agente e no diretório do caso:
+
+```bash
+python3 /caminho/eiac-campo/scripts/importar_habilitacao.py --expediente /caminho/expediente
+```
+
+O importador exige formalização vigente, acesso efetivo, qualificação registrada,
+integridade, mesmo caso reservado e mesmo responsável. Recusa expediente com
+decisão de não prosseguir e caso com etapa encerrada. A guarda recusa essa
+operação pela sessão e devolve o comando exato para o terminal humano.
+
+Somente os três PDFs assinados, suas evidências e a matriz entram em
+`fontes/habilitacao/importacao-NNN-AAAA-MM-DD/`. A matriz é conferida contra o
+hash da entrada administrativa preservada no histórico do expediente.
+`registro/habilitacao.json` conserva origem, desfecho, restrições RH-xx e hashes.
+O schema está em `registro/habilitacao.schema.json`.
+
+O rascunho `rascunho/00-habilitacao.md` usa marcas determinísticas V para
+os documentos conferidos e D para declarações e desfecho. A marca V da matriz
+identifica o documento registrado, sem transformar suas declarações em prova
+independente do acesso. Gravar pelo validador e selar são atos separados.
+
+Reimportação antes de encerrar qualquer etapa exige `--decisao-reimportacao`
+apontando para JSON com `decisor` igual ao responsável, `motivo`, `data` e
+`importacao_anterior` igual ao id vigente. Preserva registros e arquivos anteriores.
+Não é mecanismo de retomada após perda de pré-requisito durante o percurso.
