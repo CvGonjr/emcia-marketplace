@@ -67,6 +67,8 @@ def preparar(caso):
     """Importa, valida e sela uma fixture de caso antes do percurso."""
     caso=pathlib.Path(caso).resolve()
     st=json.loads((caso/'registro/estado.json').read_text())
+    from apoio.canais import definir
+    definir(caso)
     if (caso/'registro/habilitacao.json').exists():
         return
     with tempfile.TemporaryDirectory(prefix='emcia-expediente-fixture-') as tmp:

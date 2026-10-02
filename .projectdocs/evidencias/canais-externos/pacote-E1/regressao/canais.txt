@@ -1,0 +1,22 @@
+test_01_id_vazio (__main__.Canais.test_01_id_vazio) ... ok
+test_02_finalidade_desconhecida (__main__.Canais.test_02_finalidade_desconhecida) ... ok
+test_03_ferramenta_desconhecida (__main__.Canais.test_03_ferramenta_desconhecida) ... ok
+test_04_autor_agente (__main__.Canais.test_04_autor_agente) ... ok
+test_05_sessao_agente (__main__.Canais.test_05_sessao_agente) ... ok
+test_06_resolver_ausente (__main__.Canais.test_06_resolver_ausente) ... ok
+test_07_caso_alheio (__main__.Canais.test_07_caso_alheio) ... ok
+test_08_etapa_fora_contrato (__main__.Canais.test_08_etapa_fora_contrato) ... ok
+test_09_filtro_alheio (__main__.Canais.test_09_filtro_alheio) ... ok
+test_10_ids_com_caminho (__main__.Canais.test_10_ids_com_caminho) ... ok
+test_11_versao_repetida (__main__.Canais.test_11_versao_repetida) ... ok
+test_12_entrada_malformada (__main__.Canais.test_12_entrada_malformada) ... ok
+test_13_adulteracao (__main__.Canais.test_13_adulteracao) ... ok
+test_14_etapa_sem_canal_recusa_com_evento (__main__.Canais.test_14_etapa_sem_canal_recusa_com_evento) ... ok
+test_15_finalidade_exigida_ausente (__main__.Canais.test_15_finalidade_exigida_ausente) ... ok
+test_20_planejar_somente_leitura (__main__.Canais.test_20_planejar_somente_leitura) ... ok
+test_21_definir_resolver_historico (__main__.Canais.test_21_definir_resolver_historico) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.769s
+
+OK

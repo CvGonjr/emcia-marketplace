@@ -65,6 +65,9 @@ jobs:
       - name: Passagem da habilitação ao caso e selo confirmado
         run: python3 testes/habilitacao_0d.py
 
+      - name: Canais declarados e autoria
+        run: python3 testes/canais.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

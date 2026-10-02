@@ -7,6 +7,8 @@ class Caso(unittest.TestCase):
         shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
         (self.caso/'rascunho').mkdir()
         self.posicionar('P1')
+        from apoio.canais import definir
+        definir(self.caso)
     def posicionar(self, etapa):
         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
@@ -78,7 +80,9 @@ class ProdutosA14(Caso):
         self.posicionar('P7'); externo=self.caso.parent/(self.caso.name+'-externo.yaml'); externo.write_text('estado: decidido')
         self.addCleanup(externo.unlink); p=self.caso/PRODUTOS['P7'][0]; p.parent.mkdir(parents=True,exist_ok=True); p.symlink_to(externo); self.recusa_produto('P7')
     def test_23_regra_alternativa(self):
-        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
+        self.posicionar('P1')
+        from apoio.canais import definir
+        definir(self.caso); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
         next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'arquivo','padrao':'registro/outro/*.yaml','iguais':{'status':'feito'},'preenchidos':[],'descricao':'produto alternativo'}]
         p.write_text(json.dumps(pb)); self.recusa_produto('P1')
         alvo=self.caso/'registro/outro/a.yaml'; alvo.parent.mkdir(); alvo.write_text('status: feito')
@@ -88,7 +92,9 @@ class ProdutosA14(Caso):
     def test_25_metrica_uso(self):
         self.posicionar('P9'); self.produto('P9'); (self.caso/PRODUTOS['P9'][0]).write_text('estado: apurada\ntipo: uso'); self.recusa_produto('P9')
     def test_26_regra_invalida(self):
-        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
+        self.posicionar('P1')
+        from apoio.canais import definir
+        definir(self.caso); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
         next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'desconhecido','descricao':'produto'}]; p.write_text(json.dumps(pb))
         r=self.avancar('--encerrar','P1'); self.assertEqual(r.returncode,1); self.assertIn('tipo de produto desconhecido',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
 if __name__=='__main__': unittest.main(verbosity=2)

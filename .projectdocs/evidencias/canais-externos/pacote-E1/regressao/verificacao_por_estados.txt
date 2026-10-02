@@ -1,0 +1,9 @@
+== verificacao por estados do caso (decisao 021) -- selo apos P2 exigido por P3b
+  ok    T01 P3b nao abre sem selo apos P2 (guarda recusa, TentativaNegada registrada)
+  ok    T02 P3b nao encerra sem selo apos P2 (P3b exige selo posterior ao encerramento de P2. Nenhum SeloAplicado encontrado depois desse encerramento -- sele o caso antes de prosseguir.)
+  ok    T03 selo anterior ao encerramento de P2 nao satisfaz P3b (guarda recusa)
+  ok    T04 P3b não carrega pelo agente mesmo com sessão e selo posterior (A18)
+  ok    T04 P3b encerra com selo posterior ao encerramento de P2
+  ok    T05 etapa sem exige_selo_apos (P1) encerra normalmente, sem exigir selo algum
+  ok    T06 playbook.selo_apos_etapa() nao cita antitese/contraste (mecanismo generico)
+7 verificacoes de verificacao por estados do caso, 0 falhas

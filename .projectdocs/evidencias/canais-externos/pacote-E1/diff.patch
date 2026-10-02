@@ -1,0 +1,1854 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 851ee69..c463619 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -65,6 +65,9 @@ jobs:
+       - name: Passagem da habilitação ao caso e selo confirmado
+         run: python3 testes/habilitacao_0d.py
+ 
++      - name: Canais declarados e autoria
++        run: python3 testes/canais.py
++
+       - name: Versão do plugin mudou junto com o núcleo
+         if: github.event_name == 'pull_request'
+         run: |
+diff --git a/decisoes/040-canais-externos.md b/decisoes/040-canais-externos.md
+new file mode 100644
+index 0000000..6abccd1
+--- /dev/null
++++ b/decisoes/040-canais-externos.md
+@@ -0,0 +1,59 @@
++# 040 — Canais externos declarados por caso
++
++**Data:** 02/10/2026 · **Estado:** arquitetura aprovada pelo pedido; implementação por pacotes E1–E7
++
++## Contexto
++
++A decisão 008 exige procedência na fronteira de contato com o cliente. A 002
++fixa o playbook no caso; a 019 atribui autoria nominal; a 027 reserva decisões
++ao terminal humano. A 039 estabelece a passagem administrativa e o selo de F0.
++Os canais externos precisam identificar o caso sem buscas por nome nem acesso
++ao espaço de outra organização.
++
++## Decisão
++
++O campo declara finalidades e direções no playbook. O caso declara endereços
++concretos em `registro/canais.json`, com ids, proprietário, acesso, filtro e
++marcador. A definição é humana, versionada, preserva versões anteriores e
++produz `CanaisDefinidos`. A guarda nega o ato pela sessão, com `TentativaNegada`.
++Planejamento e resolução são delegáveis. Etapas com exigência declarada recusam
++carregamento e encerramento sem definição íntegra correspondente.
++
++O núcleo lê contratos e registros genéricos. Ferramentas e convenções ficam
++no campo e nos dados do caso. Scripts não chamam APIs e não recebem dependências
++novas. O agente usa somente conectores disponíveis e ids declarados; prepara
++coletas em `rascunho/entrada/`, preservando o manifesto de origem.
++
++Recebimento e registro de entrega são atos humanos. Recebimento confere canal,
++etapa, filtro e hash; entrega confere emissão, versão, hash e destino. Recusas
++produzem `TentativaNegada`. Não há registro de aceite neste escopo.
++
++Criação, compartilhamento, publicação, envio e convites exigem confirmação
++explícita do engenheiro no chat. Cada compartilhamento apresenta destinatário,
++id de destino e papel e exige confirmação própria. Confirmação não delega
++os atos humanos do terminal.
++
++## Premissas e limites de confiança
++
++O planejamento pressupõe workspace de formulários, drive compartilhado e
++calendário sob propriedade EMCIA. Canais de propriedade do cliente podem ser
++declarados explicitamente; não se presume autorização nem se procura por nome.
++Nomes das cinco divisões do drive são convenções de provisionamento; roteamento
++é exclusivamente por id. `trabalho-interno` não admite acesso do cliente.
++
++Os scripts verificam coerência entre manifestos trazidos pelo agente e o
++contrato local; não autenticam origem, conteúdo remoto, identidade real,
++permissões efetivas, recebimento pelo destinatário ou realização da sessão.
++SHA-256 fixa os bytes registrados, sem provar veracidade. Como em 022, acesso
++humano de escrita ao disco é a fronteira de confiança.
++
++E7 depende de teste real dos hooks PreToolUse em uma ferramenta MCP local sintética. Sem comprovação de disparo, não se apresenta trava de escopo como implementada.
++
++## Consequências
++
++Casos existentes conservam seu playbook e requerem migração humana deliberada.
++Não há flag de dispensa. Não se altera `reference/metodo/`; propostas canônicas
++ficam nas evidências de cada pacote. A referência do pedido ao TRI-01 foi
++corrigida por confirmação expressa: §3.3 para perguntas, §3.4 para pontuação.
++
++Evidências: `.projectdocs/evidencias/canais-externos/`.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index f9b3c38..734b8c0 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -45,3 +45,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 037 | E5 usa a rotina de calibragem vigente (A24) | firme |
+ | 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |
+ | 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; implementação por pacotes; P3b permanece para pacote posterior |
++| 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | arquitetura aprovada; implementação por pacotes E1–E7 |
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 93b000a..21a2ac6 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.12",
++  "version": "0.8.13",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/scripts/canais.py b/eiac-campo/scripts/canais.py
+new file mode 100644
+index 0000000..21bfe57
+--- /dev/null
++++ b/eiac-campo/scripts/canais.py
+@@ -0,0 +1,182 @@
++"""Planejamento delegável e definição humana dos canais externos do caso.
++
++Nenhuma API é chamada. Coerência local não autentica o conteúdo na origem.
++"""
++import argparse
++import datetime
++import fcntl
++import hashlib
++import importlib.util
++import json
++import os
++import pathlib
++import re
++import sys
++import tempfile
++
++NUCLEO = pathlib.Path(os.environ.get('EIAC_NUCLEO_SCRIPTS',
++                    pathlib.Path(__file__).resolve().parents[2]/'eiac-nucleo/scripts'))
++sys.path.insert(0, str(NUCLEO))
++import estado as E
++import playbook as P
++import canais_registro as G
++
++IDS = {'tally': ('workspace_id', 'formulario_id'), 'drive': ('drive_id', 'pasta_id'),
++       'calendar': ('calendario_id',)}
++CONTEINER = {'tally': 'formulario_id', 'drive': 'pasta_id', 'calendar': 'calendario_id'}
++
++
++def exigir(condicao, motivo):
++    if not condicao:
++        raise ValueError(motivo)
++
++
++def texto(valor):
++    exigir(isinstance(valor, str) and bool(valor.strip()) and valor == valor.strip(), 'texto vazio ou inválido')
++    return valor
++
++
++def id_externo(valor):
++    texto(valor)
++    exigir(bool(re.fullmatch(r'[A-Za-z0-9_.@:+-]+', valor)), 'id externo inválido: use id, nunca nome ou caminho')
++    return valor
++
++
++def seguro(caminho, area=None):
++    raiz = pathlib.Path.cwd().resolve(); p = pathlib.Path(caminho)
++    exigir(p.resolve().is_relative_to(raiz), 'caminho fora do caso')
++    exigir(not any(x.is_symlink() for x in [p, *p.parents] if x.absolute().is_relative_to(raiz)), 'caminho contém symlink')
++    if area:
++        exigir(p.resolve().is_relative_to((raiz/area).resolve()), 'arquivo fora de '+area)
++    return p
++
++
++def contexto(autor=None):
++    st = E.ler(); pb, erro = P.carregar()
++    exigir(st is not None and not erro, erro or 'caso ausente')
++    exigir(E.pessoa_nomeada(st.get('responsavel')), 'responsável precisa ser pessoa nomeada')
++    exigir(autor is None or (E.pessoa_nomeada(autor) and autor == st['responsavel']),
++           'autor precisa ser o responsável nomeado do caso')
++    return st, pb
++
++
++def escrever(p, dados):
++    p = seguro(p); p.parent.mkdir(parents=True, exist_ok=True)
++    with tempfile.NamedTemporaryFile(dir=p.parent, delete=False) as f:
++        tmp = pathlib.Path(f.name)
++        f.write((json.dumps(dados, ensure_ascii=False, indent=2)+'\n').encode())
++        f.flush(); os.fsync(f.fileno())
++    try:
++        os.replace(tmp, p)
++    finally:
++        tmp.unlink(missing_ok=True)
++
++
++def validar(dados, st, pb):
++    exigir(isinstance(dados, dict), 'declaração precisa ser objeto')
++    exigir(set(dados) == {'versao', 'caso', 'decidido_por', 'data', 'canais'}, 'campos da declaração inválidos')
++    exigir(type(dados['versao']) is int and dados['versao'] > 0, 'versão precisa ser inteiro positivo')
++    exigir(dados['caso'] == st['caso'], 'declaração pertence a outro caso')
++    exigir(E.pessoa_nomeada(dados['decidido_por']), 'decidido_por precisa ser pessoa nomeada')
++    datetime.date.fromisoformat(dados['data'])
++    exigir(isinstance(dados['canais'], list) and bool(dados['canais']), 'canais precisa ser lista não vazia')
++    previstos = {r['finalidade']: r for r in pb.get('canais_previstos', [])}
++    vistos = set()
++    for c in dados['canais']:
++        exigir(isinstance(c, dict), 'canal precisa ser objeto')
++        exigir(set(c) == {'finalidade', 'ferramenta', 'direcao', 'etapas', 'entregaveis', 'proprietario', 'ids', 'acesso_cliente', 'sensivel', 'filtro', 'marcador'}, 'campos de canal inválidos')
++        f = c['finalidade']; ferramenta = c['ferramenta']
++        exigir(f in previstos, 'finalidade não prevista no playbook')
++        exigir(ferramenta in IDS, 'ferramenta desconhecida')
++        for k in ('ferramenta', 'direcao'):
++            exigir(c[k] == previstos[f][k], k+' diverge da finalidade declarada')
++        for k in ('etapas', 'entregaveis'):
++            exigir(isinstance(c[k], list) and all(isinstance(x, str) for x in c[k])
++                   and len(set(c[k])) == len(c[k]) and set(c[k]) <= set(previstos[f][k]), k+' fora do contrato')
++        exigir(c['proprietario'] in ('emcia', 'cliente'), 'proprietário inválido')
++        exigir(c['acesso_cliente'] in ('nenhum', 'leitura', 'escrita'), 'acesso inválido')
++        exigir(f != 'trabalho-interno' or c['acesso_cliente'] == 'nenhum', 'trabalho-interno sem acesso do cliente')
++        exigir(type(c['sensivel']) is bool, 'sensivel precisa ser booleano')
++        exigir(isinstance(c['ids'], dict) and set(c['ids']) == set(IDS[ferramenta]), 'ids específicos ausentes ou desconhecidos')
++        for v in c['ids'].values(): id_externo(v)
++        chave = (f, tuple(sorted(c['ids'].items())))
++        exigir(chave not in vistos, 'canal duplicado'); vistos.add(chave)
++        if ferramenta == 'tally':
++            exigir(c['filtro'] == {'campo': 'caso', 'valor': st['caso']}, 'filtro precisa identificar o caso')
++            exigir(c['marcador'] is None, 'marcador reservado à agenda')
++        elif ferramenta == 'calendar':
++            exigir(c['filtro'] is None and c['marcador'] == '[{caso}/{etapa}]', 'marcador de agenda inválido')
++        else:
++            exigir(c['filtro'] is None and c['marcador'] is None, 'filtro/marcador incompatível')
++    return dados
++
++
++def planejar(st, pb):
++    return dict(caso=st['caso'], canais_necessarios=pb.get('canais_previstos', []),
++                arvore_proposta=dict(proprietario='emcia', raiz=st['caso'], roteamento='somente ids',
++                                    filhos=[dict(nome=n, acesso_cliente='nenhum') for n in
++                                            ['00-habilitacao', 'entrada-documentos', 'entrada-amostras',
++                                             'entregas', 'trabalho-interno']]))
++
++
++def definir(dados, st, pb):
++    validar(dados, st, pb)
++    p = seguro(pb['registro_canais']['arquivo'])
++    anterior = G.carregar(pb) if p.exists() else None
++    exigir(dados['versao'] == (anterior['versao']+1 if anterior else 1), 'versão deve suceder a vigente')
++    if not anterior:
++        exigir(not any(e.get('evento') == pb['registro_canais']['evento'] for e in E.eventos()),
++               'definição anterior sem registro vigente')
++    if anterior:
++        historico = seguro(f"registro/canais/versao-{anterior['versao']:04d}.json")
++        exigir(not historico.exists(), 'versão histórica já existe')
++        escrever(historico, anterior)
++    backup = p.read_bytes() if p.exists() else None
++    try:
++        escrever(p, dados)
++        E.evento(pb['registro_canais']['evento'], autor=st['responsavel'], decidido_por=dados['decidido_por'], versao=dados['versao'],
++                 sha256=hashlib.sha256(p.read_bytes()).hexdigest(), caso=st['caso'])
++    except Exception:
++        if backup is None: p.unlink(missing_ok=True)
++        else: p.write_bytes(backup)
++        if anterior: historico.unlink(missing_ok=True)
++        raise
++    return dados
++
++
++def resolver(pb, alvo, direcao):
++    erro = G.conferir(pb, alvo, entregavel=any(e['id'] == alvo for e in pb.get('entregaveis', [])))
++    exigir(not erro, erro)
++    canais = G.selecionar(pb, alvo, direcao)
++    # Uma etapa pode ter canais históricos administrativos; os requisitos
++    # do percurso selecionam a finalidade quando houver.
++    chave = 'canais_por_etapa' if P.etapa(pb, alvo) else 'canais_por_entregavel'
++    finalidades = [r['finalidade'] for r in pb.get(chave, {}).get(alvo, []) if r['direcao'] == direcao]
++    if finalidades: canais = [c for c in canais if c['finalidade'] in finalidades]
++    exigir(len(canais) == 1, 'canal ausente ou ambíguo; execute '+pb['registro_canais']['comando_definicao'])
++    return canais[0]
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('operacao', choices=['planejar', 'definir', 'resolver'])
++    ap.add_argument('alvo', nargs='?'); ap.add_argument('direcao', nargs='?', choices=['entrada', 'saida', 'agenda'])
++    ap.add_argument('--entrada'); ap.add_argument('--autor')
++    a = ap.parse_args()
++    try:
++        st, pb = contexto(a.autor)
++        if a.operacao == 'planejar': resultado = planejar(st, pb)
++        elif a.operacao == 'resolver': resultado = resolver(pb, a.alvo, a.direcao)
++        else:
++            exigir(a.entrada is not None, 'definir exige --entrada')
++            lock = seguro('registro/.canais.lock')
++            with lock.open('a') as f:
++                fcntl.flock(f, fcntl.LOCK_EX)
++                resultado = definir(json.loads(pathlib.Path(a.entrada).read_text()), st, pb)
++        print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
++        E.evento('TentativaNegada', autor=(E.ler() or {}).get('responsavel'), operacao='canais-'+a.operacao, motivo=str(exc))
++        ap.exit(1, 'Recusado: '+str(exc)+'\n')
++
++
++if __name__ == '__main__': main()
+diff --git a/eiac-campo/template-caso/registro/canais.schema.json b/eiac-campo/template-caso/registro/canais.schema.json
+new file mode 100644
+index 0000000..98dcb33
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/canais.schema.json
+@@ -0,0 +1,275 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "title": "Canais externos do caso",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "versao",
++    "caso",
++    "decidido_por",
++    "data",
++    "canais"
++  ],
++  "properties": {
++    "versao": {
++      "type": "integer",
++      "minimum": 1
++    },
++    "caso": {
++      "type": "string",
++      "minLength": 1
++    },
++    "decidido_por": {
++      "type": "string",
++      "minLength": 1
++    },
++    "data": {
++      "type": "string",
++      "format": "date"
++    },
++    "canais": {
++      "type": "array",
++      "minItems": 1,
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "finalidade",
++          "ferramenta",
++          "proprietario",
++          "ids",
++          "direcao",
++          "etapas",
++          "entregaveis",
++          "acesso_cliente",
++          "sensivel",
++          "filtro",
++          "marcador"
++        ],
++        "properties": {
++          "finalidade": {
++            "type": "string",
++            "minLength": 1
++          },
++          "ferramenta": {
++            "enum": [
++              "tally",
++              "drive",
++              "calendar"
++            ]
++          },
++          "proprietario": {
++            "enum": [
++              "emcia",
++              "cliente"
++            ]
++          },
++          "ids": {
++            "type": "object",
++            "minProperties": 1,
++            "additionalProperties": {
++              "type": "string",
++              "pattern": "^[A-Za-z0-9_.@:+-]+$"
++            }
++          },
++          "direcao": {
++            "enum": [
++              "entrada",
++              "saida",
++              "agenda"
++            ]
++          },
++          "etapas": {
++            "type": "array",
++            "items": {
++              "type": "string",
++              "minLength": 1
++            },
++            "uniqueItems": true
++          },
++          "entregaveis": {
++            "type": "array",
++            "items": {
++              "type": "string",
++              "minLength": 1
++            },
++            "uniqueItems": true
++          },
++          "acesso_cliente": {
++            "enum": [
++              "nenhum",
++              "leitura",
++              "escrita"
++            ]
++          },
++          "sensivel": {
++            "type": "boolean"
++          },
++          "filtro": {
++            "oneOf": [
++              {
++                "type": "null"
++              },
++              {
++                "type": "object",
++                "additionalProperties": false,
++                "required": [
++                  "campo",
++                  "valor"
++                ],
++                "properties": {
++                  "campo": {
++                    "const": "caso"
++                  },
++                  "valor": {
++                    "type": "string",
++                    "minLength": 1
++                  }
++                }
++              }
++            ]
++          },
++          "marcador": {
++            "enum": [
++              null,
++              "[{caso}/{etapa}]"
++            ]
++          }
++        },
++        "allOf": [
++          {
++            "if": {
++              "properties": {
++                "ferramenta": {
++                  "const": "tally"
++                }
++              }
++            },
++            "then": {
++              "properties": {
++                "ids": {
++                  "required": [
++                    "workspace_id",
++                    "formulario_id"
++                  ],
++                  "properties": {
++                    "workspace_id": {
++                      "type": "string",
++                      "minLength": 1
++                    },
++                    "formulario_id": {
++                      "type": "string",
++                      "minLength": 1
++                    }
++                  },
++                  "additionalProperties": false
++                },
++                "filtro": {
++                  "type": "object"
++                },
++                "marcador": {
++                  "type": "null"
++                },
++                "direcao": {
++                  "const": "entrada"
++                }
++              }
++            }
++          },
++          {
++            "if": {
++              "properties": {
++                "ferramenta": {
++                  "const": "drive"
++                }
++              }
++            },
++            "then": {
++              "properties": {
++                "ids": {
++                  "required": [
++                    "drive_id",
++                    "pasta_id"
++                  ],
++                  "properties": {
++                    "drive_id": {
++                      "type": "string",
++                      "minLength": 1
++                    },
++                    "pasta_id": {
++                      "type": "string",
++                      "minLength": 1
++                    }
++                  },
++                  "additionalProperties": false
++                },
++                "filtro": {
++                  "type": "null"
++                },
++                "marcador": {
++                  "type": "null"
++                },
++                "direcao": {
++                  "enum": [
++                    "entrada",
++                    "saida"
++                  ]
++                }
++              }
++            }
++          },
++          {
++            "if": {
++              "properties": {
++                "ferramenta": {
++                  "const": "calendar"
++                }
++              }
++            },
++            "then": {
++              "properties": {
++                "ids": {
++                  "required": [
++                    "calendario_id"
++                  ],
++                  "properties": {
++                    "calendario_id": {
++                      "type": "string",
++                      "minLength": 1
++                    }
++                  },
++                  "additionalProperties": false
++                },
++                "filtro": {
++                  "type": "null"
++                },
++                "marcador": {
++                  "const": "[{caso}/{etapa}]"
++                },
++                "direcao": {
++                  "const": "agenda"
++                }
++              }
++            }
++          },
++          {
++            "if": {
++              "properties": {
++                "finalidade": {
++                  "const": "trabalho-interno"
++                }
++              }
++            },
++            "then": {
++              "properties": {
++                "acesso_cliente": {
++                  "const": "nenhum"
++                }
++              }
++            }
++          }
++        ]
++      }
++    }
++  }
++}
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index c432a50..516780c 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,19 +1,23 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.12",
++  "versao": "0.4.13",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+-
+-  "referencia_integridade": {"diretorio": "metodo", "manifesto": "manifesto.json", "campo_hashes": "documentos"},
+-
+-  "niveis": ["N1", "N2", "N3"],
+-
++  "referencia_integridade": {
++    "diretorio": "metodo",
++    "manifesto": "manifesto.json",
++    "campo_hashes": "documentos"
++  },
++  "niveis": [
++    "N1",
++    "N2",
++    "N3"
++  ],
+   "encerramento_por_camada": {
+     "EX1": false,
+     "EX2": false,
+     "EX3": true,
+     "EX4": true
+   },
+-
+   "decisoes_humanas": [
+     {
+       "id": "decidir-autonomia",
+@@ -154,136 +158,337 @@
+       "id": "importar-habilitacao",
+       "script": "importar_habilitacao.py",
+       "escopo": "antes_do_percurso",
+-      "condicao": {"tipo": "sempre"}
++      "condicao": {
++        "tipo": "sempre"
++      }
++    },
++    {
++      "id": "definir-canais",
++      "script": "canais.py",
++      "argumento": "--entrada",
++      "escopo": "antes_do_percurso",
++      "condicao": {
++        "tipo": "sempre"
++      }
+     }
+   ],
+-
+   "apuracao_nivel": {
+     "eixos": {
+-      "DAD": {"minimo": 3, "maximo": 9},
+-      "GOV": {"minimo": 3, "maximo": 9},
+-      "CRI": {"minimo": 3, "maximo": 9}
++      "DAD": {
++        "minimo": 3,
++        "maximo": 9
++      },
++      "GOV": {
++        "minimo": 3,
++        "maximo": 9
++      },
++      "CRI": {
++        "minimo": 3,
++        "maximo": 9
++      }
+     },
+     "agregacao": "maximo",
+     "faixas": [
+-      {"minimo": 3, "maximo": 4, "nivel": "N1"},
+-      {"minimo": 5, "maximo": 7, "nivel": "N2"},
+-      {"minimo": 8, "maximo": 9, "nivel": "N3"}
++      {
++        "minimo": 3,
++        "maximo": 4,
++        "nivel": "N1"
++      },
++      {
++        "minimo": 5,
++        "maximo": 7,
++        "nivel": "N2"
++      },
++      {
++        "minimo": 8,
++        "maximo": 9,
++        "nivel": "N3"
++      }
+     ]
+   },
+-
+   "procedencia": {
+-    "valores": ["D", "I", "V"],
++    "valores": [
++      "D",
++      "I",
++      "V"
++    ],
+     "rotulos": {
+       "D": "Declarada",
+       "I": "Inferida",
+       "V": "Verificada"
+     }
+   },
+-
+   "dimensoes": {
+-    "apuracao": ["medido", "calculado", "estimado"],
+-    "tipo_fonte": ["interna", "externa"]
++    "apuracao": [
++      "medido",
++      "calculado",
++      "estimado"
++    ],
++    "tipo_fonte": [
++      "interna",
++      "externa"
++    ]
+   },
+-
+   "etapas": [
+     {
+       "exige_evento_selado": "HabilitacaoImportada",
+-      "id": "F0", "nome": "Enquadramento e triagem",
+-      "modalidade": "assincrono", "habilidade": "hb-enquadrar",
+-      "hb": ["HB-01", "HB-02", "HB-03"],
+-      "camada": { "N1": "EX1", "N2": "EX1", "N3": "EX1" },
+-      "produtos_encerramento": []
++      "id": "F0",
++      "nome": "Enquadramento e triagem",
++      "modalidade": "assincrono",
++      "habilidade": "hb-enquadrar",
++      "hb": [
++        "HB-01",
++        "HB-02",
++        "HB-03"
++      ],
++      "camada": {
++        "N1": "EX1",
++        "N2": "EX1",
++        "N3": "EX1"
++      },
++      "produtos_encerramento": [],
++      "exige_registro_canais": true
+     },
+     {
+-      "id": "P1", "nome": "Contexto de negocio",
+-      "modalidade": "video", "habilidade": "hb-mapear-contexto",
+-      "hb": ["HB-08", "HB-09"],
+-      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" },
++      "id": "P1",
++      "nome": "Contexto de negocio",
++      "modalidade": "video",
++      "habilidade": "hb-mapear-contexto",
++      "hb": [
++        "HB-08",
++        "HB-09"
++      ],
++      "camada": {
++        "N1": "EX2",
++        "N2": "EX2",
++        "N3": "EX3"
++      },
+       "produtos_encerramento": []
+     },
+     {
+-      "id": "P2", "nome": "Fontes e regras candidatas",
+-      "modalidade": "assincrono", "habilidade": "hb-extrair-regras",
+-      "hb": ["HB-07"],
+-      "camada": { "N1": "EX2", "N2": "EX2", "N3": "EX3" },
++      "id": "P2",
++      "nome": "Fontes e regras candidatas",
++      "modalidade": "assincrono",
++      "habilidade": "hb-extrair-regras",
++      "hb": [
++        "HB-07"
++      ],
++      "camada": {
++        "N1": "EX2",
++        "N2": "EX2",
++        "N3": "EX3"
++      },
+       "produtos_encerramento": []
+     },
+     {
+-      "id": "P3a", "nome": "Linha de base",
+-      "modalidade": "remoto", "habilidade": "hb-medir",
+-      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/baseline/*.yaml", "iguais": {}, "preenchidos": ["indicador", "valor_atual", "data"], "descricao": "linha de base registrada"}]
++      "id": "P3a",
++      "nome": "Linha de base",
++      "modalidade": "remoto",
++      "habilidade": "hb-medir",
++      "camada": {
++        "N1": "EX2",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/baseline/*.yaml",
++          "iguais": {},
++          "preenchidos": [
++            "indicador",
++            "valor_atual",
++            "data"
++          ],
++          "descricao": "linha de base registrada"
++        }
++      ]
+     },
+     {
+-      "id": "P3b", "nome": "Levantamento de regras nao documentadas",
+-      "modalidade": "presencial", "habilidade": "hb-levantar-regras",
+-      "delegavel": false, "exige_selo_apos": "P2",
+-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
++      "id": "P3b",
++      "nome": "Levantamento de regras nao documentadas",
++      "modalidade": "presencial",
++      "habilidade": "hb-levantar-regras",
++      "delegavel": false,
++      "exige_selo_apos": "P2",
++      "camada": {
++        "N1": "EX4",
++        "N2": "EX4",
++        "N3": "EX4"
++      },
+       "produtos_encerramento": []
+     },
+     {
+-      "id": "P3d", "nome": "Confronto declarado x observado",
+-      "modalidade": "remoto", "habilidade": "hb-confrontar",
++      "id": "P3d",
++      "nome": "Confronto declarado x observado",
++      "modalidade": "remoto",
++      "habilidade": "hb-confrontar",
+       "depende_de": "P3b",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
++      "camada": {
++        "N1": "EX3",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
+       "produtos_encerramento": []
+     },
+     {
+-      "id": "P4", "nome": "Priorizacao e zona de contencao",
+-      "modalidade": "video", "habilidade": "hb-priorizar",
+-      "hb": ["HB-10"],
+-      "camada": { "N1": "EX2", "N2": "EX3", "N3": "EX3" },
++      "id": "P4",
++      "nome": "Priorizacao e zona de contencao",
++      "modalidade": "video",
++      "habilidade": "hb-priorizar",
++      "hb": [
++        "HB-10"
++      ],
++      "camada": {
++        "N1": "EX2",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
+       "produtos_encerramento": []
+     },
+     {
+-      "id": "P5", "nome": "Classificacao tecnologica",
++      "id": "P5",
++      "nome": "Classificacao tecnologica",
+       "campos_registraveis": {
+         "classificacao_tecnologica": {
+-          "valores": ["agente", "caso isolado", "habilitador acoplado"]
++          "valores": [
++            "agente",
++            "caso isolado",
++            "habilitador acoplado"
++          ]
+         }
+       },
+-      "modalidade": "video", "habilidade": "hb-classificar",
+-      "hb": ["HB-11", "HB-12"],
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
+-      "produtos_encerramento": [{"tipo": "estado", "campo": "classificacao_tecnologica", "descricao": "classificacao tecnologica registrada"}]
++      "modalidade": "video",
++      "habilidade": "hb-classificar",
++      "hb": [
++        "HB-11",
++        "HB-12"
++      ],
++      "camada": {
++        "N1": "EX3",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "estado",
++          "campo": "classificacao_tecnologica",
++          "descricao": "classificacao tecnologica registrada"
++        }
++      ]
+     },
+     {
+-      "id": "P6", "nome": "Operacionalize a solucao",
+-      "modalidade": "presencial_ou_remoto", "habilidade": "hb-operacionalizar",
++      "id": "P6",
++      "nome": "Operacionalize a solucao",
++      "modalidade": "presencial_ou_remoto",
++      "habilidade": "hb-operacionalizar",
+       "depende_de": "P5",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/operacional/*.yaml", "iguais": {"estado": "validado"}, "preenchidos": [], "descricao": "OP validado"}]
++      "camada": {
++        "N1": "EX3",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/operacional/*.yaml",
++          "iguais": {
++            "estado": "validado"
++          },
++          "preenchidos": [],
++          "descricao": "OP validado"
++        }
++      ]
+     },
+     {
+-      "id": "P7", "nome": "Estabeleca governanca e conformidade",
+-      "modalidade": "decisao_humana_registrada", "habilidade": "hb-governar",
+-      "hb": ["HB-14"],
++      "id": "P7",
++      "nome": "Estabeleca governanca e conformidade",
++      "modalidade": "decisao_humana_registrada",
++      "habilidade": "hb-governar",
++      "hb": [
++        "HB-14"
++      ],
+       "delegavel": false,
+       "depende_de": "P6",
+-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/governanca/autonomia/*.yaml", "iguais": {"estado": "decidido"}, "preenchidos": [], "descricao": "AUT decidido"}]
++      "camada": {
++        "N1": "EX4",
++        "N2": "EX4",
++        "N3": "EX4"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/governanca/autonomia/*.yaml",
++          "iguais": {
++            "estado": "decidido"
++          },
++          "preenchidos": [],
++          "descricao": "AUT decidido"
++        }
++      ]
+     },
+     {
+-      "id": "P8", "nome": "Pilote, valide e escale",
+-      "modalidade": "conforme_nivel", "habilidade": "hb-pilotar",
+-      "hb": ["HB-15", "HB-16"],
++      "id": "P8",
++      "nome": "Pilote, valide e escale",
++      "modalidade": "conforme_nivel",
++      "habilidade": "hb-pilotar",
++      "hb": [
++        "HB-15",
++        "HB-16"
++      ],
+       "depende_de": "P7",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/piloto/*.yaml", "iguais": {"estado": "revisado"}, "preenchidos": [], "descricao": "conjunto revisado"}]
++      "camada": {
++        "N1": "EX3",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/piloto/*.yaml",
++          "iguais": {
++            "estado": "revisado"
++          },
++          "preenchidos": [],
++          "descricao": "conjunto revisado"
++        }
++      ]
+     },
+     {
+-      "id": "P9", "nome": "Meca o valor gerado",
+-      "modalidade": "conforme_nivel", "habilidade": "hb-medir-valor",
+-      "hb": ["HB-17"],
++      "id": "P9",
++      "nome": "Meca o valor gerado",
++      "modalidade": "conforme_nivel",
++      "habilidade": "hb-medir-valor",
++      "hb": [
++        "HB-17"
++      ],
+       "depende_de": "P8",
+-      "camada": { "N1": "EX3", "N2": "EX3", "N3": "EX3" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/metricas/*.yaml", "iguais": {"tipo": "resultado", "estado": "apurada"}, "preenchidos": [], "descricao": "metrica de resultado apurada"}]
++      "camada": {
++        "N1": "EX3",
++        "N2": "EX3",
++        "N3": "EX3"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/metricas/*.yaml",
++          "iguais": {
++            "tipo": "resultado",
++            "estado": "apurada"
++          },
++          "preenchidos": [],
++          "descricao": "metrica de resultado apurada"
++        }
++      ]
+     },
+     {
+-      "id": "P10", "nome": "Aprenda, recalibre e evolua",
+-      "modalidade": "conforme_nivel", "habilidade": "hb-recalibrar",
+-      "hb": ["HB-18"],
++      "id": "P10",
++      "nome": "Aprenda, recalibre e evolua",
++      "modalidade": "conforme_nivel",
++      "habilidade": "hb-recalibrar",
++      "hb": [
++        "HB-18"
++      ],
+       "depende_de": "P9",
+       "delegavel": false,
+       "recorrente": true,
+@@ -297,41 +502,150 @@
+         "selecao": "maior_versao",
+         "orientacao_troca": "Para trocar o responsavel, grave uma nova versao da rotina pelo engenheiro no proprio terminal, antes da recorrencia."
+       },
+-      "camada": { "N1": "EX4", "N2": "EX4", "N3": "EX4" },
+-      "camada_monitoramento": { "N1": "EX2", "N2": "EX2", "N3": "EX2" },
+-      "produtos_encerramento": [{"tipo": "arquivo", "padrao": "registro/calibragem/CAL-*.yaml", "iguais": {}, "preenchidos": ["responsavel", "cadencia"], "descricao": "rotina com responsavel e cadencia", "pessoas": ["responsavel"]}]
++      "camada": {
++        "N1": "EX4",
++        "N2": "EX4",
++        "N3": "EX4"
++      },
++      "camada_monitoramento": {
++        "N1": "EX2",
++        "N2": "EX2",
++        "N3": "EX2"
++      },
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/calibragem/CAL-*.yaml",
++          "iguais": {},
++          "preenchidos": [
++            "responsavel",
++            "cadencia"
++          ],
++          "descricao": "rotina com responsavel e cadencia",
++          "pessoas": [
++            "responsavel"
++          ]
++        }
++      ]
+     }
+   ],
+-
+   "deslocamento_por_nivel": {
+     "referencia": "EMCIA-CAT-01 secao 3.6",
+-    "N1": { "preparacao_automatizada_ate": "P4", "verificacao_obrigatoria_a_partir_de": "P5" },
+-    "N2": { "preparacao_automatizada_ate": "P2", "verificacao_obrigatoria_a_partir_de": "P3a" },
+-    "N3": { "preparacao_automatizada_ate": "F0", "verificacao_obrigatoria_a_partir_de": "P1" }
++    "N1": {
++      "preparacao_automatizada_ate": "P4",
++      "verificacao_obrigatoria_a_partir_de": "P5"
++    },
++    "N2": {
++      "preparacao_automatizada_ate": "P2",
++      "verificacao_obrigatoria_a_partir_de": "P3a"
++    },
++    "N3": {
++      "preparacao_automatizada_ate": "F0",
++      "verificacao_obrigatoria_a_partir_de": "P1"
++    }
+   },
+-
+   "entregaveis": [
+-    { "id": "E1", "artefato": "caso/entregaveis/E1.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["F0"] },
+-    { "id": "E2", "artefato": "caso/entregaveis/E2.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P1","P2","P3a","P3b","P3d"], "inegociavel": [1] },
+-    { "id": "E3-D", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P4","P5"] },
+     {
+-      "id": "E3-E", "artefato": "caso/entregaveis/E3.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P5"],
++      "id": "E1",
++      "artefato": "caso/entregaveis/E1.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "F0"
++      ]
++    },
++    {
++      "id": "E2",
++      "artefato": "caso/entregaveis/E2.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "P1",
++        "P2",
++        "P3a",
++        "P3b",
++        "P3d"
++      ],
++      "inegociavel": [
++        1
++      ]
++    },
++    {
++      "id": "E3-D",
++      "artefato": "caso/entregaveis/E3.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "P4",
++        "P5"
++      ]
++    },
++    {
++      "id": "E3-E",
++      "artefato": "caso/entregaveis/E3.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "P5"
++      ],
+       "condicao": {
+         "descricao": "Somente quando a classificacao tecnologica de P5 determinar solucao agentica",
+-        "campo": "classificacao_tecnologica", "etapa": "P5",
+-        "operador": "contem", "valor": "agente"
++        "campo": "classificacao_tecnologica",
++        "etapa": "P5",
++        "operador": "contem",
++        "valor": "agente"
+       }
+     },
+-    { "id": "E4", "artefato": "caso/entregaveis/E4.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P6","P7"], "inegociavel": [2] },
+-    { "id": "E5", "artefato": "caso/entregaveis/E5.md", "comando_materializacao": "/eiac-campo:emitir", "portao": ["P8","P9","P10"], "inegociavel": [3,4,5] }
++    {
++      "id": "E4",
++      "artefato": "caso/entregaveis/E4.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "P6",
++        "P7"
++      ],
++      "inegociavel": [
++        2
++      ]
++    },
++    {
++      "id": "E5",
++      "artefato": "caso/entregaveis/E5.md",
++      "comando_materializacao": "/eiac-campo:emitir",
++      "portao": [
++        "P8",
++        "P9",
++        "P10"
++      ],
++      "inegociavel": [
++        3,
++        4,
++        5
++      ]
++    }
+   ],
+-
+   "inegociaveis": [
+-    { "n": 1, "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)", "passo": "P3a" },
+-    { "n": 2, "item": "Termo de autonomia escrito", "passo": "P7" },
+-    { "n": 3, "item": "Casos de teste com saida esperada", "passo": "P8" },
+-    { "n": 4, "item": "Ao menos uma metrica de resultado", "passo": "P9" },
+-    { "n": 5, "item": "Responsavel nomeado pela recalibragem", "passo": "P10" }
++    {
++      "n": 1,
++      "item": "Linha de base registrada antes do piloto, apuracao proporcional ao nivel (estimada em N1, medida em N2 e N3)",
++      "passo": "P3a"
++    },
++    {
++      "n": 2,
++      "item": "Termo de autonomia escrito",
++      "passo": "P7"
++    },
++    {
++      "n": 3,
++      "item": "Casos de teste com saida esperada",
++      "passo": "P8"
++    },
++    {
++      "n": 4,
++      "item": "Ao menos uma metrica de resultado",
++      "passo": "P9"
++    },
++    {
++      "n": 5,
++      "item": "Responsavel nomeado pela recalibragem",
++      "passo": "P10"
++    }
+   ],
+   "pessoa_nomeada": {
+     "minimo_partes": 2,
+@@ -382,5 +696,170 @@
+     "autor",
+     "responsavel",
+     "decisor_quando_nao_cobre"
+-  ]
++  ],
++  "canais_previstos": [
++    {
++      "finalidade": "habilitacao",
++      "ferramenta": "tally",
++      "direcao": "entrada",
++      "etapas": [
++        "F0"
++      ],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "triagem",
++      "ferramenta": "tally",
++      "direcao": "entrada",
++      "etapas": [
++        "F0"
++      ],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "documentos",
++      "ferramenta": "drive",
++      "direcao": "entrada",
++      "etapas": [
++        "P2"
++      ],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "amostras",
++      "ferramenta": "drive",
++      "direcao": "entrada",
++      "etapas": [
++        "P3a",
++        "P9"
++      ],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "entregas",
++      "ferramenta": "drive",
++      "direcao": "saida",
++      "etapas": [],
++      "entregaveis": [
++        "E1",
++        "E2",
++        "E3-D",
++        "E3-E",
++        "E4",
++        "E5"
++      ]
++    },
++    {
++      "finalidade": "trabalho-interno",
++      "ferramenta": "drive",
++      "direcao": "entrada",
++      "etapas": [],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "sessoes",
++      "ferramenta": "calendar",
++      "direcao": "agenda",
++      "etapas": [
++        "F0",
++        "P1",
++        "P2",
++        "P3a",
++        "P3b",
++        "P3d",
++        "P4",
++        "P5",
++        "P6",
++        "P7",
++        "P8",
++        "P9",
++        "P10"
++      ],
++      "entregaveis": []
++    },
++    {
++      "finalidade": "ciclo",
++      "ferramenta": "tally",
++      "direcao": "entrada",
++      "etapas": [
++        "P10"
++      ],
++      "entregaveis": []
++    }
++  ],
++  "registro_canais": {
++    "arquivo": "registro/canais.json",
++    "evento": "CanaisDefinidos",
++    "comando_definicao": "python3 /caminho/eiac-campo/scripts/canais.py definir --entrada /caminho/canais.json"
++  },
++  "canais_por_etapa": {
++    "F0": [
++      {
++        "finalidade": "triagem",
++        "direcao": "entrada"
++      }
++    ],
++    "P2": [
++      {
++        "finalidade": "documentos",
++        "direcao": "entrada"
++      }
++    ],
++    "P3a": [
++      {
++        "finalidade": "amostras",
++        "direcao": "entrada"
++      }
++    ],
++    "P9": [
++      {
++        "finalidade": "amostras",
++        "direcao": "entrada"
++      }
++    ],
++    "P10": [
++      {
++        "finalidade": "ciclo",
++        "direcao": "entrada"
++      }
++    ]
++  },
++  "canais_por_entregavel": {
++    "E1": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ],
++    "E2": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ],
++    "E3-D": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ],
++    "E3-E": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ],
++    "E4": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ],
++    "E5": [
++      {
++        "finalidade": "entregas",
++        "direcao": "saida"
++      }
++    ]
++  }
+ }
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index fe16f7e..ebd848c 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.36",
++  "version": "0.2.37",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 1376a21..ca11081 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -22,6 +22,7 @@ import playbook as P
+ import apuracao as A
+ import produtos as R
+ import recorrencia as C
++import canais_registro as K
+ 
+ 
+ class _RecusaSessao(str):
+@@ -65,6 +66,9 @@ def encerrar(st, pb, etapa_id, autor):
+     confirmado,motivo=P.selo_confirmado_apos_evento(pb,etapa_id,E.eventos())
+     if not confirmado:
+         return _RecusaSessao(motivo)
++    erro_canal = K.conferir(pb, etapa_id)
++    if erro_canal:
++        return _RecusaSessao(erro_canal)
+ 
+     if etapa_id == pb["etapas"][0]["id"] and not st.get("nivel"):
+         return (f"{etapa_id} nao encerra sem o nivel apurado. A camada das etapas seguintes "
+diff --git a/eiac-nucleo/scripts/canais_registro.py b/eiac-nucleo/scripts/canais_registro.py
+new file mode 100644
+index 0000000..c1f44be
+--- /dev/null
++++ b/eiac-nucleo/scripts/canais_registro.py
+@@ -0,0 +1,81 @@
++"""Conferência genérica de canais declarados e de seu evento de definição."""
++import hashlib
++import json
++import pathlib
++import re
++
++import estado as E
++
++
++def carregar(pb):
++    contrato = pb.get('registro_canais')
++    if not isinstance(contrato, dict):
++        raise ValueError('registro de canais não declarado no playbook')
++    p = pathlib.Path(contrato['arquivo'])
++    if p.is_absolute() or '..' in p.parts or not p.resolve().is_relative_to(pathlib.Path.cwd().resolve()):
++        raise ValueError('registro de canais fora do caso')
++    if any(x.is_symlink() for x in [p, *p.parents]):
++        raise ValueError('registro de canais contém link')
++    conteudo = p.read_bytes()
++    dados = json.loads(conteudo)
++    if dados.get('caso') != (E.ler() or {}).get('caso'):
++        raise ValueError('registro de canais pertence a outro caso')
++    eventos = [e for e in E.eventos() if e.get('evento') == contrato['evento']]
++    if not eventos or eventos[-1].get('sha256') != hashlib.sha256(conteudo).hexdigest():
++        raise ValueError('registro de canais sem definição íntegra na trilha')
++    if (eventos[-1].get('versao') != dados.get('versao')
++            or eventos[-1].get('decidido_por') != dados.get('decidido_por')
++            or eventos[-1].get('autor') != (E.ler() or {}).get('responsavel')):
++        raise ValueError('versão/autoria de canais diverge do evento')
++    if not E.pessoa_nomeada(dados.get('decidido_por')) or not isinstance(dados.get('canais'), list):
++        raise ValueError('registro de canais inválido')
++    return dados
++
++
++def selecionar(pb, alvo, direcao, finalidade=None):
++    dados = carregar(pb)
++    chave = 'etapas' if any(e['id'] == alvo for e in pb['etapas']) else 'entregaveis'
++    return [c for c in dados['canais'] if alvo in c.get(chave, [])
++            and c.get('direcao') == direcao
++            and (finalidade is None or c.get('finalidade') == finalidade)]
++
++
++def conferir(pb, alvo, entregavel=False):
++    requisitos = pb.get('canais_por_entregavel' if entregavel else 'canais_por_etapa', {}).get(alvo, [])
++    etapa = next((e for e in pb['etapas'] if e['id'] == alvo), {})
++    if not requisitos and not etapa.get('exige_registro_canais'):
++        return None
++    comando = pb.get('registro_canais', {}).get('comando_definicao', 'definir os canais no terminal humano')
++    try:
++        carregar(pb)
++        for r in requisitos:
++            candidatos = selecionar(pb, alvo, r['direcao'], r['finalidade'])
++            if not candidatos:
++                raise ValueError(f"{alvo}: canal {r['finalidade']}/{r['direcao']} ausente")
++    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
++        return f'{exc}. Execute {comando}.'
++    return None
++
++
++def validar_contrato(pb):
++    for chave, universo in [('canais_por_etapa', {e['id'] for e in pb['etapas']}),
++                             ('canais_por_entregavel', {e['id'] for e in pb.get('entregaveis', [])})]:
++        mapa = pb.get(chave, {})
++        if not isinstance(mapa, dict):
++            return f'{chave} precisa ser objeto'
++        for alvo, requisitos in mapa.items():
++            if alvo not in universo or not isinstance(requisitos, list) or not requisitos:
++                return f'{chave}: alvo/requisitos inválidos'
++            for r in requisitos:
++                if (not isinstance(r, dict) or not isinstance(r.get('finalidade'), str)
++                        or not r['finalidade'].strip() or r.get('direcao') not in ('entrada', 'saida', 'agenda')):
++                    return f'{chave}: requisito inválido'
++    if (pb.get('canais_por_etapa') or pb.get('canais_por_entregavel')
++            or any(e.get('exige_registro_canais') for e in pb['etapas'])):
++        contrato = pb.get('registro_canais')
++        if not isinstance(contrato, dict) or any(not isinstance(contrato.get(k), str) or not contrato[k].strip()
++                                              for k in ('arquivo', 'evento', 'comando_definicao')):
++            return 'registro_canais precisa declarar arquivo, evento e comando_definicao'
++
++    return None
++
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index e404a18..8337a7d 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -24,6 +24,7 @@ import estado as E
+ import playbook as P
+ import decisao_humana as H
+ import caminhos as C
++import canais_registro as K
+ 
+ 
+ LEITORES_FONTES = {
+@@ -157,6 +158,9 @@ def main():
+         confirmado,motivo=P.selo_confirmado_apos_evento(pb,e['id'],E.eventos())
+         if not confirmado:
+             negar(motivo,etapa=e['id'],ferramenta=ferramenta)
++        erro_canal = K.conferir(pb, e['id'])
++        if erro_canal:
++            negar(erro_canal, etapa=e['id'], ferramenta=ferramenta)
+         selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
+         if not selo_ok:
+             negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 4c6128e..a39fa7a 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -147,6 +147,10 @@ def carregar():
+         return None, "playbook com valores de procedencia duplicados"
+     if not isinstance(rotulos, dict) or set(rotulos) != set(valores):
+         return None, "rotulos de procedencia nao correspondem aos valores declarados"
++    import canais_registro as K
++    erro_canais = K.validar_contrato(pb)
++    if erro_canais:
++        return None, erro_canais
+     return pb, None
+ 
+ 
+diff --git a/testes/apoio/canais.py b/testes/apoio/canais.py
+new file mode 100644
+index 0000000..92bdcb3
+--- /dev/null
++++ b/testes/apoio/canais.py
+@@ -0,0 +1,40 @@
++"""Declarações exclusivamente sintéticas, gravadas pelo comando humano real."""
++import datetime
++import json
++import pathlib
++import subprocess
++import sys
++
++RAIZ = pathlib.Path(__file__).resolve().parents[2]
++SCRIPT = RAIZ/'eiac-campo/scripts/canais.py'
++
++
++def dados(caso):
++    st = json.loads((pathlib.Path(caso)/'registro/estado.json').read_text())
++    pb = json.loads((pathlib.Path(caso)/'registro/playbook.json').read_text())
++    canais = []
++    for req in pb.get('canais_previstos', []):
++        ferramenta = req['ferramenta']
++        campos = {'tally': ['workspace_id', 'formulario_id'],
++                  'drive': ['drive_id', 'pasta_id'], 'calendar': ['calendario_id']}[ferramenta]
++        canal = dict(req, proprietario='emcia', acesso_cliente='nenhum', sensivel=True,
++                     ids={k: 'SINTETICO-'+req['finalidade']+'-'+k for k in campos},
++                     filtro={'campo': 'caso', 'valor': st['caso']} if ferramenta == 'tally' else None,
++                     marcador='[{caso}/{etapa}]' if ferramenta == 'calendar' else None)
++        canais.append(canal)
++    return dict(versao=1, caso=st['caso'], decidido_por=st['responsavel'],
++                data=datetime.date.today().isoformat(), canais=canais)
++
++
++def definir(caso):
++    caso = pathlib.Path(caso)
++    if (caso/'registro/canais.json').exists():
++        return
++    p = caso/'rascunho/canais-sinteticos.json'
++    p.parent.mkdir(exist_ok=True)
++    p.write_text(json.dumps(dados(caso), ensure_ascii=False))
++    r = subprocess.run([sys.executable, str(SCRIPT), 'definir', '--entrada', str(p)],
++                       cwd=caso, text=True, capture_output=True)
++    if r.returncode:
++        raise RuntimeError(r.stderr)
++
+diff --git a/testes/apoio/habilitacao_0d.py b/testes/apoio/habilitacao_0d.py
+index 8bd4c7a..f59207b 100644
+--- a/testes/apoio/habilitacao_0d.py
++++ b/testes/apoio/habilitacao_0d.py
+@@ -67,6 +67,8 @@ def preparar(caso):
+     """Importa, valida e sela uma fixture de caso antes do percurso."""
+     caso=pathlib.Path(caso).resolve()
+     st=json.loads((caso/'registro/estado.json').read_text())
++    from apoio.canais import definir
++    definir(caso)
+     if (caso/'registro/habilitacao.json').exists():
+         return
+     with tempfile.TemporaryDirectory(prefix='emcia-expediente-fixture-') as tmp:
+diff --git a/testes/canais.py b/testes/canais.py
+new file mode 100644
+index 0000000..c85215a
+--- /dev/null
++++ b/testes/canais.py
+@@ -0,0 +1,126 @@
++"""Canais: negativas com evento antes dos controles positivos."""
++import copy
++import json
++import subprocess
++import sys
++import unittest
++from apoio.hook_real import CasoHook, RAIZ
++from apoio.canais import dados, definir
++
++SCRIPT = RAIZ/'eiac-campo/scripts/canais.py'
++
++
++class Canais(CasoHook):
++    def setUp(self):
++        super().setUp()
++        self.entrada = self.caso/'rascunho/canais.json'
++        self.dados = dados(self.caso)
++
++    def executar(self, *args):
++        return subprocess.run([sys.executable, str(SCRIPT), *args], cwd=self.caso,
++                              text=True, capture_output=True)
++
++    def gravar(self):
++        self.entrada.write_text(json.dumps(self.dados))
++        return self.executar('definir', '--entrada', str(self.entrada))
++
++    def recusa(self):
++        antes = len(self.eventos())
++        r = self.gravar()
++        self.assertNotEqual(r.returncode, 0, r.stdout)
++        self.assertEqual(len(self.eventos()), antes+1)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++        self.assertEqual(self.eventos()[-1]['autor'], 'Celso do Vale')
++
++    def test_01_id_vazio(self):
++        self.dados['canais'][0]['ids']['workspace_id'] = ''; self.recusa()
++
++    def test_02_finalidade_desconhecida(self):
++        self.dados['canais'][0]['finalidade'] = 'inventada'; self.recusa()
++
++    def test_03_ferramenta_desconhecida(self):
++        self.dados['canais'][0]['ferramenta'] = 'inventada'; self.recusa()
++
++    def test_04_autor_agente(self):
++        self.dados['decidido_por'] = 'AG-01'; self.recusa()
++
++    def test_05_sessao_agente(self):
++        self.entrada.write_text(json.dumps(self.dados))
++        self.negado('Bash', {'command': f'python3 {SCRIPT} definir --entrada {self.entrada}'})
++
++    def test_06_resolver_ausente(self):
++        antes = len(self.eventos()); r = self.executar('resolver', 'F0', 'entrada')
++        self.assertNotEqual(r.returncode, 0)
++        self.assertIn('definir', r.stderr)
++        self.assertEqual(self.eventos()[antes]['evento'], 'TentativaNegada')
++
++    def test_07_caso_alheio(self):
++        self.dados['caso'] = 'outro'; self.recusa()
++
++    def test_08_etapa_fora_contrato(self):
++        self.dados['canais'][0]['etapas'] = ['P9']; self.recusa()
++
++    def test_09_filtro_alheio(self):
++        self.dados['canais'][0]['filtro']['valor'] = 'outro'; self.recusa()
++
++    def test_10_ids_com_caminho(self):
++        self.dados['canais'][0]['ids']['workspace_id'] = '/espaco/nome'; self.recusa()
++
++    def test_11_versao_repetida(self):
++        self.assertEqual(self.gravar().returncode, 0); self.recusa()
++
++    def test_12_entrada_malformada(self):
++        self.dados['canais'] = None; self.recusa()
++
++    def test_13_adulteracao(self):
++        self.assertEqual(self.gravar().returncode, 0)
++        p = self.caso/'registro/canais.json'; d = json.loads(p.read_text())
++        d['canais'][1]['ids']['formulario_id'] = 'ALHEIO'; p.write_text(json.dumps(d))
++        r = self.executar('resolver', 'F0', 'entrada')
++        self.assertNotEqual(r.returncode, 0)
++        self.assertEqual(self.eventos()[-1]['evento'], 'TentativaNegada')
++
++    def test_14_etapa_sem_canal_recusa_com_evento(self):
++        self.estado['etapa_atual'] = 'P2'; self.salvar()
++        self.negado('Skill', {'skill': 'eiac-campo:hb-extrair-regras'})
++        antes = len(self.eventos())
++        r = self.rodar('avancar.py', '--encerrar', 'P2', '--autor', 'Celso do Vale')
++        self.assertNotEqual(r.returncode, 0)
++        self.assertIn('definir', r.stderr)
++        self.assertEqual(self.eventos()[antes]['evento'], 'TentativaNegada')
++
++    def test_15_finalidade_exigida_ausente(self):
++        self.dados['canais'] = [c for c in self.dados['canais'] if c['finalidade'] != 'documentos']
++        self.assertEqual(self.gravar().returncode, 0)
++        self.estado['etapa_atual'] = 'P2'; self.salvar()
++        self.negado('Skill', {'skill': 'eiac-campo:hb-extrair-regras'})
++
++    def test_20_planejar_somente_leitura(self):
++        antes = list(self.eventos()); r = self.executar('planejar')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        plano = json.loads(r.stdout)
++        self.assertEqual(len(plano['arvore_proposta']['filhos']), 5)
++        self.assertEqual(self.eventos(), antes)
++        self.assertFalse((self.caso/'registro/canais.json').exists())
++
++    def test_21_definir_resolver_historico(self):
++        self.assertEqual(self.gravar().returncode, 0)
++        antigo = (self.caso/'registro/canais.json').read_bytes()
++        self.dados['versao'] = 2
++        self.assertEqual(self.gravar().returncode, 0)
++        self.assertEqual((self.caso/'registro/canais/versao-0001.json').read_bytes(), antigo)
++        r = self.executar('resolver', 'E1', 'saida')
++        self.assertEqual(r.returncode, 0, r.stderr)
++        self.assertEqual(json.loads(r.stdout)['finalidade'], 'entregas')
++        self.assertEqual([e['evento'] for e in self.eventos()], ['CanaisDefinidos']*2)
++
++    def test_22_decisor_distinto_autoria_fixa(self):
++        self.dados['decidido_por'] = 'Pessoa Engenheira'
++        self.assertEqual(self.gravar().returncode, 0)
++        evento = self.eventos()[-1]
++        self.assertEqual(evento['autor'], 'Celso do Vale')
++        self.assertEqual(evento['decidido_por'], 'Pessoa Engenheira')
++
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index 574a088..19895b8 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -198,7 +198,7 @@ class DecisaoA12(unittest.TestCase):
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+         self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao"})
++        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/habilitacao_0d.py b/testes/habilitacao_0d.py
+index aa53022..9fbbaa2 100644
+--- a/testes/habilitacao_0d.py
++++ b/testes/habilitacao_0d.py
+@@ -16,6 +16,8 @@ class Importacao(CasoHook):
+     def setUp(self):
+         super().setUp()
+         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
++        from apoio.canais import definir
++        definir(self.caso)
+ 
+     def importar(self, *args):
+         return subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp),*args],
+@@ -104,10 +106,15 @@ class Importacao(CasoHook):
+         self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
+ 
+ 
++
++
++
+ class SeloConfirmado(CasoHook):
+     def setUp(self):
+         super().setUp()
+         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
++        from apoio.canais import definir
++        definir(self.caso)
+         self.git('init','-q'); self.git('config','user.name','Celso do Vale')
+         self.git('config','user.email','sintetico@example.invalid')
+         self.git('config','commit.gpgsign','false')
+@@ -119,6 +126,8 @@ class SeloConfirmado(CasoHook):
+         self.assertEqual(r.returncode,0,r.stderr); return r.stdout.strip()
+ 
+     def importar(self):
++        from apoio.canais import definir
++        definir(self.caso)
+         r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
+                          cwd=self.caso,text=True,capture_output=True)
+         self.assertEqual(r.returncode,0,r.stderr)
+@@ -247,8 +256,12 @@ class Abertura(unittest.TestCase):
+         def rodar(path,*args,entrada=None):
+             r=subprocess.run([sys.executable,str(RAIZ/path),*args],cwd=caso,input=entrada,text=True,capture_output=True)
+             self.assertEqual(r.returncode,0,r.stderr);return r
++        from apoio.canais import definir
++        definir(caso)
+         rodar('eiac-campo/scripts/importar_habilitacao.py','--expediente',str(self.exp))
+         rodar('eiac-nucleo/scripts/validar.py','--arquivo','caso/00-habilitacao.md')
++        from apoio.canais import definir
++        definir(caso)
+         rodar('eiac-nucleo/scripts/selar.py','--nota','habilitação conferida')
+         rodar('eiac-nucleo/scripts/guarda.py',entrada=json.dumps(dict(tool_name='Skill',tool_input={'skill':'eiac-campo:hb-enquadrar'})))
+         st=json.loads(rodar('eiac-nucleo/scripts/estado.py').stdout)
+@@ -274,6 +287,8 @@ class Restricoes(CasoHook):
+     def setUp(self):
+         super().setUp()
+         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale',restricao=True)
++        from apoio.canais import definir
++        definir(self.caso)
+         r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
+                          cwd=self.caso,text=True,capture_output=True)
+         self.assertEqual(r.returncode,0,r.stderr)
+diff --git a/testes/pessoa_a16.py b/testes/pessoa_a16.py
+index 2aa5be8..f20f32c 100644
+--- a/testes/pessoa_a16.py
++++ b/testes/pessoa_a16.py
+@@ -7,6 +7,8 @@ class Caso(unittest.TestCase):
+         shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
+         (self.caso/'rascunho').mkdir()
+         self.posicionar('P1')
++        from apoio.canais import definir
++        definir(self.caso)
+     def posicionar(self, etapa):
+         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
+         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
+diff --git a/testes/produtos_a14.py b/testes/produtos_a14.py
+index 6923c8d..ce9446b 100644
+--- a/testes/produtos_a14.py
++++ b/testes/produtos_a14.py
+@@ -7,6 +7,8 @@ class Caso(unittest.TestCase):
+         shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
+         (self.caso/'rascunho').mkdir()
+         self.posicionar('P1')
++        from apoio.canais import definir
++        definir(self.caso)
+     def posicionar(self, etapa):
+         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
+         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
+@@ -78,7 +80,9 @@ class ProdutosA14(Caso):
+         self.posicionar('P7'); externo=self.caso.parent/(self.caso.name+'-externo.yaml'); externo.write_text('estado: decidido')
+         self.addCleanup(externo.unlink); p=self.caso/PRODUTOS['P7'][0]; p.parent.mkdir(parents=True,exist_ok=True); p.symlink_to(externo); self.recusa_produto('P7')
+     def test_23_regra_alternativa(self):
+-        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
++        self.posicionar('P1')
++        from apoio.canais import definir
++        definir(self.caso); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
+         next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'arquivo','padrao':'registro/outro/*.yaml','iguais':{'status':'feito'},'preenchidos':[],'descricao':'produto alternativo'}]
+         p.write_text(json.dumps(pb)); self.recusa_produto('P1')
+         alvo=self.caso/'registro/outro/a.yaml'; alvo.parent.mkdir(); alvo.write_text('status: feito')
+@@ -88,7 +92,9 @@ class ProdutosA14(Caso):
+     def test_25_metrica_uso(self):
+         self.posicionar('P9'); self.produto('P9'); (self.caso/PRODUTOS['P9'][0]).write_text('estado: apurada\ntipo: uso'); self.recusa_produto('P9')
+     def test_26_regra_invalida(self):
+-        self.posicionar('P1'); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
++        self.posicionar('P1')
++        from apoio.canais import definir
++        definir(self.caso); p=self.caso/'registro/playbook.json'; pb=json.loads(p.read_text())
+         next(e for e in pb['etapas'] if e['id']=='P1')['produtos_encerramento']=[{'tipo':'desconhecido','descricao':'produto'}]; p.write_text(json.dumps(pb))
+         r=self.avancar('--encerrar','P1'); self.assertEqual(r.returncode,1); self.assertIn('tipo de produto desconhecido',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+ if __name__=='__main__': unittest.main(verbosity=2)
+diff --git a/testes/recorrencia_a23.py b/testes/recorrencia_a23.py
+index 3199fb0..bf37a8c 100644
+--- a/testes/recorrencia_a23.py
++++ b/testes/recorrencia_a23.py
+@@ -122,6 +122,9 @@ class RecorrenciaA23(CasoHook):
+ 
+     def test_11_regra_generica_outro_caminho_campo_etapa(self):
+         self.et['id'] = 'Z99'
++        self.pb['canais_por_etapa']['Z99'] = self.pb['canais_por_etapa'].pop('P10')
++        for canal in self.pb['canais_previstos']:
++            canal['etapas'] = ['Z99' if x == 'P10' else x for x in canal['etapas']]
+         for ent in self.pb['entregaveis']:
+             ent['portao'] = ['Z99' if x=='P10' else x for x in ent['portao']]
+         for item in self.pb['inegociaveis']:
+diff --git a/testes/sessao_a8.py b/testes/sessao_a8.py
+index 25f9478..922a04a 100644
+--- a/testes/sessao_a8.py
++++ b/testes/sessao_a8.py
+@@ -24,6 +24,8 @@ class SessaoA8(unittest.TestCase):
+         # que a ignorava. O teste 18 confere também o template de produção.
+         self.configurar(lambda pb: pb.update(encerramento_por_camada=REGRAS.copy()))
+         self.posicionar("P3a", "N2")
++        from apoio.canais import definir
++        definir(self.caso)
+ 
+     def configurar(self, editar):
+         pb = json.loads(self.playbook.read_text())

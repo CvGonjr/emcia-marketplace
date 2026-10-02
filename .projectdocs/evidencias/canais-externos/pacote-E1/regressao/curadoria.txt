@@ -1,0 +1,20 @@
+== curadoria, autoria e versionamento I->V — pacote 2.5.2
+  ok    2.5.2-T01 D com autoria humana valida
+  ok    2.5.2-T02 I sem premissa
+  ok    2.5.2-T03 I com premissa
+  ok    2.5.2-T04 V sem evidencia
+  ok    2.5.2-T05 V com evidencia
+  ok    2.5.2-T06 agente como autoria_conteudo
+  ok    2.5.2-T07 pessoa como autoria_conteudo
+  ok    2.5.2-T08 registrado_por distinto de autoria_conteudo
+  ok    2.5.2-T09 sobrescrever I por V sem nova versao
+  ok    2.5.2-T10 I -> V com nova versao
+  ok    2.5.2-T11 historico preservado
+  ok    2.5.2-T12 escrita direta em contexto/
+  ok    2.5.2-T13 escrita autorizada em contexto/
+  ok    2.5.2-T14 rascunho nao e contexto curado
+  ok    2.5.2-T15 recusa gera evento
+  ok    2.5.2-T16 operacao valida gera trilha
+  ok    2.5.2-T-baseline registrado-por AG-01 nao determina autoria (achado do baseline superado)
+
+17 testes de curadoria aprovados

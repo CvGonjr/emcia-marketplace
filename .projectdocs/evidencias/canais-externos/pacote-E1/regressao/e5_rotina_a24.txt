@@ -1,0 +1,10 @@
+test_01_empate_ambiguidade_bloqueia_emissao (__main__.E5RotinaA24.test_01_empate_ambiguidade_bloqueia_emissao) ... ok
+test_02_versao_invalida_nao_e_escape (__main__.E5RotinaA24.test_02_versao_invalida_nao_e_escape) ... ok
+test_03_v10_precede_v2_mesmo_com_nome_anterior (__main__.E5RotinaA24.test_03_v10_precede_v2_mesmo_com_nome_anterior) ... ok
+test_04_e5_e_recorrencia_apontam_mesma_pessoa (__main__.E5RotinaA24.test_04_e5_e_recorrencia_apontam_mesma_pessoa) ... ok
+test_05_ciclos_ficam_fora_da_selecao (__main__.E5RotinaA24.test_05_ciclos_ficam_fora_da_selecao) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.513s
+
+OK

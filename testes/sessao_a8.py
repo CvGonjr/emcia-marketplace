@@ -24,6 +24,8 @@ class SessaoA8(unittest.TestCase):
         # que a ignorava. O teste 18 confere também o template de produção.
         self.configurar(lambda pb: pb.update(encerramento_por_camada=REGRAS.copy()))
         self.posicionar("P3a", "N2")
+        from apoio.canais import definir
+        definir(self.caso)
 
     def configurar(self, editar):
         pb = json.loads(self.playbook.read_text())

@@ -45,3 +45,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 037 | E5 usa a rotina de calibragem vigente (A24) | firme |
 | 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |
 | 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; implementação por pacotes; P3b permanece para pacote posterior |
+| 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | arquitetura aprovada; implementação por pacotes E1–E7 |

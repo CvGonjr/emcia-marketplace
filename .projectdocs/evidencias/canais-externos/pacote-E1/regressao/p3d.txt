@@ -1,0 +1,15 @@
+== integracao CTX <-> P3d — pacote 2.5.3
+  ok    2.5.3-T01 classificacao oficial valida (alinhada)
+  ok    2.5.3-T02 classificacao fora da taxonomia oficial
+  ok    2.5.3-T03 divergencia sem referencia_p3d
+  ok    2.5.3-T04 divergencia com referencia_p3d inexistente
+  ok    2.5.3-T05 divergencia com referencia_p3d valida
+  ok    2.5.3-T06 referencia resolve para o registro correto
+  ok    2.5.3-T07 CTX nao exige duplicacao do detalhe
+  ok    2.5.3-T08 estrutura antiga estatuto/divergencia nao existe mais
+  ok    2.5.3-T09 classificacao que nao exige referencia_p3d
+  ok    2.5.3-T10 atualizacao do confronto preserva historico
+  ok    2.5.3-T11 agente nao confirma confronto humano
+  ok    2.5.3-T12 controle humano valido
+
+12 testes de integracao CTX<->P3d aprovados

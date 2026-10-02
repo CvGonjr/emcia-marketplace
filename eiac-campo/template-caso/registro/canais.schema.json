@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canais externos do caso",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "versao",
+    "caso",
+    "decidido_por",
+    "data",
+    "canais"
+  ],
+  "properties": {
+    "versao": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "caso": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decidido_por": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data": {
+      "type": "string",
+      "format": "date"
+    },
+    "canais": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finalidade",
+          "ferramenta",
+          "proprietario",
+          "ids",
+          "direcao",
+          "etapas",
+          "entregaveis",
+          "acesso_cliente",
+          "sensivel",
+          "filtro",
+          "marcador"
+        ],
+        "properties": {
+          "finalidade": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ferramenta": {
+            "enum": [
+              "tally",
+              "drive",
+              "calendar"
+            ]
+          },
+          "proprietario": {
+            "enum": [
+              "emcia",
+              "cliente"
+            ]
+          },
+          "ids": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.@:+-]+$"
+            }
+          },
+          "direcao": {
+            "enum": [
+              "entrada",
+              "saida",
+              "agenda"
+            ]
+          },
+          "etapas": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "entregaveis": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "acesso_cliente": {
+            "enum": [
+              "nenhum",
+              "leitura",
+              "escrita"
+            ]
+          },
+          "sensivel": {
+            "type": "boolean"
+          },
+          "filtro": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "campo",
+                  "valor"
+                ],
+                "properties": {
+                  "campo": {
+                    "const": "caso"
+                  },
+                  "valor": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          },
+          "marcador": {
+            "enum": [
+              null,
+              "[{caso}/{etapa}]"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "ferramenta": {
+                  "const": "tally"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "ids": {
+                  "required": [
+                    "workspace_id",
+                    "formulario_id"
+                  ],
+                  "properties": {
+                    "workspace_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "formulario_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "filtro": {
+                  "type": "object"
+                },
+                "marcador": {
+                  "type": "null"
+                },
+                "direcao": {
+                  "const": "entrada"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "ferramenta": {
+                  "const": "drive"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "ids": {
+                  "required": [
+                    "drive_id",
+                    "pasta_id"
+                  ],
+                  "properties": {
+                    "drive_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "pasta_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "filtro": {
+                  "type": "null"
+                },
+                "marcador": {
+                  "type": "null"
+                },
+                "direcao": {
+                  "enum": [
+                    "entrada",
+                    "saida"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "ferramenta": {
+                  "const": "calendar"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "ids": {
+                  "required": [
+                    "calendario_id"
+                  ],
+                  "properties": {
+                    "calendario_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "filtro": {
+                  "type": "null"
+                },
+                "marcador": {
+                  "const": "[{caso}/{etapa}]"
+                },
+                "direcao": {
+                  "const": "agenda"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "finalidade": {
+                  "const": "trabalho-interno"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "acesso_cliente": {
+                  "const": "nenhum"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -7,6 +7,8 @@ class Caso(unittest.TestCase):
         shutil.copytree(RAIZ/'eiac-campo/template-caso/registro', self.caso/'registro')
         (self.caso/'rascunho').mkdir()
         self.posicionar('P1')
+        from apoio.canais import definir
+        definir(self.caso)
     def posicionar(self, etapa):
         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})

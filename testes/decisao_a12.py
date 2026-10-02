@@ -198,7 +198,7 @@ class DecisaoA12(unittest.TestCase):
     def test_29_template_declara_lista(self):
         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
         self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao"})
+        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais"})
 
     def test_30_satisfacao_por_wrapper_campo(self):
         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')

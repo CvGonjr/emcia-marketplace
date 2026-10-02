@@ -1,0 +1,23 @@
+== novo-caso.sh recusa responsavel invalido
+  ok    novo-caso.sh recusa responsavel codigo de agente ('AG-01')
+  ok    novo-caso.sh recusa responsavel codigo de agente ('agente')
+  ok    novo-caso.sh recusa responsavel placeholder ('<nome da pessoa>')
+  ok    novo-caso.sh recusa responsavel coletivo generico ('equipe')
+  ok    novo-caso.sh recusa responsavel vazio ('')
+  ok    novo-caso.sh grava responsavel valido em registro/estado.json
+  ok    novo-caso.sh emite CasoAberto com o responsavel
+
+== validar.py: autoria vem de responsavel, nao de --autor
+  ok    validar.py grava com autor=responsavel mesmo recebendo --autor AG-03
+  ok    validar.py preserva --autor informado em autor_informado, para auditoria
+  ok    validar.py recusa gravar em caso sem responsavel definido
+
+== curar.py: autoria vem de responsavel, nao de --registrado-por
+  ok    curar.py cura com registrado_por=responsavel mesmo recebendo --registrado-por AG-01
+  ok    curar.py recusa curar em caso sem responsavel definido
+
+== selar.py: autor do commit vem de responsavel, nao de --autor
+  ok    selar.py commita com autor=responsavel mesmo recebendo --autor AG-04
+  ok    selar.py recusa selar caso sem responsavel definido
+
+14 verificacoes de autoria por responsavel, 0 falhas

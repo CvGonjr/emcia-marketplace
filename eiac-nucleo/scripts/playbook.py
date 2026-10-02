@@ -147,6 +147,10 @@ def carregar():
         return None, "playbook com valores de procedencia duplicados"
     if not isinstance(rotulos, dict) or set(rotulos) != set(valores):
         return None, "rotulos de procedencia nao correspondem aos valores declarados"
+    import canais_registro as K
+    erro_canais = K.validar_contrato(pb)
+    if erro_canais:
+        return None, erro_canais
     return pb, None
 
 

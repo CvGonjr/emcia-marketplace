@@ -24,6 +24,7 @@ import estado as E
 import playbook as P
 import decisao_humana as H
 import caminhos as C
+import canais_registro as K
 
 
 LEITORES_FONTES = {
@@ -157,6 +158,9 @@ def main():
         confirmado,motivo=P.selo_confirmado_apos_evento(pb,e['id'],E.eventos())
         if not confirmado:
             negar(motivo,etapa=e['id'],ferramenta=ferramenta)
+        erro_canal = K.conferir(pb, e['id'])
+        if erro_canal:
+            negar(erro_canal, etapa=e['id'], ferramenta=ferramenta)
         selo_ok, motivo_selo = P.selo_apos_etapa(pb, e["id"], E.eventos())
         if not selo_ok:
             negar(motivo_selo, etapa=e["id"], ferramenta=ferramenta)

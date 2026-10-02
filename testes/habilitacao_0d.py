@@ -16,6 +16,8 @@ class Importacao(CasoHook):
     def setUp(self):
         super().setUp()
         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
+        from apoio.canais import definir
+        definir(self.caso)
 
     def importar(self, *args):
         return subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp),*args],
@@ -104,10 +106,15 @@ class Importacao(CasoHook):
         self.assertTrue(all((self.caso/r['caminho']).exists() for r in antigo['arquivos'].values()))
 
 
+
+
+
 class SeloConfirmado(CasoHook):
     def setUp(self):
         super().setUp()
         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale')
+        from apoio.canais import definir
+        definir(self.caso)
         self.git('init','-q'); self.git('config','user.name','Celso do Vale')
         self.git('config','user.email','sintetico@example.invalid')
         self.git('config','commit.gpgsign','false')
@@ -119,6 +126,8 @@ class SeloConfirmado(CasoHook):
         self.assertEqual(r.returncode,0,r.stderr); return r.stdout.strip()
 
     def importar(self):
+        from apoio.canais import definir
+        definir(self.caso)
         r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
                          cwd=self.caso,text=True,capture_output=True)
         self.assertEqual(r.returncode,0,r.stderr)
@@ -247,8 +256,12 @@ class Abertura(unittest.TestCase):
         def rodar(path,*args,entrada=None):
             r=subprocess.run([sys.executable,str(RAIZ/path),*args],cwd=caso,input=entrada,text=True,capture_output=True)
             self.assertEqual(r.returncode,0,r.stderr);return r
+        from apoio.canais import definir
+        definir(caso)
         rodar('eiac-campo/scripts/importar_habilitacao.py','--expediente',str(self.exp))
         rodar('eiac-nucleo/scripts/validar.py','--arquivo','caso/00-habilitacao.md')
+        from apoio.canais import definir
+        definir(caso)
         rodar('eiac-nucleo/scripts/selar.py','--nota','habilitação conferida')
         rodar('eiac-nucleo/scripts/guarda.py',entrada=json.dumps(dict(tool_name='Skill',tool_input={'skill':'eiac-campo:hb-enquadrar'})))
         st=json.loads(rodar('eiac-nucleo/scripts/estado.py').stdout)
@@ -274,6 +287,8 @@ class Restricoes(CasoHook):
     def setUp(self):
         super().setUp()
         self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale',restricao=True)
+        from apoio.canais import definir
+        definir(self.caso)
         r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
                          cwd=self.caso,text=True,capture_output=True)
         self.assertEqual(r.returncode,0,r.stderr)

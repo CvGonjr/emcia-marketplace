@@ -1,0 +1,45 @@
+== testes 2.6.6 -- verificacao integral F0-P10
+  ok    2.6.6-C01 contrato declara 13 etapas F0-P10
+  ok    2.6.6-C02 caso novo inicia em F0
+  ok    2.6.6-C03 F0 encerrada e etapa avanca para P1
+  ok    2.6.6-C04 percurso P1-P5 (via P2/P3a/P3b/P3d/P4) executa sem falha, etapa em P5
+  ok    2.6.6-C05 P3b permanece nao delegavel a agente (autor precisa ser pessoa nomeada)
+  ok    2.6.6-C06 escrita direta em contexto/ continua recusada (G2b)
+  ok    2.6.6-C07 escrita direta em registro/ continua recusada (G5)
+  ok    2.6.6-C08 P6 (especificacao operacional) e etapa operacional executavel
+  ok    2.6.6-C09 validacao de P6 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C10 P7 (minuta + decisao de autonomia) e etapa operacional executavel
+  ok    2.6.6-C11 agente nao decide autonomia (agente nao pode decidir autonomia: o estado 'decidido' exige ator humano nomeado, nunca agente (CAT-01 3.5.1).)
+  ok    2.6.6-C12 humano nominal decide autonomia
+  ok    2.6.6-C13 P8 produz casos de teste com saida esperada
+  ok    2.6.6-C14 P9 produz metrica de resultado apurada
+  ok    2.6.6-C15 P10 e etapa recorrente e registra recorrencia
+  ok    2.6.6-C16 dois ciclos de P10 preservados (nenhum sobrescrito)
+  ok    2.6.6-C17 agente (AG-04) detecta e registra drift no ciclo 2
+  ok    2.6.6-C18 decisao de recalibragem em P10 exige humano (agente recusado, humano aceito)
+  ok    2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis
+  ok    2.6.6-C20 4/4 AG declarados e estruturalmente resolviveis
+  ok    2.6.6-C21 AG-01 recusado para HB-17 (nao autorizada); AG-04 autorizado (par negativo/positivo)
+  ok    2.6.6-C22 13/13 HB automatizadas possuem criterio_de_verificacao
+  ok    2.6.6-C23 I1 baseline: satisfeito
+  ok    2.6.6-C24 I2 termo de autonomia: satisfeito
+  ok    2.6.6-C25 I3 casos com saida esperada: satisfeito
+  ok    2.6.6-C26 I4 metrica de resultado: satisfeito
+  ok    2.6.6-C27 I5 responsavel de calibragem: satisfeito
+  ok    2.6.6-C28 E1 autorizado e materializado (Ficha de Enquadramento)
+  ok    2.6.6-C29 E2 autorizado e materializado (Diagnostico e Oportunidade)
+  ok    2.6.6-C30 E3-D autorizado
+  ok    2.6.6-C31 E3-E corretamente avaliado como AUTORIZADO (caso agentico)
+  ok    2.6.6-C32 E3 materializado como arquivo unico (Parte A + Parte B consolidadas)
+  ok    2.6.6-C33 E4 autorizado e materializado (Guia Operacional)
+  ok    2.6.6-C34 E5 autorizado e materializado (Relatorio de Piloto)
+  ok    2.6.6-C35 cinco entregaveis materiais confirmados (E1-E5, entre os dois casos isolados)
+  ok    2.6.6-C36 recusa de etapa incorreta gera evento RecusaMaquina
+  ok    2.6.6-C37 recusa de escrita direta em registro/ gera evento TentativaNegada
+  ok    2.6.6-C38 AG-03 opera em camada EX2, nunca EX3/EX4 (decisao humana protegida)
+  ok    2.6.6-C39 trilha integral recuperavel (categorias minimas de evento presentes)
+  ok    2.6.6-C40 log do caso de controle preservado para auditoria de bypass (nenhuma chamada fora dos scripts oficiais)
+  ok    2.6.6-C41 materializacao sem evidencia (portao fechado) recusada, nao inventa conteudo (E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1)
+  ok    2.6.6-C42 rastreabilidade ponta a ponta: RN-101(P2)->P4->P5(agente)->E3->P6/P7->P8/P9(MET-101.baseline_ref=BL-101)->P10->E5, IDs preservados sem reinvencao
+  ok    2.6.6-C43 regressao completa: ver teste-regressao-final.txt (executada separadamente apos este modulo, mesmo padrao dos pacotes anteriores)
+43 verificacoes do pacote 2.6.6, 0 falhas

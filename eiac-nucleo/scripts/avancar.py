@@ -22,6 +22,7 @@ import playbook as P
 import apuracao as A
 import produtos as R
 import recorrencia as C
+import canais_registro as K
 
 
 class _RecusaSessao(str):
@@ -65,6 +66,9 @@ def encerrar(st, pb, etapa_id, autor):
     confirmado,motivo=P.selo_confirmado_apos_evento(pb,etapa_id,E.eventos())
     if not confirmado:
         return _RecusaSessao(motivo)
+    erro_canal = K.conferir(pb, etapa_id)
+    if erro_canal:
+        return _RecusaSessao(erro_canal)
 
     if etapa_id == pb["etapas"][0]["id"] and not st.get("nivel"):
         return (f"{etapa_id} nao encerra sem o nivel apurado. A camada das etapas seguintes "

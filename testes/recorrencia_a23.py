@@ -122,6 +122,9 @@ class RecorrenciaA23(CasoHook):
 
     def test_11_regra_generica_outro_caminho_campo_etapa(self):
         self.et['id'] = 'Z99'
+        self.pb['canais_por_etapa']['Z99'] = self.pb['canais_por_etapa'].pop('P10')
+        for canal in self.pb['canais_previstos']:
+            canal['etapas'] = ['Z99' if x == 'P10' else x for x in canal['etapas']]
         for ent in self.pb['entregaveis']:
             ent['portao'] = ['Z99' if x=='P10' else x for x in ent['portao']]
         for item in self.pb['inegociaveis']:

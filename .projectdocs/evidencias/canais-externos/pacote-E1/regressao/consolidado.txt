@@ -1,0 +1,19 @@
+== verificacao consolidada da Acao 2.5 — caso CTX-TEST-2.5.6-001
+  ok    2.5.6-C01 D/I/V integrados
+  ok    2.5.6-C02 quatro objetos CTX
+  ok    2.5.6-C03 autoria_conteudo != registrado_por, agente recusado como autor
+  ok    2.5.6-C04 curadoria rascunho -> contexto
+  ok    2.5.6-C05 bloqueio de escrita direta em contexto/
+  ok    2.5.6-C06 I -> V com historico (aqui, D -> V, mesma regra de versionamento)
+  ok    2.5.6-C07 integracao P3d
+  ok    2.5.6-C08 CTX-V01-CTX-V11 (reexecucao)
+  ok    2.5.6-C09 referencias Termo/Entidade/Fonte
+  ok    2.5.6-C10 P2 -> CTX
+  ok    2.5.6-C11 P3 -> CTX (P3b e P3d)
+  ok    2.5.6-C12 CTX -> P4
+  ok    2.5.6-C13 CTX -> P5
+  ok    2.5.6-C14 nao reinterpretacao
+  ok    2.5.6-C15 eventos
+  ok    2.5.6-C16 percurso integrado da camada
+
+16 verificacoes consolidadas aprovadas

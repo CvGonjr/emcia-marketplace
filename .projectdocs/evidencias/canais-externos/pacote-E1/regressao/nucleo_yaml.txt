@@ -1,0 +1,10 @@
+== determinismo de leitura YAML entre ambientes com/sem PyYAML
+  ok    estrutura.carregar_yaml com-PyYAML e sem-PyYAML produzem o mesmo dict
+  ok    estrutura.carregar_yaml data_validacao com PyYAML e str (nao datetime.date)
+  ok    estrutura.carregar_yaml tipo de data_validacao identico nos dois caminhos (str)
+  ok    quadro.ler_yaml com-PyYAML e sem-PyYAML produzem o mesmo dict
+  ok    quadro.ler_yaml data_validacao com PyYAML e str (nao datetime.date)
+  ok    quadro.ler_yaml tipo de data_validacao identico nos dois caminhos (str)
+  ok    checar_validacao aceita data_validacao vinda de carregar_yaml sem quebrar (controle positivo do achado 2026-09)
+
+7 verificacoes de determinismo YAML, 0 falhas

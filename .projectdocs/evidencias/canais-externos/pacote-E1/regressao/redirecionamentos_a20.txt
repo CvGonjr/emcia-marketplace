@@ -1,0 +1,17 @@
+test_01_stderr_protegido (__main__.Redirecionamentos.test_01_stderr_protegido) ... ok
+test_02_append_protegido (__main__.Redirecionamentos.test_02_append_protegido) ... ok
+test_03_caminho_com_espaco (__main__.Redirecionamentos.test_03_caminho_com_espaco) ... ok
+test_04_stderr_dev_null (__main__.Redirecionamentos.test_04_stderr_dev_null) ... ok
+test_05_stdout_dev_null (__main__.Redirecionamentos.test_05_stdout_dev_null) ... ok
+test_06_fontes_stderr_dev_null (__main__.Redirecionamentos.test_06_fontes_stderr_dev_null) ... ok
+test_07_duplicacao_descritor (__main__.Redirecionamentos.test_07_duplicacao_descritor) ... ok
+test_08_rascunho_redirecionado (__main__.Redirecionamentos.test_08_rascunho_redirecionado) ... ok
+test_09_stdout_e_stderr_protegidos (__main__.Redirecionamentos.test_09_stdout_e_stderr_protegidos) ... ok
+test_10_fora_do_caso (__main__.Redirecionamentos.test_10_fora_do_caso) ... ok
+test_11_maior_entre_aspas_e_texto (__main__.Redirecionamentos.test_11_maior_entre_aspas_e_texto) ... ok
+test_12_caractere_escapado_e_texto (__main__.Redirecionamentos.test_12_caractere_escapado_e_texto) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.718s
+
+OK

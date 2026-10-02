@@ -1,0 +1,11 @@
+test_00_revisao (__main__.RevisaoA15.test_00_revisao) ... ok
+test_01_rotina (__main__.RevisaoA15.test_01_rotina) ... ok
+test_02_rascunho_permitido (__main__.RevisaoA15.test_02_rascunho_permitido) ... ok
+test_03_baseline_medicao_permitida (__main__.RevisaoA15.test_03_baseline_medicao_permitida) ... ok
+test_04_metrica_calculo_permitido (__main__.RevisaoA15.test_04_metrica_calculo_permitido) ... ok
+test_05_ciclo_sem_decisao (__main__.RevisaoA15.test_05_ciclo_sem_decisao) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.362s
+
+OK

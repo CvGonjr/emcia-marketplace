@@ -1,0 +1,31 @@
+test_00_equipe (__main__.PessoaA16.test_00_equipe) ... ok
+test_01_time (__main__.PessoaA16.test_01_time) ... ok
+test_02_area (__main__.PessoaA16.test_02_area) ... ok
+test_03_nome_unico (__main__.PessoaA16.test_03_nome_unico) ... ok
+test_04_comite (__main__.PessoaA16.test_04_comite) ... ok
+test_05_pessoa (__main__.PessoaA16.test_05_pessoa) ... ok
+test_06_regra_do_caso (__main__.PessoaA16.test_06_regra_do_caso) ... ok
+test_10_baseline (__main__.PessoaA16.test_10_baseline) ... ok
+test_11_operacional (__main__.PessoaA16.test_11_operacional) ... ok
+test_12_governanca (__main__.PessoaA16.test_12_governanca) ... ok
+test_13_revisor (__main__.PessoaA16.test_13_revisor) ... ok
+test_14_metrica (__main__.PessoaA16.test_14_metrica) ... ok
+test_15_calibragem (__main__.PessoaA16.test_15_calibragem) ... ok
+test_16_novo_caso_coletivo (__main__.PessoaA16.test_16_novo_caso_coletivo) ... ok
+test_17_validador_autoria (__main__.PessoaA16.test_17_validador_autoria) ... ok
+test_18_nome_sobrenome_sem_acentos (__main__.PessoaA16.test_18_nome_sobrenome_sem_acentos) ... ok
+test_19_produto_responsavel_coletivo (__main__.PessoaA16.test_19_produto_responsavel_coletivo) ... FAIL
+
+======================================================================
+FAIL: test_19_produto_responsavel_coletivo (__main__.PessoaA16.test_19_produto_responsavel_coletivo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/pessoa_a16.py", line 71, in test_19_produto_responsavel_coletivo
+    r=self.avancar('--encerrar','P10'); self.assertEqual(r.returncode,1,r.stderr); self.assertIn('produto',r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
+                                                                                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'produto' not found in "[Errno 2] No such file or directory: 'registro/canais.json'. Execute python3 /caminho/eiac-campo/scripts/canais.py definir --entrada /caminho/canais.json.\n"
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.803s
+
+FAILED (failures=1)

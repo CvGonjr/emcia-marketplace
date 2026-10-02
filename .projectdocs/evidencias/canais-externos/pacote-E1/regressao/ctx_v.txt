@@ -1,0 +1,26 @@
+== bateria CTX-V01-V11 — pacote 2.5.4
+  ok    2.5.4-V01-N CTX-V01 [N] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V01-P CTX-V01 [P] Regra possui os sete campos do bloco de decisao
+  ok    2.5.4-V02-N CTX-V02 [N] Registro I possui premissa escrita
+  ok    2.5.4-V02-P CTX-V02 [P] Registro I possui premissa escrita
+  ok    2.5.4-V03-N CTX-V03 [N] Registro V possui evidencia identificada
+  ok    2.5.4-V03-P CTX-V03 [P] Registro V possui evidencia identificada
+  ok    2.5.4-V04-N CTX-V04 [N] Mudanca I->V cria nova versao
+  ok    2.5.4-V04-P CTX-V04 [P] Mudanca I->V cria nova versao
+  ok    2.5.4-V05-N CTX-V05 [N] Todo termo referenciado existe
+  ok    2.5.4-V05-P CTX-V05 [P] Todo termo referenciado existe
+  ok    2.5.4-V06-N CTX-V06 [N] Toda entidade referenciada existe
+  ok    2.5.4-V06-P CTX-V06 [P] Toda entidade referenciada existe
+  ok    2.5.4-V07-N CTX-V07 [N] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V07-P CTX-V07 [P] Toda fonte referenciada existe e possui contrato minimo
+  ok    2.5.4-V08-N CTX-V08 [N] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V08-P CTX-V08 [P] Escrita em contexto/ passa pela curadoria prevista
+  ok    2.5.4-V09-N CTX-V09 [N] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V09-P CTX-V09 [P] Autoria de conteudo e registro sao pessoas nomeadas
+  ok    2.5.4-V10-N CTX-V10 [N] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V10-P CTX-V10 [P] Toda nova versao possui data, responsavel e motivo da mudanca
+  ok    2.5.4-V11-N CTX-V11 [N] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-V11-P CTX-V11 [P] classificacao_confronto completa e resolvivel quando divergente
+  ok    2.5.4-multi multiplas-violacoes [N] I sem premissa + Fonte inexistente no mesmo objeto (politica acumulativa)
+
+23 verificacoes CTX-V01-V11 aprovadas
