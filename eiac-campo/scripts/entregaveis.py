@@ -31,6 +31,7 @@ RAIZ_NUCLEO = pathlib.Path(os.environ["EIAC_NUCLEO_SCRIPTS"]) if os.environ.get(
 sys.path.insert(0, str(RAIZ_NUCLEO))
 import estrutura as X  # noqa: E402
 import recorrencia as R  # noqa: E402
+import estado as E  # noqa: E402
 
 DIR_ENTREGAVEIS = pathlib.Path("caso/entregaveis")
 DIR_ESTADO = pathlib.Path("registro/estado.json")
@@ -255,8 +256,43 @@ ENTREGAVEL_PORTOES = {"E1": ["E1"], "E2": ["E2"], "E3": ["E3-D", "E3-E"],
                        "E4": ["E4"], "E5": ["E5"]}
 
 
+def conferir_restricoes(entregavel_id, st):
+    """Não presume vínculo entre item de acesso e item do entregável.
+
+    Os registros vigentes ainda não declaram esse vínculo; materialização
+    restrita fica bloqueada antes da escrita, conforme decisão 039.
+    """
+    p=pathlib.Path('registro/habilitacao.json')
+    if not p.exists():
+        return  # Casos anteriores conservam seu contrato e comportamento.
+    try:
+        vigente=json.loads(p.read_text(encoding='utf-8'))['vigente']
+        restricoes=vigente['restricoes']
+        if not isinstance(restricoes,list):
+            raise ValueError('lista de restrições inválida')
+        if vigente['desfecho']=='prosseguir' and not restricoes:
+            return
+        if vigente['desfecho']!='prosseguir com restrição' or not restricoes:
+            raise ValueError('desfecho e restrições divergentes')
+        ids=[]
+        for restricao in restricoes:
+            ident=restricao['id']
+            if not isinstance(ident,str) or not ident.startswith('RH-') or ident in ids:
+                raise ValueError('identificador de restrição inválido ou duplicado')
+            ids.append(ident)
+        motivo=(f"{entregavel_id}: restrição sem destino determinístico no entregável: "
+                + ', '.join(ids) + '. Falta vínculo explícito com o item afetado; ver decisão 039.')
+    except (OSError,ValueError,KeyError,TypeError) as exc:
+        ids=[]
+        motivo=f'{entregavel_id}: registro de restrições inválido: {exc}'
+    E.evento('TentativaNegada',autor=st['responsavel'],operacao='materializar-entregavel',
+             entregavel=entregavel_id,restricoes_sem_destino=ids,motivo=motivo)
+    raise NaoMaterializavel(motivo)
+
+
 def renderizar(entregavel_id):
     st = _estado()
+    conferir_restricoes(entregavel_id,st)
     fn = RENDERIZADORES[entregavel_id]
     conteudo = fn(st)
     DIR_ENTREGAVEIS.mkdir(parents=True, exist_ok=True)

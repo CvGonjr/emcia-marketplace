@@ -1,0 +1,69 @@
+test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) ...
+  test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E1') ... FAIL
+  test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E2') ... FAIL
+  test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E3') ... FAIL
+  test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E4') ... FAIL
+  test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E5') ... FAIL
+test_02_recusa_nao_sobrescreve_entregavel_anterior (__main__.Restricoes.test_02_recusa_nao_sobrescreve_entregavel_anterior) ... FAIL
+test_20_sem_restricao_materializa_comportamento_existente (__main__.Restricoes.test_20_sem_restricao_materializa_comportamento_existente) ... ok
+
+======================================================================
+FAIL: test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 290, in test_01_restricao_sem_destino_recusa_com_evento
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 : E1 renderizado: caso/entregaveis/E1.md
+
+
+======================================================================
+FAIL: test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E2')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 290, in test_01_restricao_sem_destino_recusa_com_evento
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+                                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: 'RH-01' not found in 'E2 nao materializavel: nenhuma linha de base em registro/baseline/ -- E2 A.3 exige a tabela de linha de base, item inegociavel 1\n'
+
+======================================================================
+FAIL: test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 290, in test_01_restricao_sem_destino_recusa_com_evento
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+                                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: 'RH-01' not found in 'E3 nao materializavel: P5 nao encerrada -- E3 nao tem insumo\n'
+
+======================================================================
+FAIL: test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E4')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 290, in test_01_restricao_sem_destino_recusa_com_evento
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+                                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: 'RH-01' not found in 'E4 nao materializavel: nenhuma especificacao operacional validada em registro/operacional/\n'
+
+======================================================================
+FAIL: test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) (ent='E5')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 290, in test_01_restricao_sem_destino_recusa_com_evento
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+                                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+AssertionError: 'RH-01' not found in 'E5 nao materializavel: nenhum conjunto de piloto revisado em registro/piloto/ -- item inegociavel 3 bloqueia E5\n'
+
+======================================================================
+FAIL: test_02_recusa_nao_sobrescreve_entregavel_anterior (__main__.Restricoes.test_02_recusa_nao_sobrescreve_entregavel_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 299, in test_02_recusa_nao_sobrescreve_entregavel_anterior
+    r=self.renderizar('E1');self.assertNotEqual(r.returncode,0,r.stdout)
+                            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 : E1 renderizado: caso/entregaveis/E1.md
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.808s
+
+FAILED (failures=6)

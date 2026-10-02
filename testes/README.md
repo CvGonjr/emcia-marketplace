@@ -742,3 +742,10 @@ fonte ilegível. As recusas preservam o estado e deixam evento.
 `python3 testes/habilitacao_0d.py` verifica a importação humana do expediente:
 recusas com evento, integridade, identidade reservada, histórico de reimportação,
 gravação pelo validador e preservação exclusiva dos artefatos administrativos.
+
+A suíte `habilitacao_0d.py` também cobre selo confirmado posterior à importação,
+commit recusado, selo anterior, Git inacessível, novo-caso com manifesto adulterado,
+percurso desde a abertura e diagnóstico de integridade somente leitura. O pacote
+D verifica recusa de RH-xx sem destino em E1–E5 e preservação do entregável anterior.
+Todas as fixtures usam dados exclusivamente sintéticos. A preparação anterior
+à F0 dos percursos históricos usa importação, validação e selo reais.

@@ -209,7 +209,9 @@ class Abertura(unittest.TestCase):
         self.assertIn('TentativaNegada',r.stderr)
         self.assertFalse((self.destino/'controle').exists())
         log=self.destino/'.emcia-abertura-eventos.jsonl'
-        self.assertEqual(json.loads(log.read_text().splitlines()[-1])['evento'],'TentativaNegada')
+        evento=json.loads(log.read_text().splitlines()[-1])
+        self.assertEqual(evento['evento'],'TentativaNegada')
+        self.assertEqual(evento['autor'],'Celso do Vale')
 
     def copia_ferramenta(self):
         copia=self.base/'ferramenta';copia.mkdir()
@@ -266,6 +268,45 @@ class Abertura(unittest.TestCase):
         r=subprocess.run([sys.executable,str(RAIZ/'eiac-nucleo/scripts/avancar.py'),
             '--apurar-nivel','N2','--eixos','DAD 5, GOV 3, CRI 6','--autor','Celso do Vale'],cwd=caso,text=True,capture_output=True)
         self.assertEqual(r.returncode,0,r.stderr)
+
+
+class Restricoes(CasoHook):
+    def setUp(self):
+        super().setUp()
+        self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale',restricao=True)
+        r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
+                         cwd=self.caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr)
+        # Insumo real de E1; a restrição precisa ser a causa da recusa.
+        self.estado.update(nivel='N2',cumprimentos={'F0':{'cumprido':True,'eixos':'DAD 5, GOV 3, CRI 6','autor':'Celso do Vale'}})
+        self.salvar()
+
+    def renderizar(self,entregavel):
+        return subprocess.run([sys.executable,str(RAIZ/'eiac-campo/scripts/entregaveis.py'),
+            '--renderizar',entregavel,'--autor','Celso do Vale'],cwd=self.caso,text=True,capture_output=True)
+
+    def test_01_restricao_sem_destino_recusa_com_evento(self):
+        for ent in ['E1','E2','E3','E4','E5']:
+            with self.subTest(ent=ent):
+                antes=len(self.eventos());r=self.renderizar(ent)
+                self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
+                self.assertIn('destino',r.stderr)
+                self.assertEqual(len(self.eventos()),antes+1)
+                self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
+                self.assertEqual(self.eventos()[-1]['autor'],'Celso do Vale')
+                self.assertFalse((self.caso/'caso/entregaveis'/str(ent+'.md')).exists())
+
+    def test_02_recusa_nao_sobrescreve_entregavel_anterior(self):
+        p=self.caso/'caso/entregaveis/E1.md';p.parent.mkdir(parents=True);p.write_text('versão sintética anterior')
+        r=self.renderizar('E1');self.assertNotEqual(r.returncode,0,r.stdout)
+        self.assertEqual(p.read_text(),'versão sintética anterior')
+        self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
+
+    def test_20_sem_restricao_materializa_comportamento_existente(self):
+        p=self.caso/'registro/habilitacao.json';reg=json.loads(p.read_text())
+        reg['vigente']['restricoes']=[];reg['vigente']['desfecho']='prosseguir';p.write_text(json.dumps(reg))
+        r=self.renderizar('E1');self.assertEqual(r.returncode,0,r.stderr)
+        self.assertIn('Nível de complexidade declarado',(self.caso/'caso/entregaveis/E1.md').read_text())
 
 
 if __name__=='__main__': unittest.main(verbosity=2)

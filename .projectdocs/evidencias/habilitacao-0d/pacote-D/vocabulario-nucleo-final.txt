@@ -1,0 +1,1 @@
+eiac-nucleo/scripts/selar.py:3:Uso:  python3 selar.py --nota "F0 encerrada, E1 emitido"

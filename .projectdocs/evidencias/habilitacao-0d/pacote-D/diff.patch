@@ -1,0 +1,190 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 65963e6..851ee69 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -64,0 +65,3 @@ jobs:
++      - name: Passagem da habilitação ao caso e selo confirmado
++        run: python3 testes/habilitacao_0d.py
++
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index b9a6b91..2c7ae91 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -465,0 +466,8 @@ identidade no bootstrap não inventam autor humano.
++
++**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
++a materialização exige um vínculo determinístico com o item afetado. Os registros
++atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
++TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
++A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
++lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
++genérica nem mapeamento por interpretação de texto.
+diff --git a/README.md b/README.md
+index f43d5e1..c69eceb 100644
+--- a/README.md
++++ b/README.md
+@@ -384,0 +385,8 @@ identidade no bootstrap não inventam autor humano.
++
++**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
++a materialização exige um vínculo determinístico com o item afetado. Os registros
++atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
++TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
++A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
++lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
++genérica nem mapeamento por interpretação de texto.
+diff --git a/decisoes/039-passagem-habilitacao-caso.md b/decisoes/039-passagem-habilitacao-caso.md
+index 380961e..3ef17d1 100644
+--- a/decisoes/039-passagem-habilitacao-caso.md
++++ b/decisoes/039-passagem-habilitacao-caso.md
+@@ -3 +3 @@
+-**Data:** 02/10/2026 · **Estado:** decisão aprovada; implementação por pacotes
++**Data:** 02/10/2026 · **Estado:** decisão aprovada; pacotes A–C implementados, D parcial
+@@ -110,0 +111,17 @@ Não se cria caso ou base apenas para esse registro. Identidade humana inválida
++
++### Pacote D — parcial conforme escopo autorizado
++
++A matriz de acessos identifica um item em texto; os registros dos produtos e
++os renderizadores não declaram uma relação desse item com um ponto do
++entregável. Igualdade de palavras, id de produto ou interpretação pelo modelo
++não comprova esse vínculo. Não foi criado um mapeamento por inferência.
++
++Desfecho com restrição bloqueia a materialização de E1–E5 antes da escrita,
++com TentativaNegada nomeando cada RH-xx sem destino. A versão anterior fica
++intacta. Sem restrição, o comportamento existente é preservado. O vínculo
++formal e a inserção localizada ficam fora deste pacote parcial, aguardando
++contrato documental de destino; nenhum sinalizador permite dispensá-los.
++
++A referência canônica e os templates HAB permanecem intactos. Propostas de
++MAN-01 e ESP-01 estão na evidência por pacote. Versões finais: núcleo 0.2.36,
++campo 0.8.12 e playbook 0.4.12. Um commit por pacote; nenhum push automático.
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 9882548..93b000a 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -3 +3 @@
+-  "version": "0.8.11",
++  "version": "0.8.12",
+diff --git a/eiac-campo/commands/habilitacao.md b/eiac-campo/commands/habilitacao.md
+index 4fed7f1..723ea9e 100644
+--- a/eiac-campo/commands/habilitacao.md
++++ b/eiac-campo/commands/habilitacao.md
+@@ -33,0 +34,2 @@ Na orientação de abertura, o engenheiro pode informar `--expediente` a `novo-c
++
++Apresente as restrições RH-xx preservadas no registro e informe o limite atual da emissão: sem vínculo determinístico ao item do entregável, a materialização recusa com evento. Não invente destinos nem acrescente ressalva genérica; a lacuna está registrada na decisão 039.
+diff --git a/eiac-campo/reference/habilitacao.md b/eiac-campo/reference/habilitacao.md
+index a64d122..1fed51a 100644
+--- a/eiac-campo/reference/habilitacao.md
++++ b/eiac-campo/reference/habilitacao.md
+@@ -288,0 +289,8 @@ identidade no bootstrap não inventam autor humano.
++
++**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
++a materialização exige um vínculo determinístico com o item afetado. Os registros
++atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
++TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
++A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
++lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
++genérica nem mapeamento por interpretação de texto.
+diff --git a/eiac-campo/scripts/entregaveis.py b/eiac-campo/scripts/entregaveis.py
+index dd3a10a..083bb25 100644
+--- a/eiac-campo/scripts/entregaveis.py
++++ b/eiac-campo/scripts/entregaveis.py
+@@ -33,0 +34 @@ import recorrencia as R  # noqa: E402
++import estado as E  # noqa: E402
+@@ -257,0 +259,34 @@ ENTREGAVEL_PORTOES = {"E1": ["E1"], "E2": ["E2"], "E3": ["E3-D", "E3-E"],
++def conferir_restricoes(entregavel_id, st):
++    """Não presume vínculo entre item de acesso e item do entregável.
++
++    Os registros vigentes ainda não declaram esse vínculo; materialização
++    restrita fica bloqueada antes da escrita, conforme decisão 039.
++    """
++    p=pathlib.Path('registro/habilitacao.json')
++    if not p.exists():
++        return  # Casos anteriores conservam seu contrato e comportamento.
++    try:
++        vigente=json.loads(p.read_text(encoding='utf-8'))['vigente']
++        restricoes=vigente['restricoes']
++        if not isinstance(restricoes,list):
++            raise ValueError('lista de restrições inválida')
++        if vigente['desfecho']=='prosseguir' and not restricoes:
++            return
++        if vigente['desfecho']!='prosseguir com restrição' or not restricoes:
++            raise ValueError('desfecho e restrições divergentes')
++        ids=[]
++        for restricao in restricoes:
++            ident=restricao['id']
++            if not isinstance(ident,str) or not ident.startswith('RH-') or ident in ids:
++                raise ValueError('identificador de restrição inválido ou duplicado')
++            ids.append(ident)
++        motivo=(f"{entregavel_id}: restrição sem destino determinístico no entregável: "
++                + ', '.join(ids) + '. Falta vínculo explícito com o item afetado; ver decisão 039.')
++    except (OSError,ValueError,KeyError,TypeError) as exc:
++        ids=[]
++        motivo=f'{entregavel_id}: registro de restrições inválido: {exc}'
++    E.evento('TentativaNegada',autor=st['responsavel'],operacao='materializar-entregavel',
++             entregavel=entregavel_id,restricoes_sem_destino=ids,motivo=motivo)
++    raise NaoMaterializavel(motivo)
++
++
+@@ -259,0 +295 @@ def renderizar(entregavel_id):
++    conferir_restricoes(entregavel_id,st)
+diff --git a/testes/README.md b/testes/README.md
+index 5aceae6..5fdd7c5 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -744,0 +745,7 @@ gravação pelo validador e preservação exclusiva dos artefatos administrativo
++
++A suíte `habilitacao_0d.py` também cobre selo confirmado posterior à importação,
++commit recusado, selo anterior, Git inacessível, novo-caso com manifesto adulterado,
++percurso desde a abertura e diagnóstico de integridade somente leitura. O pacote
++D verifica recusa de RH-xx sem destino em E1–E5 e preservação do entregável anterior.
++Todas as fixtures usam dados exclusivamente sintéticos. A preparação anterior
++à F0 dos percursos históricos usa importação, validação e selo reais.
+diff --git a/testes/habilitacao_0d.py b/testes/habilitacao_0d.py
+index 9ee2adc..aa53022 100644
+--- a/testes/habilitacao_0d.py
++++ b/testes/habilitacao_0d.py
+@@ -212 +212,3 @@ class Abertura(unittest.TestCase):
+-        self.assertEqual(json.loads(log.read_text().splitlines()[-1])['evento'],'TentativaNegada')
++        evento=json.loads(log.read_text().splitlines()[-1])
++        self.assertEqual(evento['evento'],'TentativaNegada')
++        self.assertEqual(evento['autor'],'Celso do Vale')
+@@ -270,0 +273,39 @@ class Abertura(unittest.TestCase):
++class Restricoes(CasoHook):
++    def setUp(self):
++        super().setUp()
++        self.exp=criar(self.base/'expediente',self.estado['caso'],'Celso do Vale',restricao=True)
++        r=subprocess.run([sys.executable,str(IMPORTADOR),'--expediente',str(self.exp)],
++                         cwd=self.caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,0,r.stderr)
++        # Insumo real de E1; a restrição precisa ser a causa da recusa.
++        self.estado.update(nivel='N2',cumprimentos={'F0':{'cumprido':True,'eixos':'DAD 5, GOV 3, CRI 6','autor':'Celso do Vale'}})
++        self.salvar()
++
++    def renderizar(self,entregavel):
++        return subprocess.run([sys.executable,str(RAIZ/'eiac-campo/scripts/entregaveis.py'),
++            '--renderizar',entregavel,'--autor','Celso do Vale'],cwd=self.caso,text=True,capture_output=True)
++
++    def test_01_restricao_sem_destino_recusa_com_evento(self):
++        for ent in ['E1','E2','E3','E4','E5']:
++            with self.subTest(ent=ent):
++                antes=len(self.eventos());r=self.renderizar(ent)
++                self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn('RH-01',r.stderr)
++                self.assertIn('destino',r.stderr)
++                self.assertEqual(len(self.eventos()),antes+1)
++                self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
++                self.assertEqual(self.eventos()[-1]['autor'],'Celso do Vale')
++                self.assertFalse((self.caso/'caso/entregaveis'/str(ent+'.md')).exists())
++
++    def test_02_recusa_nao_sobrescreve_entregavel_anterior(self):
++        p=self.caso/'caso/entregaveis/E1.md';p.parent.mkdir(parents=True);p.write_text('versão sintética anterior')
++        r=self.renderizar('E1');self.assertNotEqual(r.returncode,0,r.stdout)
++        self.assertEqual(p.read_text(),'versão sintética anterior')
++        self.assertEqual(self.eventos()[-1]['evento'],'TentativaNegada')
++
++    def test_20_sem_restricao_materializa_comportamento_existente(self):
++        p=self.caso/'registro/habilitacao.json';reg=json.loads(p.read_text())
++        reg['vigente']['restricoes']=[];reg['vigente']['desfecho']='prosseguir';p.write_text(json.dumps(reg))
++        r=self.renderizar('E1');self.assertEqual(r.returncode,0,r.stderr)
++        self.assertIn('Nível de complexidade declarado',(self.caso/'caso/entregaveis/E1.md').read_text())
++
++

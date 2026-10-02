@@ -31,3 +31,5 @@ A importação é humana: apresente `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/impo
 Em caso aberto com o novo template, a habilidade de F0 e seu encerramento exigem importação com selo confirmado no Git. Após gravar `caso/00-habilitacao.md` pelo validador, apresente a selagem ao engenheiro. Evento `SeloAplicado` sem commit confirmado mantém a passagem bloqueada. Casos antigos seguem seu próprio playbook.
 
 Na orientação de abertura, o engenheiro pode informar `--expediente` a `novo-caso.sh`; isso confere prontidão e identidade antes de criar o caso, mas não substitui a importação humana. O método é copiado do pacote conferido; o estado apresenta seu diagnóstico de integridade somente leitura.
+
+Apresente as restrições RH-xx preservadas no registro e informe o limite atual da emissão: sem vínculo determinístico ao item do entregável, a materialização recusa com evento. Não invente destinos nem acrescente ressalva genérica; a lacuna está registrada na decisão 039.

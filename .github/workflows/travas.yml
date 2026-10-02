@@ -62,6 +62,9 @@ jobs:
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 
+      - name: Passagem da habilitação ao caso e selo confirmado
+        run: python3 testes/habilitacao_0d.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

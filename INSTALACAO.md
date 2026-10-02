@@ -463,3 +463,11 @@ Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
 base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
 Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
 identidade no bootstrap não inventam autor humano.
+
+**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
+a materialização exige um vínculo determinístico com o item afetado. Os registros
+atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
+TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
+A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
+lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
+genérica nem mapeamento por interpretação de texto.

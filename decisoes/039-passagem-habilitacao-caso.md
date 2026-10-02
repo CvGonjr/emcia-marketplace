@@ -1,6 +1,6 @@
 # 039 — Passagem da habilitação ao caso
 
-**Data:** 02/10/2026 · **Estado:** decisão aprovada; implementação por pacotes
+**Data:** 02/10/2026 · **Estado:** decisão aprovada; pacotes A–C implementados, D parcial
 
 ## Contexto
 
@@ -108,3 +108,20 @@ Antes de existir caso, a recusa de abertura é emitida em JSON no stderr; se a
 base já existir fora de repositórios, o diário de abertura preserva a tentativa.
 Não se cria caso ou base apenas para esse registro. Identidade humana inválida
 é falha de bootstrap: não se atribui autoria a nome de agente ou pessoa inventada.
+
+### Pacote D — parcial conforme escopo autorizado
+
+A matriz de acessos identifica um item em texto; os registros dos produtos e
+os renderizadores não declaram uma relação desse item com um ponto do
+entregável. Igualdade de palavras, id de produto ou interpretação pelo modelo
+não comprova esse vínculo. Não foi criado um mapeamento por inferência.
+
+Desfecho com restrição bloqueia a materialização de E1–E5 antes da escrita,
+com TentativaNegada nomeando cada RH-xx sem destino. A versão anterior fica
+intacta. Sem restrição, o comportamento existente é preservado. O vínculo
+formal e a inserção localizada ficam fora deste pacote parcial, aguardando
+contrato documental de destino; nenhum sinalizador permite dispensá-los.
+
+A referência canônica e os templates HAB permanecem intactos. Propostas de
+MAN-01 e ESP-01 estão na evidência por pacote. Versões finais: núcleo 0.2.36,
+campo 0.8.12 e playbook 0.4.12. Um commit por pacote; nenhum push automático.

@@ -1,0 +1,36 @@
+test_01_manifesto_divergente (__main__.Abertura.test_01_manifesto_divergente) ... ok
+test_02_identificador_divergente_antes_da_abertura (__main__.Abertura.test_02_identificador_divergente_antes_da_abertura) ... ok
+test_03_expediente_incompleto (__main__.Abertura.test_03_expediente_incompleto) ... ok
+test_20_percurso_desde_novo_caso (__main__.Abertura.test_20_percurso_desde_novo_caso) ... ok
+test_21_diagnostico_de_integridade_nao_bloqueia (__main__.Abertura.test_21_diagnostico_de_integridade_nao_bloqueia) ... ok
+test_01_sem_formalizacao (__main__.Importacao.test_01_sem_formalizacao) ... ok
+test_02_sem_acessos (__main__.Importacao.test_02_sem_acessos) ... ok
+test_03_caso_divergente (__main__.Importacao.test_03_caso_divergente) ... ok
+test_04_responsavel_divergente (__main__.Importacao.test_04_responsavel_divergente) ... ok
+test_05_nao_prosseguir (__main__.Importacao.test_05_nao_prosseguir) ... ok
+test_06_pdf_adulterado (__main__.Importacao.test_06_pdf_adulterado) ... ok
+test_07_sessao_do_agente (__main__.Importacao.test_07_sessao_do_agente) ... ok
+test_08_segunda_importacao (__main__.Importacao.test_08_segunda_importacao) ... ok
+test_09_autor_agente (__main__.Importacao.test_09_autor_agente) ... ok
+test_10_etapa_encerrada (__main__.Importacao.test_10_etapa_encerrada) ... ok
+test_11_matriz_adulterada (__main__.Importacao.test_11_matriz_adulterada) ... ok
+test_20_importa_apenas_artefatos_autorizados (__main__.Importacao.test_20_importa_apenas_artefatos_autorizados) ... ok
+test_21_reimportacao_decidida_preserva_historico (__main__.Importacao.test_21_reimportacao_decidida_preserva_historico) ... ok
+test_01_restricao_sem_destino_recusa_com_evento (__main__.Restricoes.test_01_restricao_sem_destino_recusa_com_evento) ... ok
+test_02_recusa_nao_sobrescreve_entregavel_anterior (__main__.Restricoes.test_02_recusa_nao_sobrescreve_entregavel_anterior) ... ok
+test_20_sem_restricao_materializa_comportamento_existente (__main__.Restricoes.test_20_sem_restricao_materializa_comportamento_existente) ... ok
+test_01_habilidade_sem_evento (__main__.SeloConfirmado.test_01_habilidade_sem_evento) ... ok
+test_02_importacao_sem_selo (__main__.SeloConfirmado.test_02_importacao_sem_selo) ... ok
+test_03_encerrar_sem_selo (__main__.SeloConfirmado.test_03_encerrar_sem_selo) ... ok
+test_04_commit_recusado_nao_libera (__main__.SeloConfirmado.test_04_commit_recusado_nao_libera) ... ok
+test_05_selo_anterior_nao_libera (__main__.SeloConfirmado.test_05_selo_anterior_nao_libera) ... ok
+test_06_git_inacessivel_recusa (__main__.SeloConfirmado.test_06_git_inacessivel_recusa) ... ok
+test_07_reimportacao_exige_novo_selo (__main__.SeloConfirmado.test_07_reimportacao_exige_novo_selo) ... ok
+test_08_commit_comum_nao_confirma_tentativa_recusada (__main__.SeloConfirmado.test_08_commit_comum_nao_confirma_tentativa_recusada) ... ok
+test_20_selo_posterior_libera_habilidade_e_encerramento (__main__.SeloConfirmado.test_20_selo_posterior_libera_habilidade_e_encerramento) ... ok
+test_21_contrato_alternativo_generico (__main__.SeloConfirmado.test_21_contrato_alternativo_generico) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 6.356s
+
+OK
