@@ -1,0 +1,101 @@
+test_01_manifesto_divergente (__main__.Abertura.test_01_manifesto_divergente) ... FAIL
+test_02_identificador_divergente_antes_da_abertura (__main__.Abertura.test_02_identificador_divergente_antes_da_abertura) ... FAIL
+test_03_expediente_incompleto (__main__.Abertura.test_03_expediente_incompleto) ... FAIL
+
+======================================================================
+FAIL: test_01_manifesto_divergente (__main__.Abertura.test_01_manifesto_divergente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 226, in test_01_manifesto_divergente
+    self.recusa(self.abrir(raiz=copia),'SHA-256')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 208, in recusa
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 :
+caso "controle" criado em /tmp/tmpvhygziuu/casos/controle
+
+Falta uma coisa antes de comecar:
+
+  copie os documentos do metodo para /tmp/tmpvhygziuu/casos/controle/metodo/
+  documento do metodo, glossario, catalogo de delegacao, quadro de
+  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+  verificacao, CTX-01
+
+Os artefatos da organizacao vao para /tmp/tmpvhygziuu/casos/controle/fontes/ — leia o README
+de la antes de commitar documento de cliente.
+
+Depois:
+
+  cd "/tmp/tmpvhygziuu/casos/controle" && claude
+
+E confirme com  /eiac-nucleo:estado
+
+
+
+======================================================================
+FAIL: test_02_identificador_divergente_antes_da_abertura (__main__.Abertura.test_02_identificador_divergente_antes_da_abertura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 230, in test_02_identificador_divergente_antes_da_abertura
+    self.recusa(self.abrir('--expediente',str(self.exp)),'reservado')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 208, in recusa
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 :
+caso "controle" criado em /tmp/tmpl1hoi8uv/expediente/controle
+
+Falta uma coisa antes de comecar:
+
+  copie os documentos do metodo para /tmp/tmpl1hoi8uv/expediente/controle/metodo/
+  documento do metodo, glossario, catalogo de delegacao, quadro de
+  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+  verificacao, CTX-01
+
+Os artefatos da organizacao vao para /tmp/tmpl1hoi8uv/expediente/controle/fontes/ — leia o README
+de la antes de commitar documento de cliente.
+
+Depois:
+
+  cd "/tmp/tmpl1hoi8uv/expediente/controle" && claude
+
+E confirme com  /eiac-nucleo:estado
+
+
+
+======================================================================
+FAIL: test_03_expediente_incompleto (__main__.Abertura.test_03_expediente_incompleto)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 234, in test_03_expediente_incompleto
+    self.recusa(self.abrir('--expediente',str(self.exp)),'acessos')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_0d.py", line 208, in recusa
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 :
+caso "controle" criado em /tmp/tmpn0_oonep/expediente/controle
+
+Falta uma coisa antes de comecar:
+
+  copie os documentos do metodo para /tmp/tmpn0_oonep/expediente/controle/metodo/
+  documento do metodo, glossario, catalogo de delegacao, quadro de
+  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+  verificacao, CTX-01
+
+Os artefatos da organizacao vao para /tmp/tmpn0_oonep/expediente/controle/fontes/ — leia o README
+de la antes de commitar documento de cliente.
+
+Depois:
+
+  cd "/tmp/tmpn0_oonep/expediente/controle" && claude
+
+E confirme com  /eiac-nucleo:estado
+
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.448s
+
+FAILED (failures=3)

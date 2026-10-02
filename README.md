@@ -61,7 +61,7 @@ Um alias deixa mais curto:
 alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
 ```
 
-Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
+Na abertura, os documentos declarados no manifesto de `eiac-campo/reference/metodo/` são conferidos por SHA-256 e copiados para `metodo/`, junto com o manifesto. Ver "Material público da etapa 0a" abaixo: esse material não é copiado. Depois importe, valide e sele a habilitação antes de F0.
 
 **Abra a sessão na raiz do caso.** A guarda conserva a raiz indicada por
 `CLAUDE_PROJECT_DIR` e localiza o registro também nos ancestrais do cwd.
@@ -365,3 +365,20 @@ python3 /caminho/eiac-nucleo/scripts/selar.py --nota "habilitação importada e 
 
 Sem histórico acessível ou após falha no commit do selo, F0 continua bloqueado.
 Casos existentes conservam seu playbook; a mudança alcança novos casos.
+
+Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
+identificador reservado e responsável antes de criar o caso. A importação
+continua sendo uma operação humana separada:
+
+```bash
+/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
+```
+
+A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
+`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
+operações nem registrar eventos. Alterações no manifesto do caso também ficam
+visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
+Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
+base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
+Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
+identidade no bootstrap não inventam autor humano.

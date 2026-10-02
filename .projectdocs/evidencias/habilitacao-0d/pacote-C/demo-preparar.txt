@@ -1,0 +1,4 @@
+Caso de controle: /tmp/emcia-demo-validacao-pv4xxd__/controle-f0
+Etapa final: F0 | nível: N2
+Rascunhos de decisão (anteriores já decididos no percurso pelo engenheiro):
+Na etapa corrente, mudar apenas estado para validado/decidido/revisado conforme o rascunho.

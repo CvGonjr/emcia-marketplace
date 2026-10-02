@@ -193,4 +193,79 @@ class SeloConfirmado(CasoHook):
         r=self.hook('Skill',{'skill':'eiac-campo:hb-enquadrar'});self.assertEqual(r.returncode,0,r.stderr)
 
 
+class Abertura(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
+        self.base=pathlib.Path(self.tmp.name)
+        self.exp=criar(self.base/'expediente','controle','Celso do Vale')
+        self.destino=self.base/'casos';self.destino.mkdir()
+
+    def abrir(self,*args,raiz=RAIZ):
+        return subprocess.run(['bash',str(raiz/'novo-caso.sh'),'controle','--responsavel',
+            'Celso do Vale',str(self.destino),*args],text=True,capture_output=True)
+
+    def recusa(self,r,trecho):
+        self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
+        self.assertIn('TentativaNegada',r.stderr)
+        self.assertFalse((self.destino/'controle').exists())
+        log=self.destino/'.emcia-abertura-eventos.jsonl'
+        self.assertEqual(json.loads(log.read_text().splitlines()[-1])['evento'],'TentativaNegada')
+
+    def copia_ferramenta(self):
+        copia=self.base/'ferramenta';copia.mkdir()
+        shutil.copyfile(RAIZ/'novo-caso.sh',copia/'novo-caso.sh')
+        shutil.copytree(RAIZ/'eiac-campo',copia/'eiac-campo')
+        shutil.copytree(RAIZ/'eiac-nucleo',copia/'eiac-nucleo')
+        return copia
+
+    def test_01_manifesto_divergente(self):
+        copia=self.copia_ferramenta()
+        manifesto=json.loads((copia/'eiac-campo/reference/metodo/manifesto.json').read_text())
+        nome=next(iter(manifesto['documentos']))
+        p=copia/'eiac-campo/reference/metodo'/nome;p.write_text(p.read_text()+'controle adulterado')
+        self.recusa(self.abrir(raiz=copia),'SHA-256')
+
+    def test_02_identificador_divergente_antes_da_abertura(self):
+        p=self.exp/'expediente.json';d=json.loads(p.read_text());d['caso_reservado']='outro';p.write_text(json.dumps(d))
+        self.recusa(self.abrir('--expediente',str(self.exp)),'reservado')
+
+    def test_03_expediente_incompleto(self):
+        p=self.exp/'expediente.json';d=json.loads(p.read_text());d['acessos']=None;p.write_text(json.dumps(d))
+        self.recusa(self.abrir('--expediente',str(self.exp)),'acessos')
+
+    def test_20_percurso_desde_novo_caso(self):
+        r=self.abrir('--expediente',str(self.exp));self.assertEqual(r.returncode,0,r.stderr)
+        caso=self.destino/'controle'
+        manifesto=json.loads((caso/'metodo/manifesto.json').read_text())
+        import hashlib
+        for nome,sha in manifesto['documentos'].items():
+            self.assertEqual(hashlib.sha256((caso/'metodo'/nome).read_bytes()).hexdigest(),sha)
+        for key,value in [('user.name','Celso do Vale'),('user.email','sintetico@example.invalid')]:
+            subprocess.run(['git','config',key,value],cwd=caso,check=True)
+        def rodar(path,*args,entrada=None):
+            r=subprocess.run([sys.executable,str(RAIZ/path),*args],cwd=caso,input=entrada,text=True,capture_output=True)
+            self.assertEqual(r.returncode,0,r.stderr);return r
+        rodar('eiac-campo/scripts/importar_habilitacao.py','--expediente',str(self.exp))
+        rodar('eiac-nucleo/scripts/validar.py','--arquivo','caso/00-habilitacao.md')
+        rodar('eiac-nucleo/scripts/selar.py','--nota','habilitação conferida')
+        rodar('eiac-nucleo/scripts/guarda.py',entrada=json.dumps(dict(tool_name='Skill',tool_input={'skill':'eiac-campo:hb-enquadrar'})))
+        st=json.loads(rodar('eiac-nucleo/scripts/estado.py').stdout)
+        self.assertTrue(st['integridade_referencia']['confere'])
+
+    def test_21_diagnostico_de_integridade_nao_bloqueia(self):
+        r=self.abrir();self.assertEqual(r.returncode,0,r.stderr)
+        caso=self.destino/'controle';p=caso/'metodo/manifesto.json'
+        manifesto=json.loads(p.read_text());nome=next(iter(manifesto['documentos']))
+        (caso/'metodo'/nome).write_text('adulterado')
+        estado=caso/'registro/estado.json';antes=estado.read_bytes()
+        trilha=caso/'registro/eventos.jsonl';eventos=trilha.read_bytes()
+        r=subprocess.run([sys.executable,str(RAIZ/'eiac-nucleo/scripts/estado.py')],cwd=caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr)
+        self.assertFalse(json.loads(r.stdout)['integridade_referencia']['confere'])
+        self.assertEqual(estado.read_bytes(),antes);self.assertEqual(trilha.read_bytes(),eventos)
+        r=subprocess.run([sys.executable,str(RAIZ/'eiac-nucleo/scripts/avancar.py'),
+            '--apurar-nivel','N2','--eixos','DAD 5, GOV 3, CRI 6','--autor','Celso do Vale'],cwd=caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr)
+
+
 if __name__=='__main__': unittest.main(verbosity=2)

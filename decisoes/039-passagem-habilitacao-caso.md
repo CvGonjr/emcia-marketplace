@@ -90,3 +90,21 @@ da primeira etapa do playbook. Exemplos e comentários foram generalizados.
 da docstring de `selar.py`, pois a decisão expressa exige não alterar esse arquivo.
 Não é usada em nenhuma regra e nenhum vocabulário administrativo entrou no núcleo.
 A exceção textual é informada na evidência, sem alegar resultado vazio no grep.
+
+### Pacote C
+
+`novo-caso.sh` delega o bootstrap ao campo, que conhece o pacote do método.
+Aceita expediente opcional; quando informado, confere identidade e prontidão
+antes de criar o caso. O método é lido e conferido integralmente antes da
+abertura, e copiado de um snapshot em memória com o manifesto. A cópia é
+conferida novamente. Nenhum material público da etapa 0a é importado.
+
+O núcleo oferece somente um diagnóstico de integridade por caminhos e campo
+hash declarados no playbook; não interpreta o conteúdo da referência nem
+bloqueia operações por esse diagnóstico. A origem do pacote está no manifesto
+controlado; não há busca de uma versão remota mutável durante a abertura.
+
+Antes de existir caso, a recusa de abertura é emitida em JSON no stderr; se a
+base já existir fora de repositórios, o diário de abertura preserva a tentativa.
+Não se cria caso ou base apenas para esse registro. Identidade humana inválida
+é falha de bootstrap: não se atribui autoria a nome de agente ou pessoa inventada.

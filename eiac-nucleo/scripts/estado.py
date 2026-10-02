@@ -169,6 +169,12 @@ if __name__ == "__main__":
             print("Nenhum caso aberto neste diretorio.")
         sys.exit(0)
     e["selo"] = ultimo_selo()
+    import integridade as I
+    try:
+        contrato=json.loads(pathlib.Path('registro/playbook.json').read_text())
+        e['integridade_referencia']=I.conferir(contrato)
+    except (OSError,ValueError,TypeError) as exc:
+        e['integridade_referencia']={'declarada':False,'confere':None,'erros':[str(exc)]}
     if "--resumo" in sys.argv:
         cam = e.get("camada_atual")
         pb = None
@@ -188,6 +194,10 @@ if __name__ == "__main__":
               f"| camada {cam or '?'}{sentido} | modalidade {e.get('modalidade_atual','?')}")
         selo = e["selo"]
         print(f"Selo: {selo['hash']} | {selo['data']} | {selo['nota']}" if selo else "Selo: nenhum")
+        referencia=e['integridade_referencia']
+        if referencia['declarada']:
+            print('Referência: confere com manifesto' if referencia['confere'] else
+                  'Referência: divergente — '+ '; '.join(referencia['erros']))
         if pb:
             prox = P.proxima_fronteira(pb, e["etapa_atual"], e.get("nivel"))
             if prox:

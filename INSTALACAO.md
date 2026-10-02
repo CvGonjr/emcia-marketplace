@@ -108,7 +108,7 @@ Para outro lugar, passe a base como terceiro argumento:
 ~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome" ~/trabalho/clientes
 ```
 
-Copie os documentos do método para `metodo/` — o pacote controlado (16 documentos, manifesto SHA-256) vive em `eiac-campo/reference/metodo/` dentro do marketplace.
+`novo-caso.sh` copia para `metodo/` os documentos declarados no manifesto do pacote controlado de `eiac-campo/reference/metodo/`, conferindo todos os SHA-256 antes da abertura. O manifesto também é preservado. Material público da etapa 0a continua fora dessa cópia.
 
 **Material público da etapa 0a:** o levantamento público sobre a organização e o setor, feito antes da abertura do caso (etapa 0a do protocolo de habilitação, EMCIA-HAB-01), não entra automaticamente aqui. Ele é coletado fora do caso e só é gravado depois da abertura (0d), pelo caminho normal de curadoria, com marca `I · tipo_fonte: externa`, URL e limite da fonte — ver `eiac-campo/reference/procedencia.md`.
 
@@ -446,3 +446,20 @@ python3 /caminho/eiac-nucleo/scripts/selar.py --nota "habilitação importada e 
 
 Sem histórico acessível ou após falha no commit do selo, F0 continua bloqueado.
 Casos existentes conservam seu playbook; a mudança alcança novos casos.
+
+Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
+identificador reservado e responsável antes de criar o caso. A importação
+continua sendo uma operação humana separada:
+
+```bash
+/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
+```
+
+A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
+`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
+operações nem registrar eventos. Alterações no manifesto do caso também ficam
+visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
+Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
+base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
+Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
+identidade no bootstrap não inventam autor humano.

@@ -1,0 +1,557 @@
+diff --git a/INSTALACAO.md b/INSTALACAO.md
+index 3d635d6..b9a6b91 100644
+--- a/INSTALACAO.md
++++ b/INSTALACAO.md
+@@ -111 +111 @@ Para outro lugar, passe a base como terceiro argumento:
+-Copie os documentos do método para `metodo/` — o pacote controlado (16 documentos, manifesto SHA-256) vive em `eiac-campo/reference/metodo/` dentro do marketplace.
++`novo-caso.sh` copia para `metodo/` os documentos declarados no manifesto do pacote controlado de `eiac-campo/reference/metodo/`, conferindo todos os SHA-256 antes da abertura. O manifesto também é preservado. Material público da etapa 0a continua fora dessa cópia.
+@@ -448,0 +449,17 @@ Casos existentes conservam seu playbook; a mudança alcança novos casos.
++
++Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
++identificador reservado e responsável antes de criar o caso. A importação
++continua sendo uma operação humana separada:
++
++```bash
++/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
++```
++
++A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
++`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
++operações nem registrar eventos. Alterações no manifesto do caso também ficam
++visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
++Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
++base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
++Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
++identidade no bootstrap não inventam autor humano.
+diff --git a/README.md b/README.md
+index a347c7d..f43d5e1 100644
+--- a/README.md
++++ b/README.md
+@@ -64 +64 @@ alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
+-Antes de começar, copie os documentos do método para `metodo/` (o pacote controlado vive em `eiac-campo/reference/metodo/`, com manifesto SHA-256 — ver "Material público da etapa 0a" abaixo para o que **não** entra nessa cópia).
++Na abertura, os documentos declarados no manifesto de `eiac-campo/reference/metodo/` são conferidos por SHA-256 e copiados para `metodo/`, junto com o manifesto. Ver "Material público da etapa 0a" abaixo: esse material não é copiado. Depois importe, valide e sele a habilitação antes de F0.
+@@ -367,0 +368,17 @@ Casos existentes conservam seu playbook; a mudança alcança novos casos.
++
++Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
++identificador reservado e responsável antes de criar o caso. A importação
++continua sendo uma operação humana separada:
++
++```bash
++/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
++```
++
++A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
++`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
++operações nem registrar eventos. Alterações no manifesto do caso também ficam
++visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
++Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
++base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
++Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
++identidade no bootstrap não inventam autor humano.
+diff --git a/decisoes/039-passagem-habilitacao-caso.md b/decisoes/039-passagem-habilitacao-caso.md
+index 8cb325e..380961e 100644
+--- a/decisoes/039-passagem-habilitacao-caso.md
++++ b/decisoes/039-passagem-habilitacao-caso.md
+@@ -92,0 +93,18 @@ A exceção textual é informada na evidência, sem alegar resultado vazio no gr
++
++### Pacote C
++
++`novo-caso.sh` delega o bootstrap ao campo, que conhece o pacote do método.
++Aceita expediente opcional; quando informado, confere identidade e prontidão
++antes de criar o caso. O método é lido e conferido integralmente antes da
++abertura, e copiado de um snapshot em memória com o manifesto. A cópia é
++conferida novamente. Nenhum material público da etapa 0a é importado.
++
++O núcleo oferece somente um diagnóstico de integridade por caminhos e campo
++hash declarados no playbook; não interpreta o conteúdo da referência nem
++bloqueia operações por esse diagnóstico. A origem do pacote está no manifesto
++controlado; não há busca de uma versão remota mutável durante a abertura.
++
++Antes de existir caso, a recusa de abertura é emitida em JSON no stderr; se a
++base já existir fora de repositórios, o diário de abertura preserva a tentativa.
++Não se cria caso ou base apenas para esse registro. Identidade humana inválida
++é falha de bootstrap: não se atribui autoria a nome de agente ou pessoa inventada.
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index eb382b8..9882548 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -3 +3 @@
+-  "version": "0.8.10",
++  "version": "0.8.11",
+diff --git a/eiac-campo/commands/habilitacao.md b/eiac-campo/commands/habilitacao.md
+index 0fd203d..4fed7f1 100644
+--- a/eiac-campo/commands/habilitacao.md
++++ b/eiac-campo/commands/habilitacao.md
+@@ -31,0 +32,2 @@ Em caso aberto com o novo template, a habilidade de F0 e seu encerramento exigem
++
++Na orientação de abertura, o engenheiro pode informar `--expediente` a `novo-caso.sh`; isso confere prontidão e identidade antes de criar o caso, mas não substitui a importação humana. O método é copiado do pacote conferido; o estado apresenta seu diagnóstico de integridade somente leitura.
+diff --git a/eiac-campo/reference/habilitacao.md b/eiac-campo/reference/habilitacao.md
+index 5dbb66a..a64d122 100644
+--- a/eiac-campo/reference/habilitacao.md
++++ b/eiac-campo/reference/habilitacao.md
+@@ -271,0 +272,17 @@ Casos existentes conservam seu playbook; a mudança alcança novos casos.
++
++Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
++identificador reservado e responsável antes de criar o caso. A importação
++continua sendo uma operação humana separada:
++
++```bash
++/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
++```
++
++A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
++`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
++operações nem registrar eventos. Alterações no manifesto do caso também ficam
++visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
++Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
++base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
++Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
++identidade no bootstrap não inventam autor humano.
+diff --git a/eiac-campo/scripts/abrir_caso.py b/eiac-campo/scripts/abrir_caso.py
+new file mode 100644
+index 0000000..122c58d
+--- /dev/null
++++ b/eiac-campo/scripts/abrir_caso.py
+@@ -0,0 +1,129 @@
++"""Bootstrap humano: prepara caso novo com pacote do método conferido."""
++import argparse
++import datetime
++import hashlib
++import json
++import os
++import pathlib
++import re
++import shutil
++import subprocess
++import sys
++import tempfile
++
++RAIZ=pathlib.Path(__file__).resolve().parents[2]
++sys.path.insert(0,str(RAIZ/'eiac-nucleo/scripts'))
++import estado as E
++from importar_habilitacao import conferir
++
++
++def pacote():
++    root=RAIZ/'eiac-campo/reference/metodo'
++    arquivo=root/'manifesto.json'
++    if arquivo.is_symlink(): raise ValueError('manifesto não admite symlink')
++    raw=arquivo.read_bytes(); manifesto=json.loads(raw)
++    docs=manifesto.get('documentos')
++    if not isinstance(docs,dict) or not docs: raise ValueError('manifesto sem documentos')
++    copias={}
++    for nome,sha in docs.items():
++        if (not isinstance(nome,str) or pathlib.Path(nome).name!=nome or nome in ('.','..','manifesto.json')
++                or not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{64}',sha)):
++            raise ValueError('entrada inválida no manifesto')
++        p=root/nome
++        if not p.is_file() or p.is_symlink(): raise ValueError('documento ausente ou inválido: '+nome)
++        dados=p.read_bytes()
++        if hashlib.sha256(dados).hexdigest()!=sha: raise ValueError('SHA-256 divergente: '+nome)
++        copias[nome]=dados
++    copias['manifesto.json']=raw
++    return copias
++
++
++def git(cwd,*args):
++    return subprocess.run(['git',*args],cwd=cwd,capture_output=True,text=True)
++
++
++def abrir(nome,base,responsavel,expediente=None):
++    template=RAIZ/'eiac-campo/template-caso'
++    pb=json.loads((template/'registro/playbook.json').read_text())
++    if E.autor_e_agente(responsavel): raise ValueError('responsavel nao pode ser codigo de agente')
++    if not E.pessoa_nomeada(responsavel,pb['pessoa_nomeada']):
++        raise ValueError('responsavel precisa ser pessoa nomeada, nao agente, placeholder nem coletivo generico')
++    if not nome or '/' in nome or nome.startswith('.'):
++        raise ValueError('nome invalido: use apenas o nome do caso, sem barras')
++    base=pathlib.Path(base).expanduser().absolute()
++    if any(p.is_symlink() for p in [base,*base.parents]): raise ValueError('base não admite symlink')
++    ancestral=next(p for p in [base,*base.parents] if p.exists())
++    if git(ancestral,'rev-parse','--show-toplevel').returncode==0:
++        raise ValueError('base esta dentro de um repositorio git; um repositorio por caso')
++    destino=base/nome
++    if destino.exists() or destino.is_symlink(): raise ValueError('ja existe: '+str(destino))
++    if expediente is not None: conferir(expediente,nome,responsavel)
++    copias=pacote()  # Todas as entradas são conferidas antes de criar o caso.
++    base.mkdir(parents=True,exist_ok=True)
++    with tempfile.TemporaryDirectory(prefix='.abertura-',dir=base) as tmp:
++        stage=pathlib.Path(tmp)/'caso'
++        shutil.copytree(template,stage)
++        for area in ('metodo','rascunho','caso','fontes'): (stage/area).mkdir(exist_ok=True)
++        for nome_arq,data in copias.items():
++            p=stage/'metodo'/nome_arq;p.write_bytes(data)
++            if hashlib.sha256(p.read_bytes()).digest()!=hashlib.sha256(data).digest():
++                raise ValueError('SHA-256 divergente após cópia: '+nome_arq)
++        st_path=stage/'registro/estado.json';st=json.loads(st_path.read_text())
++        st.update(caso=nome,responsavel=responsavel)
++        st_path.write_text(json.dumps(st,indent=2,ensure_ascii=False)+'\n')
++        c=stage/'CLAUDE.md';c.write_text(c.read_text().replace('ALTERE-ME',nome))
++        for area in ('rascunho','caso'): (stage/area/'.gitkeep').touch()
++        # Claim exclusivo impede substituir destino criado por outra chamada.
++        destino.mkdir()
++        try: os.replace(stage,destino)
++        except Exception:
++            destino.rmdir()
++            raise
++    anterior=pathlib.Path.cwd()
++    try:
++        os.chdir(destino)
++        E.evento('CasoAberto',caso=nome,responsavel=responsavel,autor=responsavel)
++        if git(destino,'init','-q').returncode: raise ValueError('git init recusou abertura')
++        if git(destino,'add','-A').returncode: raise ValueError('git add recusou abertura')
++        commit=git(destino,'commit','-qm','abertura do caso '+nome)
++    finally: os.chdir(anterior)
++    print(f'caso "{nome}" criado em {destino}\nMétodo copiado e SHA-256 conferido; manifesto preservado.')
++    print('Importe a habilitação no terminal, grave o rascunho pelo validador e sele antes de F0.')
++    print('Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.')
++    if commit.returncode:
++        print('ATENCAO: o commit inicial nao foi feito. Configure a identidade do git e commite; a trilha depende do historico.')
++    return destino
++
++
++def recusar(args,motivo):
++    """Antes do caso: diagnóstico estruturado e diário na base existente.
++
++    Não cria base nem caso para registrar a negativa. Não grava na ferramenta.
++    Falta de identidade humana é erro de bootstrap, sem autoria inventada.
++    """
++    evento=dict(evento='TentativaNegada',data=datetime.datetime.now(datetime.timezone.utc).isoformat(),
++                operacao='abrir-caso',motivo=motivo)
++    try:
++        regra=json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())['pessoa_nomeada']
++        if E.pessoa_nomeada(args.responsavel,regra): evento['autor']=args.responsavel
++        base=pathlib.Path(args.base).expanduser().absolute()
++        if base.is_dir() and not any(p.is_symlink() for p in [base,*base.parents]) and git(base,'rev-parse','--show-toplevel').returncode!=0:
++            log=base/'.emcia-abertura-eventos.jsonl'
++            if not log.is_symlink():
++                with log.open('a',encoding='utf-8') as f: f.write(json.dumps(evento,ensure_ascii=False)+'\n')
++    except (OSError,ValueError,KeyError): pass
++    print(json.dumps(evento,ensure_ascii=False),file=sys.stderr)
++
++
++def main():
++    ap=argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('nome');ap.add_argument('base',nargs='?',default=str(pathlib.Path.home()/'casos'))
++    ap.add_argument('--responsavel',required=True)
++    ap.add_argument('--expediente',type=pathlib.Path)
++    a=ap.parse_args()
++    try: abrir(a.nome,a.base,a.responsavel,a.expediente)
++    except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
++        recusar(a,str(exc));ap.exit(1,'Recusado: '+str(exc)+'\n')
++
++
++if __name__=='__main__':main()
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 70e562b..c432a50 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -3 +3 @@
+-  "versao": "0.4.11",
++  "versao": "0.4.12",
+@@ -5,0 +6,2 @@
++  "referencia_integridade": {"diretorio": "metodo", "manifesto": "manifesto.json", "campo_hashes": "documentos"},
++
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index cdc7d2a..fe16f7e 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -3 +3 @@
+-  "version": "0.2.35",
++  "version": "0.2.36",
+diff --git a/eiac-nucleo/commands/estado.md b/eiac-nucleo/commands/estado.md
+index 797cb93..89febd1 100644
+--- a/eiac-nucleo/commands/estado.md
++++ b/eiac-nucleo/commands/estado.md
+@@ -6,0 +7,2 @@ Não interprete além dos dados apresentados. Se não houver caso aberto, diga i
++
++Apresente também `integridade_referencia`: compara somente leitura os arquivos com o manifesto declarado no playbook do caso. Divergências são diagnóstico; não autorizam nem recusam operações.
+diff --git a/eiac-nucleo/scripts/estado.py b/eiac-nucleo/scripts/estado.py
+index 8196c9c..a7b64f2 100644
+--- a/eiac-nucleo/scripts/estado.py
++++ b/eiac-nucleo/scripts/estado.py
+@@ -171,0 +172,6 @@ if __name__ == "__main__":
++    import integridade as I
++    try:
++        contrato=json.loads(pathlib.Path('registro/playbook.json').read_text())
++        e['integridade_referencia']=I.conferir(contrato)
++    except (OSError,ValueError,TypeError) as exc:
++        e['integridade_referencia']={'declarada':False,'confere':None,'erros':[str(exc)]}
+@@ -190,0 +197,4 @@ if __name__ == "__main__":
++        referencia=e['integridade_referencia']
++        if referencia['declarada']:
++            print('Referência: confere com manifesto' if referencia['confere'] else
++                  'Referência: divergente — '+ '; '.join(referencia['erros']))
+diff --git a/eiac-nucleo/scripts/integridade.py b/eiac-nucleo/scripts/integridade.py
+new file mode 100644
+index 0000000..c80bc55
+--- /dev/null
++++ b/eiac-nucleo/scripts/integridade.py
+@@ -0,0 +1,41 @@
++"""Diagnóstico somente leitura de arquivos contra um manifesto declarado.
++
++Não produz evento, altera estado ou decide permissão de qualquer operação.
++"""
++import hashlib
++import json
++import pathlib
++import re
++
++
++def conferir(pb):
++    regra=pb.get('referencia_integridade')
++    if regra is None: return {'declarada':False,'confere':None,'erros':[]}
++    erros=[]
++    try:
++        raiz=pathlib.Path.cwd().resolve()
++        def local(nome):
++            p=pathlib.Path(nome)
++            if p.is_absolute() or '..' in p.parts: raise ValueError('caminho declarado fora do caso')
++            p=raiz/p
++            if not p.resolve().is_relative_to(raiz) or any(x.is_symlink() for x in [p,*p.parents] if x.is_relative_to(raiz)):
++                raise ValueError('caminho declarado inválido ou symlink')
++            return p
++        diretorio=local(regra['diretorio'])
++        manifest=local(str(pathlib.Path(regra['diretorio'])/regra['manifesto']))
++        dados=json.loads(manifest.read_text())
++        hashes=dados[regra['campo_hashes']]
++        if not isinstance(hashes,dict) or not hashes: raise ValueError('manifesto sem mapa de hashes')
++        for nome,esperado in hashes.items():
++            if pathlib.Path(nome).name!=nome or not isinstance(esperado,str) or not re.fullmatch('[0-9a-f]{64}',esperado):
++                raise ValueError('entrada inválida no manifesto')
++            p=local(str(pathlib.Path(regra['diretorio'])/nome))
++            if not p.is_file(): erros.append('arquivo ausente: '+nome)
++            elif hashlib.sha256(p.read_bytes()).hexdigest()!=esperado: erros.append('SHA-256 divergente: '+nome)
++        esperados=set(hashes)|{regra['manifesto'],'.gitkeep'}
++        for p in diretorio.rglob('*'):
++            if p.is_symlink() or (p.is_file() and str(p.relative_to(diretorio)) not in esperados):
++                erros.append('arquivo não declarado: '+str(p.relative_to(diretorio)))
++    except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
++        erros.append(str(exc))
++    return {'declarada':True,'confere':not erros,'erros':erros}
+diff --git a/novo-caso.sh b/novo-caso.sh
+index b5c9382..9d06774 100755
+--- a/novo-caso.sh
++++ b/novo-caso.sh
+@@ -2,11 +2,3 @@
+-# Cria o repositorio de um caso a partir do template do playbook.
+-#
+-#   ./novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
+-#   ./novo-caso.sh medic-plus --responsavel "Nome Sobrenome" ~/trabalho/clientes
+-#
+-# Destino padrao: ~/casos/<nome>
+-#
+-# --responsavel e obrigatorio: e a pessoa cuja autoria valida validar.py,
+-# curar.py e selar.py gravam daqui em diante -- fixada aqui, fora da sessao
+-# do agente, precisamente para que nenhum comando do plugin possa definir
+-# ou trocar quem e o responsavel do caso.
++# Bootstrap humano; executar antes de abrir a sessão do agente.
++# ./novo-caso.sh <nome> --responsavel "Nome Sobrenome" [base] [--expediente <caminho>]
++# Identidade, expediente e pacote do método são conferidos pelo campo.
+@@ -14 +5,0 @@ set -euo pipefail
+-
+@@ -16,123 +7 @@ RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+-TEMPLATE="$RAIZ/eiac-campo/template-caso"
+-
+-nome=""
+-base="$HOME/casos"
+-responsavel=""
+-
+-uso() {
+-  echo "uso: $(basename "$0") <nome-do-caso> --responsavel \"Nome Sobrenome\" [diretorio-base]" >&2
+-}
+-
+-while [ "$#" -gt 0 ]; do
+-  case "$1" in
+-    --responsavel) responsavel="${2:-}"; shift 2 ;;
+-    -h|--help) uso; exit 0 ;;
+-    *)
+-      if [ -z "$nome" ]; then nome="$1";
+-      else base="$1"; fi
+-      shift ;;
+-  esac
+-done
+-
+-if [ -z "$nome" ] || [ -z "$responsavel" ]; then
+-  uso
+-  exit 1
+-fi
+-
+-case "$nome" in
+-  */*|.*|"") echo "nome invalido: use apenas o nome do caso, sem barras" >&2; exit 1 ;;
+-esac
+-
+-python3 - "$responsavel" "$RAIZ" "$TEMPLATE" <<'PY'
+-import json, pathlib, sys
+-sys.path.insert(0, str(pathlib.Path(sys.argv[2])/'eiac-nucleo/scripts'))
+-import estado as E
+-regra=json.loads((pathlib.Path(sys.argv[3])/'registro/playbook.json').read_text())['pessoa_nomeada']
+-if E.autor_e_agente(sys.argv[1]):
+-    sys.exit("responsavel nao pode ser codigo de agente")
+-if not E.pessoa_nomeada(sys.argv[1], regra):
+-    sys.exit(f"responsavel precisa ser pessoa nomeada, nao agente, placeholder nem coletivo generico: '{sys.argv[1]}'")
+-PY
+-
+-destino="$base/$nome"
+-
+-[ -d "$TEMPLATE" ] || { echo "template nao encontrado em $TEMPLATE" >&2; exit 1; }
+-[ -e "$destino" ] && { echo "ja existe: $destino" >&2; exit 1; }
+-
+-# um repositorio por caso: o destino nao pode nascer dentro de outro
+-if git -C "$base" rev-parse --show-toplevel >/dev/null 2>&1; then
+-  echo "erro: $base esta dentro de um repositorio git." >&2
+-  echo "Um repositorio por caso. Escolha um diretorio base fora de qualquer repo." >&2
+-  exit 1
+-fi
+-
+-mkdir -p "$base"
+-cp -r "$TEMPLATE" "$destino"
+-cd "$destino"
+-
+-# nome do caso e responsavel no registro; CLAUDE.md so recebe o nome
+-python3 - "$nome" "$responsavel" "$RAIZ" <<'PY'
+-import json, pathlib, sys
+-nome, responsavel, raiz = sys.argv[1], sys.argv[2], sys.argv[3]
+-
+-sys.path.insert(0, str(pathlib.Path(raiz) / "eiac-nucleo" / "scripts"))
+-import estado as E
+-
+-p = pathlib.Path("registro/estado.json")
+-d = json.loads(p.read_text(encoding="utf-8"))
+-d["caso"] = nome
+-d["responsavel"] = responsavel
+-p.write_text(json.dumps(d, indent=2, ensure_ascii=False), encoding="utf-8")
+-
+-E.evento("CasoAberto", caso=nome, responsavel=responsavel)
+-
+-c = pathlib.Path("CLAUDE.md")
+-c.write_text(c.read_text(encoding="utf-8").replace("ALTERE-ME", nome), encoding="utf-8")
+-PY
+-
+-mkdir -p metodo rascunho caso fontes
+-touch metodo/.gitkeep rascunho/.gitkeep caso/.gitkeep
+-
+-git init -q
+-git add -A
+-
+-commit_ok=1
+-if ! git config user.email >/dev/null 2>&1 && ! git config --global user.email >/dev/null 2>&1; then
+-  commit_ok=0
+-elif ! git commit -qm "abertura do caso $nome" 2>/dev/null; then
+-  commit_ok=0
+-fi
+-
+-cat <<FIM
+-
+-caso "$nome" criado em $destino
+-
+-Falta uma coisa antes de comecar:
+-
+-  copie os documentos do metodo para $destino/metodo/
+-  documento do metodo, glossario, catalogo de delegacao, quadro de
+-  ferramentas, instrumento de triagem, modelos E1-E5, plano de
+-  verificacao, CTX-01
+-
+-Os artefatos da organizacao vao para $destino/fontes/ — leia o README
+-de la antes de commitar documento de cliente.
+-
+-Depois:
+-
+-  cd "$destino" && claude
+-
+-E confirme com  /eiac-nucleo:estado
+-
+-FIM
+-
+-if [ "$commit_ok" -eq 0 ]; then
+-  cat <<'AVISO'
+-ATENCAO: o commit inicial nao foi feito. Configure a identidade do git e
+-commite — a trilha do caso depende do historico:
+-
+-  git config --global user.name "Seu Nome"
+-  git config --global user.email "voce@exemplo.com"
+-  git commit -m "abertura do caso"
+-
+-AVISO
+-fi
++exec python3 "$RAIZ/eiac-campo/scripts/abrir_caso.py" "$@"
+diff --git a/testes/habilitacao_0d.py b/testes/habilitacao_0d.py
+index 8fec843..9ee2adc 100644
+--- a/testes/habilitacao_0d.py
++++ b/testes/habilitacao_0d.py
+@@ -195,0 +196,75 @@ class SeloConfirmado(CasoHook):
++class Abertura(unittest.TestCase):
++    def setUp(self):
++        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
++        self.base=pathlib.Path(self.tmp.name)
++        self.exp=criar(self.base/'expediente','controle','Celso do Vale')
++        self.destino=self.base/'casos';self.destino.mkdir()
++
++    def abrir(self,*args,raiz=RAIZ):
++        return subprocess.run(['bash',str(raiz/'novo-caso.sh'),'controle','--responsavel',
++            'Celso do Vale',str(self.destino),*args],text=True,capture_output=True)
++
++    def recusa(self,r,trecho):
++        self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
++        self.assertIn('TentativaNegada',r.stderr)
++        self.assertFalse((self.destino/'controle').exists())
++        log=self.destino/'.emcia-abertura-eventos.jsonl'
++        self.assertEqual(json.loads(log.read_text().splitlines()[-1])['evento'],'TentativaNegada')
++
++    def copia_ferramenta(self):
++        copia=self.base/'ferramenta';copia.mkdir()
++        shutil.copyfile(RAIZ/'novo-caso.sh',copia/'novo-caso.sh')
++        shutil.copytree(RAIZ/'eiac-campo',copia/'eiac-campo')
++        shutil.copytree(RAIZ/'eiac-nucleo',copia/'eiac-nucleo')
++        return copia
++
++    def test_01_manifesto_divergente(self):
++        copia=self.copia_ferramenta()
++        manifesto=json.loads((copia/'eiac-campo/reference/metodo/manifesto.json').read_text())
++        nome=next(iter(manifesto['documentos']))
++        p=copia/'eiac-campo/reference/metodo'/nome;p.write_text(p.read_text()+'controle adulterado')
++        self.recusa(self.abrir(raiz=copia),'SHA-256')
++
++    def test_02_identificador_divergente_antes_da_abertura(self):
++        p=self.exp/'expediente.json';d=json.loads(p.read_text());d['caso_reservado']='outro';p.write_text(json.dumps(d))
++        self.recusa(self.abrir('--expediente',str(self.exp)),'reservado')
++
++    def test_03_expediente_incompleto(self):
++        p=self.exp/'expediente.json';d=json.loads(p.read_text());d['acessos']=None;p.write_text(json.dumps(d))
++        self.recusa(self.abrir('--expediente',str(self.exp)),'acessos')
++
++    def test_20_percurso_desde_novo_caso(self):
++        r=self.abrir('--expediente',str(self.exp));self.assertEqual(r.returncode,0,r.stderr)
++        caso=self.destino/'controle'
++        manifesto=json.loads((caso/'metodo/manifesto.json').read_text())
++        import hashlib
++        for nome,sha in manifesto['documentos'].items():
++            self.assertEqual(hashlib.sha256((caso/'metodo'/nome).read_bytes()).hexdigest(),sha)
++        for key,value in [('user.name','Celso do Vale'),('user.email','sintetico@example.invalid')]:
++            subprocess.run(['git','config',key,value],cwd=caso,check=True)
++        def rodar(path,*args,entrada=None):
++            r=subprocess.run([sys.executable,str(RAIZ/path),*args],cwd=caso,input=entrada,text=True,capture_output=True)
++            self.assertEqual(r.returncode,0,r.stderr);return r
++        rodar('eiac-campo/scripts/importar_habilitacao.py','--expediente',str(self.exp))
++        rodar('eiac-nucleo/scripts/validar.py','--arquivo','caso/00-habilitacao.md')
++        rodar('eiac-nucleo/scripts/selar.py','--nota','habilitação conferida')
++        rodar('eiac-nucleo/scripts/guarda.py',entrada=json.dumps(dict(tool_name='Skill',tool_input={'skill':'eiac-campo:hb-enquadrar'})))
++        st=json.loads(rodar('eiac-nucleo/scripts/estado.py').stdout)
++        self.assertTrue(st['integridade_referencia']['confere'])
++
++    def test_21_diagnostico_de_integridade_nao_bloqueia(self):
++        r=self.abrir();self.assertEqual(r.returncode,0,r.stderr)
++        caso=self.destino/'controle';p=caso/'metodo/manifesto.json'
++        manifesto=json.loads(p.read_text());nome=next(iter(manifesto['documentos']))
++        (caso/'metodo'/nome).write_text('adulterado')
++        estado=caso/'registro/estado.json';antes=estado.read_bytes()
++        trilha=caso/'registro/eventos.jsonl';eventos=trilha.read_bytes()
++        r=subprocess.run([sys.executable,str(RAIZ/'eiac-nucleo/scripts/estado.py')],cwd=caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,0,r.stderr)
++        self.assertFalse(json.loads(r.stdout)['integridade_referencia']['confere'])
++        self.assertEqual(estado.read_bytes(),antes);self.assertEqual(trilha.read_bytes(),eventos)
++        r=subprocess.run([sys.executable,str(RAIZ/'eiac-nucleo/scripts/avancar.py'),
++            '--apurar-nivel','N2','--eixos','DAD 5, GOV 3, CRI 6','--autor','Celso do Vale'],cwd=caso,text=True,capture_output=True)
++        self.assertEqual(r.returncode,0,r.stderr)
++
++
