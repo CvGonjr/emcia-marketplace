@@ -1,241 +1,342 @@
 {
-  "nome": "Catalogo de habilidades",
-  "versao": "0.1.0",
-  "referencia": "EMCIA-CAT-01 Anexo A (18 habilidades, camada/natureza/insumo/saida/criterio de verificacao literais)",
-  "nota_relacao_etapa": "O campo 'etapas' vem exclusivamente de eiac-campo/template-caso/registro/playbook.json (campo 'hb' por etapa), nunca de inferencia textual entre CAT-01 e MET-01/CAM-01 -- essa correspondencia permanece pendencia aberta por decisao (decisoes/002 e afins). HB sem etapa associada no playbook tem 'etapas: []' e 'estado_relacao_etapa: \"nao_referenciada_no_playbook\"', o que nao e erro do catalogo -- e o estado real do contrato congelado em 2.6.0.",
+  "nome": "Catálogo de habilidades",
+  "versao": "0.2.0",
+  "referencia": "EMCIA-CAT-01 v0.5 Anexo A; correspondência do Anexo C",
   "habilidades": [
     {
       "id": "HB-01",
-      "nome": "Conducao da triagem",
+      "nome": "Condução da triagem",
       "camada": "EX1",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Respostas do cliente ao instrumento",
-      "saida": "Pontuacao por eixo, com a resposta literal preservada",
-      "criterio_de_verificacao": "As nove perguntas respondidas e o literal arquivado ao lado da interpretacao",
+      "saida": "Pontuação por eixo, com a resposta literal preservada",
+      "criterio_de_verificacao": "As nove perguntas respondidas e o literal arquivado ao lado da interpretação",
       "ag_autorizado": "AG-01",
+      "automatizada": true,
+      "etapas": [
+        "F0"
+      ],
       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
-      "etapas": ["F0"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-02",
-      "nome": "Apuracao do nivel de complexidade",
+      "nome": "Apuração do nível de complexidade",
       "camada": "EX1",
-      "automatizada": true,
-      "insumo": "Pontuacao por eixo",
-      "saida": "Nivel N1, N2 ou N3, registrado pelo engenheiro",
-      "criterio_de_verificacao": "Recalculo manual reproduz o mesmo nivel",
+      "natureza": "Automatizado",
+      "insumo": "Pontuação por eixo",
+      "saida": "Nível N1, N2 ou N3, registrado pelo engenheiro",
+      "criterio_de_verificacao": "Recálculo manual reproduz o mesmo nível",
       "ag_autorizado": "AG-01",
+      "automatizada": true,
+      "etapas": [
+        "F0"
+      ],
       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
-      "etapas": ["F0"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-03",
-      "nome": "Estruturacao da dor",
+      "nome": "Estruturação da dor",
       "camada": "EX1",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Relato do patrocinador",
       "saida": "Quadro 5W2H preenchido",
-      "criterio_de_verificacao": "Cada campo remete a trecho identificavel do relato",
+      "criterio_de_verificacao": "Cada campo remete a trecho identificável do relato",
       "ag_autorizado": "AG-01",
+      "automatizada": true,
+      "etapas": [
+        "F0"
+      ],
       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
-      "etapas": ["F0"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-04",
-      "nome": "Conducao dos cinco porques",
+      "nome": "Condução dos cinco porquês",
       "camada": "EX1",
-      "automatizada": false,
+      "natureza": "Híbrido",
       "insumo": "Dor estruturada",
       "saida": "Cadeia causal proposta",
-      "criterio_de_verificacao": "Cadeia confirmada ou corrigida pelo engenheiro antes de avancar",
+      "criterio_de_verificacao": "Cadeia confirmada ou corrigida pelo engenheiro antes de avançar",
       "ag_autorizado": "AG-01",
-      "skill_ref": null,
-      "etapas": [],
-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
+      "automatizada": false,
+      "etapas": [
+        "F0"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-05",
-      "nome": "Calculo do custo do problema",
+      "nome": "Cálculo do custo do problema",
       "camada": "EX1",
-      "automatizada": false,
+      "natureza": "Híbrido",
       "insumo": "Volumes e tempos informados",
       "saida": "Custo estimado, com premissas expostas",
-      "criterio_de_verificacao": "Toda premissa visivel e cada numero com procedencia marcada",
+      "criterio_de_verificacao": "Toda premissa visível e cada número com procedência marcada",
       "ag_autorizado": "AG-01",
-      "skill_ref": null,
-      "etapas": [],
-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
+      "automatizada": false,
+      "etapas": [
+        "F0"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-06",
-      "nome": "Inventario de fontes de dados",
+      "nome": "Inventário de fontes de dados",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Declaracao da organizacao e documentos",
+      "natureza": "Automatizado",
+      "insumo": "Declaração da organização e documentos",
       "saida": "Lista de fontes com criticidade",
-      "criterio_de_verificacao": "Cada fonte marcada como declarada ate verificacao em campo",
+      "criterio_de_verificacao": "Cada fonte marcada como declarada até verificação em campo",
       "ag_autorizado": "AG-02",
-      "skill_ref": null,
-      "etapas": [],
-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
+      "automatizada": true,
+      "etapas": [
+        "P2"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-extrair-regras/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-07",
-      "nome": "Coleta de termos do glossario",
+      "nome": "Coleta de termos do glossário",
       "camada": "EX2",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Documentos e entrevistas transcritas",
-      "saida": "Termos com definicao declarada e ocorrencias",
-      "criterio_de_verificacao": "Definicoes conflitantes sinalizadas, nao conciliadas",
+      "saida": "Termos com definição declarada e ocorrências",
+      "criterio_de_verificacao": "Definições conflitantes sinalizadas, não conciliadas",
       "ag_autorizado": "AG-02",
+      "automatizada": true,
+      "etapas": [
+        "P2"
+      ],
       "skill_ref": "eiac-campo/skills/hb-extrair-regras/SKILL.md",
-      "etapas": ["P2"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-08",
-      "nome": "Consulta a base de referencia",
+      "nome": "Consulta à base de referência",
       "camada": "EX2",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Setor e processo-alvo",
-      "saida": "Referencias com fonte identificada",
-      "criterio_de_verificacao": "Nenhum item sem fonte; sem acesso aberto a internet",
+      "saida": "Referências com fonte identificada",
+      "criterio_de_verificacao": "Nenhum item sem fonte; sem acesso aberto à internet",
       "ag_autorizado": "AG-02",
+      "automatizada": true,
+      "etapas": [
+        "P1"
+      ],
       "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
-      "etapas": ["P1"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-09",
       "nome": "Varredura do mapa de valor",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Estado atual declarado",
-      "saida": "Pontos candidatos a intervencao",
-      "criterio_de_verificacao": "Candidatos rastreaveis a etapa do fluxo que os originou",
+      "natureza": "Automatizado",
+      "insumo": "Estado atual declarado, preservado pelo selo posterior ao encerramento de P2",
+      "saida": "Pontos candidatos a intervenção para P4",
+      "criterio_de_verificacao": "Cada candidato rastreável à etapa do fluxo declarado que o originou, sem reescrever a entrada selada",
       "ag_autorizado": "AG-02",
-      "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
-      "etapas": ["P1"],
+      "automatizada": true,
+      "etapas": [
+        "P3d"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-confrontar/SKILL.md",
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-10",
-      "nome": "Montagem da matriz de priorizacao",
+      "nome": "Montagem da matriz de priorização",
       "camada": "EX2",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Casos candidatos",
       "saida": "Matriz preenchida, sem escolha",
       "criterio_de_verificacao": "Todos os candidatos presentes, inclusive os descartados",
       "ag_autorizado": "AG-02",
+      "automatizada": true,
+      "etapas": [
+        "P4"
+      ],
       "skill_ref": "eiac-campo/skills/hb-priorizar/SKILL.md",
-      "etapas": ["P4"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-11",
-      "nome": "Classificacao Problema->Tecnologia",
+      "nome": "Classificação Problema→Tecnologia",
       "camada": "EX2",
-      "automatizada": false,
+      "natureza": "Híbrido",
       "insumo": "Caso descrito e camada de contexto",
       "saida": "Tecnologia adequada, com justificativa",
-      "criterio_de_verificacao": "Classificacao confirmada pelo engenheiro antes de virar decisao",
+      "criterio_de_verificacao": "Classificação confirmada pelo engenheiro antes de virar decisão",
       "ag_autorizado": "AG-03",
+      "automatizada": false,
+      "etapas": [
+        "P5"
+      ],
       "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
-      "etapas": ["P5"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-12",
-      "nome": "Estimativa de custo e latencia",
+      "nome": "Estimativa de custo e latência",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Desenho da solucao",
+      "natureza": "Automatizado",
+      "insumo": "Desenho da solução",
       "saida": "Custo por tarefa e teto mensal",
-      "criterio_de_verificacao": "Premissas expostas e recalculaveis",
+      "criterio_de_verificacao": "Premissas expostas e recalculáveis",
       "ag_autorizado": "AG-03",
+      "automatizada": true,
+      "etapas": [
+        "P5"
+      ],
       "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
-      "etapas": ["P5"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-13",
-      "nome": "Levantamento regulatorio",
+      "nome": "Levantamento regulatório",
       "camada": "EX2",
-      "automatizada": true,
+      "natureza": "Automatizado",
       "insumo": "Setor e natureza do dado tratado",
-      "saida": "Requisitos aplicaveis, com fonte",
-      "criterio_de_verificacao": "Cada requisito remete a norma citavel",
-      "ag_autorizado": "AG-02",
-      "skill_ref": null,
-      "etapas": [],
-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
+      "saida": "Requisitos aplicáveis, com fonte",
+      "criterio_de_verificacao": "Cada requisito remete a norma citável",
+      "ag_autorizado": "AG-03",
+      "automatizada": true,
+      "etapas": [
+        "P7"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-governar/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-14",
       "nome": "Minuta do termo de autonomia",
       "camada": "EX2",
-      "automatizada": false,
-      "insumo": "Arquetipo e zona de contencao",
-      "saida": "Minuta com as tres listas em branco",
-      "criterio_de_verificacao": "As tres listas preenchidas por decisao humana registrada",
+      "natureza": "Híbrido",
+      "insumo": "Arquétipo e zona de contenção",
+      "saida": "Minuta com as três listas em branco",
+      "criterio_de_verificacao": "As três listas preenchidas por decisão humana registrada",
       "ag_autorizado": "AG-03",
+      "automatizada": false,
+      "etapas": [
+        "P7"
+      ],
       "skill_ref": "eiac-campo/skills/hb-governar/SKILL.md",
-      "etapas": ["P7"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-15",
-      "nome": "Geracao de casos de teste",
+      "nome": "Geração de casos de teste",
       "camada": "EX2",
-      "automatizada": false,
-      "insumo": "Dossie verificado e camada de contexto",
-      "saida": "Casos com saida esperada",
+      "natureza": "Híbrido",
+      "insumo": "Dossiê verificado e camada de contexto",
+      "saida": "Casos com saída esperada",
       "criterio_de_verificacao": "Conjunto revisado por quem executa o processo",
       "ag_autorizado": "AG-04",
+      "automatizada": false,
+      "etapas": [
+        "P8"
+      ],
       "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
-      "etapas": ["P8"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-16",
-      "nome": "Execucao da suite de avaliacao",
+      "nome": "Execução da suíte de avaliação",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Casos de teste e solucao em piloto",
+      "natureza": "Automatizado",
+      "insumo": "Casos de teste e solução em piloto",
       "saida": "Resultado por caso e falhas agrupadas",
-      "criterio_de_verificacao": "Execucao reproduzivel a partir do mesmo conjunto",
+      "criterio_de_verificacao": "Execução reproduzível a partir do mesmo conjunto",
       "ag_autorizado": "AG-04",
+      "automatizada": true,
+      "etapas": [
+        "P8"
+      ],
       "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
-      "etapas": ["P8"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-17",
-      "nome": "Consolidacao de indicadores",
+      "nome": "Consolidação de indicadores",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Medicoes do piloto e linha de base",
+      "natureza": "Automatizado",
+      "insumo": "Medições do piloto e linha de base",
       "saida": "Comparativo contra a linha de base",
-      "criterio_de_verificacao": "Apuracao deterministica e documentada",
+      "criterio_de_verificacao": "Apuração determinística e documentada",
       "ag_autorizado": "AG-04",
+      "automatizada": true,
+      "etapas": [
+        "P9"
+      ],
       "skill_ref": "eiac-campo/skills/hb-medir-valor/SKILL.md",
-      "etapas": ["P9"],
       "estado_relacao_etapa": "referenciada_no_playbook"
     },
     {
       "id": "HB-18",
       "nome": "Monitoramento de desvio",
       "camada": "EX2",
-      "automatizada": true,
-      "insumo": "Saidas em operacao",
-      "saida": "Alerta de degradacao",
-      "criterio_de_verificacao": "Limiar definido antes do piloto, nao ajustado a posteriori",
+      "natureza": "Automatizado",
+      "insumo": "Saídas em operação",
+      "saida": "Alerta de degradação",
+      "criterio_de_verificacao": "Limiar definido antes do piloto, não ajustado a posteriori",
       "ag_autorizado": "AG-04",
+      "automatizada": true,
+      "etapas": [
+        "P10"
+      ],
       "skill_ref": "eiac-campo/skills/hb-recalibrar/SKILL.md",
-      "etapas": ["P10"],
+      "estado_relacao_etapa": "referenciada_no_playbook"
+    },
+    {
+      "id": "HB-19",
+      "nome": "Registro da linha de base",
+      "camada": "EX2",
+      "natureza": "Híbrido",
+      "insumo": "Amostras, período, indicador e fonte; em N1, estimativa declarada com quem opera",
+      "saida": "Linha de base estruturada, datada, com valor, método de apuração e procedência",
+      "criterio_de_verificacao": "Cálculo reproduzível; estimativa somente em N1; número confirmado por quem opera antes de avançar; narrativa não substitui registro estruturado",
+      "ag_autorizado": "AG-02",
+      "automatizada": false,
+      "etapas": [
+        "P3a"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-medir/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
+    },
+    {
+      "id": "HB-20",
+      "nome": "Preparação do confronto declarado × observado",
+      "camada": "EX2",
+      "natureza": "Híbrido",
+      "insumo": "Estado declarado selado após P2, sessão de P3b registrada e evidências do observado",
+      "saida": "Placar e registros propostos de divergência, com referências, justificativa e autoria nominal",
+      "criterio_de_verificacao": "Cada item liga declarado e observado; o operador decide cada item; correção cria registro novo e preserva o original, sem promoção automática de procedência",
+      "ag_autorizado": "AG-02",
+      "automatizada": false,
+      "etapas": [
+        "P3d"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-confrontar/SKILL.md",
+      "estado_relacao_etapa": "referenciada_no_playbook"
+    },
+    {
+      "id": "HB-21",
+      "nome": "Documentação do estado futuro",
+      "camada": "EX2",
+      "natureza": "Híbrido",
+      "insumo": "E3-E ou candidato correspondente, classificação de P5, contexto curado e desenho decidido com as áreas",
+      "saida": "Proposta de especificação operacional: fluxo futuro, ponto de inserção, entrada, saída, interface, exceção e retorno ao humano",
+      "criterio_de_verificacao": "Proposta rastreável aos insumos; ponto de inserção e responsável nomeados por decisão humana; aprovação registrada pelo engenheiro antes de avançar",
+      "ag_autorizado": "AG-03",
+      "automatizada": false,
+      "etapas": [
+        "P6"
+      ],
+      "skill_ref": "eiac-campo/skills/hb-operacionalizar/SKILL.md",
       "estado_relacao_etapa": "referenciada_no_playbook"
     }
   ]
