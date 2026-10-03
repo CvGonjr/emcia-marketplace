@@ -1,0 +1,1 @@
+eiac-nucleo/scripts/playbook.py:167:    Sem nivel definido, aplica a mais restritiva declarada — nao se assume

@@ -1,0 +1,373 @@
+test_01_sessao (__main__.Restricoes.test_01_sessao) ... FAIL
+test_02_rh_inexistente (__main__.Restricoes.test_02_rh_inexistente) ... FAIL
+test_03_fonte_nao_curada (__main__.Restricoes.test_03_fonte_nao_curada) ... FAIL
+test_04_dispensa_sem_motivo (__main__.Restricoes.test_04_dispensa_sem_motivo) ... FAIL
+test_05_autor_agente (__main__.Restricoes.test_05_autor_agente) ... FAIL
+test_06_etapa_errada (__main__.Restricoes.test_06_etapa_errada) ... FAIL
+test_07_p2_pendente (__main__.Restricoes.test_07_p2_pendente) ... FAIL
+test_08_emissao_pendente (__main__.Restricoes.test_08_emissao_pendente) ... FAIL
+test_09_relacao_ausente (__main__.Restricoes.test_09_relacao_ausente) ... FAIL
+test_10_nova_versao_sem_decisao (__main__.Restricoes.test_10_nova_versao_sem_decisao) ... FAIL
+test_11_registro_adulterado (__main__.Restricoes.test_11_registro_adulterado) ... FAIL
+test_12_fonte_apenas_copiada (__main__.Restricoes.test_12_fonte_apenas_copiada) ... FAIL
+test_20_vinculo_e_marca_local (__main__.Restricoes.test_20_vinculo_e_marca_local) ... FAIL
+test_21_dispensa_motivada (__main__.Restricoes.test_21_dispensa_motivada) ... FAIL
+test_22_nova_versao_decidida_preserva_anterior (__main__.Restricoes.test_22_nova_versao_decidida_preserva_anterior) ... FAIL
+test_23_sem_restricao_produto_vazio (__main__.Restricoes.test_23_sem_restricao_produto_vazio) ... FAIL
+
+======================================================================
+FAIL: test_01_sessao (__main__.Restricoes.test_01_sessao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_02_rh_inexistente (__main__.Restricoes.test_02_rh_inexistente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_03_fonte_nao_curada (__main__.Restricoes.test_03_fonte_nao_curada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_04_dispensa_sem_motivo (__main__.Restricoes.test_04_dispensa_sem_motivo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_05_autor_agente (__main__.Restricoes.test_05_autor_agente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_06_etapa_errada (__main__.Restricoes.test_06_etapa_errada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_07_p2_pendente (__main__.Restricoes.test_07_p2_pendente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_08_emissao_pendente (__main__.Restricoes.test_08_emissao_pendente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_09_relacao_ausente (__main__.Restricoes.test_09_relacao_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_10_nova_versao_sem_decisao (__main__.Restricoes.test_10_nova_versao_sem_decisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_11_registro_adulterado (__main__.Restricoes.test_11_registro_adulterado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_12_fonte_apenas_copiada (__main__.Restricoes.test_12_fonte_apenas_copiada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_20_vinculo_e_marca_local (__main__.Restricoes.test_20_vinculo_e_marca_local)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_21_dispensa_motivada (__main__.Restricoes.test_21_dispensa_motivada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_22_nova_versao_decidida_preserva_anterior (__main__.Restricoes.test_22_nova_versao_decidida_preserva_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+======================================================================
+FAIL: test_23_sem_restricao_produto_vazio (__main__.Restricoes.test_23_sem_restricao_produto_vazio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 17, in setUp
+    self.fonte('F-001')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 29, in fonte
+    self.assertEqual(r.returncode,0,r.stderr)
+AssertionError: 1 != 0 : campo obrigatorio ausente: id
+campo obrigatorio ausente: fonte
+campo obrigatorio ausente: tipo
+campo obrigatorio ausente: responsavel
+campo obrigatorio ausente: contrato
+campo obrigatorio ausente: contrato.estrutura
+campo obrigatorio ausente: contrato.significado
+campo obrigatorio ausente: contrato.qualidade
+campo obrigatorio ausente: acesso
+campo obrigatorio ausente: procedencia
+campo obrigatorio ausente: registrado_por
+campo obrigatorio ausente: data
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 3.001s
+
+FAILED (failures=16)

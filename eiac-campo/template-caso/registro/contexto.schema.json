@@ -154,7 +154,8 @@
         "acesso": "string",
         "procedencia": "string",
         "registrado_por": "string",
-        "data": "date"
+        "data": "date",
+        "recebimentos": "list"
       },
       "patterns": {
         "data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"

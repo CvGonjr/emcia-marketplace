@@ -1,0 +1,3 @@
+Snapshot temporário, fora da branch: ee48268ed20ebd452416f24a55df80a48801f957
+Árvore: 2d21c22b9e213584f443ca154a08debe0aeb4292
+Pai: da802c3dc698ea70db6cf101c59ca4e65ea55d5c

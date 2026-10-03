@@ -1,0 +1,25 @@
+test_01_sessao (__main__.Restricoes.test_01_sessao) ... ok
+test_02_rh_inexistente (__main__.Restricoes.test_02_rh_inexistente) ... ok
+test_03_fonte_nao_curada (__main__.Restricoes.test_03_fonte_nao_curada) ... ok
+test_04_dispensa_sem_motivo (__main__.Restricoes.test_04_dispensa_sem_motivo) ... ok
+test_05_autor_agente (__main__.Restricoes.test_05_autor_agente) ... ok
+test_06_etapa_errada (__main__.Restricoes.test_06_etapa_errada) ... ok
+test_07_p2_pendente (__main__.Restricoes.test_07_p2_pendente) ... ok
+test_08_emissao_pendente (__main__.Restricoes.test_08_emissao_pendente) ... ok
+test_09_relacao_ausente (__main__.Restricoes.test_09_relacao_ausente) ... ok
+test_10_nova_versao_sem_decisao (__main__.Restricoes.test_10_nova_versao_sem_decisao) ... ok
+test_11_registro_adulterado (__main__.Restricoes.test_11_registro_adulterado) ... ok
+test_12_fonte_apenas_copiada (__main__.Restricoes.test_12_fonte_apenas_copiada) ... ok
+test_13_recebimento_sem_relacao (__main__.Restricoes.test_13_recebimento_sem_relacao) ... ok
+test_14_origem_adulterada_nao_libera_produto (__main__.Restricoes.test_14_origem_adulterada_nao_libera_produto) ... ok
+test_20_vinculo_e_marca_local (__main__.Restricoes.test_20_vinculo_e_marca_local) ... ok
+test_21_dispensa_motivada (__main__.Restricoes.test_21_dispensa_motivada) ... ok
+test_22_nova_versao_decidida_preserva_anterior (__main__.Restricoes.test_22_nova_versao_decidida_preserva_anterior) ... ok
+test_23_sem_restricao_produto_vazio (__main__.Restricoes.test_23_sem_restricao_produto_vazio) ... ok
+test_24_relacao_rec_curada_e_ponto_especifico (__main__.Restricoes.test_24_relacao_rec_curada_e_ponto_especifico) ... ok
+test_25_percurso_restrito_emite_e2 (__main__.Restricoes.test_25_percurso_restrito_emite_e2) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 8.241s
+
+OK

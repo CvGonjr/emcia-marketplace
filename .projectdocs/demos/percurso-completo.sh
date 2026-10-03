@@ -5,20 +5,23 @@
 # Conta invocações diretas: não soma subprocessos internos dos plugins,
 # nem as consultas Git internas de resumo-percurso.py.
 set -euo pipefail
-if [ "$#" -ne 1 ]; then
-  echo 'uso: percurso-completo.sh <nome>' >&2
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+  echo 'uso: percurso-completo.sh <nome> [com-restricao]' >&2
   exit 1
 fi
 raiz_demo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 base_demo="${EMCIA_DEMO_BASE:-/tmp/emcia-demos}"
-python3 - "$raiz_demo" "$base_demo" "$1" <<'PY_DEMO'
+python3 - "$raiz_demo" "$base_demo" "$1" "${2:-}" <<'PY_DEMO'
 import collections, datetime, json, pathlib, shlex, subprocess, sys, tempfile
 
 raiz = pathlib.Path(sys.argv[1])
 base = pathlib.Path(sys.argv[2]).expanduser().resolve()
 nome = sys.argv[3]
+restrita = sys.argv[4] == 'com-restricao'
+if sys.argv[4] not in ('', 'com-restricao'): sys.exit('variante desconhecida')
 pessoa = 'Celso do Vale'
-tag = 'HEAD'
+import os
+tag = os.environ.get('EMCIA_DEMO_REF', 'HEAD')
 caso = base / nome
 contagens = collections.Counter()
 
@@ -95,7 +98,7 @@ def executar(fonte):
     declaracao.write_text(json.dumps(dados_canais(caso), ensure_ascii=False))
     rodar([sys.executable, str(campo_scripts/'canais.py'), 'definir', '--entrada', str(declaracao)], caso)
     with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
-        exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+        exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa, restricao=restrita)
         rodar([sys.executable, str(campo_scripts/'importar_habilitacao.py'), '--expediente', str(exp)], caso)
         rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/00-habilitacao.md'], caso)
         rodar([sys.executable, str(nucleo/'selar.py'), '--nota', 'habilitação sintética importada e conferida'], caso)
@@ -123,6 +126,9 @@ def executar(fonte):
              'P7': ('F3','E4'), 'P10': ('F4','E5')}
     for etapa in pb['etapas']:
         eid = etapa['id']
+        if eid == 'P2' and restrita:
+            from apoio.restricoes import vincular
+            bl['fontes'] = vincular(caso, fonte)
         if eid == 'P3a':
             candidato('BL-001.yaml', bl)
             campo('baseline.py', 'registro/baseline/BL-001.yaml')
@@ -186,7 +192,9 @@ def executar(fonte):
             selar('estado declarado depois de '+eid)
         if eid == 'P10':
             avancar('--registrar-recorrencia', eid, '--responsavel', 'Marina Prado', '--cadencia', 'mensal')
-        if eid in fases:
+        if eid == 'P2' and restrita:
+            emitir('E1')
+        if eid in fases and not (eid == 'F0' and restrita):
             fase, entregavel = fases[eid]
             emitir(entregavel)
             selar('fim da fase '+fase)

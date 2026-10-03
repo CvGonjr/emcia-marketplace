@@ -97,7 +97,7 @@ def render_e1(st):
                      "Delimitação da dor, custo estimado e nível de complexidade declarado", st)
     md += "## 4. Nível de complexidade declarado\n\n"
     md += f"| Eixo | Valor |\n| :--- | :---: |\n"
-    md += f"| **Eixos (DAD · GOV · CRI)** | {eixos} |\n"
+    md += f"| **Eixos (DAD · GOV · CRI)** | {_valor(f0, 'eixos')} |\n"
     md += f"| **Nível apurado** | {nivel} |\n\n"
     md += "## 6. Trilha recomendada e decisão solicitada\n\n"
     md += (f"| Decisão | Responsável | Data |\n| :--- | :--- | :---: |\n"
@@ -120,8 +120,8 @@ def render_e2(st):
     for caminho in baselines:
         b = _yaml(caminho)
         marca = b.get("procedencia", "?")
-        md += (f"| **[{marca}]** | {b.get('indicador','?')} | {b.get('valor_atual','?')} "
-               f"| {b.get('apuracao','?')} | {b.get('data','?')} |\n")
+        md += (f"| **[{marca}]** | {_valor(b, 'indicador')} | {_valor(b, 'valor_atual')} "
+               f"| {_valor(b, 'apuracao')} | {_valor(b, 'data')} |\n")
     md += "\n*A linha de base é registrada antes de qualquer piloto e é contra ela que o resultado será medido na fase F4.*\n"
     return md
 
@@ -141,7 +141,7 @@ def render_e3(st):
                      "Decisão sobre os casos e, quando couber, especificação do agente", st)
     md += "## Parte A — Decisão\n\n### A2. Classificação tecnológica\n\n"
     md += "| Caso | Classificação |\n| :--- | :--- |\n"
-    md += f"| {st.get('caso','?')} | {classificacao} |\n\n"
+    md += f"| {st.get('caso','?')} | {_valor(p5, 'classificacao_tecnologica')} |\n\n"
     if "agente" in str(classificacao):
         md += ("## Parte B — Blueprint do agente\n\n"
                "*Especificação do agente (E3-E) aplicável -- P5 classificou "
@@ -174,17 +174,17 @@ def render_e4(st):
                      "Como a equipe trabalha com a solução, e o que fazer quando ela erra", st)
     md += "## 1. O que muda no processo\n\n"
     md += f"| Campo | Valor |\n| :--- | :--- |\n"
-    md += f"| **Ponto de inserção** | {op.get('ponto_insercao','?')} |\n"
-    md += f"| **Momento** | {op.get('momento','?')} |\n"
-    md += f"| **Sistema** | {op.get('sistema','?')} |\n\n"
+    md += f"| **Ponto de inserção** | {_valor(op, 'ponto_insercao')} |\n"
+    md += f"| **Momento** | {_valor(op, 'momento')} |\n"
+    md += f"| **Sistema** | {_valor(op, 'sistema')} |\n\n"
     md += "## 3. Quando a solução erra\n\n"
     md += f"| Situação | Fallback | Ator humano |\n| :--- | :--- | :--- |\n"
-    md += f"| {op.get('excecao','?')} | {op.get('fallback','?')} | {op.get('ator_humano','?')} |\n\n"
+    md += f"| {_valor(op, 'excecao')} | {_valor(op, 'fallback')} | {_valor(op, 'ator_humano')} |\n\n"
     md += "## Termo de autonomia\n\n"
     md += (f"| Decisor | Data da decisão | Justificativa |\n"
            f"| :--- | :---: | :--- |\n"
-           f"| {termo.get('decisor','?')} | {termo.get('data_decisao','?')} "
-           f"| {termo.get('justificativa_decisao','?')} |\n")
+           f"| {_valor(termo, 'decisor')} | {_valor(termo, 'data_decisao')} "
+           f"| {_valor(termo, 'justificativa_decisao')} |\n")
     return md
 
 
@@ -227,21 +227,21 @@ def render_e5(st):
                      "O que foi testado, o que resultou contra a linha de base e quem mantém daqui em diante", st)
     md += "## 1. O que foi testado\n\n"
     md += (f"| Parâmetro | Detalhe |\n| :--- | :--- |\n"
-           f"| **Modo** | {piloto.get('modo','?')} |\n"
-           f"| **Duração** | {piloto.get('duracao','?')} |\n"
-           f"| **Critério de aprovação** | {piloto.get('criterio_aprovacao_escala','?')} "
-           f"(definido em {piloto.get('criterio_aprovacao_escala_definido_em','?')}) |\n\n")
+           f"| **Modo** | {_valor(piloto, 'modo')} |\n"
+           f"| **Duração** | {_valor(piloto, 'duracao')} |\n"
+           f"| **Critério de aprovação** | {_valor(piloto, 'criterio_aprovacao_escala')} "
+           f"(definido em {_valor(piloto, 'criterio_aprovacao_escala_definido_em')}) |\n\n")
     md += "## 2. Resultado contra a linha de base\n\n"
     md += "| Indicador | Linha de base | No piloto | Marca |\n| :--- | :--- | :--- | :---: |\n"
     for caminho in metricas_resultado:
         m = _yaml(caminho)
-        md += (f"| {m.get('metrica','?')} | {m.get('linha_base','?')} "
-               f"| {m.get('resultado_apurado','?')} | [{m.get('resultado_apurado_procedencia','?')}] |\n")
+        md += (f"| {_valor(m, 'metrica')} | {_valor(m, 'linha_base')} "
+               f"| {_valor(m, 'resultado_apurado')} | [{_valor(m, 'resultado_apurado_procedencia')}] |\n")
     md += "\n## 6. Plano de medição e calibragem\n\n"
     md += (f"| Atributo | Definição |\n| :--- | :--- |\n"
-           f"| **Responsável pela calibragem** | {rotina.get('responsavel','?')} |\n"
-           f"| **Cadência de revisão** | {rotina.get('cadencia','?')} |\n"
-           f"| **Primeira revisão** | {rotina.get('data_primeira_revisao','?')} |\n")
+           f"| **Responsável pela calibragem** | {_valor(rotina, 'responsavel')} |\n"
+           f"| **Cadência de revisão** | {_valor(rotina, 'cadencia')} |\n"
+           f"| **Primeira revisão** | {_valor(rotina, 'data_primeira_revisao')} |\n")
     return md
 
 
@@ -256,43 +256,51 @@ ENTREGAVEL_PORTOES = {"E1": ["E1"], "E2": ["E2"], "E3": ["E3-D", "E3-E"],
                        "E4": ["E4"], "E5": ["E5"]}
 
 
-def conferir_restricoes(entregavel_id, st):
-    """Não presume vínculo entre item de acesso e item do entregável.
+RESTRICOES_ATIVAS = []
 
-    Os registros vigentes ainda não declaram esse vínculo; materialização
-    restrita fica bloqueada antes da escrita, conforme decisão 039.
-    """
-    p=pathlib.Path('registro/habilitacao.json')
-    if not p.exists():
-        return  # Casos anteriores conservam seu contrato e comportamento.
+
+def conferir_restricoes(entregavel_id, st):
+    """Carrega vínculos humanos íntegros; RH pendente continua bloqueando."""
+    import restricoes as RH
+    if not pathlib.Path('registro/habilitacao.json').exists():
+        return []  # Casos anteriores conservam seu contrato.
     try:
-        vigente=json.loads(p.read_text(encoding='utf-8'))['vigente']
-        restricoes=vigente['restricoes']
-        if not isinstance(restricoes,list):
-            raise ValueError('lista de restrições inválida')
-        if vigente['desfecho']=='prosseguir' and not restricoes:
-            return
-        if vigente['desfecho']!='prosseguir com restrição' or not restricoes:
-            raise ValueError('desfecho e restrições divergentes')
-        ids=[]
-        for restricao in restricoes:
-            ident=restricao['id']
-            if not isinstance(ident,str) or not ident.startswith('RH-') or ident in ids:
-                raise ValueError('identificador de restrição inválido ou duplicado')
-            ids.append(ident)
-        motivo=(f"{entregavel_id}: restrição sem destino determinístico no entregável: "
-                + ', '.join(ids) + '. Falta vínculo explícito com o item afetado; ver decisão 039.')
-    except (OSError,ValueError,KeyError,TypeError) as exc:
-        ids=[]
-        motivo=f'{entregavel_id}: registro de restrições inválido: {exc}'
-    E.evento('TentativaNegada',autor=st['responsavel'],operacao='materializar-entregavel',
-             entregavel=entregavel_id,restricoes_sem_destino=ids,motivo=motivo)
-    raise NaoMaterializavel(motivo)
+        hab = RH.habilitacao()
+        if not hab['restricoes']: return []
+        reg = RH.carregar(hab)
+        pendentes = RH.pendentes(hab, reg)
+        if pendentes:
+            raise ValueError('restrição sem destino: '+', '.join(pendentes)+'; vincule ou dispense com motivo em P2')
+        ativos = []
+        for v in reg['vigentes']:
+            if v['estado'] == 'vinculada':
+                for f in v['fontes']: RH.fonte(f)
+                rh = next(r for r in hab['restricoes'] if r['id'] == v['restricao'])
+                ativos.append(dict(rh, fontes=v['fontes']))
+        return ativos
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        motivo = f'{entregavel_id}: registro de restrições inválido: {exc}'
+        E.evento('TentativaNegada', autor=st['responsavel'], operacao='materializar-entregavel',
+                 entregavel=entregavel_id, motivo=motivo)
+        raise NaoMaterializavel(motivo) from exc
+
+
+def _valor(dados, campo, padrao='?'):
+    import restricoes as RH
+    try:
+        return RH.marcas(dados.get(campo, padrao), dados, campo, RESTRICOES_ATIVAS)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        assercao = f"{dados.get('id', 'registro')}.{campo}"
+        motivo = f'asserção {assercao}: {exc}; relação precisa estar registrada no caso'
+        E.evento('TentativaNegada', autor=_estado()['responsavel'], operacao='materializar-entregavel',
+                 assercao=assercao, motivo=motivo)
+        raise NaoMaterializavel(motivo) from exc
 
 
 def renderizar(entregavel_id):
     st = _estado()
-    conferir_restricoes(entregavel_id,st)
+    global RESTRICOES_ATIVAS
+    RESTRICOES_ATIVAS = conferir_restricoes(entregavel_id,st)
     fn = RENDERIZADORES[entregavel_id]
     conteudo = fn(st)
     DIR_ENTREGAVEIS.mkdir(parents=True, exist_ok=True)

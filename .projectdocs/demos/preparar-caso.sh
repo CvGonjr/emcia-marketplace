@@ -2,15 +2,17 @@
 # Caso sintético para demonstração; executar pelo engenheiro no terminal.
 # "até etapa" significa deixá-la corrente, ainda aberta.
 set -euo pipefail
-if [ "$#" -ne 2 ]; then
-  echo 'uso: preparar-caso.sh <nome> <ate-etapa>' >&2
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+  echo 'uso: preparar-caso.sh <nome> <ate-etapa> [com-restricao]' >&2
   exit 1
 fi
 raiz_demo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 base_demo="${EMCIA_DEMO_BASE:-/tmp/emcia-demos}"
-python3 - "$raiz_demo" "$base_demo" "$1" "$2" <<'PY'
+python3 - "$raiz_demo" "$base_demo" "$1" "$2" "${3:-}" <<'PY'
 import datetime, json, pathlib, subprocess, sys, tempfile
 raiz, base, nome, ate = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3], sys.argv[4]
+restrita = sys.argv[5] == 'com-restricao'
+if sys.argv[5] not in ('', 'com-restricao'): sys.exit('variante desconhecida')
 pb = json.loads((raiz / 'eiac-campo/template-caso/registro/playbook.json').read_text())
 if ate not in [e['id'] for e in pb['etapas']]:
     sys.exit('etapa não declarada: '+ate)
@@ -33,7 +35,7 @@ from apoio.habilitacao_0d import criar as criar_expediente
 from apoio.canais import definir as definir_canais
 definir_canais(caso)
 with tempfile.TemporaryDirectory(prefix='emcia-habilitacao-demo-') as tmp_hab:
-    exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa)
+    exp = criar_expediente(pathlib.Path(tmp_hab)/'expediente', nome, pessoa, restricao=restrita)
     rodar([sys.executable, str(raiz/'eiac-campo/scripts/importar_habilitacao.py'), '--expediente', str(exp)], caso)
     rodar([sys.executable, str(raiz/'eiac-nucleo/scripts/validar.py'), '--arquivo', 'caso/00-habilitacao.md'], caso)
     rodar([sys.executable, str(raiz/'eiac-nucleo/scripts/selar.py'), '--nota', 'habilitação sintética importada e conferida'], caso)
@@ -82,6 +84,9 @@ def decisao_pronta(nome_arq, dados):
 avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
 for et in pb['etapas']:
     eid = et['id']
+    if eid == 'P2' and restrita:
+        from apoio.restricoes import vincular
+        bl['fontes'] = vincular(caso, raiz)
     if eid == 'P3a':
         candidato('BL-001.yaml', bl)
         campo('baseline.py', 'registro/baseline/BL-001.yaml')

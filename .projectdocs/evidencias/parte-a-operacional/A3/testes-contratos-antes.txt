@@ -1,0 +1,97 @@
+test_01_sessao (__main__.Restricoes.test_01_sessao) ... FAIL
+test_02_rh_inexistente (__main__.Restricoes.test_02_rh_inexistente) ... ok
+test_03_fonte_nao_curada (__main__.Restricoes.test_03_fonte_nao_curada) ... ok
+test_04_dispensa_sem_motivo (__main__.Restricoes.test_04_dispensa_sem_motivo) ... ok
+test_05_autor_agente (__main__.Restricoes.test_05_autor_agente) ... ok
+test_06_etapa_errada (__main__.Restricoes.test_06_etapa_errada) ... ok
+test_07_p2_pendente (__main__.Restricoes.test_07_p2_pendente) ... FAIL
+test_08_emissao_pendente (__main__.Restricoes.test_08_emissao_pendente) ... ok
+test_09_relacao_ausente (__main__.Restricoes.test_09_relacao_ausente) ... FAIL
+test_10_nova_versao_sem_decisao (__main__.Restricoes.test_10_nova_versao_sem_decisao) ... FAIL
+test_11_registro_adulterado (__main__.Restricoes.test_11_registro_adulterado) ... FAIL
+test_12_fonte_apenas_copiada (__main__.Restricoes.test_12_fonte_apenas_copiada) ... ok
+test_20_vinculo_e_marca_local (__main__.Restricoes.test_20_vinculo_e_marca_local) ... FAIL
+test_21_dispensa_motivada (__main__.Restricoes.test_21_dispensa_motivada) ... FAIL
+test_22_nova_versao_decidida_preserva_anterior (__main__.Restricoes.test_22_nova_versao_decidida_preserva_anterior) ... FAIL
+test_23_sem_restricao_produto_vazio (__main__.Restricoes.test_23_sem_restricao_produto_vazio) ... ok
+
+======================================================================
+FAIL: test_01_sessao (__main__.Restricoes.test_01_sessao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 51, in test_01_sessao
+    r=self.negado('Bash',{'command':comando});self.assertIn('Comando exato: '+comando,r.stderr)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/hook_real.py", line 42, in negado
+    self.assertEqual(r.returncode, 2, r.stderr)
+AssertionError: 0 != 2 : 
+
+======================================================================
+FAIL: test_07_p2_pendente (__main__.Restricoes.test_07_p2_pendente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 71, in test_07_p2_pendente
+    self.recusa(r,'RH-01');self.assertEqual(json.loads((self.caso/'registro/estado.json').read_text())['etapa_atual'],'P2')
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 42, in recusa
+    self.assertNotEqual(r.returncode,0,r.stdout);self.assertIn(trecho,r.stderr)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 == 0 : ok | etapa atual: P3a | camada: EX3
+
+
+======================================================================
+FAIL: test_09_relacao_ausente (__main__.Restricoes.test_09_relacao_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 77, in test_09_relacao_ausente
+    self.assertEqual(self.vincular().returncode,0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_10_nova_versao_sem_decisao (__main__.Restricoes.test_10_nova_versao_sem_decisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 81, in test_10_nova_versao_sem_decisao
+    self.assertEqual(self.vincular().returncode,0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_11_registro_adulterado (__main__.Restricoes.test_11_registro_adulterado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 88, in test_11_registro_adulterado
+    self.assertEqual(self.vincular().returncode,0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_20_vinculo_e_marca_local (__main__.Restricoes.test_20_vinculo_e_marca_local)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 98, in test_20_vinculo_e_marca_local
+    r=self.vincular();self.assertEqual(r.returncode,0,r.stderr)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Recusado: 'contexto/fontes/F-001.yaml' is not in the subpath of '/tmp/tmp3q_3hcqo/controle'
+
+
+======================================================================
+FAIL: test_21_dispensa_motivada (__main__.Restricoes.test_21_dispensa_motivada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 112, in test_21_dispensa_motivada
+    r=self.render();self.assertEqual(r.returncode,0,r.stderr)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : E2 nao materializavel: E2: restrição sem destino determinístico no entregável: RH-01. Falta vínculo explícito com o item afetado; ver decisão 039.
+
+
+======================================================================
+FAIL: test_22_nova_versao_decidida_preserva_anterior (__main__.Restricoes.test_22_nova_versao_decidida_preserva_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/restricoes.py", line 116, in test_22_nova_versao_decidida_preserva_anterior
+    self.assertEqual(self.vincular().returncode,0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 16 tests in 4.601s
+
+FAILED (failures=8)

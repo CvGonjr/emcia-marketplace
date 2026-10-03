@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vínculos e dispensas de restrições importadas",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "vigentes",
+    "historico"
+  ],
+  "properties": {
+    "schema": {
+      "const": 1
+    },
+    "vigentes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/registro"
+      }
+    },
+    "historico": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/registro"
+      }
+    }
+  },
+  "$defs": {
+    "registro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "restricao",
+        "importacao",
+        "estado",
+        "fontes",
+        "motivo",
+        "autor",
+        "data",
+        "versao",
+        "decisao"
+      ],
+      "properties": {
+        "restricao": {
+          "type": "string",
+          "pattern": "^RH-[0-9]+$"
+        },
+        "importacao": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estado": {
+          "enum": [
+            "vinculada",
+            "dispensada"
+          ]
+        },
+        "fontes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^F-[0-9]{3,}$"
+          }
+        },
+        "motivo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "autor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "versao": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "decisao": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "estado": {
+                "const": "vinculada"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "fontes": {
+                "minItems": 1
+              },
+              "motivo": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "fontes": {
+                "maxItems": 0
+              },
+              "motivo": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

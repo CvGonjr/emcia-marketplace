@@ -1,0 +1,12 @@
+{
+  "decisao": "041-restricao-vinculada-a-fonte",
+  "playbook": "0.4.18",
+  "manual_base": "EMCIA-MAN-01 v0.1",
+  "proposta": "MAN-01 v0.2",
+  "etapas": {
+    "P2": {
+      "atos": "`vincular-restricao`",
+      "produto": "Todos os RH-xx vinculados a fontes ou dispensados com motivo"
+    }
+  }
+}

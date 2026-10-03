@@ -86,6 +86,12 @@ jobs:
       - name: Percurso sintético de canais
         run: python3 testes/canais_percurso.py
 
+      - name: Selo confirmado após encerramento
+        run: python3 testes/selo_p3b.py
+
+      - name: Restrições vinculadas a fontes
+        run: python3 testes/restricoes.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

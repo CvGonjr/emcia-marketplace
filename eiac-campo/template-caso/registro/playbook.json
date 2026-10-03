@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.17",
+  "versao": "0.4.18",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -194,6 +194,13 @@
       "condicao": {
         "tipo": "sempre"
       }
+    },
+    {
+      "id": "vincular-restricao",
+      "script": "restricoes.py",
+      "condicao": {
+        "tipo": "sempre"
+      }
     }
   ],
   "apuracao_nivel": {
@@ -302,7 +309,54 @@
         "N2": "EX2",
         "N3": "EX3"
       },
-      "produtos_encerramento": []
+      "produtos_encerramento": [
+        {
+          "tipo": "cobertura",
+          "descricao": "Todos os RH-xx vinculados a fontes ou dispensados com motivo",
+          "origem": {
+            "arquivo": "registro/habilitacao.json",
+            "campo": "vigente.restricoes",
+            "chave": "id"
+          },
+          "destino": {
+            "arquivo": "registro/restricoes.json",
+            "campo": "vigentes",
+            "chave": "restricao"
+          },
+          "campo_estado": "estado",
+          "estados": {
+            "vinculada": {
+              "preenchidos": [
+                "fontes",
+                "autor",
+                "data",
+                "importacao"
+              ],
+              "pessoas": [
+                "autor"
+              ]
+            },
+            "dispensada": {
+              "preenchidos": [
+                "motivo",
+                "autor",
+                "data",
+                "importacao"
+              ],
+              "pessoas": [
+                "autor"
+              ]
+            }
+          },
+          "eventos": [
+            "RestricaoVinculada",
+            "RestricaoDispensada"
+          ],
+          "eventos_origem": [
+            "HabilitacaoImportada"
+          ]
+        }
+      ]
     },
     {
       "id": "P3a",
