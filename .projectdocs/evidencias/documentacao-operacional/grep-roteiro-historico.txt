@@ -1,0 +1,6 @@
+$ rg -n EMCIA-HAB-02-roteiro-de-habilitacao\.md|EMCIA-HAB-02 eiac-campo/reference/metodo decisoes
+eiac-campo/reference/metodo/EMCIA-ROT-02-roteiro-de-habilitacao.md:18:O código EMCIA-ROT-02 substitui o identificador provisório EMCIA-HAB-02 do roteiro, que colidia com o template HAB-02 de confidencialidade. Os templates HAB-01/02/03 conservam seus códigos e conteúdos.
+eiac-campo/reference/metodo/EMCIA-ROT-02-roteiro-de-habilitacao.md:180:| 0.2 | 2026-10 | Celso do Vale | Revisão da edição anterior sem versão explícita; renomeação de EMCIA-HAB-02 para EMCIA-ROT-02 devido ao conflito com o template HAB-02; checklist de 0d conforme decisões 039–042, sem cópia manual do método ou escrita direta em fontes, e vínculo RH em P2 | pendente |
+decisoes/039-passagem-habilitacao-caso.md:47:O conflito de códigos entre o roteiro `EMCIA-HAB-02` e o template
+Código: 0
+Somente registro histórico na decisão 039 e notas canônicas da renomeação em ROT-02; documentos canônicos não foram editados.

@@ -2,7 +2,7 @@
   "finalidade": "habilitacao",
   "proprietario": "emcia",
   "campo_oculto": "caso",
-  "instrumento": "EMCIA-HAB-02-roteiro-de-habilitacao.md",
+  "instrumento": "auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md",
   "preparacao": "Engenheiro define o conteúdo conforme o instrumento; não publicar nem enviar sem instrução expressa.",
   "perguntas": [
     {

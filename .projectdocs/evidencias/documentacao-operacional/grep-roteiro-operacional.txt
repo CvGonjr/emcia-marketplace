@@ -1,0 +1,2 @@
+$ rg -n EMCIA-HAB-02-roteiro-de-habilitacao\.md|EMCIA-HAB-02 eiac-campo/skills eiac-campo/commands eiac-campo/reference README.md INSTALACAO.md .projectdocs/map.md --glob !**/metodo/**
+Código: 1 (nenhuma ocorrência operacional).

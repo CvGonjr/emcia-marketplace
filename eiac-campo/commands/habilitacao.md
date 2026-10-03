@@ -3,7 +3,7 @@ description: Conduz o expediente administrativo de habilitação anterior ao cas
 ---
 Uso: `/eiac-campo:habilitacao <caminho-absoluto-do-expediente> [ação]`
 
-Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-HAB-02-roteiro-de-habilitacao.md` e o fluxo operacional `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` no checkout indicado pelo engenheiro de https://github.com/CvGonjr/emcia-artefatos/. Respeite o estado de aprovação de cada documento. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
+Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` e o fluxo operacional `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` no checkout indicado pelo engenheiro de https://github.com/CvGonjr/emcia-artefatos/. Respeite o estado de aprovação de cada documento. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
 
 Consulte primeiro:
 
