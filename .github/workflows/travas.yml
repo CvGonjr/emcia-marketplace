@@ -92,6 +92,12 @@ jobs:
       - name: Restrições vinculadas a fontes
         run: python3 testes/restricoes.py
 
+      - name: Pacote do método, manual operacional e citações
+        run: |
+          python3 testes/metodo_empacotado.py
+          python3 testes/manual_a25.py
+          python3 testes/citacoes.py
+
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
         run: |

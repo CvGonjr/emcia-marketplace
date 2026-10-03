@@ -1,0 +1,15 @@
+$ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 testes/citacoes.py
+test_01_secao_inexistente_recusa (__main__.Citacoes.test_01_secao_inexistente_recusa) ... ok
+test_02_auxiliar_inexistente_recusa (__main__.Citacoes.test_02_auxiliar_inexistente_recusa) ... ok
+test_03_citacoes_do_campo_resolvem (__main__.Citacoes.test_03_citacoes_do_campo_resolvem) ... ok
+test_04_tri_perguntas_e_pontuacao (__main__.Citacoes.test_04_tri_perguntas_e_pontuacao) ... ok
+test_05_ctx_canonico_substitui_resumos (__main__.Citacoes.test_05_ctx_canonico_substitui_resumos) ... ok
+test_06_auxiliares_vem_do_manifesto_canonico (__main__.Citacoes.test_06_auxiliares_vem_do_manifesto_canonico) ... ok
+test_07_formatos_e_continuacao (__main__.Citacoes.test_07_formatos_e_continuacao) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.019s
+
+OK
+
+Código: 0

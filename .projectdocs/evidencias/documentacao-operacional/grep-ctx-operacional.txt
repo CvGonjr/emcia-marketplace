@@ -1,0 +1,2 @@
+$ rg -n CTX-01-instrumento-camada-contexto eiac-campo/skills eiac-campo/commands eiac-campo/reference README.md INSTALACAO.md
+Código: 1 (nenhuma remissão operacional ao resumo).

@@ -1,3 +1,15 @@
+23712bc9fe02072f771aebfe3e640904c77c0f33a32f1b416bad27aad812189a  CTX-01-instrumento-camada-contexto.md
+23712bc9fe02072f771aebfe3e640904c77c0f33a32f1b416bad27aad812189a  eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+1ca8eb6cd0c16430f7204a0b5264ed52a7034836a51fa1fad534da03cd5eaee0  emcia-artefatos/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md
+
+Histórico das cópias antigas:
+a6ad092 docs: rewrite stale docs, document 0a public material rule
+9217925 feat(context): materialize CTX core objects
+acf35f9 refactor(context): normalize documentary provenance to DIV
+93ac18c testes negativos, CI, correcao do abrir-caso e aviso de diretorio
+b83610b marketplace emcia: nucleo e playbook de campo
+
+Decisão 021:
 # 021 — Retirada da execução de contraste e verificação por estados do caso
 
 **Data:** 23/09/2026 · **Estado:** firme · **Substitui:** [[004-janela-da-antitese]], [[014-execucao-de-contraste]], [[015-isolamento-esforco-calculo-compartilhado]], [[016-identidade-runtime-do-contraste]], [[017-pacote-controlado-e-pendencias-no-contraste]], [[018-isolamento-por-carimbo-no-selo]], [[019-autoria-atribuida-pelo-responsavel]] (só a parte específica de execução de contraste — a regra geral de autoria por responsável, aplicável a todo o núcleo, permanece válida e não é revertida por esta decisão), [[020-pendencia-cruzamento-cat01]] (só na parte que menciona a execução de contraste; a pendência de cruzamento CAT-01 em si continua aberta)
@@ -36,14 +48,60 @@ Evento deixado por commit recusado não satisfaz a trava. O texto acima é
 preservado como registro original; a descrição de função pura deixa de
 representar a implementação vigente.
 
-## Emenda de 03/10/2026 — retirada dos resumos anteriores do CTX-01
+Última alteração das cópias antigas:
+commit a6ad0921ec53fe0d8e6fd3f13385ec5d5efa8351
+Author: valejr <CvGonjr@github.com>
+Date:   Wed Sep 23 19:46:22 2026 -0300
 
-Por decisão expressa do engenheiro, são retiradas as cópias de
-`CTX-01-instrumento-camada-contexto.md` da raiz e de `eiac-campo/reference/`.
-Eram um resumo anterior, não controlado pelo manifesto do método. Toda remissão
-operacional passa a apontar para
-`eiac-campo/reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md`,
-extraído do commit canônico `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4`.
-O teste de citações confere esse destino e a ausência das cópias antigas;
-o mapa registra a retirada. O texto original desta decisão permanece intacto,
-e os resumos continuam recuperáveis pelo histórico Git.
+    docs: rewrite stale docs, document 0a public material rule
+
+    README.md and INSTALACAO.md described the pre-Sprint-2 repository: 8 of
+    13 steps, P6-P10 without habilidade, E4/E5 with portao_pendente,
+    zip-based install. Rewritten for the current state: all 13 F0-P10
+    steps, procedencia in the D/I/V format procedencia.md defines, E1-E5
+    fixed gates, GitHub install, the new "verificacao por estados do caso"
+    gate (seal after P2 required to open/close P3b), and a "material
+    publico da etapa 0a" section: public research gathered during 0a
+    (EMCIA-HAB-01) doesn't enter the case at that point -- it's collected
+    outside the repo and only recorded after opening (0d), via curation,
+    marked I / tipo_fonte: externa with URL and source limit. Documentary
+    rule only, no code.
+
+    eiac-campo/reference/gates.md: "Quadro de Contraste" renamed to "Quadro
+    de Confronto (declarado x verificado)". CTX-01 line 184 (both copies,
+    kept identical): the prediction that "o braco da antitese produza a
+    celula critica vazia" becomes "a celula critica esteja vazia no estado
+    declarado selado" -- at the end of P2, before P3b's in-person walk
+    confirms or refutes it.
+
+    .projectdocs/map.md rewritten in full; the previous version still
+    described the 12/09 baseline (6 commits, 8 steps, 13 skills), two full
+    Ações and 15 decisions out of date.
+
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+diff --git a/CTX-01-instrumento-camada-contexto.md b/CTX-01-instrumento-camada-contexto.md
+index 764fb03..fa85366 100644
+--- a/CTX-01-instrumento-camada-contexto.md
++++ b/CTX-01-instrumento-camada-contexto.md
+@@ -181,7 +181,7 @@ A célula crítica é o achado empírico do método: regras de baixa frequência
+
+ **Consequência de uso:** se a célula crítica estiver vazia ao fim do P3, ou a organização é excepcionalmente regular, ou o levantamento não aconteceu. As duas hipóteses precisam ser confrontadas antes de encerrar o passo — e a segunda é a mais provável.
+
+-O mesmo quadro serve ao Quadro de Contraste: **a previsão é que o braço da antítese produza a célula crítica vazia.**
++O mesmo quadro serve ao Quadro de Confronto: **a previsão é que a célula crítica esteja vazia no estado declarado selado**, ao fim de P2 — antes do levantamento presencial de P3b confirmar (ou não) as regras de baixa frequência e alta consequência que os documentos não registram.
+
+ ---
+
+diff --git a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+index 764fb03..fa85366 100644
+--- a/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
++++ b/eiac-campo/reference/CTX-01-instrumento-camada-contexto.md
+@@ -181,7 +181,7 @@ A célula crítica é o achado empírico do método: regras de baixa frequência
+
+ **Consequência de uso:** se a célula crítica estiver vazia ao fim do P3, ou a organização é excepcionalmente regular, ou o levantamento não aconteceu. As duas hipóteses precisam ser confrontadas antes de encerrar o passo — e a segunda é a mais provável.
+
+-O mesmo quadro serve ao Quadro de Contraste: **a previsão é que o braço da antítese produza a célula crítica vazia.**
++O mesmo quadro serve ao Quadro de Confronto: **a previsão é que a célula crítica esteja vazia no estado declarado selado**, ao fim de P2 — antes do levantamento presencial de P3b confirmar (ou não) as regras de baixa frequência e alta consequência que os documentos não registram.
+
+ ---

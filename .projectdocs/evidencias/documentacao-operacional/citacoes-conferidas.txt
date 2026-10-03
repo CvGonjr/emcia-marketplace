@@ -1,0 +1,41 @@
+eiac-campo/skills/hb-classificar/SKILL.md: EMCIA-MET-01-documento-do-metodo.md
+eiac-campo/skills/hb-confrontar/SKILL.md: CTX-01 §3.12
+eiac-campo/skills/hb-enquadrar/SKILL.md: EMCIA-TRI-01 §3.3
+eiac-campo/skills/hb-enquadrar/SKILL.md: EMCIA-TRI-01 §3.4
+eiac-campo/skills/hb-extrair-regras/SKILL.md: CTX-01 §3.11
+eiac-campo/skills/hb-governar/SKILL.md: EMCIA-CAM-01 §3.3
+eiac-campo/skills/hb-governar/SKILL.md: EMCIA-CAT-01 §3.5.1
+eiac-campo/skills/hb-governar/SKILL.md: EMCIA-E3 §B1.4
+eiac-campo/skills/hb-levantar-regras/SKILL.md: EMCIA-CTX-01 §3.8
+eiac-campo/skills/hb-medir/SKILL.md: MET-01 §3.4.3
+eiac-campo/skills/hb-medir-valor/SKILL.md: EMCIA-CAM-01 §3.5
+eiac-campo/skills/hb-medir-valor/SKILL.md: CAT-01 §3.4.5
+eiac-campo/skills/hb-medir-valor/SKILL.md: CAT-01 §3.4.5
+eiac-campo/skills/hb-operacionalizar/SKILL.md: EMCIA-CAM-01 §3.2
+eiac-campo/skills/hb-operacionalizar/SKILL.md: EMCIA-CAM-01 §3.2
+eiac-campo/skills/hb-operacionalizar/SKILL.md: EMCIA-MET-01 §3.4.6
+eiac-campo/skills/hb-pilotar/SKILL.md: EMCIA-CAM-01 §3.4
+eiac-campo/skills/hb-recalibrar/SKILL.md: CAM-01 §3.6
+eiac-campo/skills/hb-recalibrar/SKILL.md: CAT-01 §3.4.5
+eiac-campo/skills/hb-recalibrar/SKILL.md: EMCIA-CAM-01 §3.6
+eiac-campo/commands/canais.md: auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md §3.6
+eiac-campo/commands/habilitacao.md: EMCIA-HAB-01-protocolo-de-habilitacao.md
+eiac-campo/commands/habilitacao.md: auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md
+eiac-campo/commands/habilitacao.md: auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md
+eiac-campo/commands/habilitacao.md: ROT-02 §3.6
+eiac-campo/commands/habilitacao.md: EMCIA-HAB-01 §3.4
+eiac-campo/commands/habilitacao.md: EMCIA-CTX-01 §3.7
+eiac-campo/commands/mapear-fontes.md: EMCIA-HAB-01 §3.4
+eiac-campo/commands/mapear-fontes.md: EMCIA-CTX-01 §3.7
+eiac-campo/reference/canais.md: MAN-01 §3.2
+eiac-campo/reference/canais.md: auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md §3.6
+eiac-campo/reference/formularios/ciclo.json: EMCIA-CAM-01-protocolo-de-campo-por-passo.md
+eiac-campo/reference/formularios/habilitacao.json: auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md
+eiac-campo/reference/formularios/triagem.json: EMCIA-TRI-01-instrumento-de-triagem.md
+eiac-campo/reference/habilitacao.md: EMCIA-HAB-01 §3.3.4
+eiac-campo/reference/habilitacao.md: EMCIA-HAB-01 §3.4
+eiac-campo/reference/habilitacao.md: auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md §3.6
+eiac-campo/reference/habilitacao.md: auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md
+eiac-campo/reference/habilitacao.md: EMCIA-HAB-01 §3.4
+eiac-campo/reference/habilitacao.md: EMCIA-CTX-01 §3.7
+eiac-campo/reference/habilitacao.md: EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md
