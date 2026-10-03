@@ -1,0 +1,10 @@
+test_01_commit_falho_posterior (__main__.SeloP3b.test_01_commit_falho_posterior) ... ok
+test_02_confirmado_apenas_anterior (__main__.SeloP3b.test_02_confirmado_apenas_anterior) ... ok
+test_03_git_inacessivel (__main__.SeloP3b.test_03_git_inacessivel) ... ok
+test_04_commit_comum_nao_confirma (__main__.SeloP3b.test_04_commit_comum_nao_confirma) ... ok
+test_20_posterior_confirmado (__main__.SeloP3b.test_20_posterior_confirmado) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.374s
+
+OK

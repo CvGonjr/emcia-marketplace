@@ -56,8 +56,17 @@ class CasoHook(unittest.TestCase):
             'P3b': {'sessao': {'autor': 'Celso do Vale', 'participantes': 'Marina Prado'}}})
         self.salvar()
         log = self.caso/'registro/eventos.jsonl'
-        log.write_text('\n'.join(json.dumps(x) for x in [
-            {'evento': 'EtapaEncerrada', 'etapa': 'P2'}, {'evento': 'SeloAplicado'}])+'\n')
+        # Selo real permite que A18 continue exercitando G1, sem mascará-la por G7.
+        log.write_text('')
+        self.rodar('avancar.py','--registrar-sessao','P3b','--autor','Celso do Vale','--participantes','Marina Prado')
+        ev=self.eventos()[-1]
+        with log.open('a') as f:
+            f.write(json.dumps(dict(evento='EtapaEncerrada',etapa='P2',autor='Celso do Vale',componente=ev['componente']))+'\n')
+        for args in [('init','-q'),('config','user.name','Celso do Vale'),
+                     ('config','user.email','sintetico@example.invalid'),('config','commit.gpgsign','false')]:
+            subprocess.run(['git',*args],cwd=self.caso,check=True,capture_output=True)
+        r=self.rodar('selar.py','--nota','Estado declarado da fixture')
+        self.assertEqual(r.returncode,0,r.stderr)
         self.skill = self.base/'.claude/plugins/cache/emcia/eiac-campo/0.8.5/skills/hb-levantar-regras/SKILL.md'
         self.skill.parent.mkdir(parents=True)
         shutil.copyfile(RAIZ/'eiac-campo/skills/hb-levantar-regras/SKILL.md', self.skill)

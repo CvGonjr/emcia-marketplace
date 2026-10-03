@@ -108,7 +108,7 @@ class SessaoA8(unittest.TestCase):
     def test_06_sessao_nao_substitui_selo(self):
         self.posicionar("P3b", "N2")
         self.sessao("P3b")
-        self.recusa("--encerrar", "P3b", ["exige selo posterior", "P2"], "RecusaMaquina")
+        self.recusa("--encerrar", "P3b", ["exige selo posterior", "P2"], "TentativaNegada")
 
     def test_07_regra_ausente(self):
         self.configurar(lambda pb: pb.pop("encerramento_por_camada"))
@@ -145,12 +145,16 @@ class SessaoA8(unittest.TestCase):
     def test_15_ex4_sessao_e_selo(self):
         self.posicionar("P3b", "N2")
         self.sessao("P3b")
-        # Fixture da ordem da trilha; a suíte por estados exercita o selo real.
-        with (self.caso / "registro/eventos.jsonl").open("a") as log:
-            for evento in [{"evento": "EtapaEncerrada", "etapa": "P2"},
-                           {"evento": "SeloAplicado"}]:
-                evento["autor"] = "Celso do Vale"
-                log.write(json.dumps(evento) + "\n")
+        # Confirmação real no Git; evento isolado não satisfaz a decisão 042.
+        for args in [('init','-q'),('config','user.name','Celso do Vale'),
+                     ('config','user.email','sintetico@example.invalid'),('config','commit.gpgsign','false')]:
+            subprocess.run(['git',*args],cwd=self.caso,check=True,capture_output=True)
+        log=self.caso/'registro/eventos.jsonl'
+        evs=[json.loads(l) for l in log.read_text().splitlines()]
+        evs.append(dict(evento='EtapaEncerrada',etapa='P2',autor='Celso do Vale',componente=evs[-1]['componente']))
+        log.write_text(''.join(json.dumps(e)+'\n' for e in evs))
+        r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/selar.py'),'--nota','Estado declarado confirmado'],cwd=self.caso,text=True,capture_output=True)
+        self.assertEqual(r.returncode,0,r.stderr)
         self.encerramento("P3b")
 
     def test_16_ex1_sem_sessao(self):

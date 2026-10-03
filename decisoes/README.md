@@ -46,3 +46,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |
 | 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; implementação por pacotes; P3b permanece para pacote posterior |
 | 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | arquitetura aprovada; implementação por pacotes E1–E7 |
+| 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |

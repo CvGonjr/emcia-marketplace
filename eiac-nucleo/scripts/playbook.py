@@ -215,52 +215,22 @@ def capacidade_valida(capacidade):
 
 
 def selo_apos_etapa(pb, etapa_id, trilha):
-    """Verifica a exigencia declarativa 'exige_selo_apos' de uma etapa.
+    """Selo confirmado no Git após o último encerramento declarado.
 
-    Uma etapa pode declarar {"exige_selo_apos": "<outro-id-de-etapa>"} no
-    playbook. Quando declarada, essa etapa (abrir ou encerrar) exige um
-    evento SeloAplicado posterior ao EtapaEncerrada da etapa referenciada.
-    O nucleo nao sabe por que -- so compara a ORDEM de dois tipos de evento
-    genericos contra um campo declarativo do contrato, do mesmo jeito que
-    _avaliar_condicao() em avancar.py compara campo/etapa/valor sem saber
-    o que "etapa origem" ou "etapa destino" significam.
-
-    "Posterior" e definido pela POSICAO do evento na trilha (a ordem em
-    que estado.evento() gravou cada linha), nao pelo campo `data`: dois
-    eventos podem cair no mesmo segundo (timespec="seconds" em
-    estado.evento()) quando o percurso e rapido -- um comando de teste ou
-    um script automatizado emite varios eventos no mesmo segundo com
-    frequencia. Comparar por timestamp ali produziria falso negativo
-    (selo real, no lugar certo, recusado por empate de relogio). A ordem
-    de gravacao e o unico ordenador confiavel dessa trilha.
-
-    Devolve (True, None) quando a exigencia nao existe ou esta satisfeita;
-    (False, motivo) quando a etapa referenciada ainda nao foi encerrada, ou
-    quando nao ha selo posterior a esse encerramento.
-
-    ``trilha`` e a lista de eventos ja lida (estado.eventos()) -- esta
-    funcao nao le arquivo, para permanecer pura e testavel sem tocar disco.
+    A posição e o prefixo exato da trilha são conferidos pela mesma
+    função usada pela exigência de evento selado (decisões 039 e 042).
     """
-    et = etapa(pb, etapa_id)
-    if not et:
-        return True, None
-    referencia = et.get("exige_selo_apos")
+    referencia = (etapa(pb, etapa_id) or {}).get('exige_selo_apos')
     if not referencia:
         return True, None
-
-    posicoes_encerramento = [i for i, e in enumerate(trilha)
-                              if e.get("evento") == "EtapaEncerrada" and e.get("etapa") == referencia]
-    if not posicoes_encerramento:
+    posicoes = [i for i, e in enumerate(trilha)
+                if e.get('evento') == 'EtapaEncerrada' and e.get('etapa') == referencia]
+    if not posicoes:
         return False, (f"{etapa_id} exige selo posterior ao encerramento de "
-                        f"{referencia}, mas {referencia} ainda nao foi encerrada.")
-    ultima_posicao_encerramento = max(posicoes_encerramento)
-
-    posicoes_selo = [i for i, e in enumerate(trilha) if e.get("evento") == "SeloAplicado"]
-    selo_posterior = any(i > ultima_posicao_encerramento for i in posicoes_selo)
-    if not selo_posterior:
-        return False, (f"{etapa_id} exige selo posterior ao encerramento de "
-                        f"{referencia}. Nenhum SeloAplicado encontrado depois "
-                        f"desse encerramento -- sele o caso antes de prosseguir.")
+                       f"{referencia}, mas {referencia} ainda nao foi encerrada.")
+    ok, motivo = _confirmar_selo_posterior(etapa_id, referencia, trilha, posicoes[-1])
+    if not ok:
+        return False, f"{etapa_id} exige selo posterior ao encerramento de {referencia}: {motivo}"
     return True, None
 
 
@@ -276,6 +246,11 @@ def selo_confirmado_apos_evento(pb, etapa_id, trilha):
     posicoes=[i for i,e in enumerate(trilha) if e.get('evento')==referencia]
     if not posicoes:
         return False,f"{etapa_id}: evento {referencia} ausente; exige SeloAplicado confirmado posterior a esse evento."
+    return _confirmar_selo_posterior(etapa_id, referencia, trilha, posicoes[-1])
+
+
+def _confirmar_selo_posterior(etapa_id, referencia, trilha, pos):
+    """Confirma histórico acessível, autoria/nota e prefixo selado exato."""
     import estado as E
     selos,erro=E.selos_confirmados()
     if erro:
@@ -287,7 +262,6 @@ def selo_confirmado_apos_evento(pb, etapa_id, trilha):
         return False,f"{etapa_id}: trilha inválida para confirmar {referencia}: {exc}"
     if atual!=trilha:
         return False,f"{etapa_id}: trilha divergente durante confirmação de {referencia}."
-    pos=posicoes[-1]
     for selo in selos:
         fim=selo['posicao']
         if fim>pos and selo['eventos'][:fim+1]==trilha[:fim+1] and selo['linhas'][:fim+1]==linhas[:fim+1]:

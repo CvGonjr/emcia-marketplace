@@ -1,0 +1,18 @@
+test_01_read_instalado_absoluto (__main__.Habilidades.test_01_read_instalado_absoluto) ... ok
+test_02_read_relativo (__main__.Habilidades.test_02_read_relativo) ... ok
+test_03_read_pontos (__main__.Habilidades.test_03_read_pontos) ... ok
+test_04_read_link (__main__.Habilidades.test_04_read_link) ... ok
+test_05_ferramenta_skill (__main__.Habilidades.test_05_ferramenta_skill) ... ok
+test_06_ferramenta_skill_sem_namespace (__main__.Habilidades.test_06_ferramenta_skill_sem_namespace) ... ok
+test_07_expansao_direta (__main__.Habilidades.test_07_expansao_direta) ... ok
+test_08_bash_leitura (__main__.Habilidades.test_08_bash_leitura) ... ok
+test_09_grep_conteudo (__main__.Habilidades.test_09_grep_conteudo) ... ok
+test_10_habilidade_delegavel (__main__.Habilidades.test_10_habilidade_delegavel) ... ok
+test_11_hooks_instalados_cobrem_rotas (__main__.Habilidades.test_11_hooks_instalados_cobrem_rotas) ... ok
+test_12_nao_delegavel_n1 (__main__.Habilidades.test_12_nao_delegavel_n1) ... ok
+test_13_nao_delegavel_n3 (__main__.Habilidades.test_13_nao_delegavel_n3) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.718s
+
+OK

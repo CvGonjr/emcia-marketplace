@@ -1,0 +1,51 @@
+test_01_commit_falho_posterior (__main__.SeloP3b.test_01_commit_falho_posterior) ... FAIL
+test_02_confirmado_apenas_anterior (__main__.SeloP3b.test_02_confirmado_apenas_anterior) ... FAIL
+test_03_git_inacessivel (__main__.SeloP3b.test_03_git_inacessivel) ... FAIL
+test_04_commit_comum_nao_confirma (__main__.SeloP3b.test_04_commit_comum_nao_confirma) ... FAIL
+test_20_posterior_confirmado (__main__.SeloP3b.test_20_posterior_confirmado) ... ok
+
+======================================================================
+FAIL: test_01_commit_falho_posterior (__main__.SeloP3b.test_01_commit_falho_posterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 49, in test_01_commit_falho_posterior
+    self.recusar_ambos('confirmado')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 38, in recusar_ambos
+    self.assertIn(trecho,r.stderr)
+AssertionError: 'confirmado' not found in 'EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. A sessao registrada nao delega uma etapa humana.\n'
+
+======================================================================
+FAIL: test_02_confirmado_apenas_anterior (__main__.SeloP3b.test_02_confirmado_apenas_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 53, in test_02_confirmado_apenas_anterior
+    self.p3b(); self.recusar_ambos('confirmado')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 38, in recusar_ambos
+    self.assertIn(trecho,r.stderr)
+AssertionError: 'confirmado' not found in 'P3b exige selo posterior ao encerramento de P2. Nenhum SeloAplicado encontrado depois desse encerramento -- sele o caso antes de prosseguir.\n'
+
+======================================================================
+FAIL: test_03_git_inacessivel (__main__.SeloP3b.test_03_git_inacessivel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 58, in test_03_git_inacessivel
+    self.recusar_ambos('Git')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 38, in recusar_ambos
+    self.assertIn(trecho,r.stderr)
+AssertionError: 'Git' not found in 'EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. A sessao registrada nao delega uma etapa humana.\n'
+
+======================================================================
+FAIL: test_04_commit_comum_nao_confirma (__main__.SeloP3b.test_04_commit_comum_nao_confirma)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 65, in test_04_commit_comum_nao_confirma
+    self.recusar_ambos('confirmado')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/selo_p3b.py", line 38, in recusar_ambos
+    self.assertIn(trecho,r.stderr)
+AssertionError: 'confirmado' not found in 'EX4: a etapa P3b nao e delegavel a agente. Modalidade exigida: presencial. A sessao registrada nao delega uma etapa humana.\n'
+
+----------------------------------------------------------------------
+Ran 5 tests in 3.527s
+
+FAILED (failures=4)

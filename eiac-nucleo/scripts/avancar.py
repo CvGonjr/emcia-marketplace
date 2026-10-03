@@ -90,7 +90,7 @@ def encerrar(st, pb, etapa_id, autor):
         return f"{etapa_id} depende de {dep}, ainda nao cumprida"
     selo_ok, motivo_selo = P.selo_apos_etapa(pb, etapa_id, E.eventos())
     if not selo_ok:
-        return motivo_selo
+        return _RecusaSessao(motivo_selo)
 
     faltas = R.faltas(et, st)
     if faltas:

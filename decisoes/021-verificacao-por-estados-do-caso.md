@@ -27,3 +27,11 @@ O aparato de isolamento núcleo × contraste em `guarda.py` (busca por marcador 
 - Toda suíte de teste que constrói um percurso F0→P3b (ou além) precisa selar o caso depois de encerrar P2 — os módulos `testes/nucleo_2_6_1.py`, `testes/campo_2_6_3.py`, `testes/campo_2_6_5.py` e `testes/campo_2_6_6.py` foram ajustados nesta mesma frente para refletir isso; nenhum resultado que eles verificam mudou de sentido, só a sequência de comandos que os produz.
 - `README.md`, `INSTALACAO.md`, `eiac-campo/reference/gates.md`, `CTX-01-instrumento-camada-contexto.md` (as duas cópias) e `.projectdocs/map.md` deixam de mencionar antítese/contraste como parte do método executável — a terminologia "Quadro de Contraste" vira "Quadro de Confronto (declarado × verificado)".
 - Esta decisão não resolve a pendência 020 (cruzamento CAT-01 Anexo A × catálogo × playbook), que permanece aberta por seu próprio mérito.
+
+## Emenda de 03/10/2026 — decisão 042
+
+A [decisão 042](042-selo-confirmado-p3b.md) exige confirmação do selo no
+histórico Git para `exige_selo_apos`, reutilizando a confirmação da 039.
+Evento deixado por commit recusado não satisfaz a trava. O texto acima é
+preservado como registro original; a descrição de função pura deixa de
+representar a implementação vigente.
