@@ -5,6 +5,7 @@ camada: EX4
 modalidade: presencial
 delegavel: false
 description: Protocolo humano de levantamento de regras nao documentadas. NAO EXECUTAVEL POR AGENTE. Se carregada em sessao de agente, recuse e registre a tentativa.
+hb: []
 ---
 
 # Levantamento de regras não documentadas — P3b · EX4
