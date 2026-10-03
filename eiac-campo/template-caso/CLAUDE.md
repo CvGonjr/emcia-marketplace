@@ -8,6 +8,11 @@ Este repositório é um caso do playbook **Engenharia de IA de Campo**.
 
 **Nunca escreva direto em `contexto/`.** Escreva o objeto (termo, entidade, regra, fonte ou registro de confronto P3d) em `rascunho/` e cure com `/eiac-nucleo:curar`. A guarda bloqueia a escrita direta do mesmo modo que bloqueia `caso/`. Mudança de procedência (por exemplo `I` → `V`) ou de classificação de confronto exige versão nova com histórico — nunca sobrescrita.
 
+**Nunca copie material direto para `fontes/`.** Essa área só recebe arquivos
+pela importação humana da habilitação (`importar_habilitacao.py`) e pelo
+recebimento humano (`receber.py`). Prepare coletas e manifestos em
+`rascunho/entrada/`; a guarda recusa escrita direta e registra a tentativa.
+
 **Toda asserção carrega marcação.** Formato:
 
 ```
@@ -34,7 +39,7 @@ confirmar autonomamente que uma informação é `V`.
 registro/playbook.json    o método como arquivo — não editar durante o caso
 registro/estado.json      etapa corrente e cumprimentos
 registro/eventos.jsonl    trilha de auditoria
-fontes/                   artefatos da organização, só leitura
+fontes/                   bytes preservados por importação/recebimento, só leitura
 rascunho/                 conteúdo proposto, antes do validador ou curador
 caso/                     asserções gravadas
 contexto/                 termos, entidades, regras, fontes e confrontos P3d curados (CA4)

@@ -1,5 +1,10 @@
 # Interface dos canais externos
 
+Procedimento: EMCIA-CAN-01, MAN-01 §3.2 e
+`auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6, na origem fixada
+em `reference/metodo/manifesto.json`. As cópias empacotadas conservam os bytes
+canônicos e seus estados de aprovação.
+
 O playbook declara finalidades e direções; `registro/canais.json` declara ids.
 `canais.schema.json` documenta o contrato; o script aplica as mesmas condições
 e as relações com o playbook, sem bibliotecas novas nem chamadas de API.
@@ -9,7 +14,9 @@ e as relações com o playbook, sem bibliotecas novas nem chamadas de API.
 e `trabalho-interno`. Os nomes não são referências de roteamento.
 
 No terminal humano, use `canais.py definir --entrada <json>`. Declare `versao`
-inteira sequencial, `caso`, `decidido_por` nominal, `data` ISO e `canais`.
+inteira sequencial, `caso`, `decidido_por` nominal, `data` no formato ISO de data
+(AAAA-MM-DD) e `canais`. O evento é atribuído ao responsável fixado no caso;
+`decidido_por` registra a pessoa comunicada na declaração.
 Cada canal contém os campos da especificação em `registro/canais.schema.json`.
 Tally usa `workspace_id`/`formulario_id`; Drive, `drive_id`/`pasta_id`;
 Calendar, `calendario_id`. Proprietário é `emcia` ou `cliente`. Filtro Tally
@@ -23,6 +30,10 @@ recusa ausência, ambiguidade ou adulteração, indicando a definição humana.
 O núcleo exige o canal ao carregar e encerrar etapas que o declaram.
 
 ## Passagem em 0d
+
+Depois da abertura, planeje e provisione; defina os canais antes da importação
+ou na própria importação com `--canais`. Grave o desfecho pelo validador e sele
+antes de F0. `planejar` não chama APIs nem grava a declaração.
 
 Prepare os endereços com `/eiac-campo:canais`, com as confirmações de criação
 e compartilhamento. O engenheiro define os canais e importa a habilitação.
@@ -42,12 +53,14 @@ Downloads e manifestos são preparação em `rascunho/entrada/`. O engenheiro
 executa `receber.py --arquivo <caminho> --manifesto <json>` no caso. O manifesto
 traz `ferramenta`, `objeto_id`, `conteiner_id`, `modificado_em` e `coletado_em`;
 Tally acrescenta `submissao_id` e `campos_ocultos`. As datas são ISO com fuso.
-Novas versões requerem `--nova-versao <json>` com decisor, motivo, data e id
-do recebimento anterior. Arquivos e manifestos anteriores ficam preservados.
+O arquivo e o manifesto precisam estar em `rascunho/entrada/`. O script
+confere que a coleta não antecede a modificação e recusa hash ou objeto
+já recebido sem decisão de nova versão. Novas versões requerem `--nova-versao <json>` com decisor, motivo, data e id
+do recebimento anterior. A decisão fica em `rascunho/`. Arquivos e manifestos anteriores ficam preservados.
 
 O engenheiro registra a publicação com `entregar.py --entrada <json>`:
 `entregavel`, `versao`, `sha256`, `arquivo_id`, `destino_id`, `destinatario`
-nominal e `data`. O destino precisa ser o canal `entregas`. O hash é conferido
+nominal e `data` (AAAA-MM-DD). A entrada precisa estar em `rascunho/`. O destino precisa ser o canal `entregas`. O hash é conferido
 contra a emissão e os bytes locais. Esse registro não é aceite.
 
 Scripts conferem os dados trazidos pelo agente contra a declaração; não

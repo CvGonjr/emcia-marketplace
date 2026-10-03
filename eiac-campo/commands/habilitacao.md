@@ -3,7 +3,7 @@ description: Conduz o expediente administrativo de habilitação anterior ao cas
 ---
 Uso: `/eiac-campo:habilitacao <caminho-absoluto-do-expediente> [ação]`
 
-Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` e o fluxo operacional `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` no checkout indicado pelo engenheiro de https://github.com/CvGonjr/emcia-artefatos/. Respeite o estado de aprovação de cada documento. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
+Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` e o fluxo operacional `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` na origem fixada pelo manifesto do método; as cópias exatas ficam em `${CLAUDE_PLUGIN_ROOT}/reference/metodo/`. Consulte também EMCIA-CAN-01 para os canais. Respeite o estado de aprovação de cada documento. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
 
 Consulte primeiro:
 
@@ -15,7 +15,7 @@ Se não existir expediente, apresente a inicialização humana descrita na refer
 
 Antes de consultar submissões no Tally MCP, confira que `tratamento_registrado` é verdadeiro. A exceção anterior a 0d cobre exclusivamente informações administrativas da habilitação; não leia anexos ou bases operacionais. Peça ao engenheiro uma exportação administrativa filtrada se o formulário contiver conteúdo operacional. Identificação do formulário e origem da submissão devem vir do MCP, nunca de memória. Não copie respostas para repositórios do plugin ou do método.
 
-Use as ferramentas Tally disponíveis para localizar o formulário de habilitação. Para esclarecimentos, prepare um formulário por expediente e rodada com perguntas revisadas pelo engenheiro; registre seu identificador e versão nas respostas. Não altere formulários anteriores. Publicação e envio ao cliente exigem instrução expressa do engenheiro; não envie mensagens por conta própria. Se não houver MCP disponível, aceite exportação manual com as mesmas referências de origem.
+Use as ferramentas Tally disponíveis para consultar o formulário de habilitação pelo id informado pelo engenheiro ou retornado pelo conector. Não busque pelo nome da organização. Para esclarecimentos, prepare um formulário por expediente e rodada com perguntas revisadas pelo engenheiro; registre seu identificador e versão nas respostas. Não altere formulários anteriores. Publicação e envio ao cliente exigem instrução expressa do engenheiro; não envie mensagens por conta própria. Se não houver MCP disponível, aceite exportação manual com as mesmas referências de origem.
 
 Sugira perguntas e campos consolidados ao engenheiro. Não decida autoridade, resolução de pendência, qualificação, revisão de conteúdo ou conferência de assinatura. Só registre essas decisões quando a pessoa nomeada as comunicar, apontando para a evidência. Não classifique procedência por modelo: respostas permanecem declarações; o expediente preserva origem e não atribui D/I/V automaticamente.
 
@@ -26,10 +26,12 @@ A assinatura ocorre exclusivamente pelo painel escolhido pelo cliente, sem API, 
 `concluir-0b` apenas confere a formalização. `acessos` registra a verificação humana de 0c e `preparar-0d` confere prontidão; nenhum deles abre caso, sela ou libera F0. A passagem para o caso segue o roteiro canônico e os mecanismos autorizados existentes. Preserve o expediente para importação e não escreva diretamente em `fontes/`, `registro/` ou `caso/` de um caso pelo chat.
 
 
+Após a abertura, planeje e provisione os canais conforme EMCIA-CAN-01 e ROT-02 §3.6. Provisionamento MCP exige contêiner exclusivo do caso já declarado; sem ele, use a interface externa. O engenheiro define os ids pelo terminal antes de importar, ou passa a declaração completa com `--canais`. A ordem é abertura → planejar/provisionar → definir (ou `--canais`) → importar → gravar `00-habilitacao` pelo validador → selar → F0.
+
 A importação é humana: apresente `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/importar_habilitacao.py" --expediente "<caminho>"` para execução no terminal do engenheiro, no diretório do caso, fora da sessão. Não execute essa decisão pela sessão. Depois da importação, o rascunho passa pelo validador; a selagem é um ato deliberado conforme o roteiro canônico.
 
 Em caso aberto com o novo template, a habilidade de F0 e seu encerramento exigem importação com selo confirmado no Git. Após gravar `caso/00-habilitacao.md` pelo validador, apresente a selagem ao engenheiro. Evento `SeloAplicado` sem commit confirmado mantém a passagem bloqueada. Casos antigos seguem seu próprio playbook.
 
 Na orientação de abertura, o engenheiro pode informar `--expediente` a `novo-caso.sh`; isso confere prontidão e identidade antes de criar o caso, mas não substitui a importação humana. O método é copiado do pacote conferido; o estado apresenta seu diagnóstico de integridade somente leitura.
 
-Apresente as restrições RH-xx preservadas no registro e informe o limite atual da emissão: sem vínculo determinístico ao item do entregável, a materialização recusa com evento. Não invente destinos nem acrescente ressalva genérica; a lacuna está registrada na decisão 039.
+Apresente as restrições RH-xx preservadas no registro. Em P2, o engenheiro vincula cada RH a fontes curadas ou registra dispensa motivada pelo ato `vincular-restricao`, conforme EMCIA-HAB-01 §3.4 e EMCIA-CTX-01 §3.7. RH pendente bloqueia materialização; E1 de caso restrito aguarda P2. Não invente relações REC → F ou destinos nem acrescente ressalva genérica. A decisão 041 completou o contrato da 039.

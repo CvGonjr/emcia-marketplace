@@ -1,8 +1,11 @@
 # Interface do expediente de habilitação
 
-Procedimento: documentos canônicos em https://github.com/CvGonjr/emcia-artefatos/,
-`EMCIA-HAB-01-protocolo-de-habilitacao.md` e os dois documentos de fluxo/roteiro em
-`auxiliares/`. Esta referência descreve a interface técnica, não substitui o método.
+Procedimento: EMCIA-HAB-01 §3.3.4 e §3.4, EMCIA-CAN-01 e
+`auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6, no commit canônico
+fixado em `reference/metodo/manifesto.json`. O pacote contém cópias exatas;
+`caminhos_canonicos` identifica os auxiliares e sua origem. O fluxo auxiliar é
+`auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md`. Respeite seu estado e aprovação.
+Esta referência descreve a interface técnica, sem substituir o procedimento.
 
 ## Inicialização humana
 
@@ -32,7 +35,7 @@ python3 /caminho/eiac-campo/scripts/habilitacao.py OPERACAO \
   --expediente "$HOME/habilitacoes/HAB-0001" --entrada /pasta-de-trabalho/entrada.json
 ```
 
-`estado`, `concluir-0b` e `preparar-0d` dispensam `--entrada`.
+`estado`, `concluir-0b` e `preparar-0d` usam objeto vazio e dispensam `--entrada`.
 As entradas são JSON UTF-8. Exemplos abaixo são sintéticos e devem ser preenchidos
 com dados reais pelo engenheiro; caminhos de arquivos precisam existir.
 
@@ -70,9 +73,14 @@ exportação preservada no arquivo de entrada (perguntas e respostas juntas).
   "versao_perguntas": "2026-09-25-r0",
   "rodada": 0,
   "canal": "tally-mcp",
+  "workspace_id": "identificador-retornado-pelo-tally",
   "escopo": "administrativo"
 }
 ```
+
+`workspace_id` é opcional no expediente; se presente, precisa conferir com a
+declaração dos canais na importação. O script exige tratamento prévio para
+`tally-mcp`; receber exportação manual não tem essa trava específica.
 
 `canal` também aceita `manual`. Essa opção é para exportação recebida e revisada
 humanamente, não autoriza buscar conteúdo pelo MCP sem registrar tratamento.
@@ -230,6 +238,9 @@ nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
 
 ## Importação humana no caso
 
+A sequência é abertura → planejar/provisionar → definir (ou `--canais`) →
+importar → gravar `00-habilitacao` pelo validador → selar → F0.
+
 Nos casos novos com canais externos, prepare a declaração com
 `/eiac-campo:canais` e confira `reference/canais.md`. No terminal humano,
 defina os endereços por ids antes de importar, ou acrescente
@@ -296,10 +307,24 @@ base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl
 Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
 identidade no bootstrap não inventam autor humano.
 
-**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
-a materialização exige um vínculo determinístico com o item afetado. Os registros
-atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
-TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
-A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
-lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
-genérica nem mapeamento por interpretação de texto.
+## Restrição vinculada em P2
+
+A decisão 041 completou o contrato do pacote D da 039. O engenheiro executa
+`restricoes.py vincular --restricao RH-xx --fontes F-xxx,F-yyy`, ou
+`restricoes.py dispensar --restricao RH-xx --motivo <motivo>`, no terminal.
+O ato `vincular-restricao` é humano e a guarda recusa sua execução pela sessão.
+Vínculo inicial só cabe em P2 corrente e aberta, com fontes já curadas.
+
+Todo RH importado precisa ter vínculo ou dispensa motivada para encerrar P2.
+A coleção vazia satisfaz a cobertura. O registro conserva importação, versões,
+autoria e histórico. Revisão usa `--nova-versao <json>` em `rascunho/` com
+`restricao`, `versao_anterior`, `decisor`, `motivo` e `data`; fora de P2 só
+revisa vínculo existente após P2 encerrada. Nunca cria vínculo inicial tardio.
+
+RH pendente bloqueia materialização antes da escrita, preservando a versão
+anterior. Em caso restrito, E1 aguarda a resolução em P2. Cada valor afetado
+recebe marca localizada com RH, fonte F, item negado, restrição e motivo.
+REC resolve por relação `recebimentos` explícita em fonte curada; relação
+ausente recusa. Não se infere destino por texto nem se substitui por ressalva.
+Procedimento: EMCIA-HAB-01 §3.4 e EMCIA-CTX-01 §3.7; instrumento em
+`reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md`.

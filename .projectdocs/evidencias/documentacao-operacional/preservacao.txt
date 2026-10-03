@@ -1,0 +1,5 @@
+74 arquivos do núcleo, scripts do campo e contratos do template: bytes inalterados.
+Algoritmo conferir e negativos 02–05: AST inalterada.
+Decisões 021 e 038: texto original preservado; somente notas acrescentadas.
+16 perguntas HAB preservadas; triagem, ciclo e habilidade hb-enquadrar inalterados.
+Commit canônico inalterado; templates e PDFs não foram renomeados.

@@ -26,7 +26,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
 | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
 | 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
-| 021 | Retirada da execução de contraste; verificação por estados do caso (selo de P2 exigido por P3b) | firme |
+| 021 | Retirada da execução de contraste; verificação por estados do caso | firme; emendas 042 (selo Git) e retirada dos resumos CTX |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
 | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
 | 024 | Sessão exigida no encerramento das camadas EX3 e EX4 (A8) | firme |
@@ -43,8 +43,8 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 035 | Selo exibido pelo histórico confirmado do caso (A17) | firme |
 | 036 | Responsável da recorrência conferido com a fonte vigente (A23) | firme |
 | 037 | E5 usa a rotina de calibragem vigente (A24) | firme |
-| 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme |
-| 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; implementação por pacotes; P3b permanece para pacote posterior |
-| 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | arquitetura aprovada; implementação por pacotes E1–E7 |
+| 038 | Manual de aplicação conferido contra o playbook (ação 4.5) | firme; emenda MAN-01 v0.2 operacional, sem sobreposição local |
+| 039 | Passagem da habilitação ao caso; novo selo confirmado pelo Git | aprovada; A–D entregues; restrições completadas por 041 e selo de P3b por 042; roteiro renomeado para ROT-02 no canônico |
+| 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | aprovada; E1–E7 concluídos; limites locais e runtime testado registrados |
 | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |

@@ -1,25 +1,24 @@
-# Fontes — artefatos da organização
+# Fontes — material preservado do caso
 
-Os documentos reais entregues pela organização: tabelas, contratos, políticas, scripts de atendimento, exportações de sistema. **Só leitura.** Nada aqui é escrito pelo agente nem pelo validador.
+Esta área só recebe arquivos pela importação humana da habilitação
+(`importar_habilitacao.py`) e pelo recebimento humano (`receber.py`).
+O agente prepara coletas em `rascunho/entrada/`; não copia nem altera arquivos
+em `fontes/`. O validador e o curador também não escrevem nesta área.
 
-## Por que ficam no repositório do caso
+A importação preserva três PDFs assinados, suas evidências e a matriz em
+`fontes/habilitacao/importacao-NNN-AAAA-MM-DD/`. O recebimento conserva bytes,
+hash e origem em caminho sequencial por finalidade e data, com id REC;
+as asserções podem citá-lo com `fonte: REC-NNNNNN`. Relações com fontes F
+curadas são explícitas. Nova versão requer decisão e mantém a anterior.
 
-A marcação de procedência cita o documento:
+Hash preserva bytes; não autentica origem remota nem transforma declaração
+em verificação. Documento citado não é substituído silenciosamente.
 
-```
-- [V · documento: tabela-distribuidor.xlsx p.2 · 2026-09-15 · Celso]
-```
+Material cuja preservação não foi autorizada permanece ausente; registre seu
+contrato, acesso e limites em `contexto/fontes/` pela curadoria. Restrições RH
+são vinculadas a fontes curadas ou dispensadas com motivo pelo engenheiro em P2.
+O procedimento está no EMCIA-CTX-01 copiado em `metodo/`.
 
-Se o arquivo não estiver aqui, versionado, a citação aponta para fora do caso — e o selo passa a assinar uma cadeia cuja base ninguém consegue reconferir. Documento citado que não está no repositório é procedência declarada, não verificável.
-
-## Antes de colocar um arquivo aqui
-
-**São documentos do cliente.** Uma vez commitados, ficam no histórico. Este repositório não nasce com remote, e a decisão de publicá-lo em algum servidor é do operador — tomada com o cliente, não por conveniência de backup.
-
-Se um documento não puder ser versionado, registre-o em `contexto/fontes/` como contrato de dados, com a razão da ausência. A lacuna documentada vale mais que o arquivo ausente e silencioso.
-
-## Nomes
-
-Nome estável e citável, porque ele entra na asserção. Prefira `tabela-distribuidor-2026-09.xlsx` a `tabela (1) final v2.xlsx`.
-
-**Documento citado não se altera.** Se a organização mandar versão nova, entra como arquivo novo, com a data no nome — trocar o conteúdo de um arquivo já citado invalida a asserção em silêncio.
+O caso não nasce com remote. A publicação de seu histórico é uma decisão do
+engenheiro com a organização. Material público de 0a não é importado
+automaticamente; eventual uso posterior conserva URL, premissa e limite.

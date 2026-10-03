@@ -4,7 +4,15 @@ argument-hint: "planejar | resolver <etapa|entregavel> <direcao>"
 ---
 
 Consulte `reference/canais.md`, `reference/habilitacao.md` e o roteiro canônico
-de 0d no repositório emcia-artefatos. O procedimento do método permanece lá.
+`auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6 e EMCIA-CAN-01,
+na origem fixada pelo manifesto. As cópias exatas estão em `reference/metodo/`.
+O procedimento permanece nos documentos canônicos.
+
+Depois da abertura, planeje/provisione e entregue a definição humana antes de
+importar o expediente, ou a declaração completa para `--canais`. Depois seguem
+importação → gravação validada de `00-habilitacao` → selo → F0.
+Provisionamento MCP exige contêiner exclusivo do caso previamente declarado;
+sem ele, use a interface externa e depois declare os ids.
 
 Execute `scripts/canais.py planejar` para preparar o provisionamento. Apresente
 o id do drive compartilhado EMCIA e os nomes propostos. Peça confirmação

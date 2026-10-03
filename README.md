@@ -1,392 +1,217 @@
 # emcia — marketplace de plugins
 
-Para aplicar o método, comece pelo manual: `eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md`.
+O método é conferido pelo manifesto SHA-256 antes de abrir cada caso. Comece pelo
+[MAN-01 v0.2](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
+conferido contra o playbook 0.4.18. O pacote foi extraído, sem edição manual, do
+commit canônico `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4` de
+[emcia-artefatos](https://github.com/CvGonjr/emcia-artefatos).
+O manifesto v4 identifica origem, data, caminhos canônicos e hashes dos 21
+documentos, incluindo CAN-01, HAB-01, ROT-02 e o fluxo auxiliar. Empacotar uma
+revisão não altera seu estado nem lhe atribui aprovação.
 
-Dois plugins, e a separação entre eles é o argumento arquitetural do projeto.
+Este repositório é a ferramenta. Casos e dados de clientes vivem em repositórios
+próprios; não entram no marketplace.
 
-| Plugin | Contém | Conhece o método |
+| Plugin | Versão | Papel |
 |---|---|---|
-| **eiac-nucleo** | Guarda de camada, validador de procedência, máquina de etapas, trilha | **Não** |
-| **eiac-campo** | Habilidades por etapa, comandos, subagentes, template de caso | É o método |
+| eiac-nucleo | 0.2.44 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
+| eiac-campo | 0.8.22 | Método, habilidades, comandos, scripts e template de caso |
 
-O núcleo lê o playbook do caso e aplica o que ele declara. Trocar o playbook troca o método sem tocar em uma linha de código — é o que sustenta a afirmação de que o método é independente da ferramenta.
-
-Repositório: [github.com/CvGonjr/emcia-marketplace](https://github.com/CvGonjr/emcia-marketplace)
+O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
+esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
+são resolvidas deterministicamente; autoria vem do responsável nomeado.
 
 ## Instalação
 
-```
+No Claude Code:
+
+```text
 /plugin marketplace add CvGonjr/emcia-marketplace
 /plugin install eiac-nucleo@emcia
 /plugin install eiac-campo@emcia
 ```
 
-As hooks do núcleo registram automaticamente. A trava viaja com o plugin, não com o `settings.json` de cada operador.
+Requisitos: Python 3.12 ou superior no PATH, Git e Claude Code. Para gerar PDFs
+HAB, instale Google Chrome ou Chromium. Configure os conectores de Tally, Google
+Drive e Google Calendar no Claude Code e confira seus ids, ferramentas e
+argumentos. A demonstração real de hooks MCP da evidência E7 usou Claude Code
+2.1.283, com ferramenta stdio sintética. Veja [INSTALACAO.md](INSTALACAO.md).
 
-## Habilitação anterior ao caso
+## Da habilitação a F0
 
-O comando `/eiac-campo:habilitacao <expediente>` conduz a coleta administrativa
-via Tally, rodadas de esclarecimentos, preparação dos três documentos HAB e
-registro da conferência das assinaturas. A assinatura ocorre pelo painel da
-ferramenta escolhida pelo cliente, sem integração.
+A ordem operacional é:
 
-Antes da sessão, o engenheiro inicializa o expediente fora de qualquer repositório:
+**habilitação → abertura (`novo-caso.sh`) → planejar e provisionar canais →
+definir canais (`canais.py definir`, ou na importação com `--canais`) → importar
+expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
 
-```bash
-python3 eiac-campo/scripts/habilitacao.py iniciar \
-  --expediente "$HOME/habilitacoes/HAB-0001" --id HAB-0001 \
-  --caso caso-0001 --responsavel "Nome Sobrenome"
-```
+1. No terminal do engenheiro, inicialize o expediente fora de repositórios e
+   casos. O comando `/eiac-campo:habilitacao` prepara a coleta administrativa e
+   registra decisões comunicadas por pessoas. Tratamento administrativo deve
+   ser registrado antes de consultar submissões pelo MCP. HAB-01/02/03 continuam
+   sendo os três templates e os códigos dos PDFs da formalização.
+2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
+   identificador reservado e o mesmo responsável. A abertura confere todos os
+   hashes, copia os documentos e o manifesto para `metodo/` e prepara o Git.
+   `--expediente` é opcional na abertura; quando informado, confere prontidão e
+   identidade, sem executar a importação.
+3. Em caso aberto, `/eiac-campo:canais` usa `canais.py planejar` para propor a
+   estrutura. Provisionamento pelo MCP exige um contêiner previamente declarado,
+   exclusivo do caso, com regra compatível. Sem ele, provisione pela interface
+   externa. Cada criação, publicação, envio, convite e compartilhamento exige
+   confirmação explícita no chat; cada compartilhamento apresenta destinatário,
+   endereço, id e papel e recebe sua própria confirmação.
+4. O engenheiro define a declaração de ids pelo terminal, antes da importação.
+   Alternativamente, passa a declaração completa com `--canais` ao importador.
+   Na migração, o importador preserva os ids dos formulários e a origem do
+   expediente. Não busca por nome nem inventa workspace ausente.
+5. O engenheiro importa o expediente. Só os três PDFs assinados, suas evidências
+   e a matriz administrativa entram em `fontes/habilitacao/`; o importador prepara
+   `rascunho/00-habilitacao.md`. Respostas brutas não são copiadas para o caso.
+6. Grave pelo validador e sele deliberadamente. F0 exige o evento de importação
+   coberto por selo confirmado no histórico Git. Evento `SeloAplicado` deixado por
+   commit recusado mantém F0 bloqueado.
 
-A [referência de habilitação](eiac-campo/reference/habilitacao.md) descreve os
-formatos de entrada, as condições prévias ao MCP, a geração dos PDFs com
-Chrome/Chromium instalado e os registros de revisão humana. Os templates são
-lidos do checkout canônico de `emcia-artefatos` e preservados com hash.
-O expediente reserva o identificador do caso, mas não o abre nem libera F0.
-
-## Abrir um caso
-
-```bash
-~/projetos/emcia-marketplace/novo-caso.sh medic-plus --responsavel "Nome Sobrenome"
-cd ~/casos/medic-plus && claude
-```
-
-O script copia o template, fixa `responsavel` em `registro/estado.json` (a autoria de todo registro do caso vem daqui, nunca de um argumento informado durante a sessão — ver decisão 019), preenche o nome no registro e no `CLAUDE.md`, cria `metodo/`, `rascunho/` e `caso/`, e faz o commit inicial. Destino padrão é `~/casos/<nome>`; um segundo argumento posicional muda a base.
-
-`--responsavel` é obrigatório e recusa nome vazio, placeholder, código de agente ou coletivo genérico ("equipe", "área" etc.). É a única identidade humana que os scripts do núcleo (`validar.py`, `curar.py`, `selar.py`) usam como autor — mesmo que outro valor seja informado a cada chamada.
-
-Um alias deixa mais curto:
-
-```bash
-alias novocaso='~/projetos/emcia-marketplace/novo-caso.sh'
-```
-
-Na abertura, os documentos declarados no manifesto de `eiac-campo/reference/metodo/` são conferidos por SHA-256 e copiados para `metodo/`, junto com o manifesto. Ver "Material público da etapa 0a" abaixo: esse material não é copiado. Depois importe, valide e sele a habilitação antes de F0.
-
-**Abra a sessão na raiz do caso.** A guarda conserva a raiz indicada por
-`CLAUDE_PROJECT_DIR` e localiza o registro também nos ancestrais do cwd.
-Os comandos de operação continuam sendo executados na raiz do caso.
-
-## Percurso — 13 etapas, F0 a P10
-
-| Comando | Etapa | Camada (N2) | Modalidade | Depende de |
-|---|---|---|---|---|
-| `/eiac-campo:enquadrar` | F0 | EX1 | assíncrono | — |
-| `/eiac-campo:mapear-contexto` | P1 | EX2 | vídeo | — |
-| `/eiac-campo:mapear-fontes` | P2 | EX2 | assíncrono | — |
-| `/eiac-campo:medir` | P3a | EX3 | remoto | — |
-| — | P3b | **EX4 · sem comando, por desenho** | presencial | selo posterior ao encerramento de P2* |
-| `/eiac-campo:confrontar` | P3d | EX3 | remoto | P3b |
-| `/eiac-campo:priorizar` | P4 | EX3 | vídeo | — |
-| `/eiac-campo:classificar` | P5 | EX3 | vídeo | — |
-| `/eiac-campo:operacionalizar` | P6 | EX3 | presencial ou remoto | P5 |
-| `/eiac-campo:governar` | P7 | **EX4 · decisão humana registrada** | — | P6 |
-| `/eiac-campo:pilotar` | P8 | EX3 | conforme nível | P7 |
-| `/eiac-campo:medir-valor` | P9 | EX3 | conforme nível | P8 |
-| `/eiac-campo:recalibrar` | P10 | **EX4 · decisão humana registrada, recorrente** | conforme nível | P9 |
-
-\* P3b não abre nem encerra sem um evento `SeloAplicado` posterior ao encerramento de P2 — declarado no playbook (`"exige_selo_apos": "P2"` em P3b), aplicado genericamente pelo núcleo (`playbook.selo_apos_etapa()`, usado por `guarda.py` na abertura e por `avancar.py` no encerramento). Ver "Verificação por estados do caso" abaixo.
-
-A camada de uma etapa desloca por nível (N1/N2/N3, CAT-01 §3.6) — a tabela acima mostra N2; `/eiac-nucleo:fronteira` mostra a camada real do caso aberto.
-
-**Sessão antes de encerrar:** o playbook do caso declara a exigência por
-camada em `encerramento_por_camada`. EX3 e EX4 exigem sessão humana
-registrada da própria etapa; EX1 e EX2 não. Em N2, isso inclui P3a, P3d,
-P4 e P5. O engenheiro registra a sessão no próprio terminal, enquanto a
-etapa for a corrente, usando o comando preparado por
-`/eiac-nucleo:registrar-sessao <etapa> <participantes>`, antes de chamar
-`/eiac-nucleo:encerrar <etapa>`. Etapa futura ou já encerrada não aceita
-sessão, e sessão de outra etapa não libera o encerramento.
-
-O núcleo resolve a camada pelo nível apurado e aplica essa declaração,
-mesmo se a habilidade nunca tiver sido carregada. A falta de sessão
-produz `TentativaNegada`, nomeando etapa, camada, nível e modalidade.
-Em P3b, a conferência da sessão vem antes da trava de selo de P2, que
-permanece exigida (decisões 024 e 021).
-
-E os comandos de núcleo, que valem em qualquer playbook:
-
-`/eiac-nucleo:estado` · `/eiac-nucleo:apurar-nivel` · `/eiac-nucleo:gravar` · `/eiac-nucleo:curar` · `/eiac-nucleo:registrar-sessao` · `/eiac-nucleo:registrar-campo` · `/eiac-nucleo:registrar-recorrencia` · `/eiac-nucleo:satisfazer-inegociavel` · `/eiac-nucleo:encerrar` · `/eiac-nucleo:emitir` · `/eiac-nucleo:selar` · `/eiac-nucleo:consultar` · `/eiac-nucleo:quadro` · `/eiac-nucleo:esforco` · `/eiac-nucleo:fronteira`
-
-## Campos da etapa e artefatos de emissão
-
-Antes de encerrar P5, prepare o comando de classificação confirmada
-pela pessoa e entregue ao engenheiro para executar no próprio terminal:
-
-```text
-/eiac-nucleo:registrar-campo P5 classificacao_tecnologica "agente"
-```
-
-O playbook declara os campos aceitos por etapa em `campos_registraveis` e a
-taxonomia em `valores`. No passo 5: `agente`, `caso isolado` ou
-`habilitador acoplado`. O registro só aceita a etapa corrente ainda aberta e
-autor pessoa nomeada; produz `CampoRegistrado`. Campo não declarado, valor
-fora da taxonomia, autor agente ou etapa incorreta produzem `TentativaNegada`.
-
-Cada entregável declara `artefato` e `comando_materializacao`. O núcleo recusa
-emissão sem o arquivo esperado, indicando seu caminho e `/eiac-campo:emitir`.
-Esse comando materializa a partir dos registros reais do caso. E3-D/E3-E
-compartilham `caso/entregaveis/E3.md`; `NAO_APLICAVEL` dispensa arquivo e fica
-registrado. Toda emissão autorizada guarda arquivo, versão e pessoa autora.
-
-Casos existentes atualizam explicitamente seu próprio playbook; não recebem
-essas declarações do plugin automaticamente.
-
-## Decisões humanas fora da sessão (A12)
-
-Toda chamada que chega à guarda é da sessão do agente. Informar um nome
-humano em `--autor` ou `--ator` não muda essa origem. O playbook declara
-`decisoes_humanas`, com script, argumento e condição de cada operação:
-
-| Operação | Quem executa |
-|---|---|
-| Apurar nível; registrar sessão/campo/recorrência; satisfazer inegociável | Engenheiro no próprio terminal |
-| Encerrar etapa em camada humana (EX3/EX4 no campo) | Engenheiro no próprio terminal |
-| Gravar autonomia decidida, operacional validado, piloto revisado, rotina ou decisão de recalibragem | Engenheiro no próprio terminal |
-| Gravar minuta/proposta/recomendação sem decisão; ler; validar asserção; curar; emitir | Agente pela sessão |
-
-O agente prepara os argumentos e entrega o comando com caminho absoluto
-real do script. O engenheiro o executa **no diretório do caso, fora da
-sessão do Claude Code**. Confirmação no chat não executa a decisão nem
-autoriza o agente a executá-la. A guarda recusa a chamada, registra
-`TentativaNegada` e devolve a operação e o comando exato.
-
-`inegociaveis.py --verificar` pode ser usado pelo agente; adicionar
-`--satisfazer` torna a operação humana. Os demais portões e exigências de
-sessão/selo continuam aplicados no terminal. A decisão 027 substitui a
-exceção de ator informado pelo agente da decisão 019.
-
-### Demonstração por caso sintético
-
-No próprio terminal:
+Exemplos de chamadas, com caminhos e identidade preenchidos pelo engenheiro:
 
 ```bash
-.projectdocs/demos/preparar-caso.sh controle-a12 P7
-cd /tmp/emcia-demos/controle-a12
-~/Projetos/emcia-marketplace/.projectdocs/demos/como-agente.sh 'python3 ~/Projetos/emcia-marketplace/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --autor "Celso do Vale" --participantes "X"'
+python3 eiac-campo/scripts/habilitacao.py iniciar --expediente /base/habilitacoes/HAB-0001 --id HAB-0001 --caso caso-0001 --responsavel "Nome Sobrenome"
+./novo-caso.sh caso-0001 /base/casos --responsavel "Nome Sobrenome" --expediente /base/habilitacoes/HAB-0001
+cd /base/casos/caso-0001
+python3 /checkout/emcia-marketplace/eiac-campo/scripts/canais.py planejar
+python3 /checkout/emcia-marketplace/eiac-campo/scripts/canais.py definir --entrada rascunho/canais.json
+python3 /checkout/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py --expediente /base/habilitacoes/HAB-0001
+python3 /checkout/emcia-marketplace/eiac-nucleo/scripts/validar.py --arquivo caso/00-habilitacao.md
+python3 /checkout/emcia-marketplace/eiac-nucleo/scripts/selar.py --nota "habilitação importada e conferida"
 ```
 
-O auxiliar deixa a etapa pedida corrente e registra as sessões exigidas,
-o selo, a classificação e os rascunhos conforme o percurso. OP-001 chega
-validado a P7 e AUT-001 fica proposto. A base pode ser escolhida com
-`EMCIA_DEMO_BASE`; o padrão é `/tmp/emcia-demos`. Um nome já existente é
-recusado. O auxiliar é executado pelo engenheiro no terminal.
+A declaração de canais é preparada e conferida antes de executar os exemplos;
+`planejar` não cria recursos nem grava ids. Destino padrão da abertura é
+`~/casos/<nome>`; a base opcional não pode estar dentro de repositório. O caso
+não nasce com remote. Configure a identidade Git para os commits.
 
-`como-agente.sh` envia a chamada simulada à guarda e imprime PERMITIDO ou
-NEGADO com o motivo; não executa o comando. Não cria nova permissão.
+Procedimentos: [HAB-01](eiac-campo/reference/metodo/EMCIA-HAB-01-protocolo-de-habilitacao.md),
+[CAN-01](eiac-campo/reference/metodo/EMCIA-CAN-01-protocolo-de-canais-externos.md) e
+[ROT-02](eiac-campo/reference/metodo/EMCIA-ROT-02-roteiro-de-habilitacao.md).
+O caminho canônico do roteiro é `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md`.
+Interfaces e entradas: [habilitação](eiac-campo/reference/habilitacao.md) e
+[canais](eiac-campo/reference/canais.md).
 
-## Verificação por estados do caso
+## Percurso e atos humanos
 
-A comparação entre o que a organização declarou e o que o levantamento presencial confirma não roda como execução externa: é interna ao mesmo caso. O estado declarado é selado ao fim de P2 (antes do levantamento presencial); P3b/P3d produzem o estado verificado. `/eiac-nucleo:quadro` cruza os dois — célula crítica vazia no estado declarado selado é o resultado esperado quando o levantamento presencial ainda não confirmou as regras de baixa frequência e alta consequência que os documentos não registram (CTX-01 §8).
+O template declara 13 etapas. A camada depende de N1/N2/N3; a tabela mostra N2.
+A tabela completa, com atos e produtos, é MAN-01 §3.3.
 
-P3b exige selo posterior ao encerramento de P2. O encerramento pelo
-engenheiro nomeia o selo que falta. Sessão e selo não autorizam o agente
-a carregar uma habilidade declarada não delegável (decisão 031).
-
-## Material público da etapa 0a
-
-O levantamento público sobre a organização e o setor, feito na etapa 0a do protocolo de habilitação (EMCIA-HAB-01, anterior a F0), **não entra no caso nesse momento**. Ele é coletado fora do repositório do caso e só é gravado depois da abertura (etapa 0d — caso aberto e selado), pelo caminho normal de curadoria (`/eiac-nucleo:curar` ou `/eiac-nucleo:gravar`, conforme o tipo de objeto), com marca `I · tipo_fonte: externa`, URL e limite da fonte explícitos — o mesmo formato que `eiac-campo/reference/procedencia.md` já define para qualquer inferência apoiada em fonte externa. Não há automatismo que grave esse material antes da abertura; é regra documental, não trava de código.
-
-## As três travas
-
-| Trava | Mecanismo | Onde |
+| Etapa | Comando do campo | Camada N2 |
 |---|---|---|
-| **T1 procedência** | Escrita direta em `caso/` negada; todo conteúdo passa pelo validador | `guarda.py` G2 + `validar.py` |
-| **T2 camada** | Habilidade de etapa não delegável não carrega; etapa dependente não abre; encerramento confere sessão conforme a camada declarada; decisão humana não executa pela sessão | `guarda.py` G1, G3 e G8 + `avancar.py` |
-| **T3 selo** | Commits do repositório do caso | Git |
+| F0 | enquadrar | EX1 |
+| P1 | mapear-contexto | EX2 |
+| P2 | mapear-fontes | EX2 |
+| P3a | medir | EX3 |
+| P3b | Sem comando delegável | EX4 |
+| P3d | confrontar | EX3 |
+| P4 | priorizar | EX3 |
+| P5 | classificar | EX3 |
+| P6 | operacionalizar | EX3 |
+| P7 | governar, para preparar a minuta | EX4 |
+| P8 | pilotar | EX3 |
+| P9 | medir-valor | EX3 |
+| P10 | recalibrar, para preparar recomendação | EX4 |
 
-## Testes negativos — faça no primeiro dia
+Use `/eiac-nucleo:estado` e `/eiac-nucleo:fronteira` na raiz do caso.
+Habilidade não delegável não carrega pela sessão, mesmo com sessão humana e
+selo. Camadas humanas exigem sessão da própria etapa para encerrar. Os produtos
+exigidos são conferidos no encerramento conforme o playbook.
 
-Antes de confiar em qualquer coisa, prove que ela recusa.
+Definir canais, importar expediente, registrar listagem, receber material,
+registrar entrega e vincular ou dispensar restrição são atos humanos no
+terminal. Também são humanos apuração do nível, sessão, campos, recorrência,
+inegociáveis, decisões dos registros e encerramento em EX3/EX4. O agente prepara
+os argumentos e entrega o comando com caminho absoluto. Confirmação no chat
+não autoriza executar esses atos pela sessão; a guarda recusa com evento.
 
-| # | Tente | Esperado |
-|---|---|---|
-| 1 | Ler `hb-levantar-regras/SKILL.md` durante um caso, sem sessão registrada | Bloqueio, `TentativaNegada` no log |
-| 2 | Escrever direto em `caso/qualquer.md` | Bloqueio, com instrução de usar o validador |
-| 3 | Gravar rascunho com asserção sem procedência D/I/V | Recusa, `AssercaoRecusada` no log |
-| 4 | `/eiac-nucleo:encerrar P3b` sem sessão registrada | Recusa |
-| 5 | `/eiac-nucleo:encerrar P3b` (ou ler `hb-levantar-regras/SKILL.md`) antes de selar após P2 | Recusa, nomeando o selo que falta |
-| 6 | `/eiac-nucleo:emitir E2` com etapas pendentes | Recusa, nomeando as etapas |
-| 7 | `--autor AG05` em qualquer script | Recusa (autoria efetiva vem de `responsavel`, não do argumento) |
+Em P2, o engenheiro usa `restricoes.py vincular --restricao RH-xx --fontes F-xxx`
+ou `dispensar --restricao RH-xx --motivo <motivo>`; o ato declarado chama-se
+`vincular-restricao`. Cada RH importado precisa estar vinculado a fonte curada
+ou dispensado com motivo para encerrar P2. Revisões preservam histórico e exigem
+`--nova-versao` com decisão explícita; fora de P2 só cabe revisar vínculo existente
+após P2 encerrada. Sem RH, a coleção vazia satisfaz a cobertura.
 
-**Se algum passar, a trava não existe.** Há relatos públicos de que o bloqueio por `exit 2` nem sempre funciona para `Write` e `Edit`, apenas para `Bash`. O teste 2 é o que confirma se isso afeta você — e se afetar, a regra G2 precisa ser reforçada por permissão `deny` além da hook.
+## Materiais, canais e emissão
 
-## Portões de emissão — E1 a E5
+Coletas são preparadas em `rascunho/entrada/`. O engenheiro registra listagem
+prévia limitada a contêiner declarado e executa `receber.py --arquivo <arquivo>
+--manifesto <json>`. O recebimento preserva bytes, hash e origem em
+`registro/recebimentos.json`, com id REC. `fontes/` só recebe material pela
+importação administrativa e por `receber.py`; não há cópia direta pelo agente.
 
-Os cinco entregáveis ao cliente têm portão fixo, sem pendência aberta de correspondência:
+A curadoria produz fontes F em `contexto/` a partir de rascunhos. Relações REC → F
+são explícitas. Consulte o instrumento canônico
+[EMCIA-CTX-01](eiac-campo/reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md).
+As duas cópias antigas foram retiradas por decisão humana registrada na emenda
+à decisão 021. Declaração recebida não se torna V automaticamente.
 
-| Entregável | Etapas exigidas |
+`/eiac-campo:emitir` materializa os registros; o núcleo confere portões, arquivo,
+versão e hash para a emissão. RH pendente bloqueia a materialização de E1–E5
+antes da escrita. Em caso restrito, E1 fica pendente até resolver RH em P2.
+Cada asserção afetada recebe RH, F, item negado, restrição e motivo no próprio
+ponto; não existe ressalva genérica que substitua esse vínculo.
+
+| Entregável | Portão |
 |---|---|
-| E1 — Ficha de enquadramento | F0 |
-| E2 — Diagnóstico e oportunidade | P1, P2, P3a, P3b, P3d |
-| E3 — Blueprint da solução (consolida E3-D + E3-E) | P4, P5 |
-| E4 — Guia operacional | P6, P7 |
-| E5 — Relatório de piloto e calibragem | P8, P9, P10 |
+| E1 | F0 |
+| E2 | P1, P2, P3a, P3b, P3d |
+| E3-D / E3-E | P4 / P5; E3-E segue a condição tecnológica declarada |
+| E4 | P6, P7 |
+| E5 | P8, P9, P10 |
 
-Cinco itens inegociáveis (um por entregável a partir de E2) bloqueiam emissão até estarem semanticamente satisfeitos — nunca por flag manual. Ver `eiac-campo/reference/gates.md` para o detalhamento completo, incluindo a distinção interna E3-D/E3-E.
+Inegociáveis e condições específicas continuam exigidos; veja
+[gates.md](eiac-campo/reference/gates.md). Após publicação confirmada no canal
+`entregas`, o engenheiro executa `entregar.py --entrada <json>`; confere versão,
+hash, emissão, arquivo e destino declarado. O registro não constitui aceite.
 
----
+Sessões podem ter referência Calendar, canal e marcador `[caso/etapa]`.
+No template a referência externa é opcional; o caso pode exigi-la por camada.
+Quando informada, ela sempre precisa corresponder ao canal e ao marcador.
 
-## Requisitos
+## Selos e guardas
 
-- Claude Code instalado
-- Python 3 no PATH. Nenhuma biblioteca externa é obrigatória — `quadro.py` usa PyYAML quando existe e cai num leitor mínimo quando não
-- Git, para o repositório do caso
+F0 exige importação selada; P3b exige selo após o último encerramento de P2.
+Ambos exigem confirmação no histórico Git, com nota, autoria e prefixo exato
+da trilha. A ordem é a posição dos eventos, sem comparação de timestamps.
+Git inacessível ou commit de selo recusado mantém a trava fechada. Um commit
+comum não confirma tentativa recusada. `estado` exibe o último selo confirmado.
 
-## Verificação pós-instalação
+O estado declarado selado ao fim de P2 é confrontado com o levantamento de
+P3b/P3d no mesmo caso. A execução independente de contraste foi retirada
+pela decisão 021. O aparato residual de isolamento permanece no código.
 
-Depois de instalar os dois plugins, rode em um caso recém-aberto:
+A guarda protege escrita em `caso/`, `contexto/`, `registro/` e `fontes/`, normaliza
+caminhos e inspeciona redirecionamentos. Os hooks MCP leem as regras de
+`registro/ferramentas-externas.json`: ids declarados, contêineres exclusivos e
+listagem registrada limitam leitura; provisionamento tem regra própria; escrita
+de material só vai a `entregas`. Ferramenta não declarada ou chamada incompatível
+recusa. Ajuste nomes e argumentos ao conector instalado, pelo terminal.
 
-```
-/eiac-nucleo:estado          deve mostrar etapa F0, camada EX1
-/eiac-nucleo:quadro          deve avisar que a célula crítica está vazia
-```
-
-E os sete testes negativos da seção anterior. **Se o teste 2 passar — escrita direta em `caso/` funcionando — a trava T1 não existe no seu ambiente**, e a saída é acrescentar uma regra de permissão `deny` sobre `caso/**` além da hook.
-
----
-
-## Atualização
-
-Com o marketplace no GitHub:
-
-```bash
-git commit -am "mensagem da mudança"
-git push
-```
-
-Do lado de quem usa:
-
-```
-/plugin marketplace update emcia
-```
-
-Para atualizar sozinho a cada sessão, ligue `autoUpdate` no marketplace.
-
-### Versionar é obrigatório
-
-Suba a versão no `plugin.json` a cada mudança de comportamento. Com o playbook sendo o método, **versão de plugin e versão de método são a mesma coisa** — e é isso que permite dizer, no relatório, qual versão produziu qual entregável.
-
-O CI recusa mudança em `eiac-nucleo/scripts/` sem que a versão do núcleo suba junto.
-
-### Caso aberto não é afetado
-
-O `playbook.json` vive no repositório do **caso**, copiado na abertura, não no plugin. Atualizar o plugin não muda o método de um caso em andamento.
-
-**Isso é decisão, não acaso.** Se alguém "consertar" isso fazendo o caso ler o playbook do plugin, um caso no P3 pode acordar com outra camada na etapa corrente.
-
-## Testes
+## Verificação e atualização
 
 ```bash
 bash testes/negativos.sh
+python3 testes/contexto.py
+python3 testes/metodo_empacotado.py
+python3 testes/manual_a25.py
+python3 testes/citacoes.py
 ```
 
-Rodam no CI a cada push. Falha é regressão de trava — conserte a trava, não o teste. A suíte acumulada (regressão + pacotes por ação) soma centenas de verificações; ver `testes/README.md` para o detalhamento por pacote.
+A suíte completa usa Python 3.12; módulos e contagens estão em
+[testes/README.md](testes/README.md). Negativa inesperadamente permitida é regressão
+de trava. As evidências deste pacote estão em
+[documentacao-operacional](.projectdocs/evidencias/documentacao-operacional/).
+Demonstrações sintéticas: `.projectdocs/demos/preparar-caso.sh`,
+`como-agente.sh` e `percurso-completo.sh`; este último congela o HEAD commitado.
 
-## Encerramento com produto e revisão humana (A14–A16)
-
-O encerramento confere sessão, dependências e selo, depois os produtos
-`produtos_encerramento` do playbook do caso: linha de base (P3a), classificação
-registrada (P5), OP validado (P6), AUT decidido (P7), conjunto revisado (P8),
-métrica de resultado apurada (P9) e rotina com responsável e cadência (P10).
-Produto ausente gera `TentativaNegada`, informa o que falta e preserva o estado.
-O portão do entregável continua sendo conferido na emissão.
-
-A revisão do piloto e a definição da rotina de calibragem também são atos
-humanos da lista `decisoes_humanas`. O agente prepara os rascunhos; o
-engenheiro os registra no próprio terminal, fora da sessão. Rascunho de
-piloto, medição de baseline/métrica e ciclo com recomendação sem decisão
-continuam permitidos. Um nome humano informado não libera a guarda.
-
-Pessoas exigem nome e sobrenome e nenhuma palavra coletiva, conforme
-`pessoa_nomeada` do playbook: equipe de TI, Time Comercial, Área de Vendas
-e Marina são recusados; Marina Prado é aceito. A regra vale também para
-campos nominais dos artefatos. Atualize explicitamente o playbook de casos
-existentes; o núcleo não consulta o template como alternativa.
-
-### Demonstração até P10
-
-Execute no terminal do engenheiro:
-
-```bash
-cd ~/Projetos/emcia-marketplace
-bash .projectdocs/demos/preparar-caso.sh controle-p10 P10
-```
-
-O caso fica em `/tmp/emcia-demos/controle-p10`, P10 corrente e N2. O auxiliar
-imprime o caminho e os rascunhos. Ao parar em P6/P7/P8, o rascunho da etapa
-tem versão incrementada e campos de decisão preenchidos: o engenheiro muda
-apenas estado para validado/decidido/revisado e executa o script indicado.
-As decisões das etapas anteriores são executadas no percurso sintético.
-Em P10, CAL-001 já está registrada; CAL-001-C01 tem drift e recomendação,
-sem decisão. O rascunho do ciclo tem versão 2 e campos humanos preenchidos:
-o engenheiro informa apenas decisao (recalibrar/expandir/descontinuar).
-
-## Fronteira da sessão e caminhos — Sprint 3, ação 3.7
-
-A guarda alcança Read, Skill, leitura de conteúdo por Bash/Grep e a invocação
-direta de habilidades pelo evento UserPromptExpansion. Uma habilidade com
-`delegavel: false` no playbook não carrega, mesmo após sessão humana e selo.
-O nome da habilidade identifica a etapa; a pasta da instalação não autoriza
-seu uso. Nas etapas delegáveis de camada humana, mantém-se o apoio após a
-sessão da própria etapa. Toda recusa produz TentativaNegada.
-
-Absolutos, relativos, `..` e links simbólicos passam pela mesma proteção de
-caso/, contexto/, registro/ e fontes/. Redirecionamentos de Bash são
-conferidos pelo destino: leitura com `2>/dev/null` e escrita em rascunho/
-continuam permitidas. A tentativa de carregar hb-levantar-regras é evento
-da guarda; não se escreve uma marca inválida de procedência em caso/.
-
-`/eiac-nucleo:estado` exibe o último selo confirmado pelo Git do caso, com
-hash, data e nota, inclusive no resumo. Essa apresentação não altera o
-arquivo de estado nem cria uma mudança após o selo.
-
-Versão desta correção: `v-sprint3-poc.6` (núcleo 0.2.32, campo 0.8.6).
-Decisões 031–035 e evidência em
-[correcao-A17-A21](.projectdocs/evidencias/sprint3/3.7/correcao-A17-A21/resultado.md).
-
-
-## Importação da habilitação
-
-O engenheiro importa o expediente no terminal, no diretório do caso, com
-`eiac-campo/scripts/importar_habilitacao.py --expediente <caminho>`.
-A operação prepara `rascunho/00-habilitacao.md` para validação e preserva
-os documentos assinados, evidências e matriz administrativa. Consulte a
-[interface de habilitação](eiac-campo/reference/habilitacao.md).
-
-Antes de carregar ou encerrar F0, o novo playbook exige `HabilitacaoImportada`
-e selo posterior confirmado pelo histórico Git, cujo commit contém a linha
-importada. Após a importação, grave o rascunho pelo validador e sele:
-
-```bash
-python3 /caminho/eiac-nucleo/scripts/validar.py --arquivo caso/00-habilitacao.md
-python3 /caminho/eiac-nucleo/scripts/selar.py --nota "habilitação importada e conferida"
-```
-
-Sem histórico acessível ou após falha no commit do selo, F0 continua bloqueado.
-Casos existentes conservam seu playbook; a mudança alcança novos casos.
-
-Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
-identificador reservado e responsável antes de criar o caso. A importação
-continua sendo uma operação humana separada:
-
-```bash
-/caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
-```
-
-A abertura sempre confere e copia o pacote controlado e seu manifesto SHA-256.
-`/eiac-nucleo:estado` informa a integridade da referência copiada, sem bloquear
-operações nem registrar eventos. Alterações no manifesto do caso também ficam
-visíveis na trilha Git; o diagnóstico não autentica a origem do manifesto.
-Recusas antes de existir caso emitem TentativaNegada em JSON no stderr e, se a
-base já existir fora de repositórios, preservam `.emcia-abertura-eventos.jsonl`.
-Não se cria um caso ou base apenas para registrar uma negativa. Falhas de
-identidade no bootstrap não inventam autor humano.
-
-**Restrição nos entregáveis:** quando o desfecho é “prosseguir com restrição”,
-a materialização exige um vínculo determinístico com o item afetado. Os registros
-atuais ainda não declaram esse vínculo; E1–E5 recusam a materialização com
-TentativaNegada e os ids RH-xx sem destino, preservando a versão anterior.
-A habilitação pode prosseguir, mas a emissão fica bloqueada até resolver essa
-lacuna de método. O pacote D está parcial, conforme decisão 039; não há ressalva
-genérica nem mapeamento por interpretação de texto.
+Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso exige
+decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
+do playbook e versão do manifesto são registradas separadamente. Mudança em
+scripts do núcleo exige incremento da versão do núcleo; nesta revisão apenas
+campo e documentação foram alterados.
