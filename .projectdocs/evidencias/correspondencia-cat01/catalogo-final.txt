@@ -1,0 +1,16 @@
+test_00_catalogo_corresponde_ao_canonico (__main__.CatalogoCAT01.test_00_catalogo_corresponde_ao_canonico) ... ok
+test_01_negativa_de_cada_campo_literal (__main__.CatalogoCAT01.test_01_negativa_de_cada_campo_literal) ... ok
+test_02_correspondencia_divergente (__main__.CatalogoCAT01.test_02_correspondencia_divergente) ... ok
+test_03_frontmatter_divergente (__main__.CatalogoCAT01.test_03_frontmatter_divergente) ... ok
+test_04_hb_sem_etapa (__main__.CatalogoCAT01.test_04_hb_sem_etapa) ... ok
+test_05_skill_mistura_agentes (__main__.CatalogoCAT01.test_05_skill_mistura_agentes) ... ok
+test_06_hb_superior_a_etapa_em_um_nivel (__main__.CatalogoCAT01.test_06_hb_superior_a_etapa_em_um_nivel) ... ok
+test_07_monitoramento_de_p10_respeita_camada (__main__.CatalogoCAT01.test_07_monitoramento_de_p10_respeita_camada) ... ok
+test_08_hb09_fora_de_p3d (__main__.CatalogoCAT01.test_08_hb09_fora_de_p3d) ... ok
+test_09_ato_ausente (__main__.CatalogoCAT01.test_09_ato_ausente) ... ok
+test_10_produto_ausente (__main__.CatalogoCAT01.test_10_produto_ausente) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.022s
+
+OK

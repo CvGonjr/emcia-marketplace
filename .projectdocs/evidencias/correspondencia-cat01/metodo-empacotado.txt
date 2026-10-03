@@ -1,0 +1,2 @@
+origem controlada: 989e1e73796a356b660be8ed55b686ba716787ac; comparação Git: True
+metodo empacotado: 21 documentos, hashes validos, nenhuma copia no contraste

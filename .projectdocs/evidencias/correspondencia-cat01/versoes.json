@@ -1,0 +1,18 @@
+{
+  "python": "3.12.12",
+  "implementacao": "5469ec2599a5fa5a8dac8c127abd6ffd01047d0b",
+  "canonico": "989e1e73796a356b660be8ed55b686ba716787ac",
+  "nucleo": "0.2.45",
+  "campo": "0.8.23",
+  "playbook": "0.4.19",
+  "manifesto": 5,
+  "documentos": 21,
+  "regressao": {
+    "inicial": 926,
+    "final": 958,
+    "modulos_iniciais": 47,
+    "modulos_finais": 49,
+    "falhas": 0,
+    "exclusoes": []
+  }
+}

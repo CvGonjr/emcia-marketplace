@@ -1,0 +1,25 @@
+test_00_f0_sem_decisao_recusa (__main__.Prosseguimento.test_00_f0_sem_decisao_recusa) ... ok
+test_01_sessao_recusa_e_devolve_comando_exato (__main__.Prosseguimento.test_01_sessao_recusa_e_devolve_comando_exato) ... ok
+test_02_cada_campo_obrigatorio_recusa (__main__.Prosseguimento.test_02_cada_campo_obrigatorio_recusa) ... ok
+test_03_nome_de_agente_recusa (__main__.Prosseguimento.test_03_nome_de_agente_recusa) ... ok
+test_04_nome_coletivo_recusa (__main__.Prosseguimento.test_04_nome_coletivo_recusa) ... ok
+test_05_desfecho_inexistente_recusa (__main__.Prosseguimento.test_05_desfecho_inexistente_recusa) ... ok
+test_06_data_impossivel_recusa (__main__.Prosseguimento.test_06_data_impossivel_recusa) ... ok
+test_07_ficha_ausente_recusa (__main__.Prosseguimento.test_07_ficha_ausente_recusa) ... ok
+test_08_ficha_fora_do_caso_recusa (__main__.Prosseguimento.test_08_ficha_fora_do_caso_recusa) ... ok
+test_09_sobrescrita_recusa (__main__.Prosseguimento.test_09_sobrescrita_recusa) ... ok
+test_10_adulteracao_do_vigente_recusa (__main__.Prosseguimento.test_10_adulteracao_do_vigente_recusa) ... ok
+test_11_vigente_negativo_nao_usa_positivo_anterior (__main__.Prosseguimento.test_11_vigente_negativo_nao_usa_positivo_anterior) ... ok
+test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1 (__main__.Prosseguimento.test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1) ... ok
+test_13_nova_decisao_libera_e_preserva_anterior (__main__.Prosseguimento.test_13_nova_decisao_libera_e_preserva_anterior) ... ok
+test_14_e1_materializa_os_dois_desfechos (__main__.Prosseguimento.test_14_e1_materializa_os_dois_desfechos) ... ok
+test_15_caso_anterior_conserva_contrato (__main__.Prosseguimento.test_15_caso_anterior_conserva_contrato) ... ok
+test_16_decisao_negativa_bloqueia_registro_de_sessao_seguinte (__main__.Prosseguimento.test_16_decisao_negativa_bloqueia_registro_de_sessao_seguinte) ... ok
+test_17_produto_sintetico_sem_evento_nao_libera (__main__.Prosseguimento.test_17_produto_sintetico_sem_evento_nao_libera) ... ok
+test_18_motivo_vazio_recusa (__main__.Prosseguimento.test_18_motivo_vazio_recusa) ... ok
+test_19_e1_sem_decisao_recusa_com_evento (__main__.Prosseguimento.test_19_e1_sem_decisao_recusa_com_evento) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 9.097s
+
+OK

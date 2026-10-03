@@ -1,0 +1,10 @@
+{
+  "conferir": [],
+  "produto_F0": "Decisão de prosseguimento registrada",
+  "contrato": "em memória",
+  "desfechos": [
+    "prosseguir",
+    "não prosseguir"
+  ],
+  "antes_do_commit_canonico": true
+}

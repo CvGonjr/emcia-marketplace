@@ -1,0 +1,35 @@
+commit 989e1e73796a356b660be8ed55b686ba716787ac
+Author:     cgnjr <dovalecelso@gmail.com>
+AuthorDate: Sat Oct 3 13:41:00 2026 -0300
+Commit:     cgnjr <dovalecelso@gmail.com>
+CommitDate: Sat Oct 3 13:41:00 2026 -0300
+
+    docs(EMCIA-MAN-01): v0.4 — alinhar produto de F0 à decisão de prosseguimento
+
+diff --git a/EMCIA-MAN-01-manual-de-aplicacao.md b/EMCIA-MAN-01-manual-de-aplicacao.md
+index b493953..7f89a79 100644
+--- a/EMCIA-MAN-01-manual-de-aplicacao.md
++++ b/EMCIA-MAN-01-manual-de-aplicacao.md
+@@ -3,7 +3,7 @@
+ 
+ | Metadado | Valor | Metadado | Valor |
+ | :--- | :--- | :--- | :--- |
+-| **Código** | EMCIA-MAN-01 | **Versão** | 0.3 |
++| **Código** | EMCIA-MAN-01 | **Versão** | 0.4 |
+ | **Data** | 2026-10 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Todas | **Passo** | Todos |
+@@ -57,7 +57,7 @@ Para cada etapa: o comando que o agente executa, os atos que só o engenheiro ex
+ 
+ | Etapa | Camada N1 · N2 · N3 | Comando do agente | Ato do engenheiro | Produto conferido pelo Estúdio | Entregável |
+ | :--- | :--- | :--- | :--- | :--- | :--- |
+-| F0 | EX1 · EX1 · EX1 | `/eiac-campo:enquadrar` | `apurar-nivel`, `decidir-prosseguimento` | — | E1 |
++| F0 | EX1 · EX1 · EX1 | `/eiac-campo:enquadrar` | `apurar-nivel`, `decidir-prosseguimento` | Decisão de prosseguimento registrada | E1 |
+ | P1 | EX2 · EX2 · EX3 | `/eiac-campo:mapear-contexto` | `encerrar-camada-humana` (N3) | — | E2 |
+ | P2 | EX2 · EX2 · EX3 | `/eiac-campo:mapear-fontes` | `vincular-restricao`, `encerrar-camada-humana` (N3) | Todos os RH-xx vinculados a fontes ou dispensados com motivo | E2 |
+ | P3a | EX2 · EX3 · EX3 | `/eiac-campo:medir` | `registrar-sessao`, `encerrar-camada-humana` (N2, N3) | Linha de base registrada | E2 |
+@@ -129,3 +129,4 @@ EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-
+ | 0.1 | 01/10/2026 | Celso do Vale | Versão inicial, conferida contra o playbook 0.4.9 (ação 4.5); substitui o Guia do Engenheiro de Campo | — |
+ | 0.2 | 2026-10 | Celso do Vale | Operação das decisões 039–042 e playbook 0.4.18; canais antes ou junto da importação, RH em P2, fronteira externa e limites próprios. Validação autorizada em checkout temporário, sem alterar código: conferir() do A25 retornou lista vazia e os quatro testes negativos passaram; dispensada a expectativa histórica de lacunas do manual v0.1 | pendente |
+ | 0.3 | 2026-10 | Celso do Vale | Ato humano decidir-prosseguimento em F0 nas seções 3.3 e 3.4, como condição de encerramento baseada na ficha E1; retirada desse item dos limites de 3.6; correspondência canônica de HBs no CAT-01 v0.5, sem manter lacunas da decisão 020 como indefinição de método. Validação sem alterar código: conferir() do A25 contra o playbook 0.4.18 retornou somente “F0: ato decidir-prosseguimento não declarado”; os quatro testes negativos passaram. Divergência dependente da implementação no marketplace; lista vazia exigida após essa implementação | pendente |
++| 0.4 | 2026-10 | Celso do Vale | produto de F0 alinhado ao contrato de decidir-prosseguimento | pendente |

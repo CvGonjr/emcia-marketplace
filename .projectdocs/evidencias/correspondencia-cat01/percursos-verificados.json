@@ -1,0 +1,26 @@
+[
+  {
+    "caso": "cat01-integral",
+    "fonte": "5469ec2599a5fa5a8dac8c127abd6ffd01047d0b",
+    "etapas_encerradas": 13,
+    "selo_P2": "6167a1f0e221ee54938fc4a55089ca56c5078397",
+    "mapa_candidato": "- [I · premissa: etapa recebimento declarada em 6167a1f0e221ee54938fc4a55089ca56c5078397 · Celso do Vale] Candidato MV-001 para P4: organizar a fila de controle fictícia.",
+    "estado_declarado_sha256": "1491543e64a74934565f837922c0965c1fe7c2286d22ec92883fa3315d9d084b",
+    "decisoes_prosseguimento": 1,
+    "decisao_materializada_E1": true,
+    "tentativas_negadas": 0,
+    "invocacoes_diretas": 72
+  },
+  {
+    "caso": "cat01-restrita",
+    "fonte": "5469ec2599a5fa5a8dac8c127abd6ffd01047d0b",
+    "etapas_encerradas": 13,
+    "selo_P2": "8a4eb495b606c41195c50b71e13f4325f10ad661",
+    "mapa_candidato": "- [I · premissa: etapa recebimento declarada em 8a4eb495b606c41195c50b71e13f4325f10ad661 · Celso do Vale] Candidato MV-001 para P4: organizar a fila de controle fictícia.",
+    "estado_declarado_sha256": "1491543e64a74934565f837922c0965c1fe7c2286d22ec92883fa3315d9d084b",
+    "decisoes_prosseguimento": 1,
+    "decisao_materializada_E1": true,
+    "tentativas_negadas": 0,
+    "invocacoes_diretas": 71
+  }
+]

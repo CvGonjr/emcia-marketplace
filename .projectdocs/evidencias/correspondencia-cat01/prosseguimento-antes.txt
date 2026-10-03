@@ -1,0 +1,229 @@
+test_00_f0_sem_decisao_recusa (__main__.Prosseguimento.test_00_f0_sem_decisao_recusa) ... ERROR
+test_01_sessao_recusa_e_devolve_comando_exato (__main__.Prosseguimento.test_01_sessao_recusa_e_devolve_comando_exato) ... ERROR
+test_02_cada_campo_obrigatorio_recusa (__main__.Prosseguimento.test_02_cada_campo_obrigatorio_recusa) ... ERROR
+test_03_nome_de_agente_recusa (__main__.Prosseguimento.test_03_nome_de_agente_recusa) ... ERROR
+test_04_nome_coletivo_recusa (__main__.Prosseguimento.test_04_nome_coletivo_recusa) ... ERROR
+test_05_desfecho_inexistente_recusa (__main__.Prosseguimento.test_05_desfecho_inexistente_recusa) ... ERROR
+test_06_data_impossivel_recusa (__main__.Prosseguimento.test_06_data_impossivel_recusa) ... ERROR
+test_07_ficha_ausente_recusa (__main__.Prosseguimento.test_07_ficha_ausente_recusa) ... ERROR
+test_08_ficha_fora_do_caso_recusa (__main__.Prosseguimento.test_08_ficha_fora_do_caso_recusa) ... ERROR
+test_09_sobrescrita_recusa (__main__.Prosseguimento.test_09_sobrescrita_recusa) ... ERROR
+test_10_adulteracao_do_vigente_recusa (__main__.Prosseguimento.test_10_adulteracao_do_vigente_recusa) ... ERROR
+test_11_vigente_negativo_nao_usa_positivo_anterior (__main__.Prosseguimento.test_11_vigente_negativo_nao_usa_positivo_anterior) ... ERROR
+test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1 (__main__.Prosseguimento.test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1) ... ERROR
+test_13_nova_decisao_libera_e_preserva_anterior (__main__.Prosseguimento.test_13_nova_decisao_libera_e_preserva_anterior) ... ERROR
+test_14_e1_materializa_os_dois_desfechos (__main__.Prosseguimento.test_14_e1_materializa_os_dois_desfechos) ... ERROR
+test_15_caso_anterior_conserva_contrato (__main__.Prosseguimento.test_15_caso_anterior_conserva_contrato) ... ERROR
+
+======================================================================
+ERROR: test_00_f0_sem_decisao_recusa (__main__.Prosseguimento.test_00_f0_sem_decisao_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_01_sessao_recusa_e_devolve_comando_exato (__main__.Prosseguimento.test_01_sessao_recusa_e_devolve_comando_exato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_02_cada_campo_obrigatorio_recusa (__main__.Prosseguimento.test_02_cada_campo_obrigatorio_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_03_nome_de_agente_recusa (__main__.Prosseguimento.test_03_nome_de_agente_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_04_nome_coletivo_recusa (__main__.Prosseguimento.test_04_nome_coletivo_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_05_desfecho_inexistente_recusa (__main__.Prosseguimento.test_05_desfecho_inexistente_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_06_data_impossivel_recusa (__main__.Prosseguimento.test_06_data_impossivel_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_07_ficha_ausente_recusa (__main__.Prosseguimento.test_07_ficha_ausente_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_08_ficha_fora_do_caso_recusa (__main__.Prosseguimento.test_08_ficha_fora_do_caso_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_09_sobrescrita_recusa (__main__.Prosseguimento.test_09_sobrescrita_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_10_adulteracao_do_vigente_recusa (__main__.Prosseguimento.test_10_adulteracao_do_vigente_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_11_vigente_negativo_nao_usa_positivo_anterior (__main__.Prosseguimento.test_11_vigente_negativo_nao_usa_positivo_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1 (__main__.Prosseguimento.test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_13_nova_decisao_libera_e_preserva_anterior (__main__.Prosseguimento.test_13_nova_decisao_libera_e_preserva_anterior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_14_e1_materializa_os_dois_desfechos (__main__.Prosseguimento.test_14_e1_materializa_os_dois_desfechos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+======================================================================
+ERROR: test_15_caso_anterior_conserva_contrato (__main__.Prosseguimento.test_15_caso_anterior_conserva_contrato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/prosseguimento.py", line 25, in setUp
+    preparar(self.caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/habilitacao_0d.py", line 71, in preparar
+    definir(caso)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/apoio/canais.py", line 39, in definir
+    raise RuntimeError(r.stderr)
+RuntimeError: Recusado: etapa F0: contrato de produto de arquivo invalido
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.990s
+
+FAILED (errors=16)

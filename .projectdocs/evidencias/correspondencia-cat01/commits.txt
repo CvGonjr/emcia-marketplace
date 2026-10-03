@@ -1,0 +1,10 @@
+Commits de implementação e documentação, antes do commit desta evidência:
+a3c3052cdbdcdf55d9ff6a528bc2f7636cd983f2 test(cat01): exigir catálogo canônico e contrato de prosseguimento
+5450ef10f2a27b7dd8e52a6fbfe4547eb404b8cf feat(cat01): regenerar HBs e agentes a partir do Anexo A
+a21ba57cb9ef2fd54110dfa63b6ad1093df8499f feat(campo): alinhar habilidades e etapas ao CAT-01 v0.5
+54c1e73fe52f150a3d59ea6180173d7cc32b1f2d feat(campo): registrar decisão humana e bloquear continuidade negativa
+d96fdc3da7cbf3260d59abc031aadad621549e83 fix(campo): declarar P3b sem HB e sem autoria por agente
+83f695b0c599ed5f4e6be78852cbd2892b43ca42 docs(decisao): registrar 043 e superar correspondência provisória da 020
+3306add880de7d06b039f68e6b636256d71a3029 test(campo): atualizar fixtures e percursos sintéticos para decisão de F0
+693a99973e096551611ac2ed91b77abde6287ce5 build(metodo): reempacotar 989e1e7 com MAN-01 v0.4 e validar remissões
+5469ec2599a5fa5a8dac8c127abd6ffd01047d0b docs(operacao): atualizar versões, limites e inventário de testes

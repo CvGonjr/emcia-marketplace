@@ -1,0 +1,19 @@
+{
+  "commit_canonico": "2cf4ebd913b7a4de2ca7f5a2322a991bc69c1cbe",
+  "linha_F0_canonica": {
+    "etapa": "F0",
+    "camadas": "EX1 · EX1 · EX1",
+    "comando": "`/eiac-campo:enquadrar`",
+    "atos": "`apurar-nivel`, `decidir-prosseguimento`",
+    "produto": "—",
+    "entregavel": "E1"
+  },
+  "playbook_atual": [
+    "F0: ato decidir-prosseguimento não declarado"
+  ],
+  "somente_ato_declarado": [],
+  "ato_e_produto_exigidos_pelo_pedido": [
+    "F0: produto diferente da descrição do playbook"
+  ],
+  "nota": "Contrato candidato somente em memória, para verificar a compatibilidade documental antes da implementação. Nenhum playbook foi alterado."
+}

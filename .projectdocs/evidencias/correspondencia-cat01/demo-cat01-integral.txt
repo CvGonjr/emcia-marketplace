@@ -1,0 +1,441 @@
+[01 · infraestrutura] $ git rev-parse --verify 'HEAD^{commit}'
+5469ec2599a5fa5a8dac8c127abd6ffd01047d0b
+Versão congelada: HEAD / 5469ec2599a5fa5a8dac8c127abd6ffd01047d0b
+[02 · infraestrutura] $ git worktree add --detach /tmp/emcia-percurso-v7-9wyhd5xw/fonte HEAD
+HEAD is now at 5469ec2 docs(operacao): atualizar versões, limites e inventário de testes
+Preparing worktree (detached HEAD 5469ec2)
+[03 · percurso] $ bash /tmp/emcia-percurso-v7-9wyhd5xw/fonte/novo-caso.sh cat01-integral --responsavel 'Celso do Vale' /tmp/emcia-cat01-demos-20261003
+caso "cat01-integral" criado em /tmp/emcia-cat01-demos-20261003/cat01-integral
+Método copiado e SHA-256 conferido; manifesto preservado.
+Importe a habilitação no terminal, grave o rascunho pelo validador e sele antes de F0.
+Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.
+[04 · percurso] $ git config user.name 'Celso do Vale'
+[05 · percurso] $ git config user.email controle@exemplo.com
+[06 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/canais.py definir --entrada /tmp/emcia-cat01-demos-20261003/cat01-integral/rascunho/canais-sinteticos.json
+{
+  "versao": 1,
+  "caso": "cat01-integral",
+  "decidido_por": "Celso do Vale",
+  "data": "2026-10-03",
+  "canais": [
+    {
+      "finalidade": "habilitacao",
+      "ferramenta": "tally",
+      "direcao": "entrada",
+      "etapas": [
+        "F0"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "workspace_id": "SINTETICO-habilitacao-workspace_id",
+        "formulario_id": "SINTETICO-habilitacao-formulario_id"
+      },
+      "filtro": {
+        "campo": "caso",
+        "valor": "cat01-integral"
+      },
+      "marcador": null
+    },
+    {
+      "finalidade": "triagem",
+      "ferramenta": "tally",
+      "direcao": "entrada",
+      "etapas": [
+        "F0"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "workspace_id": "SINTETICO-triagem-workspace_id",
+        "formulario_id": "SINTETICO-triagem-formulario_id"
+      },
+      "filtro": {
+        "campo": "caso",
+        "valor": "cat01-integral"
+      },
+      "marcador": null
+    },
+    {
+      "finalidade": "documentos",
+      "ferramenta": "drive",
+      "direcao": "entrada",
+      "etapas": [
+        "P2"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "drive_id": "SINTETICO-documentos-drive_id",
+        "pasta_id": "SINTETICO-documentos-pasta_id"
+      },
+      "filtro": null,
+      "marcador": null
+    },
+    {
+      "finalidade": "amostras",
+      "ferramenta": "drive",
+      "direcao": "entrada",
+      "etapas": [
+        "P3a",
+        "P9"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "drive_id": "SINTETICO-amostras-drive_id",
+        "pasta_id": "SINTETICO-amostras-pasta_id"
+      },
+      "filtro": null,
+      "marcador": null
+    },
+    {
+      "finalidade": "entregas",
+      "ferramenta": "drive",
+      "direcao": "saida",
+      "etapas": [],
+      "entregaveis": [
+        "E1",
+        "E2",
+        "E3-D",
+        "E3-E",
+        "E4",
+        "E5"
+      ],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "drive_id": "SINTETICO-entregas-drive_id",
+        "pasta_id": "SINTETICO-entregas-pasta_id"
+      },
+      "filtro": null,
+      "marcador": null
+    },
+    {
+      "finalidade": "trabalho-interno",
+      "ferramenta": "drive",
+      "direcao": "entrada",
+      "etapas": [],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "drive_id": "SINTETICO-trabalho-interno-drive_id",
+        "pasta_id": "SINTETICO-trabalho-interno-pasta_id"
+      },
+      "filtro": null,
+      "marcador": null
+    },
+    {
+      "finalidade": "sessoes",
+      "ferramenta": "calendar",
+      "direcao": "agenda",
+      "etapas": [
+        "F0",
+        "P1",
+        "P2",
+        "P3a",
+        "P3b",
+        "P3d",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8",
+        "P9",
+        "P10"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "calendario_id": "SINTETICO-sessoes-calendario_id"
+      },
+      "filtro": null,
+      "marcador": "[{caso}/{etapa}]"
+    },
+    {
+      "finalidade": "ciclo",
+      "ferramenta": "tally",
+      "direcao": "entrada",
+      "etapas": [
+        "P10"
+      ],
+      "entregaveis": [],
+      "proprietario": "emcia",
+      "acesso_cliente": "nenhum",
+      "sensivel": true,
+      "ids": {
+        "workspace_id": "SINTETICO-ciclo-workspace_id",
+        "formulario_id": "SINTETICO-ciclo-formulario_id"
+      },
+      "filtro": {
+        "campo": "caso",
+        "valor": "cat01-integral"
+      },
+      "marcador": null
+    }
+  ]
+}
+[07 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/importar_habilitacao.py --expediente /tmp/emcia-habilitacao-demo-k4s7e5e7/expediente
+{
+  "id": "importacao-001-2026-10-03",
+  "habilitacao": "HAB-CONTROLE",
+  "caso_reservado": "cat01-integral",
+  "expediente": "/tmp/emcia-habilitacao-demo-k4s7e5e7/expediente",
+  "expediente_sha256": "58128d37ec350a6a0abd3d1d7ac89073a72c84b65d052e3b6a36cd27b46dac86",
+  "desfecho": "prosseguir",
+  "patrocinador": "Pessoa Patrocinadora",
+  "executor": "Pessoa Executora",
+  "data_sessao": "2026-10-15",
+  "restricoes": [],
+  "arquivos": {
+    "HAB-01-assinado.pdf": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-01-assinado.pdf",
+      "sha256": "05a74737a920e1f5472e71231bdb97250ff067a5ca23f461837b4cb416fd6dcd"
+    },
+    "HAB-01-evidencia.bin": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-01-evidencia.bin",
+      "sha256": "3394c3186c9459cc2eae3c65cb20b0fe568608e9b13c232186ff6b2dfbf03b0d"
+    },
+    "HAB-02-assinado.pdf": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-02-assinado.pdf",
+      "sha256": "05a74737a920e1f5472e71231bdb97250ff067a5ca23f461837b4cb416fd6dcd"
+    },
+    "HAB-02-evidencia.bin": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-02-evidencia.bin",
+      "sha256": "3394c3186c9459cc2eae3c65cb20b0fe568608e9b13c232186ff6b2dfbf03b0d"
+    },
+    "HAB-03-assinado.pdf": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-03-assinado.pdf",
+      "sha256": "05a74737a920e1f5472e71231bdb97250ff067a5ca23f461837b4cb416fd6dcd"
+    },
+    "HAB-03-evidencia.bin": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/HAB-03-evidencia.bin",
+      "sha256": "3394c3186c9459cc2eae3c65cb20b0fe568608e9b13c232186ff6b2dfbf03b0d"
+    },
+    "matriz-de-acessos.json": {
+      "caminho": "fontes/habilitacao/importacao-001-2026-10-03/matriz-de-acessos.json",
+      "sha256": "cc64729ff1c359cbdf2a779b1f988d5ff7aaf0e16060ae8a67f5e8e3fab4b580"
+    }
+  },
+  "autor": "Celso do Vale",
+  "data": "2026-10-03T17:14:59.068735+00:00",
+  "decisao_reimportacao": null
+}
+[08 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/validar.py --arquivo caso/00-habilitacao.md
+6 assercoes gravadas em caso/00-habilitacao.md | documentos: habilitacao/importacao-001-2026-10-03/HAB-01-assinado.pdf, habilitacao/importacao-001-2026-10-03/HAB-02-assinado.pdf, habilitacao/importacao-001-2026-10-03/HAB-03-assinado.pdf, habilitacao/importacao-001-2026-10-03/matriz-de-acessos.json
+[09 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --nota 'habilitação sintética importada e conferida'
+selado 5b5e190 | 9 arquivo(s) | autor Celso do Vale
+[10 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --apurar-nivel N2 --eixos 'DAD 5, GOV 3, CRI 6' --autor 'Celso do Vale'
+ok | etapa atual: F0 | camada: EX1
+[11 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/validar.py --arquivo caso/E1-ficha.md
+1 assercoes gravadas em caso/E1-ficha.md
+[12 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/prosseguimento.py --entrada rascunho/prosseguimento.json
+{
+  "versao": 1,
+  "decisor": "Celso do Vale",
+  "data": "2026-10-03",
+  "desfecho": "prosseguir",
+  "motivo": "Prosseguimento exclusivamente sintético decidido no terminal",
+  "ficha": "caso/E1-ficha.md",
+  "autor": "Celso do Vale",
+  "ficha_sha256": "4e41f7ca085fef3167a7908e4bb0043340204d1ec89947d4ddb37a552b5615d1"
+}
+[13 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar F0 --autor 'Celso do Vale'
+ok | etapa atual: P1 | camada: EX2
+[14 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/entregaveis.py --renderizar E1 --emitir --autor 'Celso do Vale'
+E1 renderizado: caso/entregaveis/E1.md
+E1: ok | etapa atual: P1 | camada: EX2
+[15 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F0'
+selado 2a6aff9 | 7 arquivo(s) | autor Celso do Vale
+[16 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P1 --autor 'Celso do Vale'
+ok | etapa atual: P2 | camada: EX2
+[17 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/validar.py --arquivo caso/P2-estado-declarado.md
+1 assercoes gravadas em caso/P2-estado-declarado.md
+[18 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P2 --autor 'Celso do Vale'
+ok | etapa atual: P3a | camada: EX3
+[19 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'estado declarado depois de P2'
+selado 6167a1f | 4 arquivo(s) | autor Celso do Vale
+[20 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/baseline.py --arquivo registro/baseline/BL-001.yaml --ator 'Celso do Vale'
+linha de base gravada: registro/baseline/BL-001.yaml
+[21 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/inegociaveis.py --verificar 1 --arquivo registro/baseline/BL-001.yaml --satisfazer --autor 'Celso do Vale'
+I1 | satisfeito=True | linha de base 'BL-001' registrada em 2026-10-03 (apuracao medido, nivel N2)
+ok | etapa atual: P3a | camada: EX3
+[22 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3a --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3a | camada: EX3
+[23 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3a --autor 'Celso do Vale'
+ok | etapa atual: P3b | camada: EX4
+[24 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3b --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3b | camada: EX4
+[25 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3b --autor 'Celso do Vale'
+ok | etapa atual: P3d | camada: EX3
+[26 · percurso] $ git rev-parse HEAD
+6167a1f0e221ee54938fc4a55089ca56c5078397
+[27 · percurso] $ git show 6167a1f0e221ee54938fc4a55089ca56c5078397:caso/P2-estado-declarado.md
+- [D · Celso do Vale] Etapa recebimento: pedido fictício chega à fila de controle.
+[28 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/validar.py --arquivo caso/P3d-mapa-valor.md
+1 assercoes gravadas em caso/P3d-mapa-valor.md
+[29 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P3d --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P3d | camada: EX3
+[30 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P3d --autor 'Celso do Vale'
+ok | etapa atual: P4 | camada: EX3
+[31 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/entregaveis.py --renderizar E2 --emitir --autor 'Celso do Vale'
+E2 renderizado: caso/entregaveis/E2.md
+E2: ok | etapa atual: P4 | camada: EX3
+[32 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F1'
+selado 25942db | 7 arquivo(s) | autor Celso do Vale
+[33 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P4 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P4 | camada: EX3
+[34 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P4 --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[35 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-campo P5 --campo classificacao_tecnologica --valor agente --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[36 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P5 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P5 | camada: EX3
+[37 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P5 --autor 'Celso do Vale'
+ok | etapa atual: P6 | camada: EX3
+[38 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/entregaveis.py --renderizar E3 --emitir --autor 'Celso do Vale'
+E3 renderizado: caso/entregaveis/E3.md
+E3-D: ok | etapa atual: P6 | camada: EX3
+E3-E: ok | etapa atual: P6 | camada: EX3
+[39 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F2'
+selado 4332233 | 3 arquivo(s) | autor Celso do Vale
+[40 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator 'Celso do Vale'
+especificacao operacional gravada: registro/operacional/OP-001.yaml
+[41 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/operacional.py --arquivo registro/operacional/OP-001.yaml --ator 'Celso do Vale'
+especificacao operacional gravada: registro/operacional/OP-001.yaml
+[42 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P6 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P6 | camada: EX3
+[43 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P6 --autor 'Celso do Vale'
+ok | etapa atual: P7 | camada: EX4
+[44 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[45 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[46 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/governanca.py --arquivo registro/governanca/autonomia/AUT-001.yaml --ator 'Celso do Vale'
+termo de autonomia gravado: registro/governanca/autonomia/AUT-001.yaml
+[47 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor 'Celso do Vale'
+I2 | satisfeito=True | termo 'AUT-001' decidido por 'Celso do Vale' em 2026-10-03
+ok | etapa atual: P7 | camada: EX4
+[48 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P7 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P7 | camada: EX4
+[49 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P7 --autor 'Celso do Vale'
+ok | etapa atual: P8 | camada: EX3
+[50 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/entregaveis.py --renderizar E4 --emitir --autor 'Celso do Vale'
+E4 renderizado: caso/entregaveis/E4.md
+E4: ok | etapa atual: P8 | camada: EX3
+[51 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F3'
+selado 5345f31 | 7 arquivo(s) | autor Celso do Vale
+[52 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/piloto.py --arquivo registro/piloto/CT-001.yaml --ator 'Celso do Vale'
+conjunto de piloto gravado: registro/piloto/CT-001.yaml
+[53 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/piloto.py --arquivo registro/piloto/CT-001.yaml --ator 'Celso do Vale'
+conjunto de piloto gravado: registro/piloto/CT-001.yaml
+[54 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/inegociaveis.py --verificar 3 --arquivo registro/piloto/CT-001.yaml --satisfazer --autor 'Celso do Vale'
+I3 | satisfeito=True | conjunto 'CT-001' revisado com 1 caso(s), todos com saida esperada definida antes da execucao
+ok | etapa atual: P8 | camada: EX3
+[55 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P8 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P8 | camada: EX3
+[56 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P8 --autor 'Celso do Vale'
+ok | etapa atual: P9 | camada: EX3
+[57 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/metrica.py --arquivo registro/metricas/MET-001.yaml --ator 'Celso do Vale'
+metrica gravada: registro/metricas/MET-001.yaml
+[58 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/metrica.py --arquivo registro/metricas/MET-001.yaml --ator 'Celso do Vale'
+metrica gravada: registro/metricas/MET-001.yaml
+[59 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/inegociaveis.py --verificar 4 --arquivo registro/metricas/MET-001.yaml --satisfazer --autor 'Celso do Vale'
+I4 | satisfeito=True | metrica de resultado 'MET-001' apurada: 8 minutos
+ok | etapa atual: P9 | camada: EX3
+[60 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P9 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P9 | camada: EX3
+[61 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P9 --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[62 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001.yaml --ator 'Celso do Vale'
+calibragem gravada: registro/calibragem/CAL-001.yaml
+[63 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001-C01.yaml --ator AG-04 --ciclo
+calibragem gravada: registro/calibragem/CAL-001-C01.yaml
+[64 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/calibragem.py --arquivo registro/calibragem/CAL-001-C01.yaml --ator 'Celso do Vale' --ciclo
+calibragem gravada: registro/calibragem/CAL-001-C01.yaml
+[65 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/inegociaveis.py --verificar 5 --arquivo registro/calibragem/CAL-001.yaml --satisfazer --autor 'Celso do Vale'
+I5 | satisfeito=True | responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal'
+ok | etapa atual: P10 | camada: EX4
+[66 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-sessao P10 --participantes 'Celso do Vale, Pessoa Cliente (controle sintético)' --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[67 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --encerrar P10 --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[68 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/avancar.py --registrar-recorrencia P10 --responsavel 'Marina Prado' --cadencia mensal --autor 'Celso do Vale'
+ok | etapa atual: P10 | camada: EX4
+[69 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-campo/scripts/entregaveis.py --renderizar E5 --emitir --autor 'Celso do Vale'
+E5 renderizado: caso/entregaveis/E5.md
+E5: ok | etapa atual: P10 | camada: EX4
+[70 · percurso] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /tmp/emcia-percurso-v7-9wyhd5xw/fonte/eiac-nucleo/scripts/selar.py --autor 'Celso do Vale' --nota 'fim da fase F4'
+selado 443a708 | 10 arquivo(s) | autor Celso do Vale
+[71 · resumo] $ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 /home/netiv-dn-1/Projetos/emcia-marketplace/.projectdocs/demos/resumo-percurso.py /tmp/emcia-cat01-demos-20261003/cat01-integral
+Caso: /tmp/emcia-cat01-demos-20261003/cat01-integral
+Nível: N2
+Versão do plugin — commits registrados nos eventos:
+  campo: 5469ec2599a5fa5a8dac8c127abd6ffd01047d0b (66 eventos)
+Etapas encerradas: 13/13
+  F0, P1, P2, P3a, P3b, P3d, P4, P5, P6, P7, P8, P9, P10
+Entregáveis emitidos: 5/5
+  E1 — E1: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E1.md, versão 1
+  E2 — E2: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E2.md, versão 1
+  E3 — E3-D: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E3.md, versão 1; E3-E: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E3.md, versão 1
+  E4 — E4: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E4.md, versão 1
+  E5 — E5: arquivo /tmp/emcia-cat01-demos-20261003/cat01-integral/caso/entregaveis/E5.md, versão 1
+Inegociáveis satisfeitos: 5/5
+  I1: inegociaveis.verificar_i1 :: linha de base 'BL-001' registrada em 2026-10-03 (apuracao medido, nivel N2) (ref: registro/baseline/BL-001.yaml)
+  I2: inegociaveis.verificar_i2 :: termo 'AUT-001' decidido por 'Celso do Vale' em 2026-10-03 (ref: registro/governanca/autonomia/AUT-001.yaml)
+  I3: inegociaveis.verificar_i3 :: conjunto 'CT-001' revisado com 1 caso(s), todos com saida esperada definida antes da execucao (ref: registro/piloto/CT-001.yaml)
+  I4: inegociaveis.verificar_i4 :: metrica de resultado 'MET-001' apurada: 8 minutos (ref: registro/metricas/MET-001.yaml)
+  I5: inegociaveis.verificar_i5 :: responsavel 'Marina Prado' pela recalibragem, cadencia 'mensal' (ref: registro/calibragem/CAL-001.yaml)
+Selos: 7
+  habilitação sintética importada e conferida: 5b5e1905471659e80e99fcc8778da69243ddac88
+  fim da fase F0: 2a6aff909a340e32166720150a686a2f772b727d
+  estado declarado depois de P2: 6167a1f0e221ee54938fc4a55089ca56c5078397
+  fim da fase F1: 25942dbc897f502bc9d3c0a5c1c9182f9864273d
+  fim da fase F2: 4332233d61f03d2d3876ee8e102884e0f995d28d
+  fim da fase F3: 5345f31a31bc95f1ac858a46a8f4360600dbc83c
+  fim da fase F4: 443a70859a208551c1cdb2dbe85f5e93f097a2d2
+Eventos por tipo — total 66:
+  AssercaoRegistrada: 4
+  AutonomiaDecidida: 1
+  CampoRegistrado: 1
+  CanaisDefinidos: 2
+  CasoAberto: 1
+  CicloCalibragemRegistrado: 1
+  ConjuntoPilotoRegistrado: 1
+  ConjuntoPilotoRevisado: 1
+  DecisaoRecalibragemRegistrada: 1
+  EntregavelEmitido: 6
+  EspecificacaoOperacionalRegistrada: 1
+  EspecificacaoOperacionalValidada: 1
+  EtapaEncerrada: 13
+  HabilitacaoImportada: 1
+  InegociavelSatisfeito: 5
+  LinhaDeBaseRegistrada: 1
+  MetricaApurada: 1
+  MetricaRegistrada: 1
+  NivelApurado: 1
+  ProsseguimentoDecidido: 1
+  RecorrenciaRegistrada: 1
+  RotinaCalibragemRegistrada: 1
+  SeloAplicado: 7
+  SessaoDeCampoRegistrada: 10
+  TermoAutonomiaRegistrado: 2
+  >>> TentativaNegada: 0 <<<
+Recorrência de P10: responsável Marina Prado; cadência mensal; ciclo 1
+Última decisão de calibragem: recalibrar; ator Celso do Vale; drift detectado True
+[72 · infraestrutura] $ git worktree remove /tmp/emcia-percurso-v7-9wyhd5xw/fonte
+Comandos do percurso: 68; infraestrutura: 3; resumo: 1; total de invocações diretas: 72
+Contagem inclui a tentativa que falhou, se houver; não inclui subprocessos internos.

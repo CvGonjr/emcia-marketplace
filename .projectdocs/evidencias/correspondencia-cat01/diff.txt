@@ -1,0 +1,2899 @@
+diff --git a/.github/workflows/travas.yml b/.github/workflows/travas.yml
+index 1b0ca4e..3a48a44 100644
+--- a/.github/workflows/travas.yml
++++ b/.github/workflows/travas.yml
+@@ -97,6 +97,8 @@ jobs:
+           python3 testes/metodo_empacotado.py
+           python3 testes/manual_a25.py
+           python3 testes/citacoes.py
++          python3 testes/catalogo_cat01.py
++          python3 testes/prosseguimento.py
+ 
+       - name: Versão do plugin mudou junto com o núcleo
+         if: github.event_name == 'pull_request'
+diff --git a/.projectdocs/demos/percurso-completo.sh b/.projectdocs/demos/percurso-completo.sh
+index 90a0ed9..2786686 100755
+--- a/.projectdocs/demos/percurso-completo.sh
++++ b/.projectdocs/demos/percurso-completo.sh
+@@ -122,10 +122,23 @@ def executar(fonte):
+                      justificativa_decisao='Revisão sintética para demonstração')
+ 
+     avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
++    (caso/'rascunho/E1-ficha.md').write_text('- [D · Celso do Vale] Enquadramento exclusivamente sintético: fila de pedidos fictícios.\n')
++    rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/E1-ficha.md'], caso)
++    (caso/'rascunho/prosseguimento.json').write_text(json.dumps(dict(versao=1, decisor=pessoa, data=hoje, desfecho='prosseguir', motivo='Prosseguimento exclusivamente sintético decidido no terminal', ficha='caso/E1-ficha.md'), ensure_ascii=False))
++    rodar([sys.executable, str(campo_scripts/'prosseguimento.py'), '--entrada', 'rascunho/prosseguimento.json'], caso)
+     fases = {'F0': ('F0','E1'), 'P3d': ('F1','E2'), 'P5': ('F2','E3'),
+              'P7': ('F3','E4'), 'P10': ('F4','E5')}
+     for etapa in pb['etapas']:
+         eid = etapa['id']
++        if eid == 'P2':
++            (caso/'rascunho/P2-estado-declarado.md').write_text('- [D · Celso do Vale] Etapa recebimento: pedido fictício chega à fila de controle.\n')
++            rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/P2-estado-declarado.md'], caso)
++        if eid == 'P3d':
++            selo_p2 = rodar(['git', 'rev-parse', 'HEAD'], caso).strip()
++            declarado = rodar(['git', 'show', selo_p2+':caso/P2-estado-declarado.md'], caso)
++            if 'Etapa recebimento' not in declarado: sys.exit('estado declarado selado ausente')
++            (caso/'rascunho/P3d-mapa-valor.md').write_text('- [I · premissa: etapa recebimento declarada em '+selo_p2+' · Celso do Vale] Candidato MV-001 para P4: organizar a fila de controle fictícia.\n')
++            rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/P3d-mapa-valor.md'], caso)
+         if eid == 'P2' and restrita:
+             from apoio.restricoes import vincular
+             bl['fontes'] = vincular(caso, fonte)
+diff --git a/.projectdocs/demos/preparar-caso.sh b/.projectdocs/demos/preparar-caso.sh
+index 943d1d0..f8a3605 100755
+--- a/.projectdocs/demos/preparar-caso.sh
++++ b/.projectdocs/demos/preparar-caso.sh
+@@ -82,8 +82,21 @@ def decisao_pronta(nome_arq, dados):
+     prontos.append(nome_arq)
+ 
+ avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
++(caso/'rascunho/E1-ficha.md').write_text('- [D · Celso do Vale] Enquadramento exclusivamente sintético: fila de pedidos fictícios.\n')
++rodar([sys.executable, str(raiz/'eiac-nucleo/scripts/validar.py'), '--arquivo', 'caso/E1-ficha.md'], caso)
++(caso/'rascunho/prosseguimento.json').write_text(json.dumps(dict(versao=1, decisor=pessoa, data=hoje, desfecho='prosseguir', motivo='Prosseguimento exclusivamente sintético decidido no terminal', ficha='caso/E1-ficha.md'), ensure_ascii=False))
++rodar([sys.executable, str(raiz/'eiac-campo/scripts/prosseguimento.py'), '--entrada', 'rascunho/prosseguimento.json'], caso)
+ for et in pb['etapas']:
+     eid = et['id']
++    if eid == 'P2':
++        (caso/'rascunho/P2-estado-declarado.md').write_text('- [D · Celso do Vale] Etapa recebimento: pedido fictício chega à fila de controle.\n')
++        rodar([sys.executable, str(raiz/'eiac-nucleo/scripts'/'validar.py'), '--arquivo', 'caso/P2-estado-declarado.md'], caso)
++    if eid == 'P3d':
++        selo_p2 = rodar(['git', 'rev-parse', 'HEAD'], caso).strip()
++        declarado = rodar(['git', 'show', selo_p2+':caso/P2-estado-declarado.md'], caso)
++        if 'Etapa recebimento' not in declarado: sys.exit('estado declarado selado ausente')
++        (caso/'rascunho/P3d-mapa-valor.md').write_text('- [I · premissa: etapa recebimento declarada em '+selo_p2+' · Celso do Vale] Candidato MV-001 para P4: organizar a fila de controle fictícia.\n')
++        rodar([sys.executable, str(raiz/'eiac-nucleo/scripts'/'validar.py'), '--arquivo', 'caso/P3d-mapa-valor.md'], caso)
+     if eid == 'P2' and restrita:
+         from apoio.restricoes import vincular
+         bl['fontes'] = vincular(caso, raiz)
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index da06460..1e55236 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -10,12 +10,12 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
+ 
+ | Componente | Versão | Papel |
+ |---|---|---|
+-| eiac-nucleo | 0.2.44 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+-| eiac-campo | 0.8.22 | Método, scripts de campo, comandos, habilidades e template |
+-| Playbook do template | 0.4.18 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+-| Manifesto do método | 4 | 21 documentos, origem e caminhos canônicos, SHA-256 |
++| eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
++| eiac-campo | 0.8.23 | Método, scripts de campo, comandos, habilidades e template |
++| Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
++| Manifesto do método | 5 | 21 documentos, origem e caminhos canônicos, SHA-256 |
+ 
+-Origem controlada: commit `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4`.
++Origem controlada: commit `989e1e73796a356b660be8ed55b686ba716787ac`.
+ Cada documento foi extraído do objeto Git, sem edição manual. A abertura confere
+ os hashes e copia documentos e manifesto para metodo/. Não há leitura do
+ playbook do plugin pelo caso; migração de caso existente é humana e explícita.
+@@ -24,7 +24,7 @@ playbook do plugin pelo caso; migração de caso existente é humana e explícit
+ 
+ README.md apresenta operação e limites; INSTALACAO.md apresenta instalação,
+ conectores e provas locais. AGENTS.md e CLAUDE.md fixam as regras de trabalho.
+-O manual de aplicação é MAN-01 v0.2, conferido contra o playbook vigente.
++O manual de aplicação é MAN-01 v0.4, conferido contra o playbook vigente.
+ CAN-01 declara canais por id; HAB-01 rege habilitação e vínculo de restrição;
+ ROT-02 substitui o identificador anterior do roteiro, preservando HAB-02 como
+ template do acordo de confidencialidade. Os três templates HAB ficam no checkout
+@@ -41,9 +41,9 @@ ficam neste mapa e no README principal, fora dos documentos canônicos.
+ 
+ | Documento empacotado | Versão | Caminho no commit canônico |
+ |---|---|---|
+-| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 0.3 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
++| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 0.4 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
+ | `EMCIA-CAN-01-protocolo-de-canais-externos.md` | 0.1 | `EMCIA-CAN-01-protocolo-de-canais-externos.md` |
+-| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 0.4 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
++| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 0.5 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
+ | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` | 0.5 | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` |
+ | `EMCIA-E1-ficha-de-enquadramento.md` | «0.1» | `EMCIA-E1-ficha-de-enquadramento.md` |
+ | `EMCIA-E2-diagnostico-e-oportunidade.md` | «0.1» | `EMCIA-E2-diagnostico-e-oportunidade.md` |
+@@ -52,10 +52,10 @@ ficam neste mapa e no README principal, fora dos documentos canônicos.
+ | `EMCIA-E5-relatorio-de-piloto.md` | «0.1» | `EMCIA-E5-relatorio-de-piloto.md` |
+ | `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` | 0.4 | `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` |
+ | `EMCIA-FER-01-quadro-de-ferramentas.md` | 0.2 | `EMCIA-FER-01-quadro-de-ferramentas.md` |
+-| `EMCIA-GLO-01-glossario-do-metodo.md` | 0.3 | `EMCIA-GLO-01-glossario-do-metodo.md` |
++| `EMCIA-GLO-01-glossario-do-metodo.md` | 0.4 | `EMCIA-GLO-01-glossario-do-metodo.md` |
+ | `EMCIA-HAB-01-protocolo-de-habilitacao.md` | 0.3 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` |
+ | `EMCIA-HAB-fluxo-operacional-proposta.md` | 0.2 | `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` |
+-| `EMCIA-MAN-01-manual-de-aplicacao.md` | 0.2 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
++| `EMCIA-MAN-01-manual-de-aplicacao.md` | 0.4 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
+ | `EMCIA-MET-01-documento-do-metodo.md` | 0.2 | `EMCIA-MET-01-documento-do-metodo.md` |
+ | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` | 0.1 | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` |
+ | `EMCIA-ROT-02-roteiro-de-habilitacao.md` | 0.2 | `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` |
+@@ -97,18 +97,17 @@ hooks/hooks.json registra as rotas da guarda. A guarda resolve camadas, autoria,
+ escrita, decisões humanas, dependências, selos e escopo MCP a partir do contrato
+ do caso. Verificação de selo usa autoria, nota e prefixo exato da trilha no Git,
+ ordenado pela posição dos eventos. Diagnóstico de integridade da referência
+-é somente leitura; não autentica origem. Nenhum arquivo do núcleo mudou neste pacote.
++é somente leitura; não autentica origem. O núcleo acrescenta integridade de produto e condições genéricas de continuidade, sem interpretar o método.
+ 
+ ### Campo
+ 
+-Scripts: `abrir_caso.py`, `baseline.py`, `calibragem.py`, `canais.py`, `consultar.py`, `entregar.py`, `entregaveis.py`, `formularios.py`, `governanca.py`, `habilitacao.py`, `importar_habilitacao.py`, `inegociaveis.py`, `metrica.py`, `operacional.py`, `piloto.py`, `quadro.py`, `receber.py`, `registrar_listagem.py`, `restricoes.py`.
++Scripts: `abrir_caso.py`, `baseline.py`, `calibragem.py`, `canais.py`, `consultar.py`, `entregar.py`, `entregaveis.py`, `formularios.py`, `governanca.py`, `habilitacao.py`, `importar_habilitacao.py`, `inegociaveis.py`, `metrica.py`, `operacional.py`, `piloto.py`, `prosseguimento.py`, `quadro.py`, `receber.py`, `registrar_listagem.py`, `restricoes.py`.
+ 
+ Comandos: `canais.md`, `classificar.md`, `confrontar.md`, `emitir.md`, `enquadrar.md`, `governar.md`, `habilitacao.md`, `mapear-contexto.md`, `mapear-fontes.md`, `medir-valor.md`, `medir.md`, `operacionalizar.md`, `pilotar.md`, `priorizar.md`, `recalibrar.md`.
+ 
+ Habilidades: 18 arquivos SKILL.md.
+ Agentes físicos: `classificador-tecnologico.md`, `extrator-documental.md`.
+-O catálogo declara 18 HB e quatro AG lógicos. HB-04/05/06/13 não têm habilidade
+-física própria; correspondência CAT/catálogo/playbook permanece pendente na 020.
++O catálogo declara 21 HB e quatro AG lógicos, reproduzindo CAT-01 v0.5 Anexos A e C. Toda HB está ligada à habilidade de uma etapa; P3b permanece sem HB/AG. A decisão 043 supera a regra provisória da 020.
+ Habilidade não delegável não carrega mesmo com sessão e selo; nas camadas humanas,
+ o apoio permitido segue as condições declaradas. As habilidades remetem ao método.
+ 
+@@ -145,7 +144,7 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
+ | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
+ | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
+ | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
+-| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
++| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | superada por 043; regra provisória preservada como histórico |
+ | 021 | Retirada da execução de contraste; verificação por estados do caso | firme; emendas 042 (selo Git) e retirada dos resumos CTX |
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+ | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
+@@ -168,12 +167,13 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
+ | 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | aprovada; E1–E7 concluídos; limites locais e runtime testado registrados |
+ | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
+ | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
+-
++| 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
+ 
+ ## Suítes e evidências
+ 
+-A linha de base em Python 3.12.12 passou com 919 verificações em 46 módulos.
+-A revisão acrescenta citacoes.py: 1845 verificações em 48 módulos.
++A linha de base em Python 3.12.12 passou com 926 verificações em 47 módulos.
++Esta revisão acrescenta catalogo_cat01.py e prosseguimento.py e amplia citacoes.py.
++As contagens finais constam da evidência correspondencia-cat01 e de testes/README.md.
+ O inventário completo e o executador estão em testes/README.md e
+ .projectdocs/evidencias/documentacao-operacional/. Registre códigos, saídas e
+ contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
+@@ -201,7 +201,21 @@ Hooks MCP foram demonstrados no runtime testado; a guarda não comprova a
+ confirmação no chat. Não há assinatura eletrônica integrada, aceite de entregáveis,
+ gravação ou transcrição de sessões no escopo aprovado.
+ 
+-Permanecem a revisão humana da carta, a pendência 020 e o aparato residual de
+-isolamento da execução de contraste retirada. ESP-01 conserva o recorte histórico
++A revisão humana da carta integra a habilitação normal. A correspondência 020 foi
++resolvida pela 043. Permanece o aparato residual de isolamento da execução de contraste retirada. ESP-01 conserva o recorte histórico
+ da prova de conceito; os limites operacionais estão em MAN-01 §3.6. Contrato RH,
+ selo confirmado de P3b e colisão do código do roteiro já foram resolvidos.
++
++## Correspondência e prosseguimento — decisão 043
++
++CAT-01 v0.5 Anexo C é a fonte da relação etapa → HBs → AG. HB-09 está em P3d,
++com o estado declarado selado em P2 como entrada e candidatos para P4 como saída;
++as quatro frentes pertencem a P1 e são instrumento distinto. A camada das HBs
++é de preparação, limitada pela camada de encerramento da etapa em cada nível.
++
++O engenheiro executa prosseguimento.py --entrada rascunho/prosseguimento.json
++no terminal. O registro exige pessoa, data, desfecho, motivo e ficha E1 preparada.
++Ambos os desfechos encerram F0; não prosseguir bloqueia as etapas seguintes até
++nova decisão que preserva a anterior. Produtos e continuidade vêm do contrato
++copiado no caso; casos anteriores não são migrados automaticamente. Evidência:
++.projectdocs/evidencias/correspondencia-cat01/.
+diff --git a/AGENTS.md b/AGENTS.md
+index 00d5ade..446e6ce 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -98,7 +98,7 @@ interna do contraste.
+ 
+ `EX1`–`EX4` são camadas de execução: conversacional, analítica, verificação, julgamento.
+ `CA1`–`CA5` são camadas de arquitetura: controle, agente, protocolos, contexto, dados.
+-`HB-01`–`HB-18` são habilidades. `AG-01`–`AG-04` são agentes internos.
++`HB-01`–`HB-21` são habilidades. `AG-01`–`AG-04` são agentes internos.
+ 
+ **Harness** designa exclusivamente infraestrutura de orquestração como commodity. Não nomeia produto, serviço nem componente construído.
+ 
+diff --git a/CLAUDE.md b/CLAUDE.md
+index c746058..b6d94f8 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -51,7 +51,7 @@ Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/p
+ 
+ **Não crie sinalizador que desative a guarda**, nem modo de depuração que a contorne.
+ 
+-**Não resolva as pendências marcadas no `playbook.json`.** Duas estão em aberto por decisão: a correspondência entre entregáveis e passos, e o conflito de procedência com CAT-01. São decisões de método, não de código.
++**Não resolva divergência documental por inferência.** As decisões humanas 013 e 006 resolveram entregáveis e procedência; a 043 supera a correspondência provisória da 020. Nova divergência exige decisão humana.
+ 
+ **Não reproduza o conteúdo do método nas habilidades.** Elas remetem; o procedimento vive no documento do método. Ver `decisoes/009`.
+ 
+@@ -78,7 +78,7 @@ Leia `decisoes/README.md` antes de propor mudança estrutural. Decisão registra
+ 
+ As mais consequentes: dois plugins (001), playbook no caso (002), chat sem autoridade de escrita (003), camada resolvida por nível (005).
+ 
+-A 006 está **em conflito com documento controlado** e precisa de decisão humana.
++A 006 foi resolvida em favor de D/I/V. A 043 implementa CAT-01 v0.5; a correspondência do Anexo C é conferida por catalogo_cat01.py.
+ 
+ ---
+ 
+@@ -86,7 +86,7 @@ A 006 está **em conflito com documento controlado** e precisa de decisão human
+ 
+ `EX1`–`EX4` são camadas de execução: conversacional, analítica, verificação, julgamento.
+ `CA1`–`CA5` são camadas de arquitetura: controle, agente, protocolos, contexto, dados.
+-`HB-01`–`HB-18` são habilidades. `AG-01`–`AG-04` são agentes internos.
++`HB-01`–`HB-21` são habilidades. `AG-01`–`AG-04` são agentes internos.
+ 
+ **Harness** designa exclusivamente infraestrutura de orquestração como commodity. Não nomeia produto, serviço nem componente construído.
+ 
+diff --git a/README.md b/README.md
+index a15cb6c..332fc5e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,11 +1,11 @@
+ # emcia — marketplace de plugins
+ 
+ O método é conferido pelo manifesto SHA-256 antes de abrir cada caso. Comece pelo
+-[MAN-01 v0.2](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
+-conferido contra o playbook 0.4.18. O pacote foi extraído, sem edição manual, do
+-commit canônico `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4` de
++[MAN-01 v0.4](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
++conferido contra o playbook 0.4.19. O pacote foi extraído, sem edição manual, do
++commit canônico `989e1e73796a356b660be8ed55b686ba716787ac` de
+ [emcia-artefatos](https://github.com/CvGonjr/emcia-artefatos).
+-O manifesto v4 identifica origem, data, caminhos canônicos e hashes dos 21
++O manifesto v5 identifica origem, data, caminhos canônicos e hashes dos 21
+ documentos, incluindo CAN-01, HAB-01, ROT-02 e o fluxo auxiliar. Empacotar uma
+ revisão não altera seu estado nem lhe atribui aprovação.
+ 
+@@ -14,8 +14,8 @@ próprios; não entram no marketplace.
+ 
+ | Plugin | Versão | Papel |
+ |---|---|---|
+-| eiac-nucleo | 0.2.44 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
+-| eiac-campo | 0.8.22 | Método, habilidades, comandos, scripts e template de caso |
++| eiac-nucleo | 0.2.45 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
++| eiac-campo | 0.8.23 | Método, habilidades, comandos, scripts e template de caso |
+ 
+ O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
+ esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
+@@ -50,6 +50,8 @@ expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
+    registra decisões comunicadas por pessoas. Tratamento administrativo deve
+    ser registrado antes de consultar submissões pelo MCP. HAB-01/02/03 continuam
+    sendo os três templates e os códigos dos PDFs da formalização.
++   A revisão humana da carta HAB-01 integra o procedimento normal:
++   o engenheiro confere conteúdo, condições e evidências antes da formalização.
+ 2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
+    identificador reservado e o mesmo responsável. A abertura confere todos os
+    hashes, copia os documentos e o manifesto para `metodo/` e prepara o Git.
+@@ -130,6 +132,20 @@ inegociáveis, decisões dos registros e encerramento em EX3/EX4. O agente prepa
+ os argumentos e entrega o comando com caminho absoluto. Confirmação no chat
+ não autoriza executar esses atos pela sessão; a guarda recusa com evento.
+ 
++Em F0, o engenheiro registra `decidir-prosseguimento` pelo terminal:
++`python3 /checkout/emcia-marketplace/eiac-campo/scripts/prosseguimento.py --entrada rascunho/prosseguimento.json`.
++O candidato segue `registro/prosseguimento.schema.json` e referencia a ficha E1
++preparada. Decisor, data, desfecho e motivo ficam registrados e materializados
++em E1. Ambos os desfechos permitem encerrar F0; `não prosseguir` bloqueia as
++etapas seguintes até nova decisão `prosseguir`, preservando o registro anterior.
++
++A correspondência etapa → HBs → AG vem do CAT-01 v0.5 Anexo C, implementada
++pela [decisão 043](decisoes/043-correspondencia-cat01-catalogo-playbook.md).
++P1 trata maturidade nas quatro frentes, patrocínio e caso de negócio. O mapa
++de valor pertence a P3d, com o estado declarado selado após P2 como entrada
++e candidatos para a matriz de P4 como saída. A camada de cada HB é de preparação;
++a da etapa é de encerramento e decisão. P3b permanece sem HB por desenho.
++
+ Em P2, o engenheiro usa `restricoes.py vincular --restricao RH-xx --fontes F-xxx`
+ ou `dispensar --restricao RH-xx --motivo <motivo>`; o ato declarado chama-se
+ `vincular-restricao`. Cada RH importado precisa estar vinculado a fonte curada
+@@ -208,9 +224,8 @@ disco permanece a fronteira de confiança. A guarda de escopo não comprova
+ que houve confirmação no chat. Hooks MCP foram demonstrados apenas no Claude
+ Code 2.1.283 testado; não há demonstração de suporte em outros clientes.
+ 
+-Permanecem a revisão humana da carta HAB-01, a pendência de correspondência
+-CAT-01/catálogo/playbook da decisão 020 e HB-04/05/06/13 sem habilidade física
+-própria. A conferência do manual cobre o contrato declarado, não julga a qualidade
++As atividades do CAT-01 Anexo B permanecem com o engenheiro por falta de
++execução integral comprovada. A conferência do manual cobre o contrato declarado, não julga a qualidade
+ do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
+ o recorte histórico da prova de conceito.
+ 
+@@ -226,17 +241,19 @@ python3 testes/contexto.py
+ python3 testes/metodo_empacotado.py
+ python3 testes/manual_a25.py
+ python3 testes/citacoes.py
++python3 testes/catalogo_cat01.py
++python3 testes/prosseguimento.py
+ ```
+ 
+ A suíte completa usa Python 3.12; módulos e contagens estão em
+ [testes/README.md](testes/README.md). Negativa inesperadamente permitida é regressão
+ de trava. As evidências deste pacote estão em
+-[documentacao-operacional](.projectdocs/evidencias/documentacao-operacional/).
++[correspondencia-cat01](.projectdocs/evidencias/correspondencia-cat01/).
+ Demonstrações sintéticas: `.projectdocs/demos/preparar-caso.sh`,
+ `como-agente.sh` e `percurso-completo.sh`; este último congela o HEAD commitado.
+ 
+ Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso exige
+ decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
+ do playbook e versão do manifesto são registradas separadamente. Mudança em
+-scripts do núcleo exige incremento da versão do núcleo; nesta revisão apenas
+-campo e documentação foram alterados.
++scripts do núcleo exige incremento da versão do núcleo; esta revisão incrementa
++núcleo, campo e playbook. Casos anteriores não são migrados automaticamente.
+diff --git a/decisoes/020-pendencia-cruzamento-cat01.md b/decisoes/020-pendencia-cruzamento-cat01.md
+index ed82a68..3926d77 100644
+--- a/decisoes/020-pendencia-cruzamento-cat01.md
++++ b/decisoes/020-pendencia-cruzamento-cat01.md
+@@ -2,6 +2,15 @@
+ 
+ **Data:** 22/09/2026 · **Estado:** pendente de decisão de método
+ 
++## Emenda de 03/10/2026 — superada pela decisão 043
++
++A decisão [043](043-correspondencia-cat01-catalogo-playbook.md) implementa
++CAT-01 v0.5 e a correção canônica MAN-01 v0.4. A correspondência e a regra
++provisória de autoria `hb-*` abaixo são históricas e não regem casos novos.
++P3b continua sem HB/AG e não realizada por agente. Os demais agrupamentos
++vêm dos Anexos A e C, sem autoria de agente em eventos. O registro original
++é preservado; casos anteriores conservam seu playbook pela decisão 002.
++
+ ## Contexto
+ 
+ O cruzamento integral das treze etapas, registrado em
+diff --git a/decisoes/043-correspondencia-cat01-catalogo-playbook.md b/decisoes/043-correspondencia-cat01-catalogo-playbook.md
+new file mode 100644
+index 0000000..1b1bf5d
+--- /dev/null
++++ b/decisoes/043-correspondencia-cat01-catalogo-playbook.md
+@@ -0,0 +1,86 @@
++# 043 — Correspondência CAT-01, catálogo e playbook
++
++**Data:** 03/10/2026 · **Estado:** firme por instrução do engenheiro
++
++## Contexto
++
++CAT-01 v0.5 fixa a correspondência completa no Anexo C, após decisões humanas
++D2–D8 e resolução explícita da D5. A fonte canônica deste pacote é
++emcia-artefatos, commit `989e1e73796a356b660be8ed55b686ba716787ac`.
++O pacote conserva Estado Em revisão e Aprovação pendente; esta decisão
++autoriza as alterações operacionais solicitadas, sem aprovar os documentos.
++
++A pré-validação encontrou MAN-01 v0.3 com o ato de F0 e produto `—`.
++O engenheiro aprovou a correção canônica v0.4 para a expressão literal
++**Decisão de prosseguimento registrada**. Antes do commit canônico,
++conferir() retornou lista vazia contra o rascunho e contrato em memória.
++O mesmo texto é a descrição do produto no playbook.
++
++## Decisão
++
++Esta decisão **supera explicitamente a 020**, inclusive a regra provisória
++de atribuição por identificador `hb-*` e camada substituída. O cruzamento
++de 22/09/2026 passa a registro histórico. Não se infere correspondência:
++catálogo literal do Anexo A e relação do Anexo C são conferidos por teste.
++
++| Etapa | HBs de preparação | AG |
++|---|---|---|
++| F0 | HB-01, HB-02, HB-03, HB-04, HB-05 | AG-01 |
++| P1 | HB-08 | AG-02 |
++| P2 | HB-06, HB-07 | AG-02 |
++| P3a | HB-19 | AG-02 |
++| P3b | — | —; não realizada por agente |
++| P3d | HB-09, HB-20 | AG-02 |
++| P4 | HB-10 | AG-02 |
++| P5 | HB-11, HB-12 | AG-03 |
++| P6 | HB-21 | AG-03 |
++| P7 | HB-13, HB-14 | AG-03 |
++| P8 | HB-15, HB-16 | AG-04 |
++| P9 | HB-17 | AG-04 |
++| P10 | HB-18 | AG-04 |
++
++D5: posicionamento nas quatro frentes (MET-01 §3.4.1) e mapa de valor
++(MET-01 §3.4.3) são instrumentos distintos. HB-09 permanece no passo 3,
++em P3d: estado declarado selado após P2 como entrada, candidatos para P4
++como saída. A habilidade não reescreve o estado selado com o observado;
++a saída nasce D ou I. P1 não recebe HB nova.
++
++D7: a camada da etapa é a de encerramento e decisão. Cada HB conserva
++sua camada de preparação, menor ou igual à da etapa no mesmo nível.
++Em P10 a comparação utiliza a camada de monitoramento. A relação EX2
++de preparação e EX3/EX4 de encerramento não é contradição nem delega decisão.
++
++D8: decidir-prosseguimento é operação humana declarada no playbook,
++negada pela guarda quando invocada pela sessão, com TentativaNegada e
++comando exato. O engenheiro registra decisor, data, desfecho e motivo,
++com referência e hash da ficha E1 preparada. O mecanismo genérico de
++produtos exige a decisão vigente para encerrar F0.
++
++Por esclarecimento aprovado do engenheiro, **os dois desfechos encerram F0**.
++`não prosseguir` bloqueia as etapas seguintes até nova decisão `prosseguir`.
++O registro anterior é preservado em arquivo próprio, com versão crescente;
++nenhuma decisão é sobrescrita. A materialização de E1 apresenta a decisão.
++A autorização de emissão continua sujeita aos portões e RH pendentes.
++
++As sete atividades do CAT-01 Anexo B permanecem com o engenheiro, sem HB
++inventada. HB-19/20/21 somente remetem ao catálogo: a preparação já existia
++nas habilidades examinadas. AG identifica o agrupamento da preparação,
++nunca autoria de pessoa em evento, asserção ou decisão. P3b permanece
++sem HB e sem AG por desenho, registrada como não realizada por agente.
++
++## Consequência e verificação
++
++Núcleo 0.2.45, campo 0.8.23, playbook 0.4.19, manifesto 5. Casos já abertos
++conservam o contrato copiado, conforme decisão 002. O núcleo compara
++condições declaradas e integridade de arquivos; não contém as novas
++expressões, desfechos ou instrumentos do método como regras de código.
++
++Testes catalogo_cat01.py e prosseguimento.py exercitam negativas antes
++dos controles positivos. A25 confere MAN-01 v0.4 diretamente, sem emenda
++local. Empacotamento usa bytes dos objetos Git e SHA-256, sem edição manual.
++Evidência inicial, final, pré-validação, inspeção e diff:
++`.projectdocs/evidencias/correspondencia-cat01/`.
++
++A divergência de natureza de HB-16 entre CAT-01 e CAM-01 permanece
++registrada no Anexo D.3 canônico; o catálogo reproduz CAT-01 conforme
++instrução. Não se modifica sua natureza por inferência.
+diff --git a/decisoes/README.md b/decisoes/README.md
+index 9908d79..d9fbcd1 100644
+--- a/decisoes/README.md
++++ b/decisoes/README.md
+@@ -25,7 +25,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
+ | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
+ | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
+-| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
++| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | superada por 043; regra provisória preservada como histórico |
+ | 021 | Retirada da execução de contraste; verificação por estados do caso | firme; emendas 042 (selo Git) e retirada dos resumos CTX |
+ | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
+ | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
+@@ -48,3 +48,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
+ | 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | aprovada; E1–E7 concluídos; limites locais e runtime testado registrados |
+ | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
+ | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
++| 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
+diff --git a/docs/cruzamento-cat01.md b/docs/cruzamento-cat01.md
+index 2def4af..9256fd4 100644
+--- a/docs/cruzamento-cat01.md
++++ b/docs/cruzamento-cat01.md
+@@ -1,5 +1,13 @@
+ # Cruzamento entre CAT-01, catálogo de HB e playbook executável
+ 
++**Registro histórico — superado pela
++[decisão 043](../decisoes/043-correspondencia-cat01-catalogo-playbook.md).**
++A fonte vigente da relação é CAT-01 v0.5 Anexo C. O texto abaixo preserva
++a auditoria de 22/09/2026; suas pendências e regra provisória não autorizam
++execução atual. A regra de camada de preparação e encerramento resolve a
++leitura antiga de contradição em P5, P8 e P9. D5 distingue quatro frentes
++e mapa de valor; HB-09 está em P3d, com estado selado em P2 e candidatos para P4.
++
+ **Data da auditoria:** 22/09/2026
+ 
+ **Documentos cruzados:** `EMCIA-CAT-01` v0.2, `reference/habilidades.json`
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 69b8139..f461718 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.22",
++  "version": "0.8.23",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/reference/agentes.json b/eiac-campo/reference/agentes.json
+index ee093fc..6e145b8 100644
+--- a/eiac-campo/reference/agentes.json
++++ b/eiac-campo/reference/agentes.json
+@@ -1,39 +1,64 @@
+ {
+   "nome": "Catalogo de agentes logicos",
+-  "versao": "0.1.0",
+-  "referencia": "EMCIA-CAT-01 Anexo A (agentes agrupam habilidades por camada; nenhum agente reune habilidades de camadas distintas; nenhum agente decide ou encerra etapa em EX3 ou EX4)",
++  "versao": "0.2.0",
++  "referencia": "EMCIA-CAT-01 v0.5 Anexos A e C; agentes agrupam a preparação sem reunir camadas distintas",
+   "agentes": [
+     {
+       "id": "AG-01",
+       "nome": "Agente de enquadramento",
+       "camada": "EX1",
+-      "hb_autorizadas": ["HB-01", "HB-02", "HB-03", "HB-04", "HB-05"],
++      "hb_autorizadas": [
++        "HB-01",
++        "HB-02",
++        "HB-03",
++        "HB-04",
++        "HB-05"
++      ],
+       "implementacao_fisica": null,
+-      "nota_implementacao": "Nenhum runtime fisico dedicado neste pacote. As HB-01/02/03 ja sao carregadas por eiac-campo/skills/hb-enquadrar/SKILL.md (etapa F0); HB-04/05 nao possuem skill fisica correspondente ainda."
++      "nota_implementacao": "HBs executadas pelas habilidades declaradas no CAT-01 Anexo C; preparação não delega decisão humana."
+     },
+     {
+       "id": "AG-02",
+-      "nome": "Agente de analise documental",
++      "nome": "Agente de análise documental",
+       "camada": "EX2",
+-      "hb_autorizadas": ["HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"],
++      "hb_autorizadas": [
++        "HB-06",
++        "HB-07",
++        "HB-08",
++        "HB-09",
++        "HB-10",
++        "HB-19",
++        "HB-20"
++      ],
+       "implementacao_fisica": "eiac-campo/agents/extrator-documental.md",
+-      "nota_implementacao": "extrator-documental.md materializa HB-07 (P2). HB-08/09/10 sao carregadas por skills proprias (hb-mapear-contexto, hb-priorizar) sem subagent dedicado. HB-06/13 nao possuem implementacao fisica ainda."
++      "nota_implementacao": "HBs executadas pelas habilidades declaradas no CAT-01 Anexo C; preparação não delega decisão humana."
+     },
+     {
+       "id": "AG-03",
+-      "nome": "Agente de especificacao",
++      "nome": "Agente de especificação",
+       "camada": "EX2",
+-      "hb_autorizadas": ["HB-11", "HB-12", "HB-14"],
++      "hb_autorizadas": [
++        "HB-11",
++        "HB-12",
++        "HB-13",
++        "HB-14",
++        "HB-21"
++      ],
+       "implementacao_fisica": "eiac-campo/agents/classificador-tecnologico.md",
+-      "nota_implementacao": "classificador-tecnologico.md materializa HB-11 (P5). HB-12 e carregada dentro da mesma skill hb-classificar, sem subagent proprio. HB-14 e carregada por eiac-campo/skills/hb-governar/SKILL.md (P7, hibrida — minuta apenas, decisao humana)."
++      "nota_implementacao": "HBs executadas pelas habilidades declaradas no CAT-01 Anexo C; preparação não delega decisão humana."
+     },
+     {
+       "id": "AG-04",
+-      "nome": "Agente de avaliacao",
++      "nome": "Agente de avaliação",
+       "camada": "EX2",
+-      "hb_autorizadas": ["HB-15", "HB-16", "HB-17", "HB-18"],
++      "hb_autorizadas": [
++        "HB-15",
++        "HB-16",
++        "HB-17",
++        "HB-18"
++      ],
+       "implementacao_fisica": null,
+-      "nota_implementacao": "HB-15/16 carregadas por hb-pilotar/SKILL.md (P8); HB-17 por hb-medir-valor/SKILL.md (P9); HB-18 por hb-recalibrar/SKILL.md (P10, hibrida — deteccao/recomendacao apenas, decisao humana). Nenhum runtime fisico dedicado."
++      "nota_implementacao": "HBs executadas pelas habilidades declaradas no CAT-01 Anexo C; preparação não delega decisão humana."
+     }
+   ]
+ }
+diff --git a/eiac-campo/reference/habilidades.json b/eiac-campo/reference/habilidades.json
+index b5af42f..82cef30 100644
+--- a/eiac-campo/reference/habilidades.json
++++ b/eiac-campo/reference/habilidades.json
+@@ -1,241 +1,342 @@
+ {
+-  "nome": "Catalogo de habilidades",
+-  "versao": "0.1.0",
+-  "referencia": "EMCIA-CAT-01 Anexo A (18 habilidades, camada/natureza/insumo/saida/criterio de verificacao literais)",
+-  "nota_relacao_etapa": "O campo 'etapas' vem exclusivamente de eiac-campo/template-caso/registro/playbook.json (campo 'hb' por etapa), nunca de inferencia textual entre CAT-01 e MET-01/CAM-01 -- essa correspondencia permanece pendencia aberta por decisao (decisoes/002 e afins). HB sem etapa associada no playbook tem 'etapas: []' e 'estado_relacao_etapa: \"nao_referenciada_no_playbook\"', o que nao e erro do catalogo -- e o estado real do contrato congelado em 2.6.0.",
++  "nome": "Catálogo de habilidades",
++  "versao": "0.2.0",
++  "referencia": "EMCIA-CAT-01 v0.5 Anexo A; correspondência do Anexo C",
+   "habilidades": [
+     {
+       "id": "HB-01",
+-      "nome": "Conducao da triagem",
++      "nome": "Condução da triagem",
+       "camada": "EX1",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Respostas do cliente ao instrumento",
+-      "saida": "Pontuacao por eixo, com a resposta literal preservada",
+-      "criterio_de_verificacao": "As nove perguntas respondidas e o literal arquivado ao lado da interpretacao",
++      "saida": "Pontuação por eixo, com a resposta literal preservada",
++      "criterio_de_verificacao": "As nove perguntas respondidas e o literal arquivado ao lado da interpretação",
+       "ag_autorizado": "AG-01",
++      "automatizada": true,
++      "etapas": [
++        "F0"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
+-      "etapas": ["F0"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-02",
+-      "nome": "Apuracao do nivel de complexidade",
++      "nome": "Apuração do nível de complexidade",
+       "camada": "EX1",
+-      "automatizada": true,
+-      "insumo": "Pontuacao por eixo",
+-      "saida": "Nivel N1, N2 ou N3, registrado pelo engenheiro",
+-      "criterio_de_verificacao": "Recalculo manual reproduz o mesmo nivel",
++      "natureza": "Automatizado",
++      "insumo": "Pontuação por eixo",
++      "saida": "Nível N1, N2 ou N3, registrado pelo engenheiro",
++      "criterio_de_verificacao": "Recálculo manual reproduz o mesmo nível",
+       "ag_autorizado": "AG-01",
++      "automatizada": true,
++      "etapas": [
++        "F0"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
+-      "etapas": ["F0"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-03",
+-      "nome": "Estruturacao da dor",
++      "nome": "Estruturação da dor",
+       "camada": "EX1",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Relato do patrocinador",
+       "saida": "Quadro 5W2H preenchido",
+-      "criterio_de_verificacao": "Cada campo remete a trecho identificavel do relato",
++      "criterio_de_verificacao": "Cada campo remete a trecho identificável do relato",
+       "ag_autorizado": "AG-01",
++      "automatizada": true,
++      "etapas": [
++        "F0"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
+-      "etapas": ["F0"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-04",
+-      "nome": "Conducao dos cinco porques",
++      "nome": "Condução dos cinco porquês",
+       "camada": "EX1",
+-      "automatizada": false,
++      "natureza": "Híbrido",
+       "insumo": "Dor estruturada",
+       "saida": "Cadeia causal proposta",
+-      "criterio_de_verificacao": "Cadeia confirmada ou corrigida pelo engenheiro antes de avancar",
++      "criterio_de_verificacao": "Cadeia confirmada ou corrigida pelo engenheiro antes de avançar",
+       "ag_autorizado": "AG-01",
+-      "skill_ref": null,
+-      "etapas": [],
+-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++      "automatizada": false,
++      "etapas": [
++        "F0"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-05",
+-      "nome": "Calculo do custo do problema",
++      "nome": "Cálculo do custo do problema",
+       "camada": "EX1",
+-      "automatizada": false,
++      "natureza": "Híbrido",
+       "insumo": "Volumes e tempos informados",
+       "saida": "Custo estimado, com premissas expostas",
+-      "criterio_de_verificacao": "Toda premissa visivel e cada numero com procedencia marcada",
++      "criterio_de_verificacao": "Toda premissa visível e cada número com procedência marcada",
+       "ag_autorizado": "AG-01",
+-      "skill_ref": null,
+-      "etapas": [],
+-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++      "automatizada": false,
++      "etapas": [
++        "F0"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-enquadrar/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-06",
+-      "nome": "Inventario de fontes de dados",
++      "nome": "Inventário de fontes de dados",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Declaracao da organizacao e documentos",
++      "natureza": "Automatizado",
++      "insumo": "Declaração da organização e documentos",
+       "saida": "Lista de fontes com criticidade",
+-      "criterio_de_verificacao": "Cada fonte marcada como declarada ate verificacao em campo",
++      "criterio_de_verificacao": "Cada fonte marcada como declarada até verificação em campo",
+       "ag_autorizado": "AG-02",
+-      "skill_ref": null,
+-      "etapas": [],
+-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++      "automatizada": true,
++      "etapas": [
++        "P2"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-extrair-regras/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-07",
+-      "nome": "Coleta de termos do glossario",
++      "nome": "Coleta de termos do glossário",
+       "camada": "EX2",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Documentos e entrevistas transcritas",
+-      "saida": "Termos com definicao declarada e ocorrencias",
+-      "criterio_de_verificacao": "Definicoes conflitantes sinalizadas, nao conciliadas",
++      "saida": "Termos com definição declarada e ocorrências",
++      "criterio_de_verificacao": "Definições conflitantes sinalizadas, não conciliadas",
+       "ag_autorizado": "AG-02",
++      "automatizada": true,
++      "etapas": [
++        "P2"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-extrair-regras/SKILL.md",
+-      "etapas": ["P2"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-08",
+-      "nome": "Consulta a base de referencia",
++      "nome": "Consulta à base de referência",
+       "camada": "EX2",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Setor e processo-alvo",
+-      "saida": "Referencias com fonte identificada",
+-      "criterio_de_verificacao": "Nenhum item sem fonte; sem acesso aberto a internet",
++      "saida": "Referências com fonte identificada",
++      "criterio_de_verificacao": "Nenhum item sem fonte; sem acesso aberto à internet",
+       "ag_autorizado": "AG-02",
++      "automatizada": true,
++      "etapas": [
++        "P1"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
+-      "etapas": ["P1"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-09",
+       "nome": "Varredura do mapa de valor",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Estado atual declarado",
+-      "saida": "Pontos candidatos a intervencao",
+-      "criterio_de_verificacao": "Candidatos rastreaveis a etapa do fluxo que os originou",
++      "natureza": "Automatizado",
++      "insumo": "Estado atual declarado, preservado pelo selo posterior ao encerramento de P2",
++      "saida": "Pontos candidatos a intervenção para P4",
++      "criterio_de_verificacao": "Cada candidato rastreável à etapa do fluxo declarado que o originou, sem reescrever a entrada selada",
+       "ag_autorizado": "AG-02",
+-      "skill_ref": "eiac-campo/skills/hb-mapear-contexto/SKILL.md",
+-      "etapas": ["P1"],
++      "automatizada": true,
++      "etapas": [
++        "P3d"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-confrontar/SKILL.md",
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-10",
+-      "nome": "Montagem da matriz de priorizacao",
++      "nome": "Montagem da matriz de priorização",
+       "camada": "EX2",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Casos candidatos",
+       "saida": "Matriz preenchida, sem escolha",
+       "criterio_de_verificacao": "Todos os candidatos presentes, inclusive os descartados",
+       "ag_autorizado": "AG-02",
++      "automatizada": true,
++      "etapas": [
++        "P4"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-priorizar/SKILL.md",
+-      "etapas": ["P4"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-11",
+-      "nome": "Classificacao Problema->Tecnologia",
++      "nome": "Classificação Problema→Tecnologia",
+       "camada": "EX2",
+-      "automatizada": false,
++      "natureza": "Híbrido",
+       "insumo": "Caso descrito e camada de contexto",
+       "saida": "Tecnologia adequada, com justificativa",
+-      "criterio_de_verificacao": "Classificacao confirmada pelo engenheiro antes de virar decisao",
++      "criterio_de_verificacao": "Classificação confirmada pelo engenheiro antes de virar decisão",
+       "ag_autorizado": "AG-03",
++      "automatizada": false,
++      "etapas": [
++        "P5"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
+-      "etapas": ["P5"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-12",
+-      "nome": "Estimativa de custo e latencia",
++      "nome": "Estimativa de custo e latência",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Desenho da solucao",
++      "natureza": "Automatizado",
++      "insumo": "Desenho da solução",
+       "saida": "Custo por tarefa e teto mensal",
+-      "criterio_de_verificacao": "Premissas expostas e recalculaveis",
++      "criterio_de_verificacao": "Premissas expostas e recalculáveis",
+       "ag_autorizado": "AG-03",
++      "automatizada": true,
++      "etapas": [
++        "P5"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-classificar/SKILL.md",
+-      "etapas": ["P5"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-13",
+-      "nome": "Levantamento regulatorio",
++      "nome": "Levantamento regulatório",
+       "camada": "EX2",
+-      "automatizada": true,
++      "natureza": "Automatizado",
+       "insumo": "Setor e natureza do dado tratado",
+-      "saida": "Requisitos aplicaveis, com fonte",
+-      "criterio_de_verificacao": "Cada requisito remete a norma citavel",
+-      "ag_autorizado": "AG-02",
+-      "skill_ref": null,
+-      "etapas": [],
+-      "estado_relacao_etapa": "nao_referenciada_no_playbook"
++      "saida": "Requisitos aplicáveis, com fonte",
++      "criterio_de_verificacao": "Cada requisito remete a norma citável",
++      "ag_autorizado": "AG-03",
++      "automatizada": true,
++      "etapas": [
++        "P7"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-governar/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-14",
+       "nome": "Minuta do termo de autonomia",
+       "camada": "EX2",
+-      "automatizada": false,
+-      "insumo": "Arquetipo e zona de contencao",
+-      "saida": "Minuta com as tres listas em branco",
+-      "criterio_de_verificacao": "As tres listas preenchidas por decisao humana registrada",
++      "natureza": "Híbrido",
++      "insumo": "Arquétipo e zona de contenção",
++      "saida": "Minuta com as três listas em branco",
++      "criterio_de_verificacao": "As três listas preenchidas por decisão humana registrada",
+       "ag_autorizado": "AG-03",
++      "automatizada": false,
++      "etapas": [
++        "P7"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-governar/SKILL.md",
+-      "etapas": ["P7"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-15",
+-      "nome": "Geracao de casos de teste",
++      "nome": "Geração de casos de teste",
+       "camada": "EX2",
+-      "automatizada": false,
+-      "insumo": "Dossie verificado e camada de contexto",
+-      "saida": "Casos com saida esperada",
++      "natureza": "Híbrido",
++      "insumo": "Dossiê verificado e camada de contexto",
++      "saida": "Casos com saída esperada",
+       "criterio_de_verificacao": "Conjunto revisado por quem executa o processo",
+       "ag_autorizado": "AG-04",
++      "automatizada": false,
++      "etapas": [
++        "P8"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
+-      "etapas": ["P8"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-16",
+-      "nome": "Execucao da suite de avaliacao",
++      "nome": "Execução da suíte de avaliação",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Casos de teste e solucao em piloto",
++      "natureza": "Automatizado",
++      "insumo": "Casos de teste e solução em piloto",
+       "saida": "Resultado por caso e falhas agrupadas",
+-      "criterio_de_verificacao": "Execucao reproduzivel a partir do mesmo conjunto",
++      "criterio_de_verificacao": "Execução reproduzível a partir do mesmo conjunto",
+       "ag_autorizado": "AG-04",
++      "automatizada": true,
++      "etapas": [
++        "P8"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-pilotar/SKILL.md",
+-      "etapas": ["P8"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-17",
+-      "nome": "Consolidacao de indicadores",
++      "nome": "Consolidação de indicadores",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Medicoes do piloto e linha de base",
++      "natureza": "Automatizado",
++      "insumo": "Medições do piloto e linha de base",
+       "saida": "Comparativo contra a linha de base",
+-      "criterio_de_verificacao": "Apuracao deterministica e documentada",
++      "criterio_de_verificacao": "Apuração determinística e documentada",
+       "ag_autorizado": "AG-04",
++      "automatizada": true,
++      "etapas": [
++        "P9"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-medir-valor/SKILL.md",
+-      "etapas": ["P9"],
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     },
+     {
+       "id": "HB-18",
+       "nome": "Monitoramento de desvio",
+       "camada": "EX2",
+-      "automatizada": true,
+-      "insumo": "Saidas em operacao",
+-      "saida": "Alerta de degradacao",
+-      "criterio_de_verificacao": "Limiar definido antes do piloto, nao ajustado a posteriori",
++      "natureza": "Automatizado",
++      "insumo": "Saídas em operação",
++      "saida": "Alerta de degradação",
++      "criterio_de_verificacao": "Limiar definido antes do piloto, não ajustado a posteriori",
+       "ag_autorizado": "AG-04",
++      "automatizada": true,
++      "etapas": [
++        "P10"
++      ],
+       "skill_ref": "eiac-campo/skills/hb-recalibrar/SKILL.md",
+-      "etapas": ["P10"],
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-19",
++      "nome": "Registro da linha de base",
++      "camada": "EX2",
++      "natureza": "Híbrido",
++      "insumo": "Amostras, período, indicador e fonte; em N1, estimativa declarada com quem opera",
++      "saida": "Linha de base estruturada, datada, com valor, método de apuração e procedência",
++      "criterio_de_verificacao": "Cálculo reproduzível; estimativa somente em N1; número confirmado por quem opera antes de avançar; narrativa não substitui registro estruturado",
++      "ag_autorizado": "AG-02",
++      "automatizada": false,
++      "etapas": [
++        "P3a"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-medir/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-20",
++      "nome": "Preparação do confronto declarado × observado",
++      "camada": "EX2",
++      "natureza": "Híbrido",
++      "insumo": "Estado declarado selado após P2, sessão de P3b registrada e evidências do observado",
++      "saida": "Placar e registros propostos de divergência, com referências, justificativa e autoria nominal",
++      "criterio_de_verificacao": "Cada item liga declarado e observado; o operador decide cada item; correção cria registro novo e preserva o original, sem promoção automática de procedência",
++      "ag_autorizado": "AG-02",
++      "automatizada": false,
++      "etapas": [
++        "P3d"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-confrontar/SKILL.md",
++      "estado_relacao_etapa": "referenciada_no_playbook"
++    },
++    {
++      "id": "HB-21",
++      "nome": "Documentação do estado futuro",
++      "camada": "EX2",
++      "natureza": "Híbrido",
++      "insumo": "E3-E ou candidato correspondente, classificação de P5, contexto curado e desenho decidido com as áreas",
++      "saida": "Proposta de especificação operacional: fluxo futuro, ponto de inserção, entrada, saída, interface, exceção e retorno ao humano",
++      "criterio_de_verificacao": "Proposta rastreável aos insumos; ponto de inserção e responsável nomeados por decisão humana; aprovação registrada pelo engenheiro antes de avançar",
++      "ag_autorizado": "AG-03",
++      "automatizada": false,
++      "etapas": [
++        "P6"
++      ],
++      "skill_ref": "eiac-campo/skills/hb-operacionalizar/SKILL.md",
+       "estado_relacao_etapa": "referenciada_no_playbook"
+     }
+   ]
+diff --git a/eiac-campo/reference/metodo/EMCIA-CAM-01-protocolo-de-campo-por-passo.md b/eiac-campo/reference/metodo/EMCIA-CAM-01-protocolo-de-campo-por-passo.md
+index 9b650f5..e4593ae 100644
+--- a/eiac-campo/reference/metodo/EMCIA-CAM-01-protocolo-de-campo-por-passo.md
++++ b/eiac-campo/reference/metodo/EMCIA-CAM-01-protocolo-de-campo-por-passo.md
+@@ -4,7 +4,7 @@
+ 
+ | | | | |
+ |---|---|---|---|
+-| **Código** | EMCIA-CAM-01 | **Versão** | 0.3 |
++| **Código** | EMCIA-CAM-01 | **Versão** | 0.4 |
+ | **Data** | 2026-10 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | F0–F4 | **Passo** | F0 e P1–P10 |
+@@ -69,6 +69,18 @@ P2 só encerra com todos os RH vinculados a fontes ou dispensados com motivo e c
+ 
+ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último encerramento de P2. Evento de selo sem commit confirmado ou Git inacessível não satisfaz essa condição.
+ 
++#### 3.1.3 F0 — Decisão de prosseguimento e encerramento
++
++F0 só encerra após os critérios substantivos do MET-01 §3.3.3, o nível apurado e registrado pelo engenheiro e o ato humano `decidir-prosseguimento`. Nos três níveis, o engenheiro confere o conteúdo da ficha E1 preparado para o enquadramento e registra no próprio terminal, fora da sessão do agente, a decisão de prosseguir com referência à ficha e pessoa nomeada. Preparar a ficha ou confirmar no chat não substitui o ato. A emissão formal de E1 ocorre depois do portão e permanece sujeita à resolução de RH pendente.
++
++A habilidade hb-enquadrar executa a preparação de F0 por HB-01 a HB-05, sob AG-01, em EX1. O agente não registra a decisão humana. O ato e sua condição de encerramento ainda dependem de implementação no marketplace; o playbook 0.4.18 não os declara, conforme a conferência do MAN-01 v0.3.
++
++#### 3.1.4 Correspondência de habilidades nas etapas iniciais
++
++A fonte da relação etapa → HBs → AG é o CAT-01 v0.5 Anexo C; este protocolo a utiliza sem criar relação concorrente. Em P1, hb-mapear-contexto prepara HB-08, sob AG-02; o levantamento de objetivos e o posicionamento nas quatro frentes permanecem no Anexo B do CAT-01, sem nova HB por ausência de execução comprovada. Em P2, hb-extrair-regras prepara HB-06 e HB-07, sob AG-02; a condição de RH e a verificação humana do dado permanecem conforme a seção 3.1.2.
++
++O mapa de valor é instrumento distinto das quatro frentes. HB-09 permanece no passo 3, em P3d, sob AG-02, com o estado declarado selado após P2 como entrada e candidatos para P4 como saída. HB-20 prepara o confronto; o operador decide cada item. P3b permanece sem HB e sem execução por agente. As camadas das HBs são de preparação e não podem ser superiores à camada de encerramento da etapa no mesmo nível, conforme CAT-01 §3.3. Essa correspondência aguarda reprodução controlada no marketplace.
++
+ ### 3.2 P6 — Operacionalize a solução
+ 
+ **Fase F3 · camada EX3 · modalidade presencial ou remota conforme o nível**
+@@ -97,7 +109,7 @@ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último enc
+ | N2 | Sistema de gestão com camada intermediária | Documentado | Treinamento e comunicação |
+ | N3 | Orquestração entre múltiplos sistemas | Aprovado pelas áreas | Plano formal, com recursos humanos |
+ 
+-**Fronteira.** O Estúdio pode redigir o estado futuro a partir do mapa do Passo 3 e listar candidatos a ponto de inserção. A escolha do ponto e a nomeação das pessoas são humanas — dependem de decisão organizacional que nenhuma leitura de processo revela.
++**Fronteira.** O Estúdio pode redigir o estado futuro a partir do mapa do Passo 3 e listar candidatos a ponto de inserção, por HB-21, sob AG-03, em EX2 como camada de preparação. A escolha do ponto e a nomeação das pessoas são humanas — dependem de decisão organizacional que nenhuma leitura de processo revela.
+ 
+ ### 3.3 P7 — Estabeleça governança e conformidade
+ 
+@@ -128,7 +140,7 @@ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último enc
+ | N2 | Política de uso e papéis nomeados | Lista de verificação de risco | Com limite de valor |
+ | N3 | Política completa, comitê e encarregado de dados | Relatório formal | Com limite e segregação de funções |
+ 
+-**Fronteira.** É o segundo ponto humano do percurso, ao lado de P3b. O Estúdio produz a minuta por HB-14, com as três listas em branco. Preencher as listas, definir limites e assinar são atos humanos; tentativa de conclusão por agente é recusada e registrada.
++**Fronteira.** É o segundo ponto humano do percurso, ao lado de P3b. Em P7, hb-governar prepara HB-13 e HB-14, ambas em EX2, sob AG-03: levanta requisitos regulatórios com fonte rastreável e produz a minuta do termo, com as três listas em branco para decisão humana. A camada de encerramento e decisão permanece EX4. Preencher as listas, definir limites e assinar são atos humanos; tentativa de conclusão por agente é recusada e registrada. A correspondência segue CAT-01 Anexo C e depende de atualização do catálogo e do playbook do marketplace.
+ 
+ ### 3.4 P8 — Pilote, valide e escale
+ 
+@@ -253,7 +265,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
+ ## 5. Referências
+ 
+ - EMCIA-MET-01 — Documento do método, Passos 6 a 10.
+-- EMCIA-CAT-01 — Fronteira de delegação, HB-14 a HB-18 e AG-04.
++- EMCIA-CAT-01 v0.5 — Fronteira de delegação, catálogo de HBs e agentes no Anexo A e correspondência canônica por etapa no Anexo C.
+ - EMCIA-CTX-01 — Instrumento de registro da camada de contexto.
+ - EMCIA-ROT-01 — Roteiro de levantamento de regras não documentadas.
+ - EMCIA-ESP-01 — Especificação executável do Estúdio de Trabalho.
+@@ -271,6 +283,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
+ | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: enquadramento comum, protocolo de P6 a P10, condições executáveis M1–M10 e os quatro formatos dos inegociáveis 2 a 5. | — |
+ | 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A7, e correção A24): responsável vigente da rotina de recalibragem, vínculo com a recorrência e com o E5; condições M11 e M12; campo de versão no Anexo D | — |
+ | 0.3 | 2026-10 | Celso do Vale | Finalidades de canais em todas as etapas, vínculo ou dispensa de RH como condição de P2, confirmação dos efeitos externos e selo Git após P2 | pendente |
++| 0.4 | 2026-10 | Celso do Vale | Decidir-prosseguimento como condição humana de encerramento de F0, baseada na ficha E1 antes da emissão; HBs de F0, P1, P2 e P7 conforme CAT-01 v0.5 Anexo C; HB-09 em P3d com estado declarado selado após P2 e candidatos para P4; preparação do confronto por HB-20 e estado futuro por HB-21; camadas de preparação distintas da camada de encerramento. Implementação do ato e da correspondência pendente no marketplace; divergência anterior sobre a natureza de HB-16 preservada e registrada no CAT-01 Anexo D | pendente |
+ 
+ ---
+ 
+diff --git a/eiac-campo/reference/metodo/EMCIA-CAT-01-fronteira-de-delegacao.md b/eiac-campo/reference/metodo/EMCIA-CAT-01-fronteira-de-delegacao.md
+index 1a9fc98..e1f41a0 100644
+--- a/eiac-campo/reference/metodo/EMCIA-CAT-01-fronteira-de-delegacao.md
++++ b/eiac-campo/reference/metodo/EMCIA-CAT-01-fronteira-de-delegacao.md
+@@ -1,7 +1,7 @@
+ # Fronteira de delegação
+ ## Camadas de execução e catálogo de agentes e habilidades
+ 
+-| Código | EMCIA-CAT-01 | Versão | 0.4 |
++| Código | EMCIA-CAT-01 | Versão | 0.5 |
+ | :--- | :--- | :--- | :--- |
+ | **Data** | 2026-10 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+@@ -53,6 +53,10 @@ Nenhum agente decide nem encerra etapa em EX3 ou EX4. Nessas camadas, o agente s
+ 
+ O levantamento das regras não documentadas está em EX4, e não em EX3, porque não confere um conteúdo existente: produz a regra que a camada de contexto vai codificar. Não há declaração anterior a verificar, só o que quem executa sabe e não escreveu.
+ 
++**Camada de encerramento e camada de preparação.** A camada declarada para a etapa no playbook é sua camada de encerramento e decisão. Cada HB conserva a camada de preparação declarada no Anexo A, EX1 ou EX2, que não pode ser superior à camada da etapa no mesmo nível de complexidade, na ordem EX1 < EX2 < EX3 < EX4. A verificação dessa relação é determinística. A preparação em EX2 de uma etapa encerrada em EX3 ou EX4 não constitui contradição de camada e não autoriza o agente a decidir ou encerrar. Essa regra substitui a leitura de contradição entre HB e etapa registrada para P5, P8 e P9 em docs/cruzamento-cat01.md do marketplace.
++
++Os atos humanos continuam reservados ao engenheiro mesmo quando a etapa declara EX1 ou EX2. Em F0, a camada EX1 das HBs não delega a apuração registrada do nível nem a decisão de prosseguimento. O Anexo C é a fonte canônica da correspondência entre etapa, HB e agente interno; o playbook e o catálogo operacional devem reproduzi-la mediante revisão controlada.
++
+ ### 3.4 Fronteira por passo
+ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A coluna final registra por que a atividade cai de um lado ou de outro — é ela que permite discutir a classificação em vez de aceitá-la.
+ 
+@@ -67,6 +71,8 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
+ | F0 | Calcular o custo do problema | Híbrido | O cálculo é auditável; os números de entrada costumam estar errados |
+ | F0 | Decidir o prosseguimento | Humano | Compromisso: inicia engajamento e aloca recurso |
+ 
++**Condição de encerramento.** Nos três níveis, o engenheiro registra o ato humano `decidir-prosseguimento` no próprio terminal, fora da sessão do agente, com base no conteúdo da ficha E1 preparado para o enquadramento. O registro da decisão de prosseguir é condição de encerramento de F0, além da apuração do nível e dos critérios substantivos do MET-01 §3.3.3. A emissão formal de E1 continua posterior ao portão de F0 e sujeita à resolução de RH pendente; o ato não exige uma E1 já emitida nem substitui esses controles. Sua implementação no marketplace permanece necessária.
++
+ *Fase quase inteiramente delegável: alto volume, baixa consequência, saída verificável. O que a fase produz é nível declarado, nunca nível diagnosticado.*
+ 
+ #### 3.4.2 Fase F1 — Alinhamento estratégico e diagnóstico
+@@ -79,11 +85,15 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
+ | 2 | Inventariar sistemas-fonte e coletar termos do glossário | Automatizado | Coleta do que a organização consegue declarar |
+ | 2 | Verificar se o dado existe e se presta | Humano | Exige acesso ao dado, não conversa sobre o dado |
+ | 2 | Detectar divergência entre definição declarada e uso real | Humano | Só aparece no confronto entre áreas |
+-| 3 | Varrer o mapa de valor e desenhar o estado atual declarado | Automatizado | Estruturação do que foi descrito |
++| 3 | Varrer o mapa de valor sobre o estado declarado selado em P2 | Automatizado | Candidatos rastreáveis ao fluxo declarado; não decide prioridade |
++| 3 | Desenhar o estado atual declarado | Automatizado | Estruturação do que foi descrito |
++| 3 | Preparar o confronto entre declarado e observado | Híbrido | Organização do placar e dos registros; o operador decide cada item |
+ | 3 | Levantar as regras não documentadas | Humano | Fonte: quem executa não sabe que sabe. Exige presença |
+ | 3 | Distinguir processo documentado de processo praticado | Humano | A ausência não é detectável por leitura |
+ | 3 | Registrar a linha de base | Híbrido | O agente estrutura a medição; o número é validado por quem opera |
+ 
++O posicionamento nas quatro frentes do passo 1 e o mapa de valor do passo 3 são instrumentos distintos, conforme MET-01 §§3.4.1 e 3.4.3 e resolução humana da D5. A HB-09 permanece no passo 3, em P3d: recebe o estado declarado preservado pelo selo posterior ao encerramento de P2 e produz candidatos para P4. Não redesenha esse estado a partir do observado. A preparação do confronto por HB-20 não substitui a distinção humana entre processo documentado e praticado. O MET-01 permanece inalterado.
++
+ *O passo 3 é o limite arquitetural do trabalho automatizado. Delegá-lo produz camada de contexto plausível e errada, que é o pior artefato possível, porque não parece errado.*
+ 
+ #### 3.4.3 Fase F2 — Desenho e arquitetura da solução
+@@ -172,7 +182,7 @@ O engenheiro conduz o percurso inteiro nos três níveis. O que muda é até ond
+ O deslocamento altera onde a verificação passa a ser obrigatória, não quem decide. As atividades humanas da seção 3.4 continuam humanas nos três níveis, inclusive nos passos em que a preparação automatizada é admitida: decidir o prosseguimento (F0), avaliar o patrocínio real (passo 1), verificar o dado (passo 2) e decidir a prioridade (passo 4).
+ 
+ ## 4. Condição de aceite
+-Este artefato está pronto quando toda atividade dos dez passos tem natureza atribuída e justificativa registrada; quando toda atividade automatizada ou híbrida consta do catálogo com insumo, saída e critério de verificação; e quando um engenheiro que não participou da construção consegue decidir, diante de uma atividade nova, de que lado da fronteira ela cai aplicando os três testes.
++Este artefato está pronto quando toda atividade dos dez passos tem natureza atribuída e justificativa registrada; quando toda atividade automatizada ou híbrida tem cobertura no Anexo A, com insumo, saída e critério de verificação, ou ausência de execução comprovada registrada no Anexo B; quando o Anexo C cobre todas as etapas do playbook; e quando um engenheiro que não participou da construção consegue decidir, diante de uma atividade nova, de que lado da fronteira ela cai aplicando os três testes. A presença no Anexo B não autoriza execução por agente. Aprovação documental e implementação operacional são verificações distintas.
+ 
+ ## 5. Referências
+ - *Services: The New Software*, Sequoia Capital (2024)
+@@ -190,6 +200,7 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
+ | 0.2 | 14/09/2026 | Celso do Vale | Habilidades renomeadas para HB; camadas de execução renomeadas para EX; alcance da fronteira delimitado ao trabalho interno | — |
+ | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): trava por origem da chamada (A4); levantamento das regras não documentadas movido para EX4 (D2); agente só prepara em EX3 e EX4 (D3); regra dos atos sobre o registro (D4); decisões humanas mantidas em todos os níveis (D1); situação das habilidades e atividades sem habilidade (D5) | — |
+ | 0.4 | 2026-10 | Celso do Vale | Fronteira de ações externas, confirmação por efeito e compartilhamento; atos humanos de canais, importação, recebimento, listagem, entrega e vínculo de restrição | pendente |
++| 0.5 | 2026-10 | Celso do Vale | Aplicação das decisões humanas D2–D8: HB-04/05 em F0, HB-06 em P2 e HB-13 em P7/AG-03; D5 resolvida com instrumentos distintos, HB-09 mantida no passo 3/P3d, estado declarado selado em P2 como entrada e candidatos para P4 como saída, sem alterar MET-01; varredura e desenho discriminados, preservando natureza automatizada e registrando desenho sem execução comprovada; HB-19 a HB-21 criadas somente com evidência textual dos SKILL.md; Anexo B restrito à execução não comprovada; correspondência canônica no Anexo C; camadas de encerramento e preparação; ato humano decidir-prosseguimento em F0. Evidências e dependências operacionais no Anexo D | pendente |
+ 
+ ---
+ 
+@@ -199,8 +210,8 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
+ | Código | Agente | Camada | Habilidades |
+ | :--- | :--- | :---: | :--- |
+ | **AG-01** | Agente de enquadramento | EX1 | HB-01 a HB-05 |
+-| **AG-02** | Agente de análise documental | EX2 | HB-06 a HB-10, HB-13 |
+-| **AG-03** | Agente de especificação | EX2 | HB-11, HB-12, HB-14 |
++| **AG-02** | Agente de análise documental | EX2 | HB-06 a HB-10, HB-19, HB-20 |
++| **AG-03** | Agente de especificação | EX2 | HB-11 a HB-14, HB-21 |
+ | **AG-04** | Agente de avaliação | EX2 | HB-15 a HB-18 |
+ 
+ <br>
+@@ -215,7 +226,7 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
+ | **HB-06** | Inventário de fontes de dados | EX2 · Aut. | Declaração da organização e documentos | Lista de fontes com criticidade | Cada fonte marcada como declarada até verificação em campo |
+ | **HB-07** | Coleta de termos do glossário | EX2 · Aut. | Documentos e entrevistas transcritas | Termos com definição declarada e ocorrências | Definições conflitantes sinalizadas, não conciliadas |
+ | **HB-08** | Consulta à base de referência | EX2 · Aut. | Setor e processo-alvo | Referências com fonte identificada | Nenhum item sem fonte; sem acesso aberto à internet |
+-| **HB-09** | Varredura do mapa de valor | EX2 · Aut. | Estado atual declarado | Pontos candidatos a intervenção | Candidatos rastreáveis à etapa do fluxo que os originou |
++| **HB-09** | Varredura do mapa de valor | EX2 · Aut. | Estado atual declarado, preservado pelo selo posterior ao encerramento de P2 | Pontos candidatos a intervenção para P4 | Cada candidato rastreável à etapa do fluxo declarado que o originou, sem reescrever a entrada selada |
+ | **HB-10** | Montagem da matriz de priorização | EX2 · Aut. | Casos candidatos | Matriz preenchida, sem escolha | Todos os candidatos presentes, inclusive os descartados |
+ | **HB-11** | Classificação Problema→Tecnologia | EX2 · Híb. | Caso descrito e camada de contexto | Tecnologia adequada, com justificativa | Classificação confirmada pelo engenheiro antes de virar decisão |
+ | **HB-12** | Estimativa de custo e latência | EX2 · Aut. | Desenho da solução | Custo por tarefa e teto mensal | Premissas expostas e recalculáveis |
+@@ -225,22 +236,73 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
+ | **HB-16** | Execução da suíte de avaliação | EX2 · Aut. | Casos de teste e solução em piloto | Resultado por caso e falhas agrupadas | Execução reproduzível a partir do mesmo conjunto |
+ | **HB-17** | Consolidação de indicadores | EX2 · Aut. | Medições do piloto e linha de base | Comparativo contra a linha de base | Apuração determinística e documentada |
+ | **HB-18** | Monitoramento de desvio | EX2 · Aut. | Saídas em operação | Alerta de degradação | Limiar definido antes do piloto, não ajustado a posteriori |
++| **HB-19** | Registro da linha de base | EX2 · Híb. | Amostras, período, indicador e fonte; em N1, estimativa declarada com quem opera | Linha de base estruturada, datada, com valor, método de apuração e procedência | Cálculo reproduzível; estimativa somente em N1; número confirmado por quem opera antes de avançar; narrativa não substitui registro estruturado |
++| **HB-20** | Preparação do confronto declarado × observado | EX2 · Híb. | Estado declarado selado após P2, sessão de P3b registrada e evidências do observado | Placar e registros propostos de divergência, com referências, justificativa e autoria nominal | Cada item liga declarado e observado; o operador decide cada item; correção cria registro novo e preserva o original, sem promoção automática de procedência |
++| **HB-21** | Documentação do estado futuro | EX2 · Híb. | E3-E ou candidato correspondente, classificação de P5, contexto curado e desenho decidido com as áreas | Proposta de especificação operacional: fluxo futuro, ponto de inserção, entrada, saída, interface, exceção e retorno ao humano | Proposta rastreável aos insumos; ponto de inserção e responsável nomeados por decisão humana; aprovação registrada pelo engenheiro antes de avançar |
+ 
+ *Legenda: EX1 · Aut. = camada conversacional, automatizada. EX1 · Híb. = camada conversacional, híbrida. EX2 = camada analítica. Habilidades híbridas não concluem sem decisão humana registrada.*
+ 
+-**Situação no Estúdio.** HB-04, HB-05, HB-06 e HB-13 estão catalogadas, sem implementação: nenhuma etapa do Estúdio as referencia. HB-09 pertence ao passo 3 neste catálogo e está associada ao passo 1 no Estúdio.
+-
+ ## Anexo B — Atividades delegáveis sem habilidade catalogada
+ 
+-Atividades automatizadas ou híbridas da seção 3.4 que ainda não têm habilidade que as execute. Enquanto não tiverem, são conduzidas pelo engenheiro.
++Atividades automatizadas ou híbridas da seção 3.4 sem execução integral comprovada pelo texto dos SKILL.md examinados. Enquanto não houver essa comprovação e revisão do catálogo, são conduzidas pelo engenheiro. Remissão ao método, título genérico ou preparação de parte da atividade não comprovam a atividade completa; o Anexo D registra o exame.
+ 
+ | Passo | Atividade | Natureza |
+ | :---: | :--- | :--- |
+ | 1 | Levantar objetivos declarados e posicionar nas quatro frentes | Automatizado |
+-| 3 | Registrar a linha de base | Híbrido |
++| 3 | Desenhar o estado atual declarado | Automatizado |
+ | 4 | Estimar viabilidade técnica | Híbrido |
+ | 4 | Classificar na zona de contenção | Híbrido |
+ | 6 | Mapear pontos de integração e permissões necessárias | Automatizado |
+-| 6 | Documentar o estado futuro | Híbrido |
+ | 6 | Redigir o guia operacional e o material de treinamento | Híbrido |
+ | 10 | Propor ajuste de regra ou parâmetro | Híbrido |
++
++## Anexo C — Correspondência canônica entre etapa, habilidades e agentes
++
++Esta tabela é a fonte da relação etapa → HBs → AG. Declara a correspondência desta revisão do método, a ser implementada no marketplace; não afirma que o playbook 0.4.18 já a reproduz. Os identificadores e a ordem das treze etapas são os do playbook. A camada de encerramento conserva os valores atuais por nível; as HBs conservam sua camada de preparação do Anexo A.
++
++| Etapa | Camada de encerramento N1 · N2 · N3 | Habilidade do Estúdio | HBs de preparação | AG |
++| :--- | :--- | :--- | :--- | :--- |
++| F0 | EX1 · EX1 · EX1 | hb-enquadrar | HB-01, HB-02, HB-03, HB-04, HB-05 | AG-01 |
++| P1 | EX2 · EX2 · EX3 | hb-mapear-contexto | HB-08 | AG-02 |
++| P2 | EX2 · EX2 · EX3 | hb-extrair-regras | HB-06, HB-07 | AG-02 |
++| P3a | EX2 · EX3 · EX3 | hb-medir | HB-19 | AG-02 |
++| P3b | EX4 · EX4 · EX4 | hb-levantar-regras — protocolo humano | — | — |
++| P3d | EX3 · EX3 · EX3 | hb-confrontar | HB-09, HB-20 | AG-02 |
++| P4 | EX2 · EX3 · EX3 | hb-priorizar | HB-10 | AG-02 |
++| P5 | EX3 · EX3 · EX3 | hb-classificar | HB-11, HB-12 | AG-03 |
++| P6 | EX3 · EX3 · EX3 | hb-operacionalizar | HB-21 | AG-03 |
++| P7 | EX4 · EX4 · EX4 | hb-governar | HB-13, HB-14 | AG-03 |
++| P8 | EX3 · EX3 · EX3 | hb-pilotar | HB-15, HB-16 | AG-04 |
++| P9 | EX3 · EX3 · EX3 | hb-medir-valor | HB-17 | AG-04 |
++| P10 | EX4 · EX4 · EX4 | hb-recalibrar | HB-18 | AG-04 |
++
++F0 executa HB-04 e HB-05 pela habilidade de enquadramento. P3b permanece sem HB e sem AG por desenho: levantamento presencial e não delegável. Em P7 e P10, a preparação EX2 não altera a natureza humana da decisão EX4. O monitoramento de P10 permanece em EX2. Os agentes agrupam a preparação conforme as fases já existentes: AG-01 no enquadramento, AG-02 na análise e priorização, AG-03 na especificação e governança e AG-04 na avaliação; nenhum reúne camadas distintas.
++
++## Anexo D — Evidência de cobertura e dependências da implementação
++
++### D.1 Fonte e critério
++
++Exame dos SKILL.md em eiac-campo/skills/hb-*/, de eiac-campo/reference/habilidades.json, do playbook 0.4.18 em eiac-campo/template-caso/registro/playbook.json, de decisoes/020-pendencia-cruzamento-cat01.md e de docs/cruzamento-cat01.md na branch master do emcia-marketplace, commit `ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f`, em 2026-10. Os caminhos abaixo são relativos à raiz desse repositório. Os trechos citados comprovam preparação documental, não aprovação humana nem execução em produção. As novas HBs pertencem somente a EX2, segundo a regra da seção 3.3, ainda que o front matter da habilidade declare EX3 para a etapa.
++
++### D.2 Exame das candidatas
++
++| Etapa e atividade | SKILL.md e trecho literal ou ausência relevante | Resultado |
++| :--- | :--- | :--- |
++| P1 — levantar objetivos declarados e posicionar nas quatro frentes | eiac-campo/skills/hb-mapear-contexto/SKILL.md: “Levanta o contexto de negocio e o mapa de valor da organizacao.” O texto não declara levantamento de objetivos e posicionamento nas quatro frentes; remeter ao passo 1 não comprova sua execução | Sem nova HB; Anexo B |
++| P3a — registrar a linha de base | eiac-campo/skills/hb-medir/SKILL.md: “Saída estruturada (linha de base, evidência do inegociável 1):” e “grave o indicador em `rascunho/BL-NNN.yaml`”; “O cálculo é feito em código, não por leitura.” | HB-19, EX2, híbrida, AG-02 |
++| P3d — preparação do confronto | eiac-campo/skills/hb-confrontar/SKILL.md: “Você prepara o confronto; o operador decide cada item.” e “escreva o registro em `rascunho/DIV-*.yaml`”; instrumentos: “placar regra escrita × praticada, registro de divergência.” | HB-20, EX2, híbrida, AG-02; verificação e decisão permanecem humanas |
++| P3d — desenhar o estado atual declarado | eiac-campo/skills/hb-confrontar/SKILL.md prepara placar e divergências, mas não declara desenho do fluxo atual. HB-09 recebe o estado declarado já selado; varrê-lo não comprova desenhá-lo | Sem nova HB; Anexo B |
++| P4 — estimar viabilidade técnica | eiac-campo/skills/hb-priorizar/SKILL.md cruza frequência × consequência do erro e remete à Matriz Problema→Tecnologia; não declara cálculo ou proposta de viabilidade técnica | Sem nova HB; Anexo B |
++| P4 — classificar na zona de contenção | eiac-campo/skills/hb-priorizar/SKILL.md: “Esta habilidade prepara; não decide.” e “Priorização e zona de contenção são EX4, e são decisão do cliente”; não há trecho que declare produção da classificação proposta | Sem nova HB; Anexo B |
++| P6 — mapear pontos de integração e permissões necessárias | eiac-campo/skills/hb-operacionalizar/SKILL.md: “organizar o fluxo, identificar interfaces, estruturar o mapa técnico, gerar rascunho, apontar inconsistências.” Há preparação de interfaces, mas não inventário de permissões necessárias; execução integral não comprovada | Sem nova HB para a atividade completa; Anexo B |
++| P6 — documentar o estado futuro | eiac-campo/skills/hb-operacionalizar/SKILL.md: “Ele documenta onde a solução entraria no fluxo.” e “organizar o fluxo, identificar interfaces, estruturar o mapa técnico, gerar rascunho, apontar inconsistências.” A especificação declara ponto de inserção, entrada, saída, interface, exceção e retorno ao humano | HB-21, EX2, híbrida, AG-03; aprovação do desenho permanece humana |
++| P6 — redigir guia operacional e material de treinamento | eiac-campo/skills/hb-operacionalizar/SKILL.md produz proposta OP; não declara redação do guia ou do material de treinamento. A emissão de E4 por hb-emitir-e4 não comprova executar essa atividade em P6 | Sem nova HB; Anexo B |
++| P10 — propor ajuste de regra ou parâmetro | eiac-campo/skills/hb-recalibrar/SKILL.md: “Quando `drift_detectado: true`, preencha `drift_descricao`, `drift_quantificacao` e `recomendacao_agente`.” Há recomendação sobre o desvio, mas não proposta identificada de ajuste de regra ou parâmetro | Sem nova HB para essa atividade; Anexo B |
++
++### D.3 Divergências e aplicação controlada
++
++As decisões humanas D2–D8 e a resolução da D5 fixam a correspondência desta revisão. O playbook 0.4.18 ainda lista somente HB-01/02/03 em F0, HB-07 em P2 e HB-14 em P7; associa HB-09 a P1; não referencia as três novas HBs nem declara o ato decidir-prosseguimento. O catálogo operacional ainda atribui HB-13 a AG-02 e deixa HB-04/05/06/13 sem vínculo de habilidade. Essas diferenças dependem da implementação no marketplace e não são corrigidas neste repositório. A substituição da regra provisória da decisão 020 exige registro explícito de decisão naquele repositório.
++
++P5, P8 e P9 deixam de apresentar contradição entre camada da HB e da etapa pela regra da seção 3.3. P3b já está em EX4 no CAT-01 v0.4; a comparação antiga com EX3 é histórica. Atividades humanas de P1, P2 e P4 continuam humanas em todos os níveis; a regra não cria atos nem comprova produtos ausentes do playbook.
++
++Permanece uma divergência documental anterior a esta revisão: o CAM-01 §3.4 descreve HB-15 e HB-16 como “ambas híbridas”, enquanto este Anexo A classifica HB-16 como automatizada. D2–D8 não decidem alteração dessa natureza; os textos são preservados, e a divergência fica registrada para decisão humana.
+diff --git a/eiac-campo/reference/metodo/EMCIA-GLO-01-glossario-do-metodo.md b/eiac-campo/reference/metodo/EMCIA-GLO-01-glossario-do-metodo.md
+index 6b10962..2cd9f5f 100644
+--- a/eiac-campo/reference/metodo/EMCIA-GLO-01-glossario-do-metodo.md
++++ b/eiac-campo/reference/metodo/EMCIA-GLO-01-glossario-do-metodo.md
+@@ -1,7 +1,7 @@
+ # Glossário do método
+ ## Vocabulário padronizado do percurso, índice de artefatos e índice de siglas
+ 
+-| Código | EMCIA-GLO-01 | Versão | 0.3 |
++| Código | EMCIA-GLO-01 | Versão | 0.4 |
+ | :--- | :--- | :--- | :--- |
+ | **Data** | 2026-10 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+@@ -74,9 +74,11 @@ Cada entrada tem quatro campos, e o terceiro é o que faz o trabalho. A maior pa
+ | **Trabalho híbrido** | Saída de agente que não avança sem decisão humana registrada | Automação com revisão facultativa | CAT-01 |
+ | **Trabalho humano** | Atividade que agente nenhum executa em nenhuma etapa | Atividade sem apoio de ferramenta | CAT-01 |
+ | **Camada de execução** | EX1 conversacional, EX2 analítica, EX3 verificação, EX4 julgamento | Camadas do agente, CA1 a CA5 | CAT-01 |
++| **Camada de encerramento** | Camada de execução declarada para a etapa no playbook, por nível de complexidade, que rege seu encerramento e decisão; os atos humanos permanecem humanos também em EX1 ou EX2 | Camada de todas as HBs que preparam a etapa; tampouco autorização ao agente para decidir | CAT-01 §3.3 · Anexo C · MAN-01 |
++| **Camada de preparação** | Camada EX1 ou EX2 própria de cada HB, conservada ao preparar uma etapa; não pode ser superior à camada de encerramento da etapa no mesmo nível, na ordem EX1 < EX2 < EX3 < EX4 | Camada humana de verificação ou julgamento; tampouco delegação do encerramento | CAT-01 §3.3 · Anexo A · CAM-01 |
+ | **Trava de camada** | Condição de validade que impede execução fora da camada declarada | Instrução ao agente. A trava não depende de o agente escolher respeitá-la | CAT-01 |
+ | **Desvio de camada** | Tentativa registrada de execução fora da camada | Erro de execução | CAT-01 · ação 3.7 |
+-| **Habilidade** | Capacidade modular com insumo, saída e critério de verificação. Siglas HB-01 a HB-18 | Agente | CAT-01 |
++| **Habilidade** | Capacidade modular com insumo, saída e critério de verificação. Siglas HB-01 a HB-21 | Agente | CAT-01 |
+ | **Agente interno** | Agente que opera para o engenheiro de campo. Siglas AG-01 a AG-04 | Agente especificado ao cliente | CAT-01 |
+ | **Agente especificado** | Unidade descrita no blueprint para a organização cliente | Agente interno | E3, parte B |
+ | **Arquétipo** | Analítico, criativo, interacional ou validador | Tecnologia empregada | Passo 4 · E3 |
+@@ -165,6 +167,7 @@ EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-
+ | 0.1 | 14/09/2026 | Celso do Vale | Versão inicial: 77 termos em seis grupos, quatro anexos, índice de artefatos e índice de siglas | — |
+ | 0.2 | 29/09/2026 | Celso do Vale | Termos da verificação por duas execuções marcados como históricos, em razão da substituição do EMCIA-VER-01 (registro da ação 4.3, item E1) | — |
+ | 0.3 | 2026-10 | Celso do Vale | Nove termos operacionais, índices e remissão ao ROT-02, com distinção entre origem, integridade, autenticação e aceite; manutenção inserida no conteúdo e referências em seção própria | pendente |
++| 0.4 | 2026-10 | Celso do Vale | Definição de camada de encerramento e camada de preparação conforme CAT-01 v0.5, com limite por nível e preservação dos atos humanos; faixa de habilidades atualizada até HB-21 | pendente |
+ 
+ ---
+ 
+@@ -204,7 +207,7 @@ Artefatos produzidos na Sprint 1. O código é estável ao longo das versões; a
+ | **Perguntas da triagem** | DAD-1 a CRI-3 | Três por eixo, nove ao todo | TRI-01 |
+ | **Camadas de execução** | EX1 a EX4 | Conversacional, Analítica, Verificação, Julgamento | CAT-01 |
+ | **Agentes internos** | AG-01 a AG-04 | Enquadramento, Análise documental, Especificação, Avaliação | CAT-01 |
+-| **Habilidades** | HB-01 a HB-18 | Capacidades delegáveis, com insumo, saída e critério de verificação | CAT-01 |
++| **Habilidades** | HB-01 a HB-21 | Capacidades delegáveis, com insumo, saída e critério de verificação | CAT-01 |
+ | **Camadas do agente** | CA1 a CA5 | Controle, Agente, Protocolos, Contexto, Dados | E3, parte B |
+ | **Blocos da Parte B** | B1 a B7 | Fronteira, Camadas, Tecnologias, Requisitos, Avaliação e riscos, Plano de construção, Passagem | E3, parte B |
+ | **Modos de delegação** | Sombra · Sugestão · Aprovação prévia · Exceção · Autônomo | Arranjo da interação entre agente e humano, por ação delegada | E3, B1 |
+diff --git a/eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md b/eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md
+index 0c4e8da..7f89a79 100644
+--- a/eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md
++++ b/eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md
+@@ -3,7 +3,7 @@
+ 
+ | Metadado | Valor | Metadado | Valor |
+ | :--- | :--- | :--- | :--- |
+-| **Código** | EMCIA-MAN-01 | **Versão** | 0.2 |
++| **Código** | EMCIA-MAN-01 | **Versão** | 0.4 |
+ | **Data** | 2026-10 | **Estado** | Em revisão |
+ | **Responsável** | Celso do Vale | **Aprovação** | pendente |
+ | **Fase** | Todas | **Passo** | Todos |
+@@ -16,7 +16,7 @@ Permitir que um engenheiro de campo que não participou da construção do méto
+ ## 2. Escopo e aplicação
+ Aplica-se a quem conduz um caso. Pressupõe a leitura do EMCIA-MET-01. Não se aplica à manutenção do Estúdio, que segue o EMCIA-ESP-01, o EMCIA-ARQ-01 e o EMCIA-IMP-01. Substitui o Guia do Engenheiro de Campo de setembro de 2026, que descrevia a versão 0.3.0 do playbook.
+ 
+-Esta revisão acompanha o playbook operacional **0.4.18**, campo **0.8.21** e núcleo **0.2.44**, após as decisões 039–042. O ESP-01 permanece como documento da prova de conceito; não é a referência da lista de limites operacionais desta versão. Casos existentes conservam o playbook com que foram abertos; migração exige decisão humana.
++Esta revisão toma como referência o playbook operacional **0.4.18**, campo **0.8.22** e núcleo **0.2.44**, após as decisões 039–042, e incorpora a decisão humana de prosseguimento em F0 definida no CAT-01 v0.5. O ato ainda depende de implementação no marketplace, conforme a validação da seção 4; o manual não afirma que a versão atual já o executa. O ESP-01 permanece como documento da prova de conceito; não é a referência da lista de limites operacionais desta versão. Casos existentes conservam o playbook com que foram abertos; migração exige decisão humana.
+ 
+ ## 3. Conteúdo
+ 
+@@ -57,7 +57,7 @@ Para cada etapa: o comando que o agente executa, os atos que só o engenheiro ex
+ 
+ | Etapa | Camada N1 · N2 · N3 | Comando do agente | Ato do engenheiro | Produto conferido pelo Estúdio | Entregável |
+ | :--- | :--- | :--- | :--- | :--- | :--- |
+-| F0 | EX1 · EX1 · EX1 | `/eiac-campo:enquadrar` | `apurar-nivel` | — | E1 |
++| F0 | EX1 · EX1 · EX1 | `/eiac-campo:enquadrar` | `apurar-nivel`, `decidir-prosseguimento` | Decisão de prosseguimento registrada | E1 |
+ | P1 | EX2 · EX2 · EX3 | `/eiac-campo:mapear-contexto` | `encerrar-camada-humana` (N3) | — | E2 |
+ | P2 | EX2 · EX2 · EX3 | `/eiac-campo:mapear-fontes` | `vincular-restricao`, `encerrar-camada-humana` (N3) | Todos os RH-xx vinculados a fontes ou dispensados com motivo | E2 |
+ | P3a | EX2 · EX3 · EX3 | `/eiac-campo:medir` | `registrar-sessao`, `encerrar-camada-humana` (N2, N3) | Linha de base registrada | E2 |
+@@ -73,11 +73,15 @@ Para cada etapa: o comando que o agente executa, os atos que só o engenheiro ex
+ 
+ P3b não tem comando, por desenho: o levantamento é presencial e não delegável, e segue o EMCIA-ROT-01. Em P10, o monitoramento opera em EX2 e a decisão em EX4. Os entregáveis são materializados com `/eiac-campo:emitir`, depois que todas as etapas do seu portão estiverem encerradas.
+ 
++A camada da tabela é a camada de encerramento e decisão; as HBs conservam a camada de preparação do CAT-01 Anexo A, que não pode ser superior à camada da etapa no mesmo nível. A fonte da correspondência etapa → HBs → AG é o CAT-01 v0.5 Anexo C. As decisões humanas resolveram essa correspondência no método; sua reprodução no catálogo e no playbook depende da revisão do marketplace, conforme o Anexo D do CAT-01.
++
+ Antes de P3b, aplique um selo confirmado no Git após o último encerramento de P2; a tentativa de selo sem commit confirmado não basta. Em P2, vincular-restricao cobre o vínculo a fonte F curada e a dispensa motivada por restricoes.py, no terminal humano, em todos os níveis. Sem RH importado, a cobertura é vazia. Revisão exige decisão que cite RH e versão anterior, com pessoa, motivo e data; após P2, somente revisão de registro existente. A marca acompanha cada asserção que cita fonte restrita, conforme HAB-01 §3.4 e CTX-01 §3.7.
+ 
+ ### 3.4 Atos transversais
+ Valem em qualquer etapa e são sempre do engenheiro: `registrar-sessao`, `satisfazer-inegociavel`, `satisfazer-inegociavel-campo` e `encerrar-camada-humana`. A selagem do caso também é ato do engenheiro, com autor nomeado.
+ 
++**Ato específico de F0.** Nos três níveis, `decidir-prosseguimento` é executado pelo engenheiro no próprio terminal, fora da sessão do agente. Ele confere o conteúdo da ficha E1 preparado para o enquadramento e registra a decisão de prosseguir, com pessoa nomeada e referência à ficha que a fundamenta. Esse registro é condição de encerramento de F0 e não é substituído por apurar o nível ou confirmar no chat. A ficha usada como fundamento precede a emissão formal de E1, que continua sujeita ao portão e à resolução de RH pendente. Não há comando operacional deste ato no playbook 0.4.18; sua declaração e sua trava dependem da implementação no marketplace. O agente pode preparar o conteúdo e, quando houver implementação, o comando; não pode registrar a decisão.
++
+ Os atos na fronteira externa seguem CAN-01 e são executados no próprio terminal, fora da sessão do agente:
+ 
+ | Ato declarado | Componente | O que o engenheiro confere |
+@@ -100,7 +104,7 @@ Uma recusa é a trava funcionando, e não um erro. Para cada recusa:
+ ### 3.6 O que esta versão não faz por você
+ As conferências operacionais incluem manifesto na abertura, importação e selo confirmado antes de F0, canais declarados, coerência local de listagem/recebimento/entrega, cobertura dos RH em P2, marcas localizadas na materialização e selo confirmado após P2 para P3b. As tarefas e limites que permanecem são:
+ 
+-1. Registrar no caso a decisão de prosseguimento em F0, a avaliação do patrocínio em P1, a verificação do dado em P2 e a decisão de prioridade em P4, também nos níveis N1 e N2.
++1. Registrar no caso a avaliação do patrocínio em P1, a verificação do dado em P2 e a decisão de prioridade em P4, também nos níveis N1 e N2.
+ 2. Conferir os produtos substantivos de F0, P1, P2, P3b, P3d e P4 antes de encerrar. Em P2, a cobertura de RH é conferida, mas não comprova a qualidade do inventário ou a adequação do dado. A tabela mostra os produtos efetivamente exigidos pelo Estúdio; campos e sessões não comprovam a completude de todo conteúdo do método.
+ 3. Conferir de novo um inegociável já satisfeito quando o artefato ou o responsável mudar, antes de emitir.
+ 4. Manter um único registro vigente de piloto, especificação operacional e termo de autonomia, em versões crescentes. A rotina de recalibragem possui seleção e conferência próprias de versão e responsável; essa conferência não se estende automaticamente aos demais produtos.
+@@ -113,7 +117,7 @@ As conferências operacionais incluem manifesto na abertura, importação e selo
+ O marketplace mantém em `decisoes/` o registro de cada decisão de construção, com contexto, decisão e consequência. Antes de propor mudança no que parecer burocracia, leia a decisão correspondente.
+ 
+ ## 4. Condição de aceite
+-O manual corresponde à versão operacional enquanto a tabela da seção 3.3 coincidir com o playbook declarado: mesmas etapas, mesmas camadas, comandos existentes, atos declarados, produtos e portões. Esta revisão foi conferida em checkout temporário do marketplace, sem commit nem alteração de código: a função conferir() de testes/manual_a25.py deve devolver lista vazia contra o playbook 0.4.18, acompanhada dos quatro testes negativos de etapa, camada, ato e comando. A validação não concede aprovação documental; esta permanece pendente.
++O manual corresponde integralmente à versão operacional quando a tabela da seção 3.3 coincide com o playbook declarado: mesmas etapas, mesmas camadas, comandos existentes, atos declarados, produtos e portões. Esta revisão foi conferida diretamente pela função conferir() de testes/manual_a25.py, sem alterar código ou playbook, contra o playbook 0.4.18 no commit ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f do marketplace master. O único resultado admitido nesta revisão é a lista com “F0: ato decidir-prosseguimento não declarado”, dependente da implementação no marketplace. Qualquer outra divergência interrompe a revisão. Os quatro testes negativos de etapa, camada, ato e comando acompanham a conferência. Após a implementação do novo ato, a validação deve devolver lista vazia. A validação não concede aprovação documental; esta permanece pendente.
+ 
+ ## 5. Referências
+ EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-01, EMCIA-ROT-02, EMCIA-CTX-01, EMCIA-HAB-01, EMCIA-CAN-01, EMCIA-GLO-01 e EMCIA-E1 a EMCIA-E5. EMCIA-ESP-01, EMCIA-ARQ-01 e EMCIA-IMP-01 permanecem referências da PoC e da construção. Referência operacional: emcia-marketplace, decisões 039–042, playbook 0.4.18 e evidências habilitacao-0d, canais-externos e parte-a-operacional.
+@@ -124,3 +128,5 @@ EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-
+ | :---: | :---: | :--- | :--- | :---: |
+ | 0.1 | 01/10/2026 | Celso do Vale | Versão inicial, conferida contra o playbook 0.4.9 (ação 4.5); substitui o Guia do Engenheiro de Campo | — |
+ | 0.2 | 2026-10 | Celso do Vale | Operação das decisões 039–042 e playbook 0.4.18; canais antes ou junto da importação, RH em P2, fronteira externa e limites próprios. Validação autorizada em checkout temporário, sem alterar código: conferir() do A25 retornou lista vazia e os quatro testes negativos passaram; dispensada a expectativa histórica de lacunas do manual v0.1 | pendente |
++| 0.3 | 2026-10 | Celso do Vale | Ato humano decidir-prosseguimento em F0 nas seções 3.3 e 3.4, como condição de encerramento baseada na ficha E1; retirada desse item dos limites de 3.6; correspondência canônica de HBs no CAT-01 v0.5, sem manter lacunas da decisão 020 como indefinição de método. Validação sem alterar código: conferir() do A25 contra o playbook 0.4.18 retornou somente “F0: ato decidir-prosseguimento não declarado”; os quatro testes negativos passaram. Divergência dependente da implementação no marketplace; lista vazia exigida após essa implementação | pendente |
++| 0.4 | 2026-10 | Celso do Vale | produto de F0 alinhado ao contrato de decidir-prosseguimento | pendente |
+diff --git a/eiac-campo/reference/metodo/manifesto.json b/eiac-campo/reference/metodo/manifesto.json
+index 01ea804..a97eede 100644
+--- a/eiac-campo/reference/metodo/manifesto.json
++++ b/eiac-campo/reference/metodo/manifesto.json
+@@ -1,11 +1,11 @@
+ {
+-  "versao": 4,
+-  "origem_controlada": "emcia-artefatos (github.com/CvGonjr/emcia-artefatos), commit 1d6d1e8bfc1739594ea7a119257ecae28c8e5af4",
++  "versao": 5,
++  "origem_controlada": "emcia-artefatos (github.com/CvGonjr/emcia-artefatos), commit 989e1e73796a356b660be8ed55b686ba716787ac",
+   "empacotado_em": "2026-10-03",
+   "documentos": {
+-    "EMCIA-CAM-01-protocolo-de-campo-por-passo.md": "01bcf52f7dfeac2ebd1022148fe243f524a4f3f78989145e671b55e7ab9b991b",
++    "EMCIA-CAM-01-protocolo-de-campo-por-passo.md": "fcc69ca987722ca642c2ee04a4de4855d2ad4c810decd225ec1457148b256f51",
+     "EMCIA-CAN-01-protocolo-de-canais-externos.md": "8fc18cc1484e00315f0255a49b65924b26475ba21424f625261c10797f2efe52",
+-    "EMCIA-CAT-01-fronteira-de-delegacao.md": "fa30bb8bf703c6eaf364d6051b1b5016a62204738b2ce31e16aeb9f39041745a",
++    "EMCIA-CAT-01-fronteira-de-delegacao.md": "ef03a02c8e37aa374ae3752ba0b22f5b67a3ba87a5e84930e62b20b71e3495fa",
+     "EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md": "1ca8eb6cd0c16430f7204a0b5264ed52a7034836a51fa1fad534da03cd5eaee0",
+     "EMCIA-E1-ficha-de-enquadramento.md": "ca3160c76bdcd20a9288a5459df3ad64570a07dbdf8d57c21173a7225858d1f2",
+     "EMCIA-E2-diagnostico-e-oportunidade.md": "db72e34d2937765b535b1fc565180ae37ede42eb01af1a81199f340f41891fe0",
+@@ -14,10 +14,10 @@
+     "EMCIA-E5-relatorio-de-piloto.md": "1a9fcfbbc3936ea2de45972972dbad9f1d3da5f985fa4e2535df1d1753b67e54",
+     "EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md": "36f83b92a6ef5deec4582406f7991f7e5b8b297caa0bc89cb6c205740fa7f974",
+     "EMCIA-FER-01-quadro-de-ferramentas.md": "06d3effa0ac45ca69e2237a6d9c38922f1c1eb70de623f90f43e93fa02578e4a",
+-    "EMCIA-GLO-01-glossario-do-metodo.md": "95243e3277c5d6b95393b68136d4dfee32c3fff6e5fc02824df71edca0ef7b9f",
++    "EMCIA-GLO-01-glossario-do-metodo.md": "6e00c6706289c8cebe02e79c4f2221e9299c50d76013ff7608a2c0be85922d2a",
+     "EMCIA-HAB-01-protocolo-de-habilitacao.md": "055c86894ce87d19ffb46cbb781beeb0976afd4cd7e8a748925e1b5d4b6af16d",
+     "EMCIA-HAB-fluxo-operacional-proposta.md": "3cb656958d7f8d09040ce5625b5b619877f9645cea9349d5e33bf75d9daab5c9",
+-    "EMCIA-MAN-01-manual-de-aplicacao.md": "e8e74846344949e0f2db1c7854a099e5361b9edc9f3b67206fce693ef86ae600",
++    "EMCIA-MAN-01-manual-de-aplicacao.md": "c10f32b1c80966cd76f26f6d619d7729a8a38bb2234b93c3fc043f0e7fb2aace",
+     "EMCIA-MET-01-documento-do-metodo.md": "cf237af2d8e128073beb51af680f036c81a079ab299e69389b76352534b9eaf2",
+     "EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md": "db7d0ab05ecf4d28f263819305c1ae7a194b5cf404182446d5c2366e9f4cf2e3",
+     "EMCIA-ROT-02-roteiro-de-habilitacao.md": "990670da1727e985ec3febb4b7ff134a2f2cfa862512c16680671fc4a0f3eb94",
+diff --git a/eiac-campo/reference/restricoes.md b/eiac-campo/reference/restricoes.md
+index 5072f51..f37ac85 100644
+--- a/eiac-campo/reference/restricoes.md
++++ b/eiac-campo/reference/restricoes.md
+@@ -26,9 +26,10 @@ curadoria. As marcas incluem RH, F, item negado, restrição e motivo junto
+ Se houver RH pendente, qualquer materialização fica bloqueada; por isso E1
+ em um caso restrito só é materializado após os vínculos de P2.
+ 
+-O manual base permanece preservado. `manual-emenda-041.json` registra a
+-emenda local aprovada pela decisão 041 para a conferência do playbook
+-0.4.18; a proposta para o MAN-01 v0.2 está na evidência da parte A.
++O MAN-01 v0.4 empacotado é conferido diretamente contra o playbook 0.4.19,
++sem emenda local. A correção do produto de F0 e o commit canônico estão
++registrados na decisão 043 e na evidência correspondencia-cat01. A emenda
++da decisão 041 permanece apenas como registro histórico da versão anterior.
+ 
+ Demonstrações: `preparar-caso.sh <nome> <etapa> com-restricao` e
+ `percurso-completo.sh <nome> com-restricao`. Usam somente dados sintéticos,
+diff --git a/eiac-campo/scripts/entregaveis.py b/eiac-campo/scripts/entregaveis.py
+index eb62480..969ecd5 100644
+--- a/eiac-campo/scripts/entregaveis.py
++++ b/eiac-campo/scripts/entregaveis.py
+@@ -102,6 +102,20 @@ def render_e1(st):
+     md += "## 6. Trilha recomendada e decisão solicitada\n\n"
+     md += (f"| Decisão | Responsável | Data |\n| :--- | :--- | :---: |\n"
+            f"| F0 encerrada | {f0.get('autor', '?')} | — |\n")
++    pb = json.loads(pathlib.Path('registro/playbook.json').read_text())
++    if any(a['id'] == 'decidir-prosseguimento' for a in pb['decisoes_humanas']):
++        import prosseguimento as PR
++        try:
++            decisao = PR.carregar()
++            if decisao is None:
++                raise ValueError('decisão de prosseguimento ausente')
++        except (OSError, ValueError, TypeError, KeyError) as exc:
++            E.evento('TentativaNegada', autor=st['responsavel'], operacao='materializar-entregavel', motivo=str(exc))
++            raise NaoMaterializavel(str(exc)) from exc
++        md += (f"| {decisao['desfecho']} | {decisao['decisor']} | {decisao['data']} |\n\n"
++               f"Motivo: {decisao['motivo']}\n\n"
++               f"Decisão: registro/prosseguimento/decisao-{decisao['versao']:04d}.yaml. "
++               f"Ficha preparada: {decisao['ficha']}; SHA-256: {decisao['ficha_sha256']}.\n")
+     return md
+ 
+ 
+diff --git a/eiac-campo/scripts/prosseguimento.py b/eiac-campo/scripts/prosseguimento.py
+new file mode 100644
+index 0000000..a7382fa
+--- /dev/null
++++ b/eiac-campo/scripts/prosseguimento.py
+@@ -0,0 +1,100 @@
++"""Decisão humana de F0. Executar no terminal, fora da sessão do agente.
++
++Uso: python3 prosseguimento.py --entrada rascunho/prosseguimento.json
++Nova decisão exige a versão seguinte; cada registro anterior é preservado.
++"""
++import argparse
++import datetime
++import fcntl
++import hashlib
++import json
++import pathlib
++import sys
++import canais as K
++
++E = K.E
++X = __import__('estrutura')
++DIRETORIO = 'registro/prosseguimento'
++VIGENTE = DIRETORIO + '/vigente.yaml'
++CAMPOS = {'versao', 'decisor', 'data', 'desfecho', 'motivo', 'ficha'}
++
++
++def carregar():
++    p = K.seguro(VIGENTE)
++    eventos = [e for e in E.eventos() if e.get('evento') == 'ProsseguimentoDecidido']
++    if not p.exists():
++        K.exigir(not eventos, 'registro vigente ausente após decisão')
++        return None
++    b = p.read_bytes()
++    K.exigir(eventos and eventos[-1].get('sha256') == hashlib.sha256(b).hexdigest()
++             and eventos[-1].get('arquivo') == VIGENTE, 'integridade da decisão diverge da trilha')
++    dados = X.carregar_yaml(b.decode('utf-8'))
++    schema = json.loads(K.seguro('registro/prosseguimento.schema.json').read_text())
++    K.exigir(not X.validar(dados, schema, 'registro'), 'registro de prosseguimento inválido')
++    K.exigir(E.pessoa_nomeada(dados['decisor']) and E.pessoa_nomeada(dados['autor']), 'autoria nominal inválida')
++    K.exigir(type(dados['versao']) is int and dados['versao'] > 0, 'versão inválida')
++    historico = K.seguro(f"{DIRETORIO}/decisao-{dados['versao']:04d}.yaml")
++    K.exigir(historico.read_bytes() == b, 'registro vigente difere da decisão preservada')
++    return dados
++
++
++def gravar(entrada):
++    st, pb = K.contexto()
++    K.exigir(any(a['id'] == 'decidir-prosseguimento' for a in pb['decisoes_humanas']),
++             'ato não declarado no contrato deste caso')
++    K.exigir(st['etapa_atual'] == 'F0' or
++             (st['etapa_atual'] == 'P1' and st['cumprimentos'].get('F0', {}).get('cumprido')
++              and not st['cumprimentos'].get('P1', {}).get('cumprido')), 'decisão somente em F0 ou antes de iniciar P1')
++    K.exigir(st.get('nivel') in pb['niveis'], 'nível precisa ser apurado antes da decisão')
++    dados = json.loads(K.seguro(entrada, 'rascunho').read_text())
++    K.exigir(isinstance(dados, dict) and set(dados) == CAMPOS, 'campos da decisão inválidos')
++    schema = json.loads(K.seguro('registro/prosseguimento.schema.json').read_text())
++    erros = X.validar(dados, schema, 'decisao')
++    K.exigir(not erros, '; '.join(erros))
++    for campo in ('decisor', 'data', 'desfecho', 'motivo', 'ficha'):
++        K.texto(dados[campo])
++    K.exigir(E.pessoa_nomeada(dados['decisor']), 'decisor precisa ser pessoa nomeada')
++    datetime.date.fromisoformat(dados['data'])
++    K.exigir(type(dados['versao']) is int and dados['versao'] > 0, 'versão precisa ser inteiro positivo')
++    ficha = K.seguro(dados['ficha'], 'caso')
++    K.exigir(ficha.is_file() and bool(ficha.read_text().strip()), 'ficha E1 preparada ausente ou vazia')
++    anterior = carregar()
++    K.exigir(dados['versao'] == (anterior['versao'] + 1 if anterior else 1), 'versão deve suceder a decisão vigente')
++    novo = dict(dados, autor=st['responsavel'], ficha_sha256=hashlib.sha256(ficha.read_bytes()).hexdigest())
++    b = ('\n'.join(k + ': ' + json.dumps(v, ensure_ascii=False) for k, v in novo.items()) + '\n').encode()
++    historico = K.seguro(f"{DIRETORIO}/decisao-{novo['versao']:04d}.yaml")
++    K.exigir(not historico.exists(), 'decisão anterior não pode ser sobrescrita')
++    p = K.seguro(VIGENTE)
++    backup = p.read_bytes() if p.exists() else None
++    try:
++        historico.write_bytes(b)
++        p.write_bytes(b)
++        E.evento('ProsseguimentoDecidido', autor=st['responsavel'], decisor=dados['decisor'],
++                 data=dados['data'], desfecho=dados['desfecho'], motivo=dados['motivo'],
++                 versao=dados['versao'], arquivo=VIGENTE, historico=str(historico),
++                 sha256=hashlib.sha256(b).hexdigest(), ficha_sha256=novo['ficha_sha256'])
++    except Exception:
++        if backup is None: p.unlink(missing_ok=True)
++        else: p.write_bytes(backup)
++        historico.unlink(missing_ok=True)
++        raise
++    return novo
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument('--entrada', required=True)
++    a = ap.parse_args()
++    try:
++        pasta = K.seguro(DIRETORIO); pasta.mkdir(parents=True, exist_ok=True)
++        with K.seguro(DIRETORIO + '/.lock').open('a') as f:
++            fcntl.flock(f, fcntl.LOCK_EX)
++            resultado = gravar(a.entrada)
++        print(json.dumps(resultado, ensure_ascii=False, indent=2))
++    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
++        E.evento('TentativaNegada', autor=(E.ler() or {}).get('responsavel'),
++                 operacao='decidir-prosseguimento', motivo=str(exc))
++        ap.exit(1, 'Recusado: ' + str(exc) + '\n')
++
++
++if __name__ == '__main__': main()
+diff --git a/eiac-campo/skills/hb-confrontar/SKILL.md b/eiac-campo/skills/hb-confrontar/SKILL.md
+index 1c471d2..e6aa69f 100644
+--- a/eiac-campo/skills/hb-confrontar/SKILL.md
++++ b/eiac-campo/skills/hb-confrontar/SKILL.md
+@@ -4,6 +4,7 @@ etapa: P3d
+ camada: EX3
+ modalidade: remoto
+ description: Confronta regra declarada contra regra observada, item a item, e produz o log de divergencia. Use quando /confrontar for invocado, apos a sessao de campo registrada.
++hb: ["HB-09", "HB-20"]
+ ---
+ 
+ # Confronto declarado × observado — P3d · EX3
+@@ -11,6 +12,13 @@ description: Confronta regra declarada contra regra observada, item a item, e pr
+ **Pré-requisito:** `caso/P3b-sessao.md` existe. Sem ele, pare — o confronto não tem contra o que confrontar.
+ 
+ **Procedimento:** documento do método, passo 3, parte de confronto.
++**Mapa de valor — HB-09:** prepare a varredura conforme EMCIA-MET-01 §3.4.3,
++sobre o estado declarado preservado pelo selo confirmado posterior a P2.
++Leia esse estado pelo commit do selo; não o redesenhe com base no observado.
++Registre candidatos rastreáveis ao fluxo em `caso/P3d-mapa-valor.md`, com
++procedência D ou I e referência ao commit de entrada, para uso em P4.
++**Preparação do confronto — HB-20:** EMCIA-CAT-01 Anexo A.
++O confronto e a decisão de cada item continuam humanos, em EX3.
+ **Instrumentos:** placar regra escrita × praticada, registro de divergência.
+ 
+ **Um item por vez.** Cada correção exige justificativa escrita e autor nomeado. Correção sem justificativa não é correção, é reescrita.
+diff --git a/eiac-campo/skills/hb-enquadrar/SKILL.md b/eiac-campo/skills/hb-enquadrar/SKILL.md
+index 2225910..1558ac8 100644
+--- a/eiac-campo/skills/hb-enquadrar/SKILL.md
++++ b/eiac-campo/skills/hb-enquadrar/SKILL.md
+@@ -3,13 +3,16 @@ name: hb-enquadrar
+ etapa: F0
+ camada: EX1
+ modalidade: assincrono
+-hb: ["HB-01", "HB-02", "HB-03"]
++hb: ["HB-01", "HB-02", "HB-03", "HB-04", "HB-05"]
+ description: Estrutura a dor declarada e calcula o nivel de complexidade da organizacao. Use quando /enquadrar for invocado ou quando um caso novo nao tiver ficha.
+ ---
+ 
+ # Enquadramento e triagem — F0 · EX1
+ 
+ **Procedimento:** documento do método, Fase 0. Não reproduza aqui.
++**HB-04 e HB-05:** conduza a preparação assistida dos cinco porquês e do
++custo do problema conforme EMCIA-MET-01 §3.3 (Fase 0). Cadeia causal e
++premissas são conferidas pelo engenheiro antes de avançar.
+ **Instrumento:** EMCIA-TRI-01, seção 3.3 para as perguntas e seção 3.4 para
+ a pontuação, no pacote controlado em `reference/metodo/`.
+ As nove perguntas têm redação fixa e não podem ser reformuladas.
+@@ -25,6 +28,13 @@ ao operador; não edite o estado para contorná-la.
+ **Saída:** `caso/E1-ficha.md`, toda asserção marcada conforme `reference/procedencia.md`.
+ **Encerramento:** critério da Fase 0 no documento do método.
+ 
++**Prosseguimento:** prepare a ficha E1 e o candidato JSON em
++`rascunho/prosseguimento.json`, conforme `registro/prosseguimento.schema.json`.
++Entregue ao engenheiro o comando com caminho absoluto resolvido:
++`python3 /caminho/eiac-campo/scripts/prosseguimento.py --entrada rascunho/prosseguimento.json`.
++Somente ele o executa no terminal. Os dois desfechos permitem encerrar F0;
++`não prosseguir` bloqueia as etapas seguintes até nova decisão, preservando a anterior.
++
+ ## Execução das decisões humanas (A12)
+ 
+ O agente prepara a proposta e os comandos; o engenheiro executa as decisões
+diff --git a/eiac-campo/skills/hb-extrair-regras/SKILL.md b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+index 23b7d0b..ea67956 100644
+--- a/eiac-campo/skills/hb-extrair-regras/SKILL.md
++++ b/eiac-campo/skills/hb-extrair-regras/SKILL.md
+@@ -3,7 +3,7 @@ name: hb-extrair-regras
+ etapa: P2
+ camada: EX2
+ modalidade: assincrono
+-hb: ["HB-07"]
++hb: ["HB-06", "HB-07"]
+ description: Extrai regras candidatas dos documentos entregues e lista o que eles nao respondem. Use quando /mapear-fontes for invocado ou quando houver documento do caso nao varrido.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-governar/SKILL.md b/eiac-campo/skills/hb-governar/SKILL.md
+index c158ee8..3669795 100644
+--- a/eiac-campo/skills/hb-governar/SKILL.md
++++ b/eiac-campo/skills/hb-governar/SKILL.md
+@@ -4,7 +4,7 @@ etapa: P7
+ camada: EX4
+ modalidade: decisao_humana_registrada
+ delegavel: false
+-hb: ["HB-14"]
++hb: ["HB-13", "HB-14"]
+ description: Minuta o termo de autonomia a partir do desenho operacional de P6. NAO decide autonomia — isso e sempre humano. Se um agente tentar registrar a decisao final, recuse e registre a tentativa.
+ ---
+ 
+diff --git a/eiac-campo/skills/hb-levantar-regras/SKILL.md b/eiac-campo/skills/hb-levantar-regras/SKILL.md
+index f690e6d..4003d28 100644
+--- a/eiac-campo/skills/hb-levantar-regras/SKILL.md
++++ b/eiac-campo/skills/hb-levantar-regras/SKILL.md
+@@ -5,6 +5,7 @@ camada: EX4
+ modalidade: presencial
+ delegavel: false
+ description: Protocolo humano de levantamento de regras nao documentadas. NAO EXECUTAVEL POR AGENTE. Se carregada em sessao de agente, recuse e registre a tentativa.
++hb: []
+ ---
+ 
+ # Levantamento de regras não documentadas — P3b · EX4
+diff --git a/eiac-campo/skills/hb-mapear-contexto/SKILL.md b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+index 154fa8c..da9363b 100644
+--- a/eiac-campo/skills/hb-mapear-contexto/SKILL.md
++++ b/eiac-campo/skills/hb-mapear-contexto/SKILL.md
+@@ -3,14 +3,18 @@ name: hb-mapear-contexto
+ etapa: P1
+ camada: EX2
+ modalidade: video
+-hb: ["HB-08", "HB-09"]
+-description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use quando /mapear-contexto for invocado, apos o enquadramento.
++hb: ["HB-08"]
++description: Organiza referências e o material de maturidade nas quatro frentes, patrocínio e caso de negócio para o engenheiro. Use quando /mapear-contexto for invocado, apos o enquadramento.
+ ---
+ 
+ # Contexto de negócio — P1 · EX2
+ 
+-**Procedimento:** documento do método, passo 1. Aplique a calibragem do nível do caso.
+-**Instrumentos:** Mapa de Valor, 5W2H, 5 Porquês, custo do problema.
++**Procedimento:** EMCIA-MET-01 §3.4.1, passo 1, conforme o nível do caso.
++**Preparação catalogada:** HB-08, consulta de referência na base curada.
++Organize fontes e o material fornecido pelo engenheiro sobre maturidade nas
++quatro frentes, patrocínio e caso de negócio. O levantamento de objetivos e
++posicionamento nas quatro frentes permanece com ele, conforme CAT-01 Anexo B;
++não foi criada HB para essa atividade. A avaliação do patrocínio é humana.
+ 
+ **Toda saída nasce `D` ou `I`.** Nada aqui é `V` — não houve observação, documento-fonte admissível ou leitura de volta.
+ 
+diff --git a/eiac-campo/skills/hb-medir/SKILL.md b/eiac-campo/skills/hb-medir/SKILL.md
+index 042ebb0..3b02206 100644
+--- a/eiac-campo/skills/hb-medir/SKILL.md
++++ b/eiac-campo/skills/hb-medir/SKILL.md
+@@ -4,11 +4,13 @@ etapa: P3a
+ camada: EX3
+ modalidade: remoto
+ description: Produz a medicao inicial a partir das amostras enviadas pela organizacao. Use quando /medir for invocado.
++hb: ["HB-19"]
+ ---
+ 
+ # Medição inicial — P3a · EX3
+ 
+ **Procedimento:** documento do método, passo 3, parte de medição.
++**HB-19:** registro da linha de base, conforme EMCIA-CAT-01 Anexo A.
+ 
+ **O cálculo é feito em código, não por leitura.** Apresente a conta.
+ 
+diff --git a/eiac-campo/skills/hb-operacionalizar/SKILL.md b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+index b41b1f5..020071c 100644
+--- a/eiac-campo/skills/hb-operacionalizar/SKILL.md
++++ b/eiac-campo/skills/hb-operacionalizar/SKILL.md
+@@ -4,11 +4,13 @@ etapa: P6
+ camada: EX3
+ modalidade: presencial_ou_remoto
+ description: Estrutura a especificacao operacional a partir de E3-E/P5 e do contexto curado. Use quando /operacionalizar for invocado, apos P5 encerrada.
++hb: ["HB-21"]
+ ---
+ 
+ # Operacionalize a solução — P6 · EX3
+ 
+ **Procedimento:** EMCIA-CAM-01 3.2, documento do método passo 6.
++**HB-21:** documentação do estado futuro, conforme EMCIA-CAT-01 Anexo A.
+ **Entrada:** E3-E emitido (ou o candidato correspondente), caso classificado como agente em P5, camada de contexto registrada — não reexecute P4/P5.
+ 
+ **Este passo produz especificação, não deployment.** O Estúdio não implanta sistema, não integra com o ambiente do cliente, não constrói o agente real. Ele documenta onde a solução entraria no fluxo.
+diff --git a/eiac-campo/skills/hb-priorizar/SKILL.md b/eiac-campo/skills/hb-priorizar/SKILL.md
+index 0c204fb..21aee36 100644
+--- a/eiac-campo/skills/hb-priorizar/SKILL.md
++++ b/eiac-campo/skills/hb-priorizar/SKILL.md
+@@ -10,6 +10,9 @@ description: Prioriza os casos levantados e define a zona de contencao. Use quan
+ # Priorização e zona de contenção — P4 · EX2
+ 
+ **Procedimento:** documento do método, passo 4.
++**Entrada da matriz:** candidatos do mapa de valor produzidos em P3d por
++HB-09, em `caso/P3d-mapa-valor.md`, com referência ao estado declarado selado
++em P2, conforme EMCIA-MET-01 §3.4.3. Preserve a procedência D ou I.
+ **Instrumentos:** Matriz de Priorização, Matriz Problema→Tecnologia na passada de triagem.
+ 
+ **Esta habilidade prepara; não decide.** Priorização e zona de contenção são EX4, e são decisão do cliente — o método estrutura, não substitui.
+diff --git a/eiac-campo/template-caso/registro/playbook.json b/eiac-campo/template-caso/registro/playbook.json
+index 9cf2dc5..a9fd30e 100644
+--- a/eiac-campo/template-caso/registro/playbook.json
++++ b/eiac-campo/template-caso/registro/playbook.json
+@@ -1,6 +1,6 @@
+ {
+   "nome": "Engenharia de IA de Campo",
+-  "versao": "0.4.18",
++  "versao": "0.4.19",
+   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
+   "referencia_integridade": {
+     "diretorio": "metodo",
+@@ -201,6 +201,13 @@
+       "condicao": {
+         "tipo": "sempre"
+       }
++    },
++    {
++      "id": "decidir-prosseguimento",
++      "script": "prosseguimento.py",
++      "condicao": {
++        "tipo": "sempre"
++      }
+     }
+   ],
+   "apuracao_nivel": {
+@@ -270,14 +277,33 @@
+       "hb": [
+         "HB-01",
+         "HB-02",
+-        "HB-03"
++        "HB-03",
++        "HB-04",
++        "HB-05"
+       ],
+       "camada": {
+         "N1": "EX1",
+         "N2": "EX1",
+         "N3": "EX1"
+       },
+-      "produtos_encerramento": [],
++      "produtos_encerramento": [
++        {
++          "tipo": "arquivo",
++          "padrao": "registro/prosseguimento/vigente.yaml",
++          "iguais": {},
++          "preenchidos": [
++            "decisor",
++            "data",
++            "desfecho",
++            "motivo"
++          ],
++          "pessoas": [
++            "decisor"
++          ],
++          "descricao": "Decisão de prosseguimento registrada",
++          "evento_integridade": "ProsseguimentoDecidido"
++        }
++      ],
+       "exige_registro_canais": true
+     },
+     {
+@@ -286,8 +312,7 @@
+       "modalidade": "video",
+       "habilidade": "hb-mapear-contexto",
+       "hb": [
+-        "HB-08",
+-        "HB-09"
++        "HB-08"
+       ],
+       "camada": {
+         "N1": "EX2",
+@@ -302,6 +327,7 @@
+       "modalidade": "assincrono",
+       "habilidade": "hb-extrair-regras",
+       "hb": [
++        "HB-06",
+         "HB-07"
+       ],
+       "camada": {
+@@ -380,6 +406,9 @@
+           ],
+           "descricao": "linha de base registrada"
+         }
++      ],
++      "hb": [
++        "HB-19"
+       ]
+     },
+     {
+@@ -394,7 +423,8 @@
+         "N2": "EX4",
+         "N3": "EX4"
+       },
+-      "produtos_encerramento": []
++      "produtos_encerramento": [],
++      "hb": []
+     },
+     {
+       "id": "P3d",
+@@ -407,7 +437,11 @@
+         "N2": "EX3",
+         "N3": "EX3"
+       },
+-      "produtos_encerramento": []
++      "produtos_encerramento": [],
++      "hb": [
++        "HB-09",
++        "HB-20"
++      ]
+     },
+     {
+       "id": "P4",
+@@ -476,6 +510,9 @@
+           "preenchidos": [],
+           "descricao": "OP validado"
+         }
++      ],
++      "hb": [
++        "HB-21"
+       ]
+     },
+     {
+@@ -484,6 +521,7 @@
+       "modalidade": "decisao_humana_registrada",
+       "habilidade": "hb-governar",
+       "hb": [
++        "HB-13",
+         "HB-14"
+       ],
+       "delegavel": false,
+@@ -965,5 +1003,17 @@
+     "padrao": "mcp__.*",
+     "listagens": "registro/listagens.json",
+     "evento_listagem": "ListagemRegistrada"
+-  }
++  },
++  "condicoes_continuidade": [
++    {
++      "a_partir_de": "P1",
++      "arquivo": "registro/prosseguimento/vigente.yaml",
++      "campo": "desfecho",
++      "valores": [
++        "prosseguir"
++      ],
++      "evento_integridade": "ProsseguimentoDecidido",
++      "descricao": "Decisão vigente deve autorizar o prosseguimento"
++    }
++  ]
+ }
+diff --git a/eiac-campo/template-caso/registro/prosseguimento.schema.json b/eiac-campo/template-caso/registro/prosseguimento.schema.json
+new file mode 100644
+index 0000000..e06525f
+--- /dev/null
++++ b/eiac-campo/template-caso/registro/prosseguimento.schema.json
+@@ -0,0 +1,21 @@
++{
++  "nome": "Decisão humana de prosseguimento",
++  "versao": "0.1.0",
++  "referencia": "EMCIA-CAT-01 v0.5 §3.4.1; EMCIA-MAN-01 v0.4 §3.3",
++  "objetos": {
++    "decisao": {
++      "required": ["versao", "decisor", "data", "desfecho", "motivo", "ficha"],
++      "nonempty": ["decisor", "data", "desfecho", "motivo", "ficha"],
++      "types": {"versao": "integer", "decisor": "string", "data": "date", "desfecho": "string", "motivo": "string", "ficha": "string"},
++      "enums": {"desfecho": ["prosseguir", "não prosseguir"]},
++      "patterns": {"data": "[0-9]{4}-[0-9]{2}-[0-9]{2}"}
++    },
++    "registro": {
++      "required": ["versao", "decisor", "data", "desfecho", "motivo", "ficha", "autor", "ficha_sha256"],
++      "nonempty": ["decisor", "data", "desfecho", "motivo", "ficha", "autor", "ficha_sha256"],
++      "types": {"versao": "integer", "decisor": "string", "data": "date", "desfecho": "string", "motivo": "string", "ficha": "string", "autor": "string", "ficha_sha256": "string"},
++      "enums": {"desfecho": ["prosseguir", "não prosseguir"]},
++      "patterns": {"data": "[0-9]{4}-[0-9]{2}-[0-9]{2}", "ficha_sha256": "[a-f0-9]{64}"}
++    }
++  }
++}
+diff --git a/eiac-nucleo/.claude-plugin/plugin.json b/eiac-nucleo/.claude-plugin/plugin.json
+index c959780..b5ac320 100644
+--- a/eiac-nucleo/.claude-plugin/plugin.json
++++ b/eiac-nucleo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-nucleo",
+-  "version": "0.2.44",
++  "version": "0.2.45",
+   "description": "Nucleo deterministico: maquina de etapas, guarda de camada resolvida por nivel e validador de procedencia. Agnostico de metodo.",
+   "variante": "campo",
+   "author": {
+diff --git a/eiac-nucleo/scripts/avancar.py b/eiac-nucleo/scripts/avancar.py
+index 67a3892..aa2a40a 100644
+--- a/eiac-nucleo/scripts/avancar.py
++++ b/eiac-nucleo/scripts/avancar.py
+@@ -63,6 +63,10 @@ def encerrar(st, pb, etapa_id, autor):
+         return (f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
+                 f"So a etapa corrente pode ser encerrada.")
+ 
++    bloqueios = R.faltas_continuidade(pb, etapa_id)
++    if bloqueios:
++        return _RecusaSessao('; '.join(bloqueios))
++
+     confirmado,motivo=P.selo_confirmado_apos_evento(pb,etapa_id,E.eventos())
+     if not confirmado:
+         return _RecusaSessao(motivo)
+@@ -157,7 +161,7 @@ def registrar_campo(st, pb, etapa_id, campo, valor, autor):
+ def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
+     """Etapa recorrente (playbook 'recorrente': true) nao desaparece apos o
+     primeiro encerramento — cada novo ciclo atualiza 'ultima_verificacao'
+-    sem apagar o historico de ciclos anteriores (CAM-01 3.8, anexo D).
++    sem apagar o historico de ciclos anteriores.
+ 
+     O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
+     estejam presentes quando o playbook marcar a etapa como recorrente e
+@@ -398,6 +402,14 @@ def main():
+                          acao_autor)
+         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+ 
++    alvo_continuidade = a.encerrar or a.registrar_sessao or a.registrar_campo or a.registrar_recorrencia
++    if alvo_continuidade:
++        bloqueios = R.faltas_continuidade(pb, alvo_continuidade)
++        if bloqueios:
++            motivo = '; '.join(bloqueios)
++            _recusar_operacao(st, a.autor, motivo, 'continuidade')
++            print(motivo, file=sys.stderr); sys.exit(1)
++
+     if a.apurar_nivel:
+         acao, alvo = "apurar_nivel", a.apurar_nivel
+         err = apurar_nivel(st, pb, a.apurar_nivel, a.autor, a.eixos)
+diff --git a/eiac-nucleo/scripts/guarda.py b/eiac-nucleo/scripts/guarda.py
+index 165d4d2..05c38fc 100644
+--- a/eiac-nucleo/scripts/guarda.py
++++ b/eiac-nucleo/scripts/guarda.py
+@@ -157,6 +157,11 @@ def main():
+     # fazem parte da regra do método.
+     nomes = nomes_habilidades(ev, entrada, alvo, comando, caminhos)
+     habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
++    import produtos as R
++    for e in habilidades:
++        bloqueios = R.faltas_continuidade(pb, e['id'])
++        if bloqueios:
++            negar('; '.join(bloqueios), etapa=e['id'], ferramenta=ferramenta)
+     # G7 continua independente da autorização de carregamento.
+     for e in habilidades:
+         confirmado,motivo=P.selo_confirmado_apos_evento(pb,e['id'],E.eventos())
+diff --git a/eiac-nucleo/scripts/playbook.py b/eiac-nucleo/scripts/playbook.py
+index 1447335..a811d8e 100644
+--- a/eiac-nucleo/scripts/playbook.py
++++ b/eiac-nucleo/scripts/playbook.py
+@@ -86,6 +86,9 @@ def carregar():
+                           f"declarados, senao a etapa desaparece apos a primeira execucao.")
+ 
+     sessoes = pb.get("encerramento_por_camada")
++    erro_continuidade = R.validar_continuidade(pb)
++    if erro_continuidade:
++        return None, erro_continuidade
+     if not isinstance(sessoes, dict):
+         return None, "playbook sem encerramento_por_camada valido"
+     for et in pb["etapas"]:
+diff --git a/eiac-nucleo/scripts/produtos.py b/eiac-nucleo/scripts/produtos.py
+index 46a3cb2..6acb4dd 100644
+--- a/eiac-nucleo/scripts/produtos.py
++++ b/eiac-nucleo/scripts/produtos.py
+@@ -17,8 +17,10 @@ def validar(et):
+             if set(r) != {'tipo', 'campo', 'descricao'} or r.get('campo') not in et.get('campos_registraveis', {}):
+                 return f"etapa {et['id']}: produto de estado exige campo registravel"
+         elif r.get('tipo') == 'arquivo':
+-            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
++            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas', 'evento_integridade'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
+                 return f"etapa {et['id']}: contrato de produto de arquivo invalido"
++            if 'evento_integridade' in r and (not isinstance(r['evento_integridade'], str) or not r['evento_integridade'].strip()):
++                return f"etapa {et['id']}: evento de integridade invalido"
+             if not isinstance(r.get('pessoas', []), list) or any(not isinstance(c, str) or not c.strip() for c in r.get('pessoas', [])):
+                 return f"etapa {et['id']}: campos de pessoa invalidos no produto"
+             p = r['padrao']
+@@ -70,7 +72,7 @@ def faltas(et, st):
+                 try:
+                     if not arquivo.is_file() or not arquivo.resolve().is_relative_to(raiz):
+                         continue
+-                    dados = X.carregar_yaml(arquivo.read_text(encoding='utf-8'))
++                    dados = dados_arquivo(arquivo, regra)
+                     if not isinstance(dados, dict):
+                         continue
+                     if (all(dados.get(c) == v for c, v in regra['iguais'].items())
+@@ -85,6 +87,55 @@ def faltas(et, st):
+     return ausentes
+ 
+ 
++def dados_arquivo(arquivo, regra):
++    """Arquivo local com integridade opcional declarada pelo contrato."""
++    raiz = pathlib.Path.cwd().resolve()
++    if not arquivo.resolve().is_relative_to(raiz) or any(
++            p.is_symlink() for p in [arquivo, *arquivo.parents] if p.absolute().is_relative_to(raiz)):
++        raise ValueError('arquivo fora do caso ou com link')
++    conteudo = arquivo.read_bytes()
++    evento = regra.get('evento_integridade')
++    if evento:
++        eventos = [e for e in E.eventos() if e.get('evento') == evento]
++        if (not eventos or eventos[-1].get('sha256') != hashlib.sha256(conteudo).hexdigest()
++                or eventos[-1].get('arquivo') != str(arquivo.relative_to(raiz))):
++            raise ValueError('integridade do arquivo diverge da trilha')
++    return X.carregar_yaml(conteudo.decode('utf-8'))
++
++
++def validar_continuidade(pb):
++    regras = pb.get('condicoes_continuidade', [])
++    if not isinstance(regras, list):
++        return 'condicoes_continuidade precisa ser lista'
++    ids = {e['id'] for e in pb['etapas']}
++    for r in regras:
++        if not isinstance(r, dict) or set(r) != {'a_partir_de', 'arquivo', 'campo', 'valores', 'evento_integridade', 'descricao'}:
++            return 'contrato de continuidade invalido'
++        if any(not isinstance(r[k], str) or not r[k].strip() for k in ('a_partir_de', 'arquivo', 'campo', 'evento_integridade', 'descricao')):
++            return 'campos de continuidade invalidos'
++        p = pathlib.Path(r['arquivo'])
++        if p.is_absolute() or '..' in p.parts or r['a_partir_de'] not in ids:
++            return 'continuidade fora do caso ou etapa inexistente'
++        if not isinstance(r['valores'], list) or not r['valores'] or any(not isinstance(v, str) or not v for v in r['valores']):
++            return 'valores de continuidade invalidos'
++
++
++def faltas_continuidade(pb, etapa_id):
++    """Não interpreta desfechos: compara campos e valores declarados."""
++    ids = [e['id'] for e in pb['etapas']]
++    faltas = []
++    for r in pb.get('condicoes_continuidade', []):
++        if etapa_id not in ids or ids.index(etapa_id) < ids.index(r['a_partir_de']):
++            continue
++        try:
++            dados = dados_arquivo(pathlib.Path.cwd().resolve()/r['arquivo'], r)
++            if not isinstance(dados, dict) or dados.get(r['campo']) not in r['valores']:
++                raise ValueError('valor vigente nao autoriza a continuidade')
++        except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml) as exc:
++            faltas.append(f"continuidade: {r['descricao']} ({exc})")
++    return faltas
++
++
+ def _campo(dados, nome):
+     for parte in nome.split('.'):
+         dados = dados[parte]
+diff --git a/eiac-nucleo/scripts/selar.py b/eiac-nucleo/scripts/selar.py
+index bab3e10..e9549f0 100644
+--- a/eiac-nucleo/scripts/selar.py
++++ b/eiac-nucleo/scripts/selar.py
+@@ -1,6 +1,6 @@
+ """Selo do caso. Unico caminho de commit no repositorio do caso.
+ 
+-Uso:  python3 selar.py --nota "F0 encerrada, E1 emitido"
++Uso:  python3 selar.py --nota "etapa encerrada, entregavel emitido"
+ 
+ O autor do commit e do evento SeloAplicado nao vem de --autor: e sempre
+ `responsavel` de registro/estado.json, fixado pelo operador em
+diff --git a/testes/README.md b/testes/README.md
+index 1962a2e..f0e648d 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -1,10 +1,11 @@
+ # Testes — inventário operacional
+ 
+-Revisão: 03/10/2026. Linha de base em Python 3.12.12: **919 verificações,
+-46 módulos**, sem exclusões e sem falhas. O pacote de documentação acrescenta
+-7 testes de citações: **1845 verificações em 48 módulos**.
++Revisão: 03/10/2026. Linha de base em Python 3.12.12: **926 verificações,
++47 módulos**, sem exclusões e sem falhas. A correspondência CAT-01 acrescenta
++11 testes de catálogo, 20 de prosseguimento e uma conferência de citações:
++**958 verificações em 49 módulos**.
+ As saídas integrais inicial e final e o executador estão em
+-`.projectdocs/evidencias/documentacao-operacional/`.
++`.projectdocs/evidencias/correspondencia-cat01/`.
+ 
+ ## Executar
+ 
+@@ -18,7 +19,7 @@ python3 testes/contexto.py
+ Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
+ 
+ ```bash
+-python3 .projectdocs/evidencias/documentacao-operacional/reexecutar-suite.py /tmp/emcia-suite.txt
++python3 .projectdocs/evidencias/correspondencia-cat01/reexecutar-suite.py /tmp/emcia-suite.txt
+ ```
+ 
+ O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
+@@ -30,7 +31,6 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ 
+ | Módulo | Verificações | Cobertura |
+ |---|---:|---|
+-| `TOTAL` | 919 | Verificações do pacote |
+ | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
+ | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
+ | `campo_2_6_2.py` | 38 | Verificacao operacional de P6 e P7 -- pacote 2.6.2 |
+@@ -41,7 +41,8 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ | `campos_a10.py` | 18 | A10: campos declarados, autoria nominal e E3 por comandos reais |
+ | `canais.py` | 19 | Canais: negativas com evento antes dos controles positivos |
+ | `canais_percurso.py` | 1 | Percurso integrado de canais com ids sintéticos |
+-| `citacoes.py` | 7 | Seções, caminhos canônicos, auxiliares, TRI-01 e retirada dos resumos CTX |
++| `catalogo_cat01.py` | 11 | Reprodução literal do CAT-01, correspondência de etapas, AG e camadas; negativas de cada regra |
++| `citacoes.py` | 8 | Seções, caminhos canônicos, auxiliares, TRI-01, retirada dos resumos CTX e instrumentos distintos de P1/P3d |
+ | `consolidado.py` | 16 | Verificacao consolidada da Acao 2.5 — pacote 2.5.6 |
+ | `contexto.py` | 11 | Testes estruturais do pacote 2.5.1 com evidência bruta opcional |
+ | `ctx_v.py` | 23 | Bateria formal CTX-V01-CTX-V11 do pacote 2.5.4 |
+@@ -66,6 +67,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ | `pessoa_a16.py` | 17 | Verificações do pacote pessoa_a16 |
+ | `playbook_2_6_0.py` | 29 | Verificacao do contrato executavel F0-P10 -- pacote 2.6.0 |
+ | `produtos_a14.py` | 21 | Verificações do pacote produtos_a14 |
++| `prosseguimento.py` | 20 | Ato humano, registro íntegro, histórico, dois desfechos, bloqueio, E1 e compatibilidade de casos anteriores |
+ | `receber.py` | 17 | Recebimento humano: negativas conferem a trilha e preservam fontes |
+ | `recorrencia_a23.py` | 12 | A23: responsável da recorrência conferido contra a fonte vigente do caso |
+ | `recusa_a21.py` | 2 | A21: recusa é evento; não vira asserção com procedência inventada |
+@@ -78,7 +80,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ | `sessao_externa.py` | 6 | Referência de sessão genérica: camada, id declarado e marcador |
+ | `triagem_a7.py` | 24 | A7: recusas primeiro; regra de apuração declarada no playbook do caso |
+ | `verificacao_por_estados.py` | 7 | Verificacao por estados do caso (decisao 021, substitui 004/014-020) |
+-| **Total** | **1845** | **48 módulos** |
++| **Total** | **958** | **49 módulos** |
+ 
+ metodo_empacotado.py e esforco.py são verificações por processo e contam como
+ uma cada; os demais módulos declaram unittest ou imprimem verificações `ok`.
+@@ -86,14 +88,15 @@ Estas contagens identificam a execução deste pacote, sem somar reexecuções.
+ 
+ ## Contratos documentais
+ 
+-`metodo_empacotado.py` exige o inventário exato de 21 documentos, manifesto v4
++`metodo_empacotado.py` exige o inventário exato de 21 documentos, manifesto v5
+ com caminhos de origem e commit completo, hashes corretos e ausência de cópias
+ no contraste. Com emcia-artefatos como checkout irmão, confere bytes contra
+ `git show <commit>:<caminho>`; nunca compara a uma versão mutável de trabalho.
+ Sem esse checkout, os hashes fixados permitem conferir o pacote offline.
+ 
+-`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v0.2 e playbook
+-0.4.18. Não há sobreposição de emenda nem expectativa de lacunas da v0.1.
++`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v0.4 e playbook
++0.4.19. O produto de F0 é "Decisão de prosseguimento registrada", conforme
++correção aprovada antes do commit canônico. Não há sobreposição de emenda.
+ Os negativos 02–05 continuam detectando etapa removida, camada trocada,
+ ato humano inexistente e comando inexistente.
+ 
+diff --git a/testes/apoio/hook_real.py b/testes/apoio/hook_real.py
+index 0597cc1..e33f044 100644
+--- a/testes/apoio/hook_real.py
++++ b/testes/apoio/hook_real.py
+@@ -14,6 +14,9 @@ class CasoHook(unittest.TestCase):
+         self.estado.update(responsavel='Celso do Vale', nivel='N2')
+         self.salvar()
+         (self.caso/'rascunho').mkdir(exist_ok=True)
++        # Pré-condição sintética do novo contrato, pelo script real.
++        from apoio.prosseguimento import preparar
++        preparar(self.caso)
+         self.env = dict(os.environ, CLAUDE_PROJECT_DIR=str(self.caso))
+ 
+     def salvar(self):
+@@ -57,7 +60,8 @@ class CasoHook(unittest.TestCase):
+         self.salvar()
+         log = self.caso/'registro/eventos.jsonl'
+         # Selo real permite que A18 continue exercitando G1, sem mascará-la por G7.
+-        log.write_text('')
++        log.write_text(''.join(json.dumps(e)+'\n' for e in self.eventos()
++                               if e['evento'] == 'ProsseguimentoDecidido'))
+         self.rodar('avancar.py','--registrar-sessao','P3b','--autor','Celso do Vale','--participantes','Marina Prado')
+         ev=self.eventos()[-1]
+         with log.open('a') as f:
+diff --git a/testes/apoio/preparar.py b/testes/apoio/preparar.py
+index 3d869df..b924286 100644
+--- a/testes/apoio/preparar.py
++++ b/testes/apoio/preparar.py
+@@ -10,6 +10,10 @@ PESSOA='Celso do Vale'
+ def produto(caso, etapa, responsavel=None):
+     caso=pathlib.Path(caso)
+     st=json.loads((caso/'registro/estado.json').read_text())
++    if etapa == 'F0':
++        from apoio.prosseguimento import preparar
++        preparar(caso)
++        return
+     if etapa=='P5':
+         if st.get('cumprimentos',{}).get(etapa,{}).get('classificacao_tecnologica'): return
+         r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),'--registrar-campo',etapa,'--campo','classificacao_tecnologica','--valor','agente','--autor',PESSOA],cwd=caso,text=True,capture_output=True)
+diff --git a/testes/apoio/prosseguimento.py b/testes/apoio/prosseguimento.py
+new file mode 100644
+index 0000000..c221905
+--- /dev/null
++++ b/testes/apoio/prosseguimento.py
+@@ -0,0 +1,38 @@
++"""Precondição sintética explícita; nunca chamada pelo encerramento testado.
++
++Fixtures antigas posicionam o estado diretamente em etapas intermediárias.
++Para essas fixtures, registra a decisão pelo script real sobre um estado
++temporário de F0 e restaura o posicionamento original. Não desativa guardas
++nem muda o playbook. Percursos usam seu estado real já apurado.
++"""
++import json
++import pathlib
++import subprocess
++import sys
++
++RAIZ = pathlib.Path(__file__).resolve().parents[2]
++
++
++def preparar(caso):
++    caso = pathlib.Path(caso)
++    if (caso/'registro/prosseguimento/vigente.yaml').exists(): return
++    pb = json.loads((caso/'registro/playbook.json').read_text())
++    if not any(a['id'] == 'decidir-prosseguimento' for a in pb['decisoes_humanas']): return
++    p = caso/'registro/estado.json'; original = p.read_bytes(); st = json.loads(original)
++    # Posicionamento integra apenas a montagem desta fixture isolada.
++    temporario = dict(st, etapa_atual='F0', nivel=st.get('nivel') or 'N2',
++                      responsavel=st.get('responsavel') or 'Celso do Vale', cumprimentos={})
++    pasta = caso/'caso'; pasta.mkdir(exist_ok=True)
++    ficha = pasta/'E1-ficha.md'
++    if not ficha.exists(): ficha.write_text('- [D · Celso do Vale] Ficha exclusivamente sintética para controle.\n')
++    rascunho = caso/'rascunho'; rascunho.mkdir(exist_ok=True)
++    entrada = rascunho/'prosseguimento.json'
++    entrada.write_text(json.dumps(dict(versao=1,decisor=temporario['responsavel'],data='2026-10-03',
++        desfecho='prosseguir',motivo='Decisão exclusivamente sintética de controle',ficha='caso/E1-ficha.md'),ensure_ascii=False))
++    try:
++        p.write_text(json.dumps(temporario))
++        r = subprocess.run([sys.executable,str(RAIZ/'eiac-campo/scripts/prosseguimento.py'),
++                            '--entrada','rascunho/prosseguimento.json'],cwd=caso,text=True,capture_output=True)
++        if r.returncode: raise RuntimeError(r.stderr or r.stdout)
++    finally:
++        p.write_bytes(original)
+diff --git a/testes/campo_2_6_2.py b/testes/campo_2_6_2.py
+index 7c3c298..78bb3fb 100644
+--- a/testes/campo_2_6_2.py
++++ b/testes/campo_2_6_2.py
+@@ -113,6 +113,8 @@ def eventos(caso):
+ 
+ def apurar_e_encerrar_f0(caso):
+     avancar(caso, apurar_nivel="N1", autor="Celso do Vale", eixos="DAD 3, GOV 3, CRI 3")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/campo_2_6_3.py b/testes/campo_2_6_3.py
+index 2527c73..796ef19 100644
+--- a/testes/campo_2_6_3.py
++++ b/testes/campo_2_6_3.py
+@@ -157,6 +157,8 @@ def eventos(caso):
+ 
+ def apurar_e_encerrar_f0(caso):
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/campo_2_6_4.py b/testes/campo_2_6_4.py
+index 242fc8c..2ac3b96 100644
+--- a/testes/campo_2_6_4.py
++++ b/testes/campo_2_6_4.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ """Verificacao do catalogo de HB/AG -- pacote 2.6.4.
+ 
+-Cobre: catalogo estrutural de 18 HB e 4 AG (eiac-campo/reference/), o
++Cobre: catalogo estrutural de 21 HB e 4 AG (eiac-campo/reference/), o
+ resolvedor generico de capacidade/papel do nucleo (catalogo.py, que nao
+ conhece HB/AG/EMCIA -- so "capacidade" e "papel" com "id"),
+ resolucao playbook->HB, resolucao HB->skill, autorizacao AG->HB, a
+@@ -110,6 +110,8 @@ def eventos(caso):
+ 
+ def apurar_e_encerrar_f0(caso):
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+@@ -145,14 +147,14 @@ else:
+     falha(f"2.6.4-T01 catalogo de HB invalido: {erro}")
+ 
+ ids_hb = [h["id"] for h in hab_oficial["habilidades"]]
+-if len(ids_hb) == 18:
+-    ok("2.6.4-T02 exatamente 18 IDs HB")
++if len(ids_hb) == 21:
++    ok("2.6.4-T02 exatamente 21 IDs HB")
+ else:
+-    falha(f"2.6.4-T02 {len(ids_hb)} IDs HB, esperado 18")
++    falha(f"2.6.4-T02 {len(ids_hb)} IDs HB, esperado 21")
+ 
+-esperado_hb = {f"HB-{i:02d}" for i in range(1, 19)}
++esperado_hb = {f"HB-{i:02d}" for i in range(1, 22)}
+ if set(ids_hb) == esperado_hb:
+-    ok("2.6.4-T03 conjunto HB-01..HB-18 completo")
++    ok("2.6.4-T03 conjunto HB-01..HB-21 completo")
+ else:
+     falha(f"2.6.4-T03 conjunto incompleto: faltam {esperado_hb - set(ids_hb)}, "
+           f"sobram {set(ids_hb) - esperado_hb}")
+@@ -314,8 +316,8 @@ else:
+ # ================================================ T21-T24: mapa canonico =
+ mapa_oficial = {
+     "AG-01": {f"HB-{i:02d}" for i in range(1, 6)},
+-    "AG-02": {"HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"},
+-    "AG-03": {"HB-11", "HB-12", "HB-14"},
++    "AG-02": {"HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-19", "HB-20"},
++    "AG-03": {"HB-11", "HB-12", "HB-13", "HB-14", "HB-21"},
+     "AG-04": {"HB-15", "HB-16", "HB-17", "HB-18"},
+ }
+ ag_por_id = {a["id"]: a for a in ag_oficial["agentes"]}
+@@ -445,7 +447,7 @@ else:
+ codigo, saida, erro = catalogo(
+     "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades")
+ if codigo == 0:
+-    ok("2.6.4-T33 mecanismo recebe as 18 HB reais, todas com criterio quando "
++    ok("2.6.4-T33 mecanismo recebe as 21 HB reais, todas com criterio quando "
+        "automatizadas: PASS")
+ else:
+     falha(f"2.6.4-T33 mecanismo recusou catalogo real: {erro}")
+@@ -475,7 +477,7 @@ else:
+     falha(f"2.6.4-T36 HB-14 nao reflete a fronteira humana de P7: {hb14}")
+ 
+ skill_levantar = (SKILLS_DIR / "hb-levantar-regras" / "SKILL.md").read_text(encoding="utf-8")
+-if "hb-levantar-regras" not in skills_hb_referenciada and "NAO EXECUTAVEL POR AGENTE" in skill_levantar:
++if not next(e for e in pb_oficial['etapas'] if e['id'] == 'P3b').get('hb') and "NAO EXECUTAVEL POR AGENTE" in skill_levantar:
+     ok("2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b "
+        "(hb-levantar-regras nao tem HB do catalogo associada e e explicitamente "
+        "marcada 'NAO EXECUTAVEL POR AGENTE')")
+diff --git a/testes/campo_2_6_5.py b/testes/campo_2_6_5.py
+index 5a1ad2c..dffe084 100644
+--- a/testes/campo_2_6_5.py
++++ b/testes/campo_2_6_5.py
+@@ -167,6 +167,8 @@ def apurar_e_encerrar_f0(caso, nivel="N2"):
+     eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
+              "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
+     avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/campo_2_6_6.py b/testes/campo_2_6_6.py
+index 7b8a6ed..3a1ca8c 100644
+--- a/testes/campo_2_6_6.py
++++ b/testes/campo_2_6_6.py
+@@ -194,6 +194,8 @@ def apurar_e_encerrar_f0(caso, nivel="N2"):
+     eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
+              "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
+     avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+@@ -780,12 +782,12 @@ avancar(caso_p6, emitir="E5", autor="Celso do Vale")
+ entregavel(caso_p6, "E5", "Celso do Vale", emitir=True)
+ 
+ # ======================================================================
+-# C19 -- 18 HB resolviveis
++# C19 -- 21 HB resolviveis, CAT-01 v0.5
+ # ======================================================================
+ codigo, saida, erro = _catalogo("--capacidades", HABILIDADES_JSON, "--chave-capacidades", "habilidades")
+ hb_dados = json.loads(HABILIDADES.read_text(encoding="utf-8"))
+-if codigo == 0 and len(hb_dados["habilidades"]) == 18:
+-    ok("2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis")
++if codigo == 0 and len(hb_dados["habilidades"]) == 21:
++    ok("2.6.6-C19 21/21 HB declaradas e estruturalmente resolviveis")
+ else:
+     falha(f"2.6.6-C19 catalogo de HB invalido ou incompleto: exit={codigo} {erro}")
+ 
+diff --git a/testes/campos_a10.py b/testes/campos_a10.py
+index 9aa96c2..df8e917 100644
+--- a/testes/campos_a10.py
++++ b/testes/campos_a10.py
+@@ -26,6 +26,8 @@ class CamposA10(unittest.TestCase):
+         st.update(responsavel='Celso do Vale', etapa_atual='P5', nivel='N2')
+         st['cumprimentos'] = {}
+         self.estado.write_text(json.dumps(st))
++        from apoio.prosseguimento import preparar
++        preparar(self.caso)
+ 
+     def configurar(self, fn):
+         pb = json.loads(self.pbpath.read_text())
+@@ -121,7 +123,7 @@ class CamposA10(unittest.TestCase):
+     def test_14_substituicao_tem_historico(self):
+         self.assertEqual(self.registrar().returncode, 0)
+         self.assertEqual(self.registrar(valor='caso isolado').returncode, 0)
+-        ev = self.eventos()
++        ev = [e for e in self.eventos() if e['evento'] == 'CampoRegistrado']
+         self.assertEqual([e['valor'] for e in ev], ['agente', 'caso isolado'])
+         self.assertEqual(ev[-1]['anterior'], 'agente')
+ 
+diff --git a/testes/canais.py b/testes/canais.py
+index 13acc58..322f7a4 100644
+--- a/testes/canais.py
++++ b/testes/canais.py
+@@ -112,7 +112,7 @@ class Canais(CasoHook):
+         r = self.executar('resolver', 'E1', 'saida')
+         self.assertEqual(r.returncode, 0, r.stderr)
+         self.assertEqual(json.loads(r.stdout)['finalidade'], 'entregas')
+-        self.assertEqual([e['evento'] for e in self.eventos()], ['CanaisDefinidos']*2)
++        self.assertEqual([e['evento'] for e in self.eventos()], ['ProsseguimentoDecidido', 'CanaisDefinidos', 'CanaisDefinidos'])
+ 
+     def test_22_decisor_distinto_autoria_fixa(self):
+         self.dados['decidido_por'] = 'Pessoa Engenheira'
+diff --git a/testes/catalogo_cat01.py b/testes/catalogo_cat01.py
+new file mode 100644
+index 0000000..418e443
+--- /dev/null
++++ b/testes/catalogo_cat01.py
+@@ -0,0 +1,158 @@
++"""CAT-01: catálogo literal, correspondência e fronteira determinística."""
++import copy
++import json
++import pathlib
++import re
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++CAMPO = RAIZ / 'eiac-campo'
++CAT = CAMPO / 'reference/metodo/EMCIA-CAT-01-fronteira-de-delegacao.md'
++CAMPOS = ('id', 'nome', 'camada', 'natureza', 'insumo', 'saida',
++          'criterio_de_verificacao', 'ag_autorizado')
++
++
++def ler_cat(texto):
++    anexo = texto.split('## Anexo A —', 1)[1].split('## Anexo B —', 1)[0]
++    agentes = {}
++    for linha in anexo.splitlines():
++        if not linha.startswith('| **AG-'):
++            continue
++        cols = [c.strip().replace('**', '') for c in linha.strip('|').split('|')]
++        for inicio, fim, isolado in re.findall(r'HB-(\d+) a HB-(\d+)|HB-(\d+)', cols[3]):
++            numeros = range(int(inicio), int(fim)+1) if inicio else [int(isolado)]
++            for n in numeros:
++                agentes[f'HB-{n:02d}'] = cols[0]
++    habilidades = []
++    for linha in anexo.splitlines():
++        if not linha.startswith('| **HB-'):
++            continue
++        cols = [c.strip().replace('**', '') for c in linha.strip('|').split('|')]
++        camada, natureza = cols[2].split(' · ')
++        habilidades.append(dict(zip(CAMPOS, (
++            cols[0], cols[1], camada, {'Aut.': 'Automatizado', 'Híb.': 'Híbrido'}[natureza],
++            cols[3], cols[4], cols[5], agentes[cols[0]],
++        ))))
++    correspondencia = {}
++    trecho = texto.split('## Anexo C —', 1)[1].split('## Anexo D —', 1)[0]
++    for linha in trecho.splitlines():
++        if not re.match(r'^\| (?:F0|P\d+[a-z]?) \|', linha):
++            continue
++        cols = [c.strip() for c in linha.strip('|').split('|')]
++        correspondencia[cols[0]] = re.findall(r'HB-\d+', cols[3])
++    return habilidades, correspondencia
++
++
++def ler_skills():
++    resultado = {}
++    for p in (CAMPO / 'skills').glob('hb-*/SKILL.md'):
++        front = p.read_text().split('---', 2)[1]
++        hb = re.search(r'^hb:\s*(\[.*\])$', front, re.M)
++        resultado[p.parent.name] = json.loads(hb[1]) if hb else []
++    return resultado
++
++
++def conferir(canonicas, correspondencia, catalogo, pb, skills):
++    erros = []
++    literal = [{k: h.get(k) for k in CAMPOS} for h in catalogo]
++    if literal != canonicas:
++        erros.append('catalogo-literal')
++    etapas = {e['id']: e for e in pb['etapas']}
++    if {i: e.get('hb', []) for i, e in etapas.items()} != correspondencia:
++        erros.append('correspondencia')
++    for e in etapas.values():
++        if skills.get(e['habilidade']) != e.get('hb', []):
++            erros.append('frontmatter:' + e['id'])
++    referencias = {hb for e in etapas.values() for hb in e.get('hb', [])}
++    if not {h['id'] for h in canonicas} <= referencias:
++        erros.append('hb-sem-etapa')
++    por_id = {h['id']: h for h in catalogo}
++    for nome, hbs in skills.items():
++        if any(h not in por_id for h in hbs) or len({por_id[h]['ag_autorizado'] for h in hbs if h in por_id}) > 1:
++            erros.append('skill-mistura-ag:' + nome)
++    ordem = ('EX1', 'EX2', 'EX3', 'EX4')
++    for e in etapas.values():
++        camadas = e.get('camada_monitoramento', e['camada']) if e['id'] == 'P10' else e['camada']
++        for hb in e.get('hb', []):
++            camada = por_id.get(hb, {}).get('camada')
++            if camada not in ('EX1', 'EX2') or any(
++                    camadas.get(n) not in ordem or ordem.index(camada) > ordem.index(camadas[n])
++                    for n in pb['niveis']):
++                erros.append('camada-preparacao:' + e['id'])
++    if 'HB-09' not in etapas['P3d'].get('hb', []) or 'HB-09' in etapas['P1'].get('hb', []):
++        erros.append('hb09-p3d')
++    if not any(a['id'] == 'decidir-prosseguimento' for a in pb['decisoes_humanas']):
++        erros.append('ato-prosseguimento')
++    if not any(p.get('descricao') == 'Decisão de prosseguimento registrada'
++               and p.get('padrao') == 'registro/prosseguimento/vigente.yaml'
++               and {'decisor', 'data', 'desfecho', 'motivo'} <= set(p.get('preenchidos', []))
++               for p in etapas['F0'].get('produtos_encerramento', [])):
++        erros.append('produto-prosseguimento')
++    return erros
++
++
++class CatalogoCAT01(unittest.TestCase):
++    def setUp(self):
++        self.canonicas, self.relacao = ler_cat(CAT.read_text())
++        self.catalogo = json.loads((CAMPO / 'reference/habilidades.json').read_text())['habilidades']
++        self.pb = json.loads((CAMPO / 'template-caso/registro/playbook.json').read_text())
++        self.skills = ler_skills()
++
++    def conferir(self):
++        return conferir(self.canonicas, self.relacao, self.catalogo, self.pb, self.skills)
++
++    def test_00_catalogo_corresponde_ao_canonico(self):
++        self.assertEqual(len(self.canonicas), 21)
++        self.assertEqual(len(self.relacao), 13)
++        self.assertEqual(self.conferir(), [])
++
++    def test_01_negativa_de_cada_campo_literal(self):
++        for campo in CAMPOS:
++            with self.subTest(campo=campo):
++                salvo = copy.deepcopy(self.catalogo)
++                self.catalogo[0][campo] = 'valor divergente'
++                self.assertIn('catalogo-literal', self.conferir())
++                self.catalogo = salvo
++
++    def test_02_correspondencia_divergente(self):
++        self.pb['etapas'][0]['hb'].pop()
++        self.assertIn('correspondencia', self.conferir())
++
++    def test_03_frontmatter_divergente(self):
++        self.skills['hb-enquadrar'].pop()
++        self.assertIn('frontmatter:F0', self.conferir())
++
++    def test_04_hb_sem_etapa(self):
++        for e in self.pb['etapas']:
++            e['hb'] = [h for h in e.get('hb', []) if h != 'HB-05']
++        self.assertIn('hb-sem-etapa', self.conferir())
++
++    def test_05_skill_mistura_agentes(self):
++        self.skills['hb-enquadrar'].append('HB-06')
++        self.assertIn('skill-mistura-ag:hb-enquadrar', self.conferir())
++
++    def test_06_hb_superior_a_etapa_em_um_nivel(self):
++        self.pb['etapas'][1]['camada']['N1'] = 'EX1'
++        self.assertIn('camada-preparacao:P1', self.conferir())
++
++    def test_07_monitoramento_de_p10_respeita_camada(self):
++        self.pb['etapas'][-1]['camada_monitoramento']['N3'] = 'EX1'
++        self.assertIn('camada-preparacao:P10', self.conferir())
++
++    def test_08_hb09_fora_de_p3d(self):
++        etapa = next(e for e in self.pb['etapas'] if e['id'] == 'P3d')
++        etapa['hb'] = [h for h in etapa.get('hb', []) if h != 'HB-09']
++        self.pb['etapas'][1]['hb'].append('HB-09')
++        self.assertIn('hb09-p3d', self.conferir())
++
++    def test_09_ato_ausente(self):
++        self.pb['decisoes_humanas'] = [a for a in self.pb['decisoes_humanas'] if a['id'] != 'decidir-prosseguimento']
++        self.assertIn('ato-prosseguimento', self.conferir())
++
++    def test_10_produto_ausente(self):
++        self.pb['etapas'][0]['produtos_encerramento'] = []
++        self.assertIn('produto-prosseguimento', self.conferir())
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/testes/citacoes.py b/testes/citacoes.py
+index b692958..db92145 100644
+--- a/testes/citacoes.py
++++ b/testes/citacoes.py
+@@ -156,6 +156,13 @@ class Citacoes(unittest.TestCase):
+             self.assertTrue(conferir(t, self.docs))
+         self.assertEqual(conferir('TRI-01 §§3.3 e 3.4', self.docs), [])
+ 
++    def test_08_instrumentos_distintos_em_p1_e_p3d(self):
++        for nome, secao in (('hb-mapear-contexto', '3.4.1'), ('hb-confrontar', '3.4.3'), ('hb-priorizar', '3.4.3')):
++            refs = set(remissoes((CAMPO/'skills'/nome/'SKILL.md').read_text()))
++            self.assertIn(('EMCIA-MET-01', secao), refs)
++        refs = set(remissoes((CAMPO/'skills/hb-mapear-contexto/SKILL.md').read_text()))
++        self.assertNotIn(('EMCIA-MET-01', '3.4.3'), refs)
++
+ 
+ if __name__ == '__main__':
+     unittest.main(verbosity=2)
+diff --git a/testes/decisao_a12.py b/testes/decisao_a12.py
+index d5a2831..b88d991 100644
+--- a/testes/decisao_a12.py
++++ b/testes/decisao_a12.py
+@@ -10,6 +10,7 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
+ GUARDA = RAIZ / 'eiac-nucleo/scripts/guarda.py'
+ # Contrato explícito para exercitar a versão anterior antes da implementação.
+ REGRAS = [
++    {'id': 'decidir-prosseguimento', 'script': 'prosseguimento.py', 'condicao': {'tipo': 'sempre'}},
+     {'id': 'decidir-autonomia', 'script': 'governanca.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'decidido', 'preparacao': ['rascunho', 'proposto']}},
+     {'id': 'validar-operacional', 'script': 'operacional.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'validado', 'preparacao': ['proposta']}},
+     {'id': 'decidir-recalibragem', 'script': 'calibragem.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'decisao', 'operador': 'preenchido'}},
+@@ -197,8 +198,10 @@ class DecisaoA12(unittest.TestCase):
+ 
+     def test_29_template_declara_lista(self):
+         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+-        self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
+-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material", "registrar-listagem", "vincular-restricao"})
++        declaradas = {r['id']: r for r in pb.get('decisoes_humanas', [])}
++        for regra in REGRAS:
++            self.assertEqual(declaradas.get(regra['id']), regra)
++        self.assertEqual(set(declaradas) - {r['id'] for r in REGRAS}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material", "registrar-listagem", "vincular-restricao"})
+ 
+     def test_30_satisfacao_por_wrapper_campo(self):
+         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')
+diff --git a/testes/negativos.sh b/testes/negativos.sh
+index d0819de..b20c7c1 100644
+--- a/testes/negativos.sh
++++ b/testes/negativos.sh
+@@ -20,6 +20,14 @@ import json, pathlib
+ p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
+ d['responsavel'] = 'Celso do Vale'; p.write_text(json.dumps(d))"
+ 
++# Pré-condição independente das negativas; não altera o estado de apuração.
++python3 - "$RAIZ" "$PWD" <<'PY_PROSSEGUIMENTO'
++import pathlib, sys
++sys.path.insert(0, str(pathlib.Path(sys.argv[1])/'testes'))
++from apoio.prosseguimento import preparar
++preparar(sys.argv[2])
++PY_PROSSEGUIMENTO
++
+ falhas=0
+ ok()   { printf '  ok    %s\n' "$1"; }
+ falha(){ printf '  FALHA %s\n' "$1"; falhas=$((falhas+1)); }
+diff --git a/testes/nucleo_2_6_1.py b/testes/nucleo_2_6_1.py
+index 13eba8e..d57c639 100644
+--- a/testes/nucleo_2_6_1.py
++++ b/testes/nucleo_2_6_1.py
+@@ -105,6 +105,8 @@ def eventos(caso):
+ 
+ def apurar_e_encerrar_f0(caso):
+     avancar(caso, apurar_nivel="N1", autor="Celso do Vale", eixos="DAD 3, GOV 3, CRI 3")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     return avancar(caso, encerrar="F0", autor="Celso do Vale")
+ 
+ 
+diff --git a/testes/pessoa_a16.py b/testes/pessoa_a16.py
+index f20f32c..a47baf5 100644
+--- a/testes/pessoa_a16.py
++++ b/testes/pessoa_a16.py
+@@ -9,6 +9,8 @@ class Caso(unittest.TestCase):
+         self.posicionar('P1')
+         from apoio.canais import definir
+         definir(self.caso)
++        from apoio.prosseguimento import preparar as preparar_prosseguimento
++        preparar_prosseguimento(self.caso)
+     def posicionar(self, etapa):
+         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
+         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
+diff --git a/testes/produtos_a14.py b/testes/produtos_a14.py
+index ce9446b..703317e 100644
+--- a/testes/produtos_a14.py
++++ b/testes/produtos_a14.py
+@@ -9,6 +9,8 @@ class Caso(unittest.TestCase):
+         self.posicionar('P1')
+         from apoio.canais import definir
+         definir(self.caso)
++        from apoio.prosseguimento import preparar as preparar_prosseguimento
++        preparar_prosseguimento(self.caso)
+     def posicionar(self, etapa):
+         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
+         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})
+diff --git a/testes/prosseguimento.py b/testes/prosseguimento.py
+new file mode 100644
+index 0000000..0f20976
+--- /dev/null
++++ b/testes/prosseguimento.py
+@@ -0,0 +1,164 @@
++"""Negativas do ato humano de F0, integridade e bloqueio após encerramento."""
++import hashlib
++import json
++import pathlib
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++
++RAIZ = pathlib.Path(__file__).resolve().parents[1]
++CAMPO = RAIZ / 'eiac-campo/scripts'
++NUCLEO = RAIZ / 'eiac-nucleo/scripts'
++
++
++class Prosseguimento(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
++        self.caso = pathlib.Path(self.tmp.name)
++        shutil.copytree(RAIZ / 'eiac-campo/template-caso', self.caso, dirs_exist_ok=True)
++        p = self.caso / 'registro/estado.json'; st = json.loads(p.read_text())
++        st.update(caso='CONTROLE-SINTETICO', responsavel='Celso do Vale')
++        p.write_text(json.dumps(st))
++        from apoio.habilitacao_0d import preparar
++        preparar(self.caso)
++        self.rodar(NUCLEO / 'avancar.py', '--apurar-nivel', 'N1', '--eixos', 'DAD 3, GOV 3, CRI 3', '--autor', 'Celso do Vale', ok=True)
++        (self.caso / 'caso/E1-ficha.md').write_text('- [D · Celso do Vale] Ficha de enquadramento exclusivamente sintética.\n')
++        self.dados = dict(versao=1, decisor='Celso do Vale', data='2026-10-03',
++                          desfecho='prosseguir', motivo='Controle sintético aprovado', ficha='caso/E1-ficha.md')
++
++    def rodar(self, script, *args, ok=False):
++        r = subprocess.run([sys.executable, str(script), *args], cwd=self.caso, text=True, capture_output=True)
++        if ok: self.assertEqual(r.returncode, 0, r.stdout+r.stderr)
++        return r
++
++    def decidir(self, ok=False):
++        (self.caso / 'rascunho/prosseguimento.json').write_text(json.dumps(self.dados, ensure_ascii=False))
++        return self.rodar(CAMPO / 'prosseguimento.py', '--entrada', 'rascunho/prosseguimento.json', ok=ok)
++
++    def encerrar(self, etapa='F0', ok=False):
++        return self.rodar(NUCLEO / 'avancar.py', '--encerrar', etapa, '--autor', 'Celso do Vale', ok=ok)
++
++    def evento(self):
++        return json.loads((self.caso / 'registro/eventos.jsonl').read_text().splitlines()[-1])
++
++    def recusa(self, funcao):
++        antes = (self.caso / 'registro/estado.json').read_bytes()
++        r = funcao()
++        self.assertNotEqual(r.returncode, 0, r.stdout+r.stderr)
++        self.assertEqual(self.evento()['evento'], 'TentativaNegada')
++        self.assertEqual((self.caso / 'registro/estado.json').read_bytes(), antes)
++        return r
++
++    def test_00_f0_sem_decisao_recusa(self):
++        self.assertIn('produto', self.recusa(self.encerrar).stderr)
++
++    def test_01_sessao_recusa_e_devolve_comando_exato(self):
++        cmd = f'python3 {CAMPO}/prosseguimento.py --entrada rascunho/prosseguimento.json'
++        antes = (self.caso / 'registro/estado.json').read_bytes()
++        r = subprocess.run([sys.executable, str(NUCLEO/'guarda.py')], cwd=self.caso,
++                           input=json.dumps(dict(tool_name='Bash', tool_input=dict(command=cmd))), text=True, capture_output=True)
++        self.assertEqual(r.returncode, 2, r.stderr)
++        self.assertIn(cmd, r.stderr)
++        self.assertEqual(self.evento()['operacao'], 'decidir-prosseguimento')
++        self.assertEqual(self.evento()['comando'], cmd)
++        self.assertEqual((self.caso / 'registro/estado.json').read_bytes(), antes)
++
++    def test_02_cada_campo_obrigatorio_recusa(self):
++        original = self.dados.copy()
++        for campo in original:
++            with self.subTest(campo=campo):
++                self.dados = {k:v for k,v in original.items() if k != campo}
++                self.recusa(self.decidir)
++
++    def test_03_nome_de_agente_recusa(self):
++        self.dados['decisor'] = 'AG-01'; self.recusa(self.decidir)
++
++    def test_04_nome_coletivo_recusa(self):
++        self.dados['decisor'] = 'Equipe Técnica'; self.recusa(self.decidir)
++
++    def test_05_desfecho_inexistente_recusa(self):
++        self.dados['desfecho'] = 'talvez'; self.recusa(self.decidir)
++
++    def test_06_data_impossivel_recusa(self):
++        self.dados['data'] = '2026-02-30'; self.recusa(self.decidir)
++
++    def test_07_ficha_ausente_recusa(self):
++        (self.caso / self.dados['ficha']).unlink(); self.recusa(self.decidir)
++
++    def test_08_ficha_fora_do_caso_recusa(self):
++        self.dados['ficha'] = '../fora.md'; self.recusa(self.decidir)
++
++    def test_09_sobrescrita_recusa(self):
++        self.decidir(ok=True)
++        anterior = (self.caso/'registro/prosseguimento/decisao-0001.yaml').read_bytes()
++        self.dados['motivo'] = 'Sobrescrita'; self.recusa(self.decidir)
++        self.assertEqual((self.caso/'registro/prosseguimento/decisao-0001.yaml').read_bytes(), anterior)
++
++    def test_10_adulteracao_do_vigente_recusa(self):
++        self.decidir(ok=True)
++        p = self.caso/'registro/prosseguimento/vigente.yaml'
++        p.write_text(p.read_text().replace('Controle sintético aprovado', 'Outro motivo'))
++        self.recusa(self.encerrar)
++
++    def test_11_vigente_negativo_nao_usa_positivo_anterior(self):
++        self.decidir(ok=True); self.dados.update(versao=2,desfecho='não prosseguir')
++        self.decidir(ok=True); self.encerrar(ok=True)
++        self.assertIn('continuidade', self.recusa(lambda: self.encerrar('P1')).stderr)
++
++    def test_12_nao_prosseguir_encerra_f0_e_bloqueia_p1(self):
++        self.dados['desfecho'] = 'não prosseguir'; self.decidir(ok=True); self.encerrar(ok=True)
++        st = json.loads((self.caso/'registro/estado.json').read_text())
++        self.assertTrue(st['cumprimentos']['F0']['cumprido'])
++        self.recusa(lambda: self.encerrar('P1'))
++        r = subprocess.run([sys.executable,str(NUCLEO/'guarda.py')],cwd=self.caso,
++                           input=json.dumps(dict(tool_name='Skill',tool_input=dict(skill='eiac-campo:hb-mapear-contexto'))),text=True,capture_output=True)
++        self.assertEqual(r.returncode,2,r.stderr); self.assertEqual(self.evento()['evento'],'TentativaNegada')
++
++    def test_13_nova_decisao_libera_e_preserva_anterior(self):
++        self.dados['desfecho']='não prosseguir'; self.decidir(ok=True); self.encerrar(ok=True)
++        p=self.caso/'registro/prosseguimento/decisao-0001.yaml'; anterior=p.read_bytes()
++        self.dados.update(versao=2,desfecho='prosseguir',motivo='Retomada sintética decidida')
++        self.decidir(ok=True); self.encerrar('P1',ok=True)
++        self.assertEqual(p.read_bytes(),anterior)
++
++    def test_14_e1_materializa_os_dois_desfechos(self):
++        for desfecho in ('prosseguir','não prosseguir'):
++            with self.subTest(desfecho=desfecho):
++                self.dados.update(versao=1 if desfecho=='prosseguir' else 2,desfecho=desfecho)
++                self.decidir(ok=True)
++                if desfecho=='prosseguir': self.encerrar(ok=True)
++                self.rodar(CAMPO/'entregaveis.py','--renderizar','E1','--autor','Celso do Vale',ok=True)
++                md=(self.caso/'caso/entregaveis/E1.md').read_text()
++                self.assertIn(desfecho,md); self.assertIn(self.dados['motivo'],md)
++                self.assertIn(hashlib.sha256((self.caso/self.dados['ficha']).read_bytes()).hexdigest(),md)
++
++    def test_15_caso_anterior_conserva_contrato(self):
++        p=self.caso/'registro/playbook.json'
++        p.write_bytes(subprocess.check_output(['git','show','ebb6bbd:eiac-campo/template-caso/registro/playbook.json'],cwd=RAIZ))
++        self.encerrar(ok=True)
++
++    def test_16_decisao_negativa_bloqueia_registro_de_sessao_seguinte(self):
++        self.dados['desfecho']='não prosseguir'; self.decidir(ok=True); self.encerrar(ok=True)
++        self.recusa(lambda: self.rodar(NUCLEO/'avancar.py','--registrar-sessao','P1',
++                                     '--autor','Celso do Vale','--participantes','Marina Prado'))
++
++    def test_17_produto_sintetico_sem_evento_nao_libera(self):
++        self.decidir(ok=True)
++        log=self.caso/'registro/eventos.jsonl'
++        log.write_text(''.join(json.dumps(e)+'\n' for e in map(json.loads,log.read_text().splitlines())
++                               if e['evento']!='ProsseguimentoDecidido'))
++        self.recusa(self.encerrar)
++
++    def test_18_motivo_vazio_recusa(self):
++        self.dados['motivo']='   '; self.recusa(self.decidir)
++
++    def test_19_e1_sem_decisao_recusa_com_evento(self):
++        p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
++        st['cumprimentos']['F0']['cumprido']=True
++        p.write_text(json.dumps(st))  # Fixture isolada de materialização.
++        self.recusa(lambda: self.rodar(CAMPO/'entregaveis.py','--renderizar','E1','--autor','Celso do Vale'))
++
++
++if __name__ == '__main__': unittest.main(verbosity=2)
+diff --git a/testes/sessao_a8.py b/testes/sessao_a8.py
+index 2c46b83..9b9da79 100644
+--- a/testes/sessao_a8.py
++++ b/testes/sessao_a8.py
+@@ -26,6 +26,8 @@ class SessaoA8(unittest.TestCase):
+         self.posicionar("P3a", "N2")
+         from apoio.canais import definir
+         definir(self.caso)
++        from apoio.prosseguimento import preparar as preparar_prosseguimento
++        preparar_prosseguimento(self.caso)
+ 
+     def configurar(self, editar):
+         pb = json.loads(self.playbook.read_text())
+diff --git a/testes/verificacao_por_estados.py b/testes/verificacao_por_estados.py
+index a9a0abe..2a4d30e 100644
+--- a/testes/verificacao_por_estados.py
++++ b/testes/verificacao_por_estados.py
+@@ -104,6 +104,8 @@ def levar_ate_p3b(caso):
+     sessao humana ja registrada. G7 é conferida independentemente de G1;
+     a sessão não autoriza carregar habilidade não delegável (A18)."""
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     avancar(caso, encerrar="F0", autor="Celso do Vale")
+     avancar(caso, encerrar="P1", autor="Celso do Vale")
+     codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
+@@ -158,6 +160,8 @@ with tempfile.TemporaryDirectory() as tmp:
+ with tempfile.TemporaryDirectory() as tmp:
+     caso = preparar_caso(pathlib.Path(tmp))
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     avancar(caso, encerrar="F0", autor="Celso do Vale")
+     avancar(caso, encerrar="P1", autor="Celso do Vale")
+     # sela ANTES de encerrar P2 -- este selo e anterior ao EtapaEncerrada de P2
+@@ -213,6 +217,8 @@ with tempfile.TemporaryDirectory() as tmp:
+ with tempfile.TemporaryDirectory() as tmp:
+     caso = preparar_caso(pathlib.Path(tmp))
+     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
++    from apoio.prosseguimento import preparar as preparar_prosseguimento
++    preparar_prosseguimento(caso)
+     avancar(caso, encerrar="F0", autor="Celso do Vale")
+     codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
+     if codigo == 0:
