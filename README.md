@@ -193,6 +193,31 @@ listagem registrada limitam leitura; provisionamento tem regra própria; escrita
 de material só vai a `entregas`. Ferramenta não declarada ou chamada incompatível
 recusa. Ajuste nomes e argumentos ao conector instalado, pelo terminal.
 
+## Limites vigentes
+
+Por decisão do engenheiro, ficam fora de escopo integração de assinatura
+eletrônica, aceite de entregáveis, gravação e transcrição de sessões. A habilitação
+registra a conferência humana de PDFs assinados pelo painel externo, sem
+validar certificados nem operar uma API de assinatura.
+
+As decisões 022 e 040 delimitam confiança: os scripts conferem coerência local,
+integridade e contratos; não autenticam origem remota, identidade real,
+permissões efetivas, recebimento pelo destinatário ou realização da sessão.
+SHA-256 preserva bytes, sem comprovar veracidade. Acesso humano de escrita ao
+disco permanece a fronteira de confiança. A guarda de escopo não comprova
+que houve confirmação no chat. Hooks MCP foram demonstrados apenas no Claude
+Code 2.1.283 testado; não há demonstração de suporte em outros clientes.
+
+Permanecem a revisão humana da carta HAB-01, a pendência de correspondência
+CAT-01/catálogo/playbook da decisão 020 e HB-04/05/06/13 sem habilidade física
+própria. A conferência do manual cobre o contrato declarado, não julga a qualidade
+do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
+o recorte histórico da prova de conceito.
+
+O material público de 0a fica fora do caso nessa etapa. Se usado depois da
+abertura, segue validação ou curadoria, com procedência, premissa, URL e limite
+da fonte, sem importação automática desse levantamento.
+
 ## Verificação e atualização
 
 ```bash
