@@ -1,9 +1,9 @@
 # Fronteira de delegação
 ## Camadas de execução e catálogo de agentes e habilidades
 
-| Código | EMCIA-CAT-01 | Versão | 0.3 |
+| Código | EMCIA-CAT-01 | Versão | 0.4 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
@@ -153,6 +153,13 @@ Toda saída de EX1 e EX2 carrega a procedência de cada informação: declarada,
 #### 3.5.5 Atos sobre o registro
 Além das atividades do percurso, são reservados ao engenheiro os atos que alteram a evidência do caso: registrar o nível, registrar sessão e campo, satisfazer inegociável, registrar recorrência, encerrar etapa em EX3 ou EX4 e alterar o estado do caso. O agente pode preparar o comando; não pode executá-lo. Esses atos não produzem conteúdo, mas decidem o que o registro passa a afirmar, e por isso são os primeiros que um agente tenta contornar.
 
+Também são humanos, no próprio terminal e fora da sessão do agente: importar a habilitação, definir canais, receber material, registrar listagem, registrar entrega e vincular ou dispensar restrição. O ato vincular-restricao, por `restricoes.py`, ocorre inicialmente em P2 e associa RH-xx a fonte F-xxx curada ou registra dispensa com motivo. Revisão exige decisão explícita sobre a versão anterior e preserva histórico. Confirmação no chat não autoriza o agente a executar esses atos; informar o nome do engenheiro na chamada não muda sua origem.
+
+#### 3.5.6 Efeitos externos e limite de confiança
+O agente lê pelos ids autorizados, prepara planos, formulários, manifestos e comandos, e apresenta ao engenheiro o efeito externo proposto. Criação de recurso, compartilhamento, publicação, convite e envio exigem confirmação explícita no chat antes da execução pelo conector. Cada compartilhamento exige confirmação própria, identificando pessoa, endereço, id de destino e papel. Planejar ou preparar link não autoriza publicar ou enviá-lo.
+
+O procedimento segue CAN-01: roteamento exclusivamente por id, listagem restrita ao contêiner declarado e registrada pelo engenheiro antes da leitura de objeto; coleta em rascunho até recebimento; publicação de material somente em entregas. Os scripts conferem coerência local, origem declarada e hashes; não autenticam resposta remota, identidade real ou permissões efetivas. A guarda MCP depende das regras correspondentes ao conector instalado e do suporte a hooks no runtime; não comprova que houve confirmação no chat. Registro de entrega não é aceite. Assinatura eletrônica, gravação e transcrição permanecem fora do escopo dos canais.
+
 ### 3.6 Deslocamento da fronteira por nível
 O engenheiro conduz o percurso inteiro nos três níveis. O que muda é até onde a preparação automatizada é admitida antes da verificação obrigatória: quanto maior a consequência do erro, mais cedo o trabalho humano precisa entrar.
 
@@ -172,7 +179,8 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 - *The Tacit Dimension*, Polanyi (1966)
 - *The Knowledge-Creating Company*, Nonaka e Takeuchi (1995)
 - *AI Risk Management Framework*, NIST (2023)
-- Artefatos relacionados: EMCIA-MET-01, EMCIA-TRI-01, EMCIA-GLO-01.
+- Artefatos relacionados: EMCIA-MET-01, EMCIA-TRI-01, EMCIA-GLO-01, EMCIA-CAN-01, EMCIA-HAB-01, EMCIA-CTX-01 e EMCIA-MAN-01.
+- Referência operacional: emcia-marketplace, decisões 039–042 e playbook 0.4.18.
 
 ## 6. Histórico de revisões
 
@@ -181,6 +189,7 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 | 0.1 | 10/09/2026 | Celso do Vale | Versão inicial: critério de corte, três naturezas, quatro camadas, fronteira por passo e catálogo | — |
 | 0.2 | 14/09/2026 | Celso do Vale | Habilidades renomeadas para HB; camadas de execução renomeadas para EX; alcance da fronteira delimitado ao trabalho interno | — |
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): trava por origem da chamada (A4); levantamento das regras não documentadas movido para EX4 (D2); agente só prepara em EX3 e EX4 (D3); regra dos atos sobre o registro (D4); decisões humanas mantidas em todos os níveis (D1); situação das habilidades e atividades sem habilidade (D5) | — |
+| 0.4 | 2026-10 | Celso do Vale | Fronteira de ações externas, confirmação por efeito e compartilhamento; atos humanos de canais, importação, recebimento, listagem, entrega e vínculo de restrição | pendente |
 
 ---
 

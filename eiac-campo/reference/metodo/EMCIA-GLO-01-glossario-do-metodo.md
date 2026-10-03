@@ -1,9 +1,9 @@
 # Glossário do método
 ## Vocabulário padronizado do percurso, índice de artefatos e índice de siglas
 
-| Código | EMCIA-GLO-01 | Versão | 0.2 |
+| Código | EMCIA-GLO-01 | Versão | 0.3 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | Todas | **Passo** | Todos |
 
@@ -133,13 +133,30 @@ Cada entrada tem quatro campos, e o terceiro é o que faz o trabalho. A maior pa
 | **Organização participante** | Organização em que o percurso é aplicado para fins de verificação | Cliente | VER-01 · Sprint 3 |
 | **Documento controlado** | Artefato com código estável, versão, responsável e condição de aceite | Documento de trabalho | Todos |
 
-## 4. Regra de manutenção
+### 3.9 Operação do serviço e registros de fronteira
+
+| Termo | Definição | O que não é | Onde aparece |
+| :--- | :--- | :--- | :--- |
+| **Expediente** | Registro administrativo de habilitação, separado e anterior ao caso, com originais, rodadas, decisões, versões e evidências | Caso aberto ou autorização para processar dados operacionais | HAB-01 §3.7 · ROT-02 · MAN-01 |
+| **Canal** | Endereço externo por id, declarado no caso com finalidade, direção, proprietário e acesso | Nome de pasta ou autorização genérica de acesso | CAN-01 |
+| **Finalidade** | Uso que o método declara para o canal, com direção e etapas ou entregáveis aplicáveis | Endereço concreto, que é declarado pelo caso | CAN-01 · CAM-01 |
+| **Recebimento** | Ato humano que confere a coleta e preserva arquivo, origem, hash e id REC no caso | Download preparado pelo agente ou autenticação do conteúdo | CAN-01 · TRA-01 |
+| **Listagem registrada** | Manifesto humano de chamada limitada a contêiner declarado, com ids, data, hash e evento, anterior à leitura de objetos por id | Prova de autenticidade da resposta remota ou permissão para escrever em fontes | CAN-01 · MAN-01 |
+| **Entrega registrada** | Registro humano da publicação, com emissão, versão, hash, destino por id e destinatário nomeado | Aceite ou comprovação de leitura pelo destinatário | CAN-01 · MAN-01 |
+| **Campo oculto** | Campo caso que acompanha o link e a submissão para selecionar material do caso correto | Autenticação do respondente | CAN-01 · FER-01 |
+| **Evento selado** | Evento incluído no prefixo da trilha preservado por selo posterior confirmado no histórico Git | Evento SeloAplicado isolado ou commit comum após tentativa recusada | HAB-01 §3.3.4 · MAN-01 |
+| **Restrição vinculada** | RH importado associado por decisão humana a fonte F curada, em registro versionado; sua marca acompanha cada asserção que cita essa fonte | Ressalva genérica, concessão do acesso negado ou elevação automática para V | HAB-01 §3.4 · CTX-01 §3.7 · TRA-01 |
+
+### 3.10 Regra de manutenção
 Termo entra quando uma divergência de leitura aparece, e não por antecipação. Glossário redigido preventivamente registra os termos que o autor imaginou ambíguos, e não os que de fato o são.
 
 Cada versão é datada. A alteração de uma definição exige registro do que mudou, porque artefato produzido sob a definição anterior permanece válido sob ela — e a data é o que permite saber qual definição vigorava.
 
-## 5. Condição de aceite
+## 4. Condição de aceite
 Este artefato está pronto quando todo termo empregado nos demais artefatos com sentido próprio consta aqui; quando cada entrada declara o que o termo não é; quando os termos padronizados registram o sinônimo recusado; e quando um engenheiro que não participou da construção lê um artefato do método sem precisar perguntar o que uma expressão significa.
+
+## 5. Referências
+EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-CTX-01, EMCIA-TRA-01 e EMCIA-FER-01. Referência operacional: emcia-marketplace, decisões 039–042 e playbook 0.4.18. As remissões históricas ao VER-01 permanecem identificadas na seção 3.6.
 
 ## 6. Histórico de revisões
 
@@ -147,6 +164,7 @@ Este artefato está pronto quando todo termo empregado nos demais artefatos com 
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 14/09/2026 | Celso do Vale | Versão inicial: 77 termos em seis grupos, quatro anexos, índice de artefatos e índice de siglas | — |
 | 0.2 | 29/09/2026 | Celso do Vale | Termos da verificação por duas execuções marcados como históricos, em razão da substituição do EMCIA-VER-01 (registro da ação 4.3, item E1) | — |
+| 0.3 | 2026-10 | Celso do Vale | Nove termos operacionais, índices e remissão ao ROT-02, com distinção entre origem, integridade, autenticação e aceite; manutenção inserida no conteúdo e referências em seção própria | pendente |
 
 ---
 
@@ -159,6 +177,9 @@ Artefatos produzidos na Sprint 1. O código é estável ao longo das versões; a
 | **EMCIA-CAT-01** | Fronteira de delegação | Três testes de delegação, naturezas de trabalho, camadas de execução e catálogo de agentes e habilidades | 1.2 |
 | **EMCIA-FER-01** | Quadro de ferramentas | Instrumentos aplicados por fase, exclusões registradas e lacunas de cobertura | 1.3 |
 | **EMCIA-HAB-01** | Protocolo de habilitação | Etapas 0a a 0d, quatro pré-requisitos e três desfechos | 1.4 |
+| **EMCIA-ROT-02** | Roteiro de habilitação | Perguntas e checklist de 0a–0d; substitui o identificador provisório do roteiro, distinto do template HAB-02 de confidencialidade | — |
+| **EMCIA-CAN-01** | Protocolo de canais externos | Finalidades, ids, confirmação de efeitos externos e registros humanos | — |
+| **EMCIA-MAN-01** | Manual de aplicação | Sequência operacional e tabela conferida contra o playbook 0.4.18 | — |
 | **EMCIA-TRI-01** | Instrumento de triagem | Nove perguntas em três eixos, regra de leitura e verificação posterior | 1.5 |
 | **EMCIA-E1-01** | Modelo · Ficha de enquadramento | Estrutura do entregável da Fase F0 | 1.6 |
 | **EMCIA-E2-01** | Modelo · Diagnóstico e oportunidade | Estrutura do entregável dos passos 1 a 3, em três partes por público | 1.6 |

@@ -1,23 +1,27 @@
-# Protocolo de Campo por Passo — P6 a P10
+# Protocolo de campo por passo
 
-*Entrada, atividade, saída e encerramento das fases de operacionalização e piloto*
+*Canais do percurso e procedimento das fases de operacionalização e piloto*
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CAM-01 | **Versão** | 0.2 |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-CAM-01 | **Versão** | 0.3 |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
-| **Fase** | Sprint 2 — Implementação | **Passo** | Ação 2.3 |
+| **Fase** | F0–F4 | **Passo** | F0 e P1–P10 |
 
 ## 1. Objetivo
 
 Tornar executáveis os cinco passos que o método descreve por calibragem e critério de encerramento, mas não por procedimento: P6 a P10. Cada passo recebe o mesmo enquadramento — entrada, atividade, saída, encerramento, fronteira de delegação e registro no estado — e os quatro formatos que os itens inegociáveis 2 a 5 exigem passam a existir como anexos.
+
+Identificar também, em cada etapa de F0 a P10, as finalidades dos canais de serviço e a condição de resolução das restrições em P2, conforme a operação entregue no playbook 0.4.18.
 
 Sem este documento, as fases F3 e F4 não possuem habilidade carregável e os portões E4 e E5 validam a existência de artefatos cujo conteúdo mínimo nunca foi definido.
 
 ## 2. Escopo e aplicação
 
 Aplica-se aos passos P6, P7, P8, P9 e P10, nas fases F3 — operacionalização e governança — e F4 — piloto, mensuração e calibragem. Vale nos três níveis, com a calibragem indicada em cada passo.
+
+O mapa de canais e a condição de restrições em P2 abrangem todo o percurso. Os procedimentos substantivos anteriores a P6 continuam nos instrumentos próprios do método. Os canais seguem o CAN-01; não executam assinatura, aceite, gravação ou transcrição.
 
 Na prova de conceito, estes passos são percorridos e produzem seus artefatos, mas **não são apresentados como validados em operação real da solução do cliente**. O protocolo define o procedimento; a execução na PoC demonstra que o percurso e os portões operam, não que o agente do cliente funcionou em produção.
 
@@ -38,9 +42,38 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 | **Fronteira** | O que o Estúdio prepara e o que permanece humano |
 | **Registro** | O que o estado do caso guarda ao encerrar |
 
+#### 3.1.1 Finalidades de canal em cada etapa
+
+| Etapa | Entrada específica | Agenda e publicação |
+| :--- | :--- | :--- |
+| F0 | triagem; habilitacao conserva a origem administrativa importada | sessoes quando houver sessão; entregas para E1 após o portão e resolução de RH pendente |
+| P1 | Sem nova entrada externa atribuída no template; usar as fontes já registradas | sessoes; entregas para E2 somente após o portão completo |
+| P2 | documentos | sessoes; entregas para E2 após P3d |
+| P3a | amostras para linha de base | sessoes; entregas para E2 após o portão completo |
+| P3b | Fontes já registradas e levantamento presencial pelo ROT-01 | sessoes; entregas para E2 após P3d |
+| P3d | Fontes registradas do confronto | sessoes; entregas para E2 após o portão completo |
+| P4 | Contexto e fontes já registrados | sessoes; entregas para E3 após P5 |
+| P5 | Contexto e fontes já registrados | sessoes; entregas para E3 conforme E3-D e E3-E |
+| P6 | E3 e contexto registrados | sessoes; entregas para E4 após P7 |
+| P7 | Minuta e decisões de autonomia | sessoes; entregas para E4 após P6 e P7 |
+| P8 | Conjunto de piloto e linha de base registrados | sessoes; entregas para E5 após P10 |
+| P9 | amostras para medição | sessoes; entregas para E5 após o portão completo |
+| P10 | ciclo para monitoramento; decisão humana separada | sessoes para revisões; entregas para E5 após o portão completo |
+
+Trabalho-interno permanece sem acesso do cliente; não é canal genérico para buscar material externo em qualquer etapa. O template exige a entrada declarada em F0, P2, P3a, P9 e P10. A finalidade sessoes não torna a referência externa obrigatória: ela é opcional no template, mas, quando informada, deve ter canal e marcador [caso/etapa] coerentes. Cada criação, compartilhamento, publicação, convite ou envio exige confirmação no chat; os registros de listagem, recebimento e entrega são humanos no terminal.
+
+#### 3.1.2 P2 — Restrição de acesso e encerramento
+Após receber a documentação pelo canal documentos, curar os objetos Fonte F-xxx com contrato, pessoa responsável e evento de curadoria. Conferir cada RH-xx importado de 0c e executar `restricoes.py` no terminal humano para vinculá-lo à fonte afetada ou dispensá-lo com motivo quando nenhuma fonte do recorte for afetada. O agente prepara referências e comandos; não decide o vínculo ou a dispensa.
+
+P2 só encerra com todos os RH vinculados a fontes ou dispensados com motivo e com integridade dos registros de origem e destino conferida. Sem RH, a cobertura é vazia. A verificação substantiva da qualidade e da adequação do dado continua humana. Revisão exige decisão explícita sobre a versão anterior e conserva histórico; após P2, só se revisa vínculo existente. A emissão aplica a marca junto a cada asserção que cita fonte restrita, conforme HAB-01 §3.4 e CTX-01 §3.7. RH pendente bloqueia também a materialização de E1 até sua resolução em P2.
+
+Antes do levantamento de P3b, aplicar selo confirmado no Git após o último encerramento de P2. Evento de selo sem commit confirmado ou Git inacessível não satisfaz essa condição.
+
 ### 3.2 P6 — Operacionalize a solução
 
 **Fase F3 · camada EX3 · modalidade presencial ou remota conforme o nível**
+
+**Canais:** sessoes para agenda; entregas para E4 somente após P6 e P7 encerrados.
 
 | Elemento | Conteúdo |
 |---|---|
@@ -69,6 +102,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 ### 3.3 P7 — Estabeleça governança e conformidade
 
 **Fase F3 · camada EX4 · decisão humana registrada**
+
+**Canais:** sessoes para agenda; entregas para E4 após o portão completo. Assinatura do termo segue procedimento humano próprio.
 
 | Elemento | Conteúdo |
 |---|---|
@@ -99,6 +134,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 
 **Fase F4 · camada EX3 · conjunto de testes revisado por quem executa o processo**
 
+**Canais:** sessoes para agenda; entregas para E5 somente após P8, P9 e P10 encerrados. O template não declara nova coleta externa em P8.
+
 | Elemento | Conteúdo |
 |---|---|
 | Entrada | P7 encerrado; termo de autonomia assinado; linha de base do Passo 3 registrada |
@@ -128,6 +165,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 
 **Fase F4 · camada EX3 · apuração determinística**
 
+**Canais:** amostras para material da medição, recebido pelo engenheiro; sessoes para agenda; entregas para E5 após o portão completo.
+
 | Elemento | Conteúdo |
 |---|---|
 | Entrada | P8 encerrado; piloto executado; linha de base disponível |
@@ -155,6 +194,8 @@ Todo passo de F3 e F4 é descrito por seis elementos. A uniformidade é o que pe
 ### 3.6 P10 — Aprenda, recalibre e evolua
 
 **Fase F4 · camada EX4 na decisão, EX2 no monitoramento · etapa recorrente**
+
+**Canais:** ciclo para declarações do monitoramento, com campo oculto caso; sessoes para agenda e revisão; entregas para E5 após o portão completo. A resposta do formulário não decide recalibragem.
 
 | Elemento | Conteúdo |
 |---|---|
@@ -207,6 +248,8 @@ Ao encerrar cada passo, o estado guarda: identificação do passo, data, respons
 
 O protocolo está pronto quando cada um dos cinco passos declara entrada, atividade ordenada, saída com formato definido, encerramento verificável e fronteira de delegação; quando os quatro formatos dos anexos permitem preencher os inegociáveis 2 a 5 sem inventar estrutura; quando as condições M1 a M10 podem ser convertidas em recusa do núcleo; e quando um engenheiro que não participou da construção consegue conduzir P6 a P10 sem decidir novamente o que cada passo produz.
 
+O mapa operacional deve identificar finalidades em todas as etapas, distinguir canais previstos de entrada exigida e declarar em P2 a cobertura dos RH vinculados ou dispensados com motivo. Sua aplicação conserva a confirmação dos efeitos externos e o selo confirmado após P2 para P3b.
+
 ## 5. Referências
 
 - EMCIA-MET-01 — Documento do método, Passos 6 a 10.
@@ -217,6 +260,8 @@ O protocolo está pronto quando cada um dos cinco passos declara entrada, ativid
 - EMCIA-TST-01 — Plano de testes da implementação.
 - EMCIA-E4 — Modelo de guia operacional.
 - EMCIA-E5 — Modelo de relatório de piloto.
+- EMCIA-CAN-01, EMCIA-HAB-01 §3.4, EMCIA-CTX-01 §3.7 e EMCIA-MAN-01 — Canais e restrições.
+- emcia-marketplace — Decisões 039–042 e playbook 0.4.18.
 - NIST. *AI Risk Management Framework* (2023).
 
 ## 6. Histórico de revisões
@@ -225,6 +270,7 @@ O protocolo está pronto quando cada um dos cinco passos declara entrada, ativid
 |---|---|---|---|---|
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: enquadramento comum, protocolo de P6 a P10, condições executáveis M1–M10 e os quatro formatos dos inegociáveis 2 a 5. | — |
 | 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A7, e correção A24): responsável vigente da rotina de recalibragem, vínculo com a recorrência e com o E5; condições M11 e M12; campo de versão no Anexo D | — |
+| 0.3 | 2026-10 | Celso do Vale | Finalidades de canais em todas as etapas, vínculo ou dispensa de RH como condição de P2, confirmação dos efeitos externos e selo Git após P2 | pendente |
 
 ---
 

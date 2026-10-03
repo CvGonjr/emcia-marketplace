@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-TRA-01 | **Versão** | 0.3 |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-TRA-01 | **Versão** | 0.4 |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0–F4 (transversal) | **Passo** | Todos |
 
@@ -120,6 +120,18 @@ O indicador mede quanto do que sustenta o processo não pode ser obtido por leit
 
 **Procedência em número.** Todo valor quantitativo apresentado carrega a marca da sua origem. Estimativa apresentada sem marca assume aparência de medição, e é a forma mais comum de inflar a credibilidade de um diagnóstico sem afirmar nada falso.
 
+#### 3.5.1 Origem no recebimento e na importação
+Material coletado pelos canais externos permanece em rascunho até o recebimento humano por `receber.py`, conforme CAN-01. O recebimento cria id REC, conserva arquivo, manifesto, objeto e contêiner de origem, datas com fuso, canal, pessoa responsável e hash. Asserções que dependem desse material citam a referência `fonte: REC-NNNNNN`; o validador resolve o registro e confere a integridade dos bytes. O id registra a origem declarada da coleta; não autentica a origem remota.
+
+Na passagem de 0d, `importar_habilitacao.py` preserva em registro próprio os PDFs assinados, suas evidências e a matriz de acessos, com origem e hashes. A matriz deriva da entrada administrativa preservada no expediente. No rascunho de 00-habilitacao, a marca V identifica os documentos conferidos; declarações, restrições e desfecho conservam D. Conferir o documento da matriz não é verificar independentemente cada declaração de acesso.
+
+SHA-256 fixa os bytes preservados e permite detectar diferença entre versões ou adulteração. Não prova veracidade, identidade do declarante, legitimidade da assinatura, permissão efetiva ou realização de uma sessão. Receber, importar ou selar não transforma automaticamente D ou I em V. A marca depende do procedimento e da evidência identificada, sem decisão de modelo de linguagem.
+
+#### 3.5.2 Restrição junto à asserção
+Em P2, o engenheiro vincula RH-xx importado a fonte F-xxx curada ou registra dispensa motivada, conforme HAB-01 §3.4 e CTX-01 §3.7. A decisão preserva pessoa nomeada, data, importação, versão e histórico; P2 não encerra com RH pendente.
+
+Na emissão, cada asserção que cita fonte restrita recebe a marca no ponto em que aparece, com RH, F, item negado, restrição e motivo. Os produtos declaram a origem por registro ou por campo. Referência REC exige relação explícita com F curada e recebimento íntegro; o agente não deduz o vínculo de nomes. Relação ausente recusa nomeando a asserção; RH pendente bloqueia materialização antes da escrita, inclusive E1 até sua resolução em P2. A restrição delimita o alcance da verificação e não substitui a marca D/I/V nem se converte em ressalva genérica ao final.
+
 ### 3.6 Débito de julgamento
 
 **O que é.** Quando uma pergunta relevante não pode ser respondida no momento em que surge, ela é registrada como débito, com o passo de origem e o prazo de liquidação. O percurso segue.
@@ -184,6 +196,8 @@ O artefato está pronto quando os cinco procedimentos possuem passo a passo apli
 - EMCIA-VER-01 — Plano de verificação do método.
 - EMCIA-TST-01 — Plano de testes da implementação.
 - EMCIA-GLO-01 — Glossário do método.
+- EMCIA-HAB-01, EMCIA-CTX-01 §3.7 e EMCIA-CAN-01 — Importação, restrições e canais externos.
+- emcia-marketplace — Decisões 039–042 e playbook 0.4.18.
 
 ## 6. Histórico de revisões
 
@@ -192,6 +206,7 @@ O artefato está pronto quando os cinco procedimentos possuem passo a passo apli
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: leitura de volta, confronto e placar, procedência, débito de julgamento, pendência bloqueante e validações TRA-V01–V10. | — |
 | 0.2 | 17/09/2026 | Celso do Vale | Item de confronto passa a ser aberto para toda regra, não apenas para divergências; nomes de campo alinhados ao EMCIA-CTX-01 0.4; identificador padronizado como `confronto-NNN`; TRA-V01 e TRA-V02 ajustadas. | — |
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A6): condição TRA-V11 de pessoa nomeada, com o limite entre conferência do nome e garantia de origem | — |
+| 0.4 | 2026-10 | Celso do Vale | Origem REC e importação administrativa, limite probatório do hash e marca RH junto à asserção que cita fonte restrita | pendente |
 
 ---
 

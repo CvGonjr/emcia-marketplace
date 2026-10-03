@@ -1,0 +1,5 @@
+$ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 testes/metodo_empacotado.py
+origem controlada: 1d6d1e8bfc1739594ea7a119257ecae28c8e5af4; comparação Git: True
+metodo empacotado: 21 documentos, hashes validos, nenhuma copia no contraste
+
+Código: 0

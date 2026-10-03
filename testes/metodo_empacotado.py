@@ -4,6 +4,8 @@ import hashlib
 import json
 import pathlib
 import sys
+import re
+import subprocess
 
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
@@ -11,6 +13,10 @@ PACOTE = RAIZ / "eiac-campo" / "reference" / "metodo"
 CONTRASTE = RAIZ.parent / "emcia-contraste"
 
 DOCUMENTOS = {
+    'EMCIA-ROT-02-roteiro-de-habilitacao.md',
+    'EMCIA-HAB-fluxo-operacional-proposta.md',
+    'EMCIA-HAB-01-protocolo-de-habilitacao.md',
+    'EMCIA-CAN-01-protocolo-de-canais-externos.md',
     "EMCIA-CAM-01-protocolo-de-campo-por-passo.md",
     "EMCIA-CAT-01-fronteira-de-delegacao.md",
     "EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md",
@@ -50,10 +56,37 @@ def main():
         falhar(f"manifesto ausente ou invalido: {erro}")
     if set(manifesto.get("documentos", {})) != DOCUMENTOS:
         falhar("manifesto nao enumera exatamente o pacote operacional controlado")
+    if {p.name for p in PACOTE.iterdir()} != DOCUMENTOS | {'manifesto.json'}:
+        falhar('arquivos fora do manifesto')
+    caminhos = manifesto.get('caminhos_canonicos', {})
+    if set(caminhos) != DOCUMENTOS:
+        falhar('caminhos canônicos não enumeram exatamente o pacote')
+    origem = re.search(r'commit ([0-9a-f]{40})$', manifesto.get('origem_controlada', ''))
+    if origem is None:
+        falhar('origem controlada deve fixar commit completo')
+    canonico = RAIZ.parent / 'emcia-artefatos'
     for nome, esperado in manifesto["documentos"].items():
-        obtido = hashlib.sha256((PACOTE / nome).read_bytes()).hexdigest()
+        caminho = pathlib.PurePosixPath(caminhos[nome])
+        if caminho.is_absolute() or '..' in caminho.parts or caminho.name != nome:
+            falhar(f'caminho canônico inválido: {nome}')
+        if (PACOTE / nome).is_symlink():
+            falhar(f'symlink no pacote: {nome}')
+        data = (PACOTE / nome).read_bytes()
+        obtido = hashlib.sha256(data).hexdigest()
         if obtido != esperado:
             falhar(f"hash divergente em {nome}: {obtido} != {esperado}")
+
+        # Quando o checkout canônico está disponível, confere o objeto Git,
+        # nunca o arquivo mutável do working tree. O pacote funciona offline.
+        if canonico.is_dir():
+            try:
+                original = subprocess.check_output(
+                    ['git', 'show', f'{origem[1]}:{caminhos[nome]}'], cwd=canonico,
+                    stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError as erro:
+                falhar(f'objeto canônico indisponível: {nome}: {erro.stderr.decode()}')
+            if data != original:
+                falhar(f'bytes diferentes do commit canônico: {nome}')
 
     copias_no_contraste = [
         caminho for caminho in CONTRASTE.glob("**/EMCIA-*.md")
@@ -62,6 +95,7 @@ def main():
     if copias_no_contraste:
         falhar(f"documentos do metodo foram copiados para o contraste: {copias_no_contraste}")
 
+    print(f"origem controlada: {origem[1]}; comparação Git: {canonico.is_dir()}")
     print(f"metodo empacotado: {len(DOCUMENTOS)} documentos, hashes validos, nenhuma copia no contraste")
 
 

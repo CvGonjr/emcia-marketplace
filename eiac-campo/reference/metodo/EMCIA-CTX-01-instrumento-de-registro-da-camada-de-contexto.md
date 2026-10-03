@@ -4,8 +4,8 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CTX-01 | **Versão** | 0.4 |
-| **Data** | 17/09/2026 | **Estado** | Em revisão |
+| **Código** | EMCIA-CTX-01 | **Versão** | 0.5 |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F1–F2 | **Passo** | 2 a 5 |
 
@@ -174,6 +174,20 @@ data: 2026-09-10
 
 O campo `significado` evita que uma fonte seja interpretada apenas pelo nome. O contrato registra estrutura, significado e qualidade mínima antes de a fonte ser usada pelo caso.
 
+#### 3.7.1 Origem recebida e restrição de acesso
+A fonte F-xxx pode carregar uma relação explícita com recebimentos REC, pelo metadado opcional `recebimentos`. O engenheiro confere os ids e a integridade do material recebido antes da curadoria. Um id de recebimento identifica a origem preservada, mas não atribui D/I/V automaticamente. Hash fixa os bytes registrados, não a verdade do conteúdo.
+
+A fonte também pode ter vínculo com uma ou mais restrições RH-xx importadas da habilitação. O vínculo é carregado pelo registro versionado de restrições do caso, e não por coincidência de nomes nem por um campo RH inventado no objeto. Em P2, o engenheiro executa `restricoes.py vincular` para uma ou mais fontes existentes, com contrato e curadoria registrada, ou `restricoes.py dispensar` com motivo quando nenhuma fonte do recorte é afetada. Ambos correspondem ao ato humano vincular-restricao. P2 não encerra com RH pendente.
+
+O registro do vínculo conserva RH, importação, fontes, estado, versão, pessoa responsável e data. Revisão exige decisão que identifique a versão anterior, com decisor, motivo e data; o histórico permanece. Após P2, somente revisão de vínculo existente é admitida. A restrição não transforma uma fonte não curada em curada nem confirma o conteúdo a que o acesso foi negado.
+
+#### 3.7.2 Efeito na procedência e na emissão
+A procedência permanece D, I ou V segundo a evidência da asserção. A existência de contrato, recebimento ou vínculo RH não eleva a marca. Se o acesso limita o que pôde ser verificado, essa limitação acompanha a asserção, inclusive quando parte do documento foi conferida por outra evidência.
+
+Os produtos materializados declaram fontes para o registro ou para cada campo. Uma asserção que cita uma fonte F restrita recebe no próprio valor a marca com RH, F, item negado, restrição e motivo. Uma citação REC só resolve para F por relação explicitamente registrada no objeto curado e por recebimento íntegro; relação ausente recusa nomeando a asserção. Campos sem fonte não recebem vínculo inferido: cabe ao engenheiro declarar a origem antes da emissão.
+
+RH pendente bloqueia a materialização de E1–E5 antes da escrita. E1 de caso restrito aguarda a resolução dos vínculos em P2. A marca não é substituída por ressalva ao final; dispensa motivada não concede acesso nem verifica o item negado. O procedimento administrativo está no HAB-01 §3.4, e a operação dos canais no CAN-01.
+
 ### 3.8 Correspondência com o EMCIA-ROT-01
 
 Cada regra levantada em P3b entra no CTX-01 por conversão direta, sem perder os campos produzidos na sessão.
@@ -255,6 +269,8 @@ O CTX-01 define regras que o núcleo pode verificar deterministicamente. Os iden
 | **CTX-V09** | Autoria de conteúdo e registro são pessoas nomeadas. | Recusar identificador de agente como autor de registro curado. |
 | **CTX-V10** | Toda nova versão possui data, responsável e motivo da mudança. | Recusar alteração sem trilha mínima. |
 | **CTX-V11** | Toda `classificacao_confronto` possui `classe` e `referencia_p3d`; quando a classe é `divergente`, a referência resolve para registro de P3d com `documento_diz`, `observado` e `justificativa`. | Recusar classificação órfã ou divergência sem registro justificável em P3d. |
+| **CTX-V12** | Todo RH importado possui vínculo a fonte curada ou dispensa motivada antes de encerrar P2; a origem e o registro correspondem aos eventos e hashes. | Recusar encerramento com RH pendente ou registro incoerente. |
+| **CTX-V13** | Asserção materializada com fonte restrita conserva a marca localizada; referência REC possui relação explícita com fonte F curada e recebimento íntegro. | Recusar relação de fonte ausente, identificando a asserção; bloquear materialização com RH pendente. |
 
 ### 3.14 Saídas e uso posterior
 
@@ -269,13 +285,7 @@ Ao final do registro de contexto de um caso existem: glossário do processo, cat
 | Quadro frequência × consequência | P4 e E2. |
 | Pendências | Limitações e dependências registradas no E3. |
 
-## 4. Condição de aceite
-
-O CTX-01 está pronto para uso quando um engenheiro consegue receber as saídas de P2, P3b e P3d e registrar termos, entidades, regras e fontes sem decidir novamente quais campos compõem o instrumento; quando a correspondência com o EMCIA-ROT-01 preserva autoria, procedência e evidência; e quando as validações CTX-V01 a CTX-V11 possuem condição verificável suficiente para implementação no Code Plugin.
-
-O registro de contexto de um caso está completo quando: todo termo, entidade e fonte referenciados existem; toda regra contém os sete campos de decisão; toda regra V possui evidência; toda regra I possui premissa e permanece fora de decisão conclusiva até confirmação; toda classificação de confronto aponta para o item correspondente de P3d e, quando `classe: divergente`, a referência resolve para registro com o que o documento dizia, o que foi observado e a justificativa; fontes possuem contrato mínimo; o quadro frequência × consequência foi produzido; e as pendências foram explicitamente registradas.
-
-## 5. Limites declarados
+### 3.15 Limites declarados
 
 **Não cobre o domínio inteiro.** O CTX-01 registra o recorte necessário ao caso priorizado, não toda a organização.
 
@@ -283,7 +293,15 @@ O registro de contexto de um caso está completo quando: todo termo, entidade e 
 
 **Depende do levantamento.** Sem P3b, o instrumento registra principalmente conhecimento declarado e escrito. Ele não compensa a ausência da verificação de campo; apenas torna essa limitação visível.
 
-## 6. Referências
+## 4. Condição de aceite
+
+O CTX-01 está pronto para uso quando um engenheiro consegue receber as saídas de P2, P3b e P3d e registrar termos, entidades, regras e fontes sem decidir novamente quais campos compõem o instrumento; quando a correspondência com o EMCIA-ROT-01 preserva autoria, procedência e evidência; e quando as validações CTX-V01 a CTX-V11 possuem condição verificável suficiente para implementação no Code Plugin.
+
+O registro de contexto de um caso está completo quando: todo termo, entidade e fonte referenciados existem; toda regra contém os sete campos de decisão; toda regra V possui evidência; toda regra I possui premissa e permanece fora de decisão conclusiva até confirmação; toda classificação de confronto aponta para o item correspondente de P3d e, quando `classe: divergente`, a referência resolve para registro com o que o documento dizia, o que foi observado e a justificativa; fontes possuem contrato mínimo; o quadro frequência × consequência foi produzido; e as pendências foram explicitamente registradas.
+
+Quando houver RH importado, a condição inclui cobertura em P2 e marcas junto às asserções que citam fontes restritas, conforme CTX-V12 e CTX-V13. Relações de recebimento e restrição devem ser recuperáveis sem interpretação de nomes pelo agente.
+
+## 5. Referências
 
 - EMCIA-MET-01 — Documento do método, Passos 2, 3, 4 e 5.
 - EMCIA-ROT-01 — Roteiro de levantamento de regras não documentadas.
@@ -291,10 +309,12 @@ O registro de contexto de um caso está completo quando: todo termo, entidade e 
 - EMCIA-ESP-01 — Especificação executável do Estúdio de Trabalho.
 - EMCIA-TST-01 — Plano de testes da implementação.
 - EMCIA-GLO-01 — Glossário do método.
+- EMCIA-HAB-01 §3.4, EMCIA-CAN-01 e EMCIA-TRA-01 — Restrições, recebimento e procedência.
+- emcia-marketplace — Decisão 041, playbook 0.4.18 e evidências parte-a-operacional/A3.
 - EMCIA-VER-01 — Plano de verificação do método.
 - *Data Governance*, John Ladley (2019).
 
-## 7. Histórico de revisões
+## 6. Histórico de revisões
 
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 |---|---|---|---|---|
@@ -302,3 +322,4 @@ O registro de contexto de um caso está completo quando: todo termo, entidade e 
 | 0.2 | 17/09/2026 | Celso do Vale | Procedência convertida para D/I/V; correspondência com o ROT-01; condições executáveis e terminologia alinhadas ao plano de verificação. | — |
 | 0.3 | 17/09/2026 | Celso do Vale | Separação entre autoria do conteúdo e registro; calibragem N1–N3; revisão da zona crítica; condições CTX-V01–V10; escopo e metadados alinhados ao template oficial. | — |
 | 0.4 | 17/09/2026 | Celso do Vale | Divergência retirada do registro de Regra como conteúdo duplicado; `classificacao_confronto` passa a referenciar o item de P3d/Ação 2.4; adicionada validação CTX-V11 e ajustada a condição de aceite. | — |
+| 0.5 | 2026-10 | Celso do Vale | Relações explícitas REC → F e RH → F, vínculo humano em P2 e efeito localizado na emissão; CTX-V12 e CTX-V13; organização em seções 1 a 6 sem retirar limites anteriores | pendente |

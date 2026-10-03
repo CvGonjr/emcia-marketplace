@@ -1,9 +1,9 @@
 # Quadro de ferramentas
 ## Instrumentos administrativos, de negócio, de IA e de Big Data selecionados por fase
 
-| Código | EMCIA-FER-01 | Versão | 0.1 |
+| Código | EMCIA-FER-01 | Versão | 0.2 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 10/09/2026 | **Estado** | Em revisão |
+| **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
@@ -156,6 +156,17 @@ Quatro elementos técnicos aplicados no passo 5 não têm cobertura no acervo de
 
 O registro da lacuna é deliberado: apresentar esses elementos como se derivassem do acervo seria atribuir-lhes lastro que não possuem.
 
+### 3.7 Ferramentas de operação do serviço
+Formulários, drive e calendário dão suporte à circulação de material e à agenda do serviço. São componentes operacionais, separados dos instrumentos de análise das seções anteriores; sua presença não altera as siglas nem a contagem ADM, NEG, IA e BD. O procedimento é o EMCIA-CAN-01, com endereços declarados por id no caso.
+
+| Ferramenta | Papel | Finalidades e uso | Limite |
+| :--- | :--- | :--- | :--- |
+| Formulários, por conector Tally compatível ou exportação manual | Recolher declarações, perguntas e respostas com origem preservada | habilitacao no expediente, triagem em F0 e ciclo em P10; workspace EMCIA como padrão e campo oculto caso | Campo oculto não autentica pessoa; resposta não formaliza escopo, não comprova acesso nem decide recalibragem. Preparação não autoriza publicação ou envio |
+| Drive compartilhado, por conector compatível ou interface externa | Organizar contêineres e publicar entregáveis por ids | Cinco divisões por caso: 00-habilitacao, entrada-documentos, entrada-amostras, entregas e trabalho-interno; documentos em P2, amostras em P3a/P9 e entregas E1–E5 | Nome não roteia; listagem, recebimento e entrega são registros humanos. Hash não autentica a origem nem comprova leitura ou aceite; trabalho-interno não admite acesso do cliente |
+| Calendário, por conector compatível ou interface externa | Reservar sessões e revisões com participantes e horário conferidos | sessoes, por id de calendário e marcador [caso/etapa] | Criar evento ou enviar convite exige confirmação no chat. Referência externa é opcional no template e não prova realização da sessão; não cobre gravação ou transcrição |
+
+A propriedade padrão é EMCIA; propriedade do cliente exige declaração explícita. Cada criação, compartilhamento, publicação, convite ou envio requer confirmação no chat. Definir canais e registrar listagem, recebimento ou entrega exige execução humana no terminal. Scripts conferem coerência local, sem chamar APIs ou autenticar conteúdo remoto. Regras de escopo MCP precisam corresponder ao conector instalado e depender de runtime com hooks demonstrados; ferramenta não declarada recusa.
+
 ## 4. Condição de aceite
 Este artefato está pronto quando todo passo do método tem ao menos um instrumento associado; quando cada instrumento selecionado declara a pergunta que responde e o nível a partir do qual é exigido; quando as exclusões estão registradas com razão; e quando as lacunas de cobertura bibliográfica estão nomeadas em vez de dissimuladas.
 
@@ -167,9 +178,11 @@ Este artefato está pronto quando todo passo do método tem ao menos um instrume
 - *Why ontologies matter, why they fail and how to build them as products*, Thoughtworks (2026)
 - *Building the foundations for agentic AI at scale*, McKinsey & Company (2026)
 - Artefatos relacionados: EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-FER-F0-01 a EMCIA-FER-F4-01.
+- EMCIA-CAN-01 e EMCIA-MAN-01 — Operação dos canais do serviço; emcia-marketplace, decisão 040 e playbook 0.4.18.
 
 ## 6. Histórico de revisões
 
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 10/09/2026 | Celso do Vale | Versão inicial: critério de seleção, quatro naturezas, siglas, quadro por fase, exclusões e lacunas | — |
+| 0.2 | 2026-10 | Celso do Vale | Ferramentas de operação do serviço em seção própria: formulários, drive e calendário, com papéis, confirmações e limites, preservando os instrumentos de análise | pendente |
