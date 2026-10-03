@@ -4,7 +4,7 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CAM-01 | **Versão** | 0.3 |
+| **Código** | EMCIA-CAM-01 | **Versão** | 0.4 |
 | **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
 | **Fase** | F0–F4 | **Passo** | F0 e P1–P10 |
@@ -69,6 +69,18 @@ P2 só encerra com todos os RH vinculados a fontes ou dispensados com motivo e c
 
 Antes do levantamento de P3b, aplicar selo confirmado no Git após o último encerramento de P2. Evento de selo sem commit confirmado ou Git inacessível não satisfaz essa condição.
 
+#### 3.1.3 F0 — Decisão de prosseguimento e encerramento
+
+F0 só encerra após os critérios substantivos do MET-01 §3.3.3, o nível apurado e registrado pelo engenheiro e o ato humano `decidir-prosseguimento`. Nos três níveis, o engenheiro confere o conteúdo da ficha E1 preparado para o enquadramento e registra no próprio terminal, fora da sessão do agente, a decisão de prosseguir com referência à ficha e pessoa nomeada. Preparar a ficha ou confirmar no chat não substitui o ato. A emissão formal de E1 ocorre depois do portão e permanece sujeita à resolução de RH pendente.
+
+A habilidade hb-enquadrar executa a preparação de F0 por HB-01 a HB-05, sob AG-01, em EX1. O agente não registra a decisão humana. O ato e sua condição de encerramento ainda dependem de implementação no marketplace; o playbook 0.4.18 não os declara, conforme a conferência do MAN-01 v0.3.
+
+#### 3.1.4 Correspondência de habilidades nas etapas iniciais
+
+A fonte da relação etapa → HBs → AG é o CAT-01 v0.5 Anexo C; este protocolo a utiliza sem criar relação concorrente. Em P1, hb-mapear-contexto prepara HB-08, sob AG-02; o levantamento de objetivos e o posicionamento nas quatro frentes permanecem no Anexo B do CAT-01, sem nova HB por ausência de execução comprovada. Em P2, hb-extrair-regras prepara HB-06 e HB-07, sob AG-02; a condição de RH e a verificação humana do dado permanecem conforme a seção 3.1.2.
+
+O mapa de valor é instrumento distinto das quatro frentes. HB-09 permanece no passo 3, em P3d, sob AG-02, com o estado declarado selado após P2 como entrada e candidatos para P4 como saída. HB-20 prepara o confronto; o operador decide cada item. P3b permanece sem HB e sem execução por agente. As camadas das HBs são de preparação e não podem ser superiores à camada de encerramento da etapa no mesmo nível, conforme CAT-01 §3.3. Essa correspondência aguarda reprodução controlada no marketplace.
+
 ### 3.2 P6 — Operacionalize a solução
 
 **Fase F3 · camada EX3 · modalidade presencial ou remota conforme o nível**
@@ -97,7 +109,7 @@ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último enc
 | N2 | Sistema de gestão com camada intermediária | Documentado | Treinamento e comunicação |
 | N3 | Orquestração entre múltiplos sistemas | Aprovado pelas áreas | Plano formal, com recursos humanos |
 
-**Fronteira.** O Estúdio pode redigir o estado futuro a partir do mapa do Passo 3 e listar candidatos a ponto de inserção. A escolha do ponto e a nomeação das pessoas são humanas — dependem de decisão organizacional que nenhuma leitura de processo revela.
+**Fronteira.** O Estúdio pode redigir o estado futuro a partir do mapa do Passo 3 e listar candidatos a ponto de inserção, por HB-21, sob AG-03, em EX2 como camada de preparação. A escolha do ponto e a nomeação das pessoas são humanas — dependem de decisão organizacional que nenhuma leitura de processo revela.
 
 ### 3.3 P7 — Estabeleça governança e conformidade
 
@@ -128,7 +140,7 @@ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último enc
 | N2 | Política de uso e papéis nomeados | Lista de verificação de risco | Com limite de valor |
 | N3 | Política completa, comitê e encarregado de dados | Relatório formal | Com limite e segregação de funções |
 
-**Fronteira.** É o segundo ponto humano do percurso, ao lado de P3b. O Estúdio produz a minuta por HB-14, com as três listas em branco. Preencher as listas, definir limites e assinar são atos humanos; tentativa de conclusão por agente é recusada e registrada.
+**Fronteira.** É o segundo ponto humano do percurso, ao lado de P3b. Em P7, hb-governar prepara HB-13 e HB-14, ambas em EX2, sob AG-03: levanta requisitos regulatórios com fonte rastreável e produz a minuta do termo, com as três listas em branco para decisão humana. A camada de encerramento e decisão permanece EX4. Preencher as listas, definir limites e assinar são atos humanos; tentativa de conclusão por agente é recusada e registrada. A correspondência segue CAT-01 Anexo C e depende de atualização do catálogo e do playbook do marketplace.
 
 ### 3.4 P8 — Pilote, valide e escale
 
@@ -253,7 +265,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
 ## 5. Referências
 
 - EMCIA-MET-01 — Documento do método, Passos 6 a 10.
-- EMCIA-CAT-01 — Fronteira de delegação, HB-14 a HB-18 e AG-04.
+- EMCIA-CAT-01 v0.5 — Fronteira de delegação, catálogo de HBs e agentes no Anexo A e correspondência canônica por etapa no Anexo C.
 - EMCIA-CTX-01 — Instrumento de registro da camada de contexto.
 - EMCIA-ROT-01 — Roteiro de levantamento de regras não documentadas.
 - EMCIA-ESP-01 — Especificação executável do Estúdio de Trabalho.
@@ -271,6 +283,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: enquadramento comum, protocolo de P6 a P10, condições executáveis M1–M10 e os quatro formatos dos inegociáveis 2 a 5. | — |
 | 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A7, e correção A24): responsável vigente da rotina de recalibragem, vínculo com a recorrência e com o E5; condições M11 e M12; campo de versão no Anexo D | — |
 | 0.3 | 2026-10 | Celso do Vale | Finalidades de canais em todas as etapas, vínculo ou dispensa de RH como condição de P2, confirmação dos efeitos externos e selo Git após P2 | pendente |
+| 0.4 | 2026-10 | Celso do Vale | Decidir-prosseguimento como condição humana de encerramento de F0, baseada na ficha E1 antes da emissão; HBs de F0, P1, P2 e P7 conforme CAT-01 v0.5 Anexo C; HB-09 em P3d com estado declarado selado após P2 e candidatos para P4; preparação do confronto por HB-20 e estado futuro por HB-21; camadas de preparação distintas da camada de encerramento. Implementação do ato e da correspondência pendente no marketplace; divergência anterior sobre a natureza de HB-16 preservada e registrada no CAT-01 Anexo D | pendente |
 
 ---
 

@@ -1,7 +1,7 @@
 # Fronteira de delegação
 ## Camadas de execução e catálogo de agentes e habilidades
 
-| Código | EMCIA-CAT-01 | Versão | 0.4 |
+| Código | EMCIA-CAT-01 | Versão | 0.5 |
 | :--- | :--- | :--- | :--- |
 | **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
@@ -53,6 +53,10 @@ Nenhum agente decide nem encerra etapa em EX3 ou EX4. Nessas camadas, o agente s
 
 O levantamento das regras não documentadas está em EX4, e não em EX3, porque não confere um conteúdo existente: produz a regra que a camada de contexto vai codificar. Não há declaração anterior a verificar, só o que quem executa sabe e não escreveu.
 
+**Camada de encerramento e camada de preparação.** A camada declarada para a etapa no playbook é sua camada de encerramento e decisão. Cada HB conserva a camada de preparação declarada no Anexo A, EX1 ou EX2, que não pode ser superior à camada da etapa no mesmo nível de complexidade, na ordem EX1 < EX2 < EX3 < EX4. A verificação dessa relação é determinística. A preparação em EX2 de uma etapa encerrada em EX3 ou EX4 não constitui contradição de camada e não autoriza o agente a decidir ou encerrar. Essa regra substitui a leitura de contradição entre HB e etapa registrada para P5, P8 e P9 em docs/cruzamento-cat01.md do marketplace.
+
+Os atos humanos continuam reservados ao engenheiro mesmo quando a etapa declara EX1 ou EX2. Em F0, a camada EX1 das HBs não delega a apuração registrada do nível nem a decisão de prosseguimento. O Anexo C é a fonte canônica da correspondência entre etapa, HB e agente interno; o playbook e o catálogo operacional devem reproduzi-la mediante revisão controlada.
+
 ### 3.4 Fronteira por passo
 A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A coluna final registra por que a atividade cai de um lado ou de outro — é ela que permite discutir a classificação em vez de aceitá-la.
 
@@ -67,6 +71,8 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
 | F0 | Calcular o custo do problema | Híbrido | O cálculo é auditável; os números de entrada costumam estar errados |
 | F0 | Decidir o prosseguimento | Humano | Compromisso: inicia engajamento e aloca recurso |
 
+**Condição de encerramento.** Nos três níveis, o engenheiro registra o ato humano `decidir-prosseguimento` no próprio terminal, fora da sessão do agente, com base no conteúdo da ficha E1 preparado para o enquadramento. O registro da decisão de prosseguir é condição de encerramento de F0, além da apuração do nível e dos critérios substantivos do MET-01 §3.3.3. A emissão formal de E1 continua posterior ao portão de F0 e sujeita à resolução de RH pendente; o ato não exige uma E1 já emitida nem substitui esses controles. Sua implementação no marketplace permanece necessária.
+
 *Fase quase inteiramente delegável: alto volume, baixa consequência, saída verificável. O que a fase produz é nível declarado, nunca nível diagnosticado.*
 
 #### 3.4.2 Fase F1 — Alinhamento estratégico e diagnóstico
@@ -79,10 +85,14 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
 | 2 | Inventariar sistemas-fonte e coletar termos do glossário | Automatizado | Coleta do que a organização consegue declarar |
 | 2 | Verificar se o dado existe e se presta | Humano | Exige acesso ao dado, não conversa sobre o dado |
 | 2 | Detectar divergência entre definição declarada e uso real | Humano | Só aparece no confronto entre áreas |
-| 3 | Varrer o mapa de valor e desenhar o estado atual declarado | Automatizado | Estruturação do que foi descrito |
+| 3 | Varrer o mapa de valor sobre o estado declarado selado em P2 | Automatizado | Candidatos rastreáveis ao fluxo declarado; não decide prioridade |
+| 3 | Desenhar o estado atual declarado | Automatizado | Estruturação do que foi descrito |
+| 3 | Preparar o confronto entre declarado e observado | Híbrido | Organização do placar e dos registros; o operador decide cada item |
 | 3 | Levantar as regras não documentadas | Humano | Fonte: quem executa não sabe que sabe. Exige presença |
 | 3 | Distinguir processo documentado de processo praticado | Humano | A ausência não é detectável por leitura |
 | 3 | Registrar a linha de base | Híbrido | O agente estrutura a medição; o número é validado por quem opera |
+
+O posicionamento nas quatro frentes do passo 1 e o mapa de valor do passo 3 são instrumentos distintos, conforme MET-01 §§3.4.1 e 3.4.3 e resolução humana da D5. A HB-09 permanece no passo 3, em P3d: recebe o estado declarado preservado pelo selo posterior ao encerramento de P2 e produz candidatos para P4. Não redesenha esse estado a partir do observado. A preparação do confronto por HB-20 não substitui a distinção humana entre processo documentado e praticado. O MET-01 permanece inalterado.
 
 *O passo 3 é o limite arquitetural do trabalho automatizado. Delegá-lo produz camada de contexto plausível e errada, que é o pior artefato possível, porque não parece errado.*
 
@@ -172,7 +182,7 @@ O engenheiro conduz o percurso inteiro nos três níveis. O que muda é até ond
 O deslocamento altera onde a verificação passa a ser obrigatória, não quem decide. As atividades humanas da seção 3.4 continuam humanas nos três níveis, inclusive nos passos em que a preparação automatizada é admitida: decidir o prosseguimento (F0), avaliar o patrocínio real (passo 1), verificar o dado (passo 2) e decidir a prioridade (passo 4).
 
 ## 4. Condição de aceite
-Este artefato está pronto quando toda atividade dos dez passos tem natureza atribuída e justificativa registrada; quando toda atividade automatizada ou híbrida consta do catálogo com insumo, saída e critério de verificação; e quando um engenheiro que não participou da construção consegue decidir, diante de uma atividade nova, de que lado da fronteira ela cai aplicando os três testes.
+Este artefato está pronto quando toda atividade dos dez passos tem natureza atribuída e justificativa registrada; quando toda atividade automatizada ou híbrida tem cobertura no Anexo A, com insumo, saída e critério de verificação, ou ausência de execução comprovada registrada no Anexo B; quando o Anexo C cobre todas as etapas do playbook; e quando um engenheiro que não participou da construção consegue decidir, diante de uma atividade nova, de que lado da fronteira ela cai aplicando os três testes. A presença no Anexo B não autoriza execução por agente. Aprovação documental e implementação operacional são verificações distintas.
 
 ## 5. Referências
 - *Services: The New Software*, Sequoia Capital (2024)
@@ -190,6 +200,7 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 | 0.2 | 14/09/2026 | Celso do Vale | Habilidades renomeadas para HB; camadas de execução renomeadas para EX; alcance da fronteira delimitado ao trabalho interno | — |
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): trava por origem da chamada (A4); levantamento das regras não documentadas movido para EX4 (D2); agente só prepara em EX3 e EX4 (D3); regra dos atos sobre o registro (D4); decisões humanas mantidas em todos os níveis (D1); situação das habilidades e atividades sem habilidade (D5) | — |
 | 0.4 | 2026-10 | Celso do Vale | Fronteira de ações externas, confirmação por efeito e compartilhamento; atos humanos de canais, importação, recebimento, listagem, entrega e vínculo de restrição | pendente |
+| 0.5 | 2026-10 | Celso do Vale | Aplicação das decisões humanas D2–D8: HB-04/05 em F0, HB-06 em P2 e HB-13 em P7/AG-03; D5 resolvida com instrumentos distintos, HB-09 mantida no passo 3/P3d, estado declarado selado em P2 como entrada e candidatos para P4 como saída, sem alterar MET-01; varredura e desenho discriminados, preservando natureza automatizada e registrando desenho sem execução comprovada; HB-19 a HB-21 criadas somente com evidência textual dos SKILL.md; Anexo B restrito à execução não comprovada; correspondência canônica no Anexo C; camadas de encerramento e preparação; ato humano decidir-prosseguimento em F0. Evidências e dependências operacionais no Anexo D | pendente |
 
 ---
 
@@ -199,8 +210,8 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
 | Código | Agente | Camada | Habilidades |
 | :--- | :--- | :---: | :--- |
 | **AG-01** | Agente de enquadramento | EX1 | HB-01 a HB-05 |
-| **AG-02** | Agente de análise documental | EX2 | HB-06 a HB-10, HB-13 |
-| **AG-03** | Agente de especificação | EX2 | HB-11, HB-12, HB-14 |
+| **AG-02** | Agente de análise documental | EX2 | HB-06 a HB-10, HB-19, HB-20 |
+| **AG-03** | Agente de especificação | EX2 | HB-11 a HB-14, HB-21 |
 | **AG-04** | Agente de avaliação | EX2 | HB-15 a HB-18 |
 
 <br>
@@ -215,7 +226,7 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
 | **HB-06** | Inventário de fontes de dados | EX2 · Aut. | Declaração da organização e documentos | Lista de fontes com criticidade | Cada fonte marcada como declarada até verificação em campo |
 | **HB-07** | Coleta de termos do glossário | EX2 · Aut. | Documentos e entrevistas transcritas | Termos com definição declarada e ocorrências | Definições conflitantes sinalizadas, não conciliadas |
 | **HB-08** | Consulta à base de referência | EX2 · Aut. | Setor e processo-alvo | Referências com fonte identificada | Nenhum item sem fonte; sem acesso aberto à internet |
-| **HB-09** | Varredura do mapa de valor | EX2 · Aut. | Estado atual declarado | Pontos candidatos a intervenção | Candidatos rastreáveis à etapa do fluxo que os originou |
+| **HB-09** | Varredura do mapa de valor | EX2 · Aut. | Estado atual declarado, preservado pelo selo posterior ao encerramento de P2 | Pontos candidatos a intervenção para P4 | Cada candidato rastreável à etapa do fluxo declarado que o originou, sem reescrever a entrada selada |
 | **HB-10** | Montagem da matriz de priorização | EX2 · Aut. | Casos candidatos | Matriz preenchida, sem escolha | Todos os candidatos presentes, inclusive os descartados |
 | **HB-11** | Classificação Problema→Tecnologia | EX2 · Híb. | Caso descrito e camada de contexto | Tecnologia adequada, com justificativa | Classificação confirmada pelo engenheiro antes de virar decisão |
 | **HB-12** | Estimativa de custo e latência | EX2 · Aut. | Desenho da solução | Custo por tarefa e teto mensal | Premissas expostas e recalculáveis |
@@ -225,22 +236,73 @@ Os agentes agrupam habilidades por camada. Nenhum agente reúne habilidades de c
 | **HB-16** | Execução da suíte de avaliação | EX2 · Aut. | Casos de teste e solução em piloto | Resultado por caso e falhas agrupadas | Execução reproduzível a partir do mesmo conjunto |
 | **HB-17** | Consolidação de indicadores | EX2 · Aut. | Medições do piloto e linha de base | Comparativo contra a linha de base | Apuração determinística e documentada |
 | **HB-18** | Monitoramento de desvio | EX2 · Aut. | Saídas em operação | Alerta de degradação | Limiar definido antes do piloto, não ajustado a posteriori |
+| **HB-19** | Registro da linha de base | EX2 · Híb. | Amostras, período, indicador e fonte; em N1, estimativa declarada com quem opera | Linha de base estruturada, datada, com valor, método de apuração e procedência | Cálculo reproduzível; estimativa somente em N1; número confirmado por quem opera antes de avançar; narrativa não substitui registro estruturado |
+| **HB-20** | Preparação do confronto declarado × observado | EX2 · Híb. | Estado declarado selado após P2, sessão de P3b registrada e evidências do observado | Placar e registros propostos de divergência, com referências, justificativa e autoria nominal | Cada item liga declarado e observado; o operador decide cada item; correção cria registro novo e preserva o original, sem promoção automática de procedência |
+| **HB-21** | Documentação do estado futuro | EX2 · Híb. | E3-E ou candidato correspondente, classificação de P5, contexto curado e desenho decidido com as áreas | Proposta de especificação operacional: fluxo futuro, ponto de inserção, entrada, saída, interface, exceção e retorno ao humano | Proposta rastreável aos insumos; ponto de inserção e responsável nomeados por decisão humana; aprovação registrada pelo engenheiro antes de avançar |
 
 *Legenda: EX1 · Aut. = camada conversacional, automatizada. EX1 · Híb. = camada conversacional, híbrida. EX2 = camada analítica. Habilidades híbridas não concluem sem decisão humana registrada.*
 
-**Situação no Estúdio.** HB-04, HB-05, HB-06 e HB-13 estão catalogadas, sem implementação: nenhuma etapa do Estúdio as referencia. HB-09 pertence ao passo 3 neste catálogo e está associada ao passo 1 no Estúdio.
-
 ## Anexo B — Atividades delegáveis sem habilidade catalogada
 
-Atividades automatizadas ou híbridas da seção 3.4 que ainda não têm habilidade que as execute. Enquanto não tiverem, são conduzidas pelo engenheiro.
+Atividades automatizadas ou híbridas da seção 3.4 sem execução integral comprovada pelo texto dos SKILL.md examinados. Enquanto não houver essa comprovação e revisão do catálogo, são conduzidas pelo engenheiro. Remissão ao método, título genérico ou preparação de parte da atividade não comprovam a atividade completa; o Anexo D registra o exame.
 
 | Passo | Atividade | Natureza |
 | :---: | :--- | :--- |
 | 1 | Levantar objetivos declarados e posicionar nas quatro frentes | Automatizado |
-| 3 | Registrar a linha de base | Híbrido |
+| 3 | Desenhar o estado atual declarado | Automatizado |
 | 4 | Estimar viabilidade técnica | Híbrido |
 | 4 | Classificar na zona de contenção | Híbrido |
 | 6 | Mapear pontos de integração e permissões necessárias | Automatizado |
-| 6 | Documentar o estado futuro | Híbrido |
 | 6 | Redigir o guia operacional e o material de treinamento | Híbrido |
 | 10 | Propor ajuste de regra ou parâmetro | Híbrido |
+
+## Anexo C — Correspondência canônica entre etapa, habilidades e agentes
+
+Esta tabela é a fonte da relação etapa → HBs → AG. Declara a correspondência desta revisão do método, a ser implementada no marketplace; não afirma que o playbook 0.4.18 já a reproduz. Os identificadores e a ordem das treze etapas são os do playbook. A camada de encerramento conserva os valores atuais por nível; as HBs conservam sua camada de preparação do Anexo A.
+
+| Etapa | Camada de encerramento N1 · N2 · N3 | Habilidade do Estúdio | HBs de preparação | AG |
+| :--- | :--- | :--- | :--- | :--- |
+| F0 | EX1 · EX1 · EX1 | hb-enquadrar | HB-01, HB-02, HB-03, HB-04, HB-05 | AG-01 |
+| P1 | EX2 · EX2 · EX3 | hb-mapear-contexto | HB-08 | AG-02 |
+| P2 | EX2 · EX2 · EX3 | hb-extrair-regras | HB-06, HB-07 | AG-02 |
+| P3a | EX2 · EX3 · EX3 | hb-medir | HB-19 | AG-02 |
+| P3b | EX4 · EX4 · EX4 | hb-levantar-regras — protocolo humano | — | — |
+| P3d | EX3 · EX3 · EX3 | hb-confrontar | HB-09, HB-20 | AG-02 |
+| P4 | EX2 · EX3 · EX3 | hb-priorizar | HB-10 | AG-02 |
+| P5 | EX3 · EX3 · EX3 | hb-classificar | HB-11, HB-12 | AG-03 |
+| P6 | EX3 · EX3 · EX3 | hb-operacionalizar | HB-21 | AG-03 |
+| P7 | EX4 · EX4 · EX4 | hb-governar | HB-13, HB-14 | AG-03 |
+| P8 | EX3 · EX3 · EX3 | hb-pilotar | HB-15, HB-16 | AG-04 |
+| P9 | EX3 · EX3 · EX3 | hb-medir-valor | HB-17 | AG-04 |
+| P10 | EX4 · EX4 · EX4 | hb-recalibrar | HB-18 | AG-04 |
+
+F0 executa HB-04 e HB-05 pela habilidade de enquadramento. P3b permanece sem HB e sem AG por desenho: levantamento presencial e não delegável. Em P7 e P10, a preparação EX2 não altera a natureza humana da decisão EX4. O monitoramento de P10 permanece em EX2. Os agentes agrupam a preparação conforme as fases já existentes: AG-01 no enquadramento, AG-02 na análise e priorização, AG-03 na especificação e governança e AG-04 na avaliação; nenhum reúne camadas distintas.
+
+## Anexo D — Evidência de cobertura e dependências da implementação
+
+### D.1 Fonte e critério
+
+Exame dos SKILL.md em eiac-campo/skills/hb-*/, de eiac-campo/reference/habilidades.json, do playbook 0.4.18 em eiac-campo/template-caso/registro/playbook.json, de decisoes/020-pendencia-cruzamento-cat01.md e de docs/cruzamento-cat01.md na branch master do emcia-marketplace, commit `ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f`, em 2026-10. Os caminhos abaixo são relativos à raiz desse repositório. Os trechos citados comprovam preparação documental, não aprovação humana nem execução em produção. As novas HBs pertencem somente a EX2, segundo a regra da seção 3.3, ainda que o front matter da habilidade declare EX3 para a etapa.
+
+### D.2 Exame das candidatas
+
+| Etapa e atividade | SKILL.md e trecho literal ou ausência relevante | Resultado |
+| :--- | :--- | :--- |
+| P1 — levantar objetivos declarados e posicionar nas quatro frentes | eiac-campo/skills/hb-mapear-contexto/SKILL.md: “Levanta o contexto de negocio e o mapa de valor da organizacao.” O texto não declara levantamento de objetivos e posicionamento nas quatro frentes; remeter ao passo 1 não comprova sua execução | Sem nova HB; Anexo B |
+| P3a — registrar a linha de base | eiac-campo/skills/hb-medir/SKILL.md: “Saída estruturada (linha de base, evidência do inegociável 1):” e “grave o indicador em `rascunho/BL-NNN.yaml`”; “O cálculo é feito em código, não por leitura.” | HB-19, EX2, híbrida, AG-02 |
+| P3d — preparação do confronto | eiac-campo/skills/hb-confrontar/SKILL.md: “Você prepara o confronto; o operador decide cada item.” e “escreva o registro em `rascunho/DIV-*.yaml`”; instrumentos: “placar regra escrita × praticada, registro de divergência.” | HB-20, EX2, híbrida, AG-02; verificação e decisão permanecem humanas |
+| P3d — desenhar o estado atual declarado | eiac-campo/skills/hb-confrontar/SKILL.md prepara placar e divergências, mas não declara desenho do fluxo atual. HB-09 recebe o estado declarado já selado; varrê-lo não comprova desenhá-lo | Sem nova HB; Anexo B |
+| P4 — estimar viabilidade técnica | eiac-campo/skills/hb-priorizar/SKILL.md cruza frequência × consequência do erro e remete à Matriz Problema→Tecnologia; não declara cálculo ou proposta de viabilidade técnica | Sem nova HB; Anexo B |
+| P4 — classificar na zona de contenção | eiac-campo/skills/hb-priorizar/SKILL.md: “Esta habilidade prepara; não decide.” e “Priorização e zona de contenção são EX4, e são decisão do cliente”; não há trecho que declare produção da classificação proposta | Sem nova HB; Anexo B |
+| P6 — mapear pontos de integração e permissões necessárias | eiac-campo/skills/hb-operacionalizar/SKILL.md: “organizar o fluxo, identificar interfaces, estruturar o mapa técnico, gerar rascunho, apontar inconsistências.” Há preparação de interfaces, mas não inventário de permissões necessárias; execução integral não comprovada | Sem nova HB para a atividade completa; Anexo B |
+| P6 — documentar o estado futuro | eiac-campo/skills/hb-operacionalizar/SKILL.md: “Ele documenta onde a solução entraria no fluxo.” e “organizar o fluxo, identificar interfaces, estruturar o mapa técnico, gerar rascunho, apontar inconsistências.” A especificação declara ponto de inserção, entrada, saída, interface, exceção e retorno ao humano | HB-21, EX2, híbrida, AG-03; aprovação do desenho permanece humana |
+| P6 — redigir guia operacional e material de treinamento | eiac-campo/skills/hb-operacionalizar/SKILL.md produz proposta OP; não declara redação do guia ou do material de treinamento. A emissão de E4 por hb-emitir-e4 não comprova executar essa atividade em P6 | Sem nova HB; Anexo B |
+| P10 — propor ajuste de regra ou parâmetro | eiac-campo/skills/hb-recalibrar/SKILL.md: “Quando `drift_detectado: true`, preencha `drift_descricao`, `drift_quantificacao` e `recomendacao_agente`.” Há recomendação sobre o desvio, mas não proposta identificada de ajuste de regra ou parâmetro | Sem nova HB para essa atividade; Anexo B |
+
+### D.3 Divergências e aplicação controlada
+
+As decisões humanas D2–D8 e a resolução da D5 fixam a correspondência desta revisão. O playbook 0.4.18 ainda lista somente HB-01/02/03 em F0, HB-07 em P2 e HB-14 em P7; associa HB-09 a P1; não referencia as três novas HBs nem declara o ato decidir-prosseguimento. O catálogo operacional ainda atribui HB-13 a AG-02 e deixa HB-04/05/06/13 sem vínculo de habilidade. Essas diferenças dependem da implementação no marketplace e não são corrigidas neste repositório. A substituição da regra provisória da decisão 020 exige registro explícito de decisão naquele repositório.
+
+P5, P8 e P9 deixam de apresentar contradição entre camada da HB e da etapa pela regra da seção 3.3. P3b já está em EX4 no CAT-01 v0.4; a comparação antiga com EX3 é histórica. Atividades humanas de P1, P2 e P4 continuam humanas em todos os níveis; a regra não cria atos nem comprova produtos ausentes do playbook.
+
+Permanece uma divergência documental anterior a esta revisão: o CAM-01 §3.4 descreve HB-15 e HB-16 como “ambas híbridas”, enquanto este Anexo A classifica HB-16 como automatizada. D2–D8 não decidem alteração dessa natureza; os textos são preservados, e a divergência fica registrada para decisão humana.

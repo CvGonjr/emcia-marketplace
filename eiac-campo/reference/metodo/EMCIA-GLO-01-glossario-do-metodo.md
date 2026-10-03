@@ -1,7 +1,7 @@
 # Glossário do método
 ## Vocabulário padronizado do percurso, índice de artefatos e índice de siglas
 
-| Código | EMCIA-GLO-01 | Versão | 0.3 |
+| Código | EMCIA-GLO-01 | Versão | 0.4 |
 | :--- | :--- | :--- | :--- |
 | **Data** | 2026-10 | **Estado** | Em revisão |
 | **Responsável** | Celso do Vale | **Aprovação** | pendente |
@@ -74,9 +74,11 @@ Cada entrada tem quatro campos, e o terceiro é o que faz o trabalho. A maior pa
 | **Trabalho híbrido** | Saída de agente que não avança sem decisão humana registrada | Automação com revisão facultativa | CAT-01 |
 | **Trabalho humano** | Atividade que agente nenhum executa em nenhuma etapa | Atividade sem apoio de ferramenta | CAT-01 |
 | **Camada de execução** | EX1 conversacional, EX2 analítica, EX3 verificação, EX4 julgamento | Camadas do agente, CA1 a CA5 | CAT-01 |
+| **Camada de encerramento** | Camada de execução declarada para a etapa no playbook, por nível de complexidade, que rege seu encerramento e decisão; os atos humanos permanecem humanos também em EX1 ou EX2 | Camada de todas as HBs que preparam a etapa; tampouco autorização ao agente para decidir | CAT-01 §3.3 · Anexo C · MAN-01 |
+| **Camada de preparação** | Camada EX1 ou EX2 própria de cada HB, conservada ao preparar uma etapa; não pode ser superior à camada de encerramento da etapa no mesmo nível, na ordem EX1 < EX2 < EX3 < EX4 | Camada humana de verificação ou julgamento; tampouco delegação do encerramento | CAT-01 §3.3 · Anexo A · CAM-01 |
 | **Trava de camada** | Condição de validade que impede execução fora da camada declarada | Instrução ao agente. A trava não depende de o agente escolher respeitá-la | CAT-01 |
 | **Desvio de camada** | Tentativa registrada de execução fora da camada | Erro de execução | CAT-01 · ação 3.7 |
-| **Habilidade** | Capacidade modular com insumo, saída e critério de verificação. Siglas HB-01 a HB-18 | Agente | CAT-01 |
+| **Habilidade** | Capacidade modular com insumo, saída e critério de verificação. Siglas HB-01 a HB-21 | Agente | CAT-01 |
 | **Agente interno** | Agente que opera para o engenheiro de campo. Siglas AG-01 a AG-04 | Agente especificado ao cliente | CAT-01 |
 | **Agente especificado** | Unidade descrita no blueprint para a organização cliente | Agente interno | E3, parte B |
 | **Arquétipo** | Analítico, criativo, interacional ou validador | Tecnologia empregada | Passo 4 · E3 |
@@ -165,6 +167,7 @@ EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-
 | 0.1 | 14/09/2026 | Celso do Vale | Versão inicial: 77 termos em seis grupos, quatro anexos, índice de artefatos e índice de siglas | — |
 | 0.2 | 29/09/2026 | Celso do Vale | Termos da verificação por duas execuções marcados como históricos, em razão da substituição do EMCIA-VER-01 (registro da ação 4.3, item E1) | — |
 | 0.3 | 2026-10 | Celso do Vale | Nove termos operacionais, índices e remissão ao ROT-02, com distinção entre origem, integridade, autenticação e aceite; manutenção inserida no conteúdo e referências em seção própria | pendente |
+| 0.4 | 2026-10 | Celso do Vale | Definição de camada de encerramento e camada de preparação conforme CAT-01 v0.5, com limite por nível e preservação dos atos humanos; faixa de habilidades atualizada até HB-21 | pendente |
 
 ---
 
@@ -204,7 +207,7 @@ Artefatos produzidos na Sprint 1. O código é estável ao longo das versões; a
 | **Perguntas da triagem** | DAD-1 a CRI-3 | Três por eixo, nove ao todo | TRI-01 |
 | **Camadas de execução** | EX1 a EX4 | Conversacional, Analítica, Verificação, Julgamento | CAT-01 |
 | **Agentes internos** | AG-01 a AG-04 | Enquadramento, Análise documental, Especificação, Avaliação | CAT-01 |
-| **Habilidades** | HB-01 a HB-18 | Capacidades delegáveis, com insumo, saída e critério de verificação | CAT-01 |
+| **Habilidades** | HB-01 a HB-21 | Capacidades delegáveis, com insumo, saída e critério de verificação | CAT-01 |
 | **Camadas do agente** | CA1 a CA5 | Controle, Agente, Protocolos, Contexto, Dados | E3, parte B |
 | **Blocos da Parte B** | B1 a B7 | Fronteira, Camadas, Tecnologias, Requisitos, Avaliação e riscos, Plano de construção, Passagem | E3, parte B |
 | **Modos de delegação** | Sombra · Sugestão · Aprovação prévia · Exceção · Autônomo | Arranjo da interação entre agente e humano, por ação delegada | E3, B1 |

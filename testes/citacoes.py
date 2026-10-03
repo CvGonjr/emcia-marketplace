@@ -156,6 +156,13 @@ class Citacoes(unittest.TestCase):
             self.assertTrue(conferir(t, self.docs))
         self.assertEqual(conferir('TRI-01 §§3.3 e 3.4', self.docs), [])
 
+    def test_08_instrumentos_distintos_em_p1_e_p3d(self):
+        for nome, secao in (('hb-mapear-contexto', '3.4.1'), ('hb-confrontar', '3.4.3'), ('hb-priorizar', '3.4.3')):
+            refs = set(remissoes((CAMPO/'skills'/nome/'SKILL.md').read_text()))
+            self.assertIn(('EMCIA-MET-01', secao), refs)
+        refs = set(remissoes((CAMPO/'skills/hb-mapear-contexto/SKILL.md').read_text()))
+        self.assertNotIn(('EMCIA-MET-01', '3.4.3'), refs)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
