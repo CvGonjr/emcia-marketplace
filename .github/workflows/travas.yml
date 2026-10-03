@@ -97,6 +97,8 @@ jobs:
           python3 testes/metodo_empacotado.py
           python3 testes/manual_a25.py
           python3 testes/citacoes.py
+          python3 testes/catalogo_cat01.py
+          python3 testes/prosseguimento.py
 
       - name: Versão do plugin mudou junto com o núcleo
         if: github.event_name == 'pull_request'
