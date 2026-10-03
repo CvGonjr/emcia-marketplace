@@ -17,8 +17,10 @@ def validar(et):
             if set(r) != {'tipo', 'campo', 'descricao'} or r.get('campo') not in et.get('campos_registraveis', {}):
                 return f"etapa {et['id']}: produto de estado exige campo registravel"
         elif r.get('tipo') == 'arquivo':
-            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
+            if set(r) - {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao', 'pessoas', 'evento_integridade'} or not {'tipo', 'padrao', 'iguais', 'preenchidos', 'descricao'} <= set(r):
                 return f"etapa {et['id']}: contrato de produto de arquivo invalido"
+            if 'evento_integridade' in r and (not isinstance(r['evento_integridade'], str) or not r['evento_integridade'].strip()):
+                return f"etapa {et['id']}: evento de integridade invalido"
             if not isinstance(r.get('pessoas', []), list) or any(not isinstance(c, str) or not c.strip() for c in r.get('pessoas', [])):
                 return f"etapa {et['id']}: campos de pessoa invalidos no produto"
             p = r['padrao']
@@ -70,7 +72,7 @@ def faltas(et, st):
                 try:
                     if not arquivo.is_file() or not arquivo.resolve().is_relative_to(raiz):
                         continue
-                    dados = X.carregar_yaml(arquivo.read_text(encoding='utf-8'))
+                    dados = dados_arquivo(arquivo, regra)
                     if not isinstance(dados, dict):
                         continue
                     if (all(dados.get(c) == v for c, v in regra['iguais'].items())
@@ -83,6 +85,55 @@ def faltas(et, st):
         if not ok:
             ausentes.append(f"{regra['descricao']} ({detalhe})")
     return ausentes
+
+
+def dados_arquivo(arquivo, regra):
+    """Arquivo local com integridade opcional declarada pelo contrato."""
+    raiz = pathlib.Path.cwd().resolve()
+    if not arquivo.resolve().is_relative_to(raiz) or any(
+            p.is_symlink() for p in [arquivo, *arquivo.parents] if p.absolute().is_relative_to(raiz)):
+        raise ValueError('arquivo fora do caso ou com link')
+    conteudo = arquivo.read_bytes()
+    evento = regra.get('evento_integridade')
+    if evento:
+        eventos = [e for e in E.eventos() if e.get('evento') == evento]
+        if (not eventos or eventos[-1].get('sha256') != hashlib.sha256(conteudo).hexdigest()
+                or eventos[-1].get('arquivo') != str(arquivo.relative_to(raiz))):
+            raise ValueError('integridade do arquivo diverge da trilha')
+    return X.carregar_yaml(conteudo.decode('utf-8'))
+
+
+def validar_continuidade(pb):
+    regras = pb.get('condicoes_continuidade', [])
+    if not isinstance(regras, list):
+        return 'condicoes_continuidade precisa ser lista'
+    ids = {e['id'] for e in pb['etapas']}
+    for r in regras:
+        if not isinstance(r, dict) or set(r) != {'a_partir_de', 'arquivo', 'campo', 'valores', 'evento_integridade', 'descricao'}:
+            return 'contrato de continuidade invalido'
+        if any(not isinstance(r[k], str) or not r[k].strip() for k in ('a_partir_de', 'arquivo', 'campo', 'evento_integridade', 'descricao')):
+            return 'campos de continuidade invalidos'
+        p = pathlib.Path(r['arquivo'])
+        if p.is_absolute() or '..' in p.parts or r['a_partir_de'] not in ids:
+            return 'continuidade fora do caso ou etapa inexistente'
+        if not isinstance(r['valores'], list) or not r['valores'] or any(not isinstance(v, str) or not v for v in r['valores']):
+            return 'valores de continuidade invalidos'
+
+
+def faltas_continuidade(pb, etapa_id):
+    """Não interpreta desfechos: compara campos e valores declarados."""
+    ids = [e['id'] for e in pb['etapas']]
+    faltas = []
+    for r in pb.get('condicoes_continuidade', []):
+        if etapa_id not in ids or ids.index(etapa_id) < ids.index(r['a_partir_de']):
+            continue
+        try:
+            dados = dados_arquivo(pathlib.Path.cwd().resolve()/r['arquivo'], r)
+            if not isinstance(dados, dict) or dados.get(r['campo']) not in r['valores']:
+                raise ValueError('valor vigente nao autoriza a continuidade')
+        except (OSError, UnicodeError, ValueError, X.yaml.YAMLError if X.yaml else X.ErroYaml) as exc:
+            faltas.append(f"continuidade: {r['descricao']} ({exc})")
+    return faltas
 
 
 def _campo(dados, nome):

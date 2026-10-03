@@ -157,6 +157,11 @@ def main():
     # fazem parte da regra do método.
     nomes = nomes_habilidades(ev, entrada, alvo, comando, caminhos)
     habilidades = [e for e in pb["etapas"] if e.get("habilidade") in nomes]
+    import produtos as R
+    for e in habilidades:
+        bloqueios = R.faltas_continuidade(pb, e['id'])
+        if bloqueios:
+            negar('; '.join(bloqueios), etapa=e['id'], ferramenta=ferramenta)
     # G7 continua independente da autorização de carregamento.
     for e in habilidades:
         confirmado,motivo=P.selo_confirmado_apos_evento(pb,e['id'],E.eventos())

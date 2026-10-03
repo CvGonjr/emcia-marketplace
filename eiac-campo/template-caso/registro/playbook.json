@@ -201,6 +201,13 @@
       "condicao": {
         "tipo": "sempre"
       }
+    },
+    {
+      "id": "decidir-prosseguimento",
+      "script": "prosseguimento.py",
+      "condicao": {
+        "tipo": "sempre"
+      }
     }
   ],
   "apuracao_nivel": {
@@ -279,7 +286,24 @@
         "N2": "EX1",
         "N3": "EX1"
       },
-      "produtos_encerramento": [],
+      "produtos_encerramento": [
+        {
+          "tipo": "arquivo",
+          "padrao": "registro/prosseguimento/vigente.yaml",
+          "iguais": {},
+          "preenchidos": [
+            "decisor",
+            "data",
+            "desfecho",
+            "motivo"
+          ],
+          "pessoas": [
+            "decisor"
+          ],
+          "descricao": "Decisão de prosseguimento registrada",
+          "evento_integridade": "ProsseguimentoDecidido"
+        }
+      ],
       "exige_registro_canais": true
     },
     {
@@ -979,5 +1003,17 @@
     "padrao": "mcp__.*",
     "listagens": "registro/listagens.json",
     "evento_listagem": "ListagemRegistrada"
-  }
+  },
+  "condicoes_continuidade": [
+    {
+      "a_partir_de": "P1",
+      "arquivo": "registro/prosseguimento/vigente.yaml",
+      "campo": "desfecho",
+      "valores": [
+        "prosseguir"
+      ],
+      "evento_integridade": "ProsseguimentoDecidido",
+      "descricao": "Decisão vigente deve autorizar o prosseguimento"
+    }
+  ]
 }

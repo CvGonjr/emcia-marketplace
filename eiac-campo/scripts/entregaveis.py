@@ -102,6 +102,20 @@ def render_e1(st):
     md += "## 6. Trilha recomendada e decisão solicitada\n\n"
     md += (f"| Decisão | Responsável | Data |\n| :--- | :--- | :---: |\n"
            f"| F0 encerrada | {f0.get('autor', '?')} | — |\n")
+    pb = json.loads(pathlib.Path('registro/playbook.json').read_text())
+    if any(a['id'] == 'decidir-prosseguimento' for a in pb['decisoes_humanas']):
+        import prosseguimento as PR
+        try:
+            decisao = PR.carregar()
+            if decisao is None:
+                raise ValueError('decisão de prosseguimento ausente')
+        except (OSError, ValueError, TypeError, KeyError) as exc:
+            E.evento('TentativaNegada', autor=st['responsavel'], operacao='materializar-entregavel', motivo=str(exc))
+            raise NaoMaterializavel(str(exc)) from exc
+        md += (f"| {decisao['desfecho']} | {decisao['decisor']} | {decisao['data']} |\n\n"
+               f"Motivo: {decisao['motivo']}\n\n"
+               f"Decisão: registro/prosseguimento/decisao-{decisao['versao']:04d}.yaml. "
+               f"Ficha preparada: {decisao['ficha']}; SHA-256: {decisao['ficha_sha256']}.\n")
     return md
 
 

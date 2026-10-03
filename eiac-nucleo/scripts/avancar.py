@@ -63,6 +63,10 @@ def encerrar(st, pb, etapa_id, autor):
         return (f"{etapa_id} nao e a etapa corrente ({st['etapa_atual']}). "
                 f"So a etapa corrente pode ser encerrada.")
 
+    bloqueios = R.faltas_continuidade(pb, etapa_id)
+    if bloqueios:
+        return _RecusaSessao('; '.join(bloqueios))
+
     confirmado,motivo=P.selo_confirmado_apos_evento(pb,etapa_id,E.eventos())
     if not confirmado:
         return _RecusaSessao(motivo)
@@ -157,7 +161,7 @@ def registrar_campo(st, pb, etapa_id, campo, valor, autor):
 def registrar_recorrencia(st, pb, etapa_id, autor, cadencia, responsavel):
     """Etapa recorrente (playbook 'recorrente': true) nao desaparece apos o
     primeiro encerramento — cada novo ciclo atualiza 'ultima_verificacao'
-    sem apagar o historico de ciclos anteriores (CAM-01 3.8, anexo D).
+    sem apagar o historico de ciclos anteriores.
 
     O nucleo nao entende cadencia nem responsavel; apenas exige que ambos
     estejam presentes quando o playbook marcar a etapa como recorrente e
@@ -397,6 +401,14 @@ def main():
         _recusar_operacao(st, a.autor, "autor precisa ser pessoa nomeada",
                          acao_autor)
         print("autor precisa ser pessoa nomeada", file=sys.stderr); sys.exit(1)
+
+    alvo_continuidade = a.encerrar or a.registrar_sessao or a.registrar_campo or a.registrar_recorrencia
+    if alvo_continuidade:
+        bloqueios = R.faltas_continuidade(pb, alvo_continuidade)
+        if bloqueios:
+            motivo = '; '.join(bloqueios)
+            _recusar_operacao(st, a.autor, motivo, 'continuidade')
+            print(motivo, file=sys.stderr); sys.exit(1)
 
     if a.apurar_nivel:
         acao, alvo = "apurar_nivel", a.apurar_nivel

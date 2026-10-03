@@ -86,6 +86,9 @@ def carregar():
                           f"declarados, senao a etapa desaparece apos a primeira execucao.")
 
     sessoes = pb.get("encerramento_por_camada")
+    erro_continuidade = R.validar_continuidade(pb)
+    if erro_continuidade:
+        return None, erro_continuidade
     if not isinstance(sessoes, dict):
         return None, "playbook sem encerramento_por_camada valido"
     for et in pb["etapas"]:

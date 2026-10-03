@@ -1,6 +1,6 @@
 """Selo do caso. Unico caminho de commit no repositorio do caso.
 
-Uso:  python3 selar.py --nota "F0 encerrada, E1 emitido"
+Uso:  python3 selar.py --nota "etapa encerrada, entregavel emitido"
 
 O autor do commit e do evento SeloAplicado nao vem de --autor: e sempre
 `responsavel` de registro/estado.json, fixado pelo operador em
