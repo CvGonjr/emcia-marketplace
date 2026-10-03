@@ -86,6 +86,12 @@ def _escalar(valor):
         return True
     if valor.lower() == "false":
         return False
+    # JSON inline é subconjunto YAML e aparece nos candidatos estruturados.
+    if valor.startswith(("[", "{")):
+        try:
+            return json.loads(valor)
+        except json.JSONDecodeError:
+            pass
     if valor.startswith("[") and valor.endswith("]"):
         miolo = valor[1:-1].strip()
         return [] if not miolo else [_escalar(item) for item in _itens_inline(miolo)]

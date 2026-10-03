@@ -142,5 +142,15 @@ checar("quadro.ler_yaml",
        RAIZ / "eiac-nucleo" / "scripts" / "quadro.py", "ler_yaml")
 checar_checar_validacao_nao_quebra()
 
+# Regressão descoberta no Python 3.12 sem a dependência opcional.
+import json
+mod = _carregar_modulo(RAIZ/'eiac-nucleo/scripts/estrutura.py', 'estrutura_inline')
+mod.yaml = None
+objeto = {'casos': [{'identificador': 'CT-001', 'revisor': 'Marina Prado', 'ativo': True, 'obs': None}]}
+if mod.carregar_yaml('casos: '+json.dumps(objeto['casos'])) == objeto:
+    ok('lista JSON de objetos preserva estrutura sem PyYAML')
+else:
+    falha('lista JSON de objetos perdeu estrutura sem PyYAML')
+
 print(f"\n{total} verificacoes de determinismo YAML, {falhas} falhas")
 sys.exit(1 if falhas else 0)

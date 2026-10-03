@@ -244,6 +244,15 @@ class Abertura(unittest.TestCase):
         shutil.copytree(RAIZ/'eiac-nucleo',copia/'eiac-nucleo')
         return copia
 
+    def test_00_base_antes_e_depois_da_opcao(self):
+        for depois in (False, True):
+            with self.subTest(base_depois=depois):
+                nome = 'ordem-' + str(depois).lower()
+                args = [nome, '--responsavel', 'Celso do Vale', str(self.destino)] if depois else [nome, str(self.destino), '--responsavel', 'Celso do Vale']
+                r = subprocess.run([sys.executable, str(RAIZ/'eiac-campo/scripts/abrir_caso.py'), *args], text=True, capture_output=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                self.assertTrue((self.destino/nome/'registro/estado.json').is_file())
+
     def test_01_manifesto_divergente(self):
         copia=self.copia_ferramenta()
         manifesto=json.loads((copia/'eiac-campo/reference/metodo/manifesto.json').read_text())

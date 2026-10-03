@@ -120,7 +120,7 @@ def main():
     ap.add_argument('nome');ap.add_argument('base',nargs='?',default=str(pathlib.Path.home()/'casos'))
     ap.add_argument('--responsavel',required=True)
     ap.add_argument('--expediente',type=pathlib.Path)
-    a=ap.parse_args()
+    a=ap.parse_intermixed_args()
     try: abrir(a.nome,a.base,a.responsavel,a.expediente)
     except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
         recusar(a,str(exc));ap.exit(1,'Recusado: '+str(exc)+'\n')

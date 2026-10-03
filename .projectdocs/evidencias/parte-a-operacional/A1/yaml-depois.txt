@@ -1,0 +1,9 @@
+== determinismo de leitura YAML entre ambientes com/sem PyYAML
+  ok    estrutura.carregar_yaml caminho sem-PyYAML executa e devolve dict (PyYAML nao instalado neste ambiente de teste, comparacao com-PyYAML pulada)
+  ok    estrutura.carregar_yaml data_validacao sem PyYAML e str
+  ok    quadro.ler_yaml caminho sem-PyYAML executa e devolve dict (PyYAML nao instalado neste ambiente de teste, comparacao com-PyYAML pulada)
+  ok    quadro.ler_yaml data_validacao sem PyYAML e str
+  ok    checar_validacao aceita data_validacao vinda de carregar_yaml sem quebrar (controle positivo do achado 2026-09)
+  ok    lista JSON de objetos preserva estrutura sem PyYAML
+
+6 verificacoes de determinismo YAML, 0 falhas
