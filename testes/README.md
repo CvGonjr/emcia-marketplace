@@ -1,10 +1,11 @@
 # Testes — inventário operacional
 
-Revisão: 03/10/2026. Linha de base em Python 3.12.12: **919 verificações,
-46 módulos**, sem exclusões e sem falhas. O pacote de documentação acrescenta
-7 testes de citações: **1845 verificações em 48 módulos**.
+Revisão: 03/10/2026. Linha de base em Python 3.12.12: **926 verificações,
+47 módulos**, sem exclusões e sem falhas. A correspondência CAT-01 acrescenta
+11 testes de catálogo, 20 de prosseguimento e uma conferência de citações:
+**958 verificações em 49 módulos**.
 As saídas integrais inicial e final e o executador estão em
-`.projectdocs/evidencias/documentacao-operacional/`.
+`.projectdocs/evidencias/correspondencia-cat01/`.
 
 ## Executar
 
@@ -18,7 +19,7 @@ python3 testes/contexto.py
 Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
 
 ```bash
-python3 .projectdocs/evidencias/documentacao-operacional/reexecutar-suite.py /tmp/emcia-suite.txt
+python3 .projectdocs/evidencias/correspondencia-cat01/reexecutar-suite.py /tmp/emcia-suite.txt
 ```
 
 O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
@@ -30,7 +31,6 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 
 | Módulo | Verificações | Cobertura |
 |---|---:|---|
-| `TOTAL` | 919 | Verificações do pacote |
 | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
 | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
 | `campo_2_6_2.py` | 38 | Verificacao operacional de P6 e P7 -- pacote 2.6.2 |
@@ -41,7 +41,8 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `campos_a10.py` | 18 | A10: campos declarados, autoria nominal e E3 por comandos reais |
 | `canais.py` | 19 | Canais: negativas com evento antes dos controles positivos |
 | `canais_percurso.py` | 1 | Percurso integrado de canais com ids sintéticos |
-| `citacoes.py` | 7 | Seções, caminhos canônicos, auxiliares, TRI-01 e retirada dos resumos CTX |
+| `catalogo_cat01.py` | 11 | Reprodução literal do CAT-01, correspondência de etapas, AG e camadas; negativas de cada regra |
+| `citacoes.py` | 8 | Seções, caminhos canônicos, auxiliares, TRI-01, retirada dos resumos CTX e instrumentos distintos de P1/P3d |
 | `consolidado.py` | 16 | Verificacao consolidada da Acao 2.5 — pacote 2.5.6 |
 | `contexto.py` | 11 | Testes estruturais do pacote 2.5.1 com evidência bruta opcional |
 | `ctx_v.py` | 23 | Bateria formal CTX-V01-CTX-V11 do pacote 2.5.4 |
@@ -66,6 +67,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `pessoa_a16.py` | 17 | Verificações do pacote pessoa_a16 |
 | `playbook_2_6_0.py` | 29 | Verificacao do contrato executavel F0-P10 -- pacote 2.6.0 |
 | `produtos_a14.py` | 21 | Verificações do pacote produtos_a14 |
+| `prosseguimento.py` | 20 | Ato humano, registro íntegro, histórico, dois desfechos, bloqueio, E1 e compatibilidade de casos anteriores |
 | `receber.py` | 17 | Recebimento humano: negativas conferem a trilha e preservam fontes |
 | `recorrencia_a23.py` | 12 | A23: responsável da recorrência conferido contra a fonte vigente do caso |
 | `recusa_a21.py` | 2 | A21: recusa é evento; não vira asserção com procedência inventada |
@@ -78,7 +80,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `sessao_externa.py` | 6 | Referência de sessão genérica: camada, id declarado e marcador |
 | `triagem_a7.py` | 24 | A7: recusas primeiro; regra de apuração declarada no playbook do caso |
 | `verificacao_por_estados.py` | 7 | Verificacao por estados do caso (decisao 021, substitui 004/014-020) |
-| **Total** | **1845** | **48 módulos** |
+| **Total** | **958** | **49 módulos** |
 
 metodo_empacotado.py e esforco.py são verificações por processo e contam como
 uma cada; os demais módulos declaram unittest ou imprimem verificações `ok`.
@@ -86,14 +88,15 @@ Estas contagens identificam a execução deste pacote, sem somar reexecuções.
 
 ## Contratos documentais
 
-`metodo_empacotado.py` exige o inventário exato de 21 documentos, manifesto v4
+`metodo_empacotado.py` exige o inventário exato de 21 documentos, manifesto v5
 com caminhos de origem e commit completo, hashes corretos e ausência de cópias
 no contraste. Com emcia-artefatos como checkout irmão, confere bytes contra
 `git show <commit>:<caminho>`; nunca compara a uma versão mutável de trabalho.
 Sem esse checkout, os hashes fixados permitem conferir o pacote offline.
 
-`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v0.2 e playbook
-0.4.18. Não há sobreposição de emenda nem expectativa de lacunas da v0.1.
+`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v0.4 e playbook
+0.4.19. O produto de F0 é "Decisão de prosseguimento registrada", conforme
+correção aprovada antes do commit canônico. Não há sobreposição de emenda.
 Os negativos 02–05 continuam detectando etapa removida, camada trocada,
 ato humano inexistente e comando inexistente.
 

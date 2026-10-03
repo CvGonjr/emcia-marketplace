@@ -98,7 +98,7 @@ interna do contraste.
 
 `EX1`–`EX4` são camadas de execução: conversacional, analítica, verificação, julgamento.
 `CA1`–`CA5` são camadas de arquitetura: controle, agente, protocolos, contexto, dados.
-`HB-01`–`HB-18` são habilidades. `AG-01`–`AG-04` são agentes internos.
+`HB-01`–`HB-21` são habilidades. `AG-01`–`AG-04` são agentes internos.
 
 **Harness** designa exclusivamente infraestrutura de orquestração como commodity. Não nomeia produto, serviço nem componente construído.
 

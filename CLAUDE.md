@@ -51,7 +51,7 @@ Ao mudar scripts do núcleo, **suba a versão** em `eiac-nucleo/.claude-plugin/p
 
 **Não crie sinalizador que desative a guarda**, nem modo de depuração que a contorne.
 
-**Não resolva as pendências marcadas no `playbook.json`.** Duas estão em aberto por decisão: a correspondência entre entregáveis e passos, e o conflito de procedência com CAT-01. São decisões de método, não de código.
+**Não resolva divergência documental por inferência.** As decisões humanas 013 e 006 resolveram entregáveis e procedência; a 043 supera a correspondência provisória da 020. Nova divergência exige decisão humana.
 
 **Não reproduza o conteúdo do método nas habilidades.** Elas remetem; o procedimento vive no documento do método. Ver `decisoes/009`.
 
@@ -78,7 +78,7 @@ Leia `decisoes/README.md` antes de propor mudança estrutural. Decisão registra
 
 As mais consequentes: dois plugins (001), playbook no caso (002), chat sem autoridade de escrita (003), camada resolvida por nível (005).
 
-A 006 está **em conflito com documento controlado** e precisa de decisão humana.
+A 006 foi resolvida em favor de D/I/V. A 043 implementa CAT-01 v0.5; a correspondência do Anexo C é conferida por catalogo_cat01.py.
 
 ---
 
@@ -86,7 +86,7 @@ A 006 está **em conflito com documento controlado** e precisa de decisão human
 
 `EX1`–`EX4` são camadas de execução: conversacional, analítica, verificação, julgamento.
 `CA1`–`CA5` são camadas de arquitetura: controle, agente, protocolos, contexto, dados.
-`HB-01`–`HB-18` são habilidades. `AG-01`–`AG-04` são agentes internos.
+`HB-01`–`HB-21` são habilidades. `AG-01`–`AG-04` são agentes internos.
 
 **Harness** designa exclusivamente infraestrutura de orquestração como commodity. Não nomeia produto, serviço nem componente construído.
 

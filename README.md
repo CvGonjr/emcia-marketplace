@@ -1,11 +1,11 @@
 # emcia — marketplace de plugins
 
 O método é conferido pelo manifesto SHA-256 antes de abrir cada caso. Comece pelo
-[MAN-01 v0.2](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
-conferido contra o playbook 0.4.18. O pacote foi extraído, sem edição manual, do
-commit canônico `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4` de
+[MAN-01 v0.4](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
+conferido contra o playbook 0.4.19. O pacote foi extraído, sem edição manual, do
+commit canônico `989e1e73796a356b660be8ed55b686ba716787ac` de
 [emcia-artefatos](https://github.com/CvGonjr/emcia-artefatos).
-O manifesto v4 identifica origem, data, caminhos canônicos e hashes dos 21
+O manifesto v5 identifica origem, data, caminhos canônicos e hashes dos 21
 documentos, incluindo CAN-01, HAB-01, ROT-02 e o fluxo auxiliar. Empacotar uma
 revisão não altera seu estado nem lhe atribui aprovação.
 
@@ -14,8 +14,8 @@ próprios; não entram no marketplace.
 
 | Plugin | Versão | Papel |
 |---|---|---|
-| eiac-nucleo | 0.2.44 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
-| eiac-campo | 0.8.22 | Método, habilidades, comandos, scripts e template de caso |
+| eiac-nucleo | 0.2.45 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
+| eiac-campo | 0.8.23 | Método, habilidades, comandos, scripts e template de caso |
 
 O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
 esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
@@ -50,6 +50,8 @@ expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
    registra decisões comunicadas por pessoas. Tratamento administrativo deve
    ser registrado antes de consultar submissões pelo MCP. HAB-01/02/03 continuam
    sendo os três templates e os códigos dos PDFs da formalização.
+   A revisão humana da carta HAB-01 integra o procedimento normal:
+   o engenheiro confere conteúdo, condições e evidências antes da formalização.
 2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
    identificador reservado e o mesmo responsável. A abertura confere todos os
    hashes, copia os documentos e o manifesto para `metodo/` e prepara o Git.
@@ -130,6 +132,20 @@ inegociáveis, decisões dos registros e encerramento em EX3/EX4. O agente prepa
 os argumentos e entrega o comando com caminho absoluto. Confirmação no chat
 não autoriza executar esses atos pela sessão; a guarda recusa com evento.
 
+Em F0, o engenheiro registra `decidir-prosseguimento` pelo terminal:
+`python3 /checkout/emcia-marketplace/eiac-campo/scripts/prosseguimento.py --entrada rascunho/prosseguimento.json`.
+O candidato segue `registro/prosseguimento.schema.json` e referencia a ficha E1
+preparada. Decisor, data, desfecho e motivo ficam registrados e materializados
+em E1. Ambos os desfechos permitem encerrar F0; `não prosseguir` bloqueia as
+etapas seguintes até nova decisão `prosseguir`, preservando o registro anterior.
+
+A correspondência etapa → HBs → AG vem do CAT-01 v0.5 Anexo C, implementada
+pela [decisão 043](decisoes/043-correspondencia-cat01-catalogo-playbook.md).
+P1 trata maturidade nas quatro frentes, patrocínio e caso de negócio. O mapa
+de valor pertence a P3d, com o estado declarado selado após P2 como entrada
+e candidatos para a matriz de P4 como saída. A camada de cada HB é de preparação;
+a da etapa é de encerramento e decisão. P3b permanece sem HB por desenho.
+
 Em P2, o engenheiro usa `restricoes.py vincular --restricao RH-xx --fontes F-xxx`
 ou `dispensar --restricao RH-xx --motivo <motivo>`; o ato declarado chama-se
 `vincular-restricao`. Cada RH importado precisa estar vinculado a fonte curada
@@ -208,9 +224,8 @@ disco permanece a fronteira de confiança. A guarda de escopo não comprova
 que houve confirmação no chat. Hooks MCP foram demonstrados apenas no Claude
 Code 2.1.283 testado; não há demonstração de suporte em outros clientes.
 
-Permanecem a revisão humana da carta HAB-01, a pendência de correspondência
-CAT-01/catálogo/playbook da decisão 020 e HB-04/05/06/13 sem habilidade física
-própria. A conferência do manual cobre o contrato declarado, não julga a qualidade
+As atividades do CAT-01 Anexo B permanecem com o engenheiro por falta de
+execução integral comprovada. A conferência do manual cobre o contrato declarado, não julga a qualidade
 do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
 o recorte histórico da prova de conceito.
 
@@ -226,17 +241,19 @@ python3 testes/contexto.py
 python3 testes/metodo_empacotado.py
 python3 testes/manual_a25.py
 python3 testes/citacoes.py
+python3 testes/catalogo_cat01.py
+python3 testes/prosseguimento.py
 ```
 
 A suíte completa usa Python 3.12; módulos e contagens estão em
 [testes/README.md](testes/README.md). Negativa inesperadamente permitida é regressão
 de trava. As evidências deste pacote estão em
-[documentacao-operacional](.projectdocs/evidencias/documentacao-operacional/).
+[correspondencia-cat01](.projectdocs/evidencias/correspondencia-cat01/).
 Demonstrações sintéticas: `.projectdocs/demos/preparar-caso.sh`,
 `como-agente.sh` e `percurso-completo.sh`; este último congela o HEAD commitado.
 
 Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso exige
 decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
 do playbook e versão do manifesto são registradas separadamente. Mudança em
-scripts do núcleo exige incremento da versão do núcleo; nesta revisão apenas
-campo e documentação foram alterados.
+scripts do núcleo exige incremento da versão do núcleo; esta revisão incrementa
+núcleo, campo e playbook. Casos anteriores não são migrados automaticamente.

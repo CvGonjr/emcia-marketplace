@@ -10,12 +10,12 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 
 | Componente | Versão | Papel |
 |---|---|---|
-| eiac-nucleo | 0.2.44 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.22 | Método, scripts de campo, comandos, habilidades e template |
-| Playbook do template | 0.4.18 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
-| Manifesto do método | 4 | 21 documentos, origem e caminhos canônicos, SHA-256 |
+| eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+| eiac-campo | 0.8.23 | Método, scripts de campo, comandos, habilidades e template |
+| Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+| Manifesto do método | 5 | 21 documentos, origem e caminhos canônicos, SHA-256 |
 
-Origem controlada: commit `1d6d1e8bfc1739594ea7a119257ecae28c8e5af4`.
+Origem controlada: commit `989e1e73796a356b660be8ed55b686ba716787ac`.
 Cada documento foi extraído do objeto Git, sem edição manual. A abertura confere
 os hashes e copia documentos e manifesto para metodo/. Não há leitura do
 playbook do plugin pelo caso; migração de caso existente é humana e explícita.
@@ -24,7 +24,7 @@ playbook do plugin pelo caso; migração de caso existente é humana e explícit
 
 README.md apresenta operação e limites; INSTALACAO.md apresenta instalação,
 conectores e provas locais. AGENTS.md e CLAUDE.md fixam as regras de trabalho.
-O manual de aplicação é MAN-01 v0.2, conferido contra o playbook vigente.
+O manual de aplicação é MAN-01 v0.4, conferido contra o playbook vigente.
 CAN-01 declara canais por id; HAB-01 rege habilitação e vínculo de restrição;
 ROT-02 substitui o identificador anterior do roteiro, preservando HAB-02 como
 template do acordo de confidencialidade. Os três templates HAB ficam no checkout
@@ -41,9 +41,9 @@ ficam neste mapa e no README principal, fora dos documentos canônicos.
 
 | Documento empacotado | Versão | Caminho no commit canônico |
 |---|---|---|
-| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 0.3 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
+| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 0.4 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
 | `EMCIA-CAN-01-protocolo-de-canais-externos.md` | 0.1 | `EMCIA-CAN-01-protocolo-de-canais-externos.md` |
-| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 0.4 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
+| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 0.5 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
 | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` | 0.5 | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` |
 | `EMCIA-E1-ficha-de-enquadramento.md` | «0.1» | `EMCIA-E1-ficha-de-enquadramento.md` |
 | `EMCIA-E2-diagnostico-e-oportunidade.md` | «0.1» | `EMCIA-E2-diagnostico-e-oportunidade.md` |
@@ -52,10 +52,10 @@ ficam neste mapa e no README principal, fora dos documentos canônicos.
 | `EMCIA-E5-relatorio-de-piloto.md` | «0.1» | `EMCIA-E5-relatorio-de-piloto.md` |
 | `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` | 0.4 | `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` |
 | `EMCIA-FER-01-quadro-de-ferramentas.md` | 0.2 | `EMCIA-FER-01-quadro-de-ferramentas.md` |
-| `EMCIA-GLO-01-glossario-do-metodo.md` | 0.3 | `EMCIA-GLO-01-glossario-do-metodo.md` |
+| `EMCIA-GLO-01-glossario-do-metodo.md` | 0.4 | `EMCIA-GLO-01-glossario-do-metodo.md` |
 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` | 0.3 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` |
 | `EMCIA-HAB-fluxo-operacional-proposta.md` | 0.2 | `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` |
-| `EMCIA-MAN-01-manual-de-aplicacao.md` | 0.2 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
+| `EMCIA-MAN-01-manual-de-aplicacao.md` | 0.4 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
 | `EMCIA-MET-01-documento-do-metodo.md` | 0.2 | `EMCIA-MET-01-documento-do-metodo.md` |
 | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` | 0.1 | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` |
 | `EMCIA-ROT-02-roteiro-de-habilitacao.md` | 0.2 | `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` |
@@ -97,18 +97,17 @@ hooks/hooks.json registra as rotas da guarda. A guarda resolve camadas, autoria,
 escrita, decisões humanas, dependências, selos e escopo MCP a partir do contrato
 do caso. Verificação de selo usa autoria, nota e prefixo exato da trilha no Git,
 ordenado pela posição dos eventos. Diagnóstico de integridade da referência
-é somente leitura; não autentica origem. Nenhum arquivo do núcleo mudou neste pacote.
+é somente leitura; não autentica origem. O núcleo acrescenta integridade de produto e condições genéricas de continuidade, sem interpretar o método.
 
 ### Campo
 
-Scripts: `abrir_caso.py`, `baseline.py`, `calibragem.py`, `canais.py`, `consultar.py`, `entregar.py`, `entregaveis.py`, `formularios.py`, `governanca.py`, `habilitacao.py`, `importar_habilitacao.py`, `inegociaveis.py`, `metrica.py`, `operacional.py`, `piloto.py`, `quadro.py`, `receber.py`, `registrar_listagem.py`, `restricoes.py`.
+Scripts: `abrir_caso.py`, `baseline.py`, `calibragem.py`, `canais.py`, `consultar.py`, `entregar.py`, `entregaveis.py`, `formularios.py`, `governanca.py`, `habilitacao.py`, `importar_habilitacao.py`, `inegociaveis.py`, `metrica.py`, `operacional.py`, `piloto.py`, `prosseguimento.py`, `quadro.py`, `receber.py`, `registrar_listagem.py`, `restricoes.py`.
 
 Comandos: `canais.md`, `classificar.md`, `confrontar.md`, `emitir.md`, `enquadrar.md`, `governar.md`, `habilitacao.md`, `mapear-contexto.md`, `mapear-fontes.md`, `medir-valor.md`, `medir.md`, `operacionalizar.md`, `pilotar.md`, `priorizar.md`, `recalibrar.md`.
 
 Habilidades: 18 arquivos SKILL.md.
 Agentes físicos: `classificador-tecnologico.md`, `extrator-documental.md`.
-O catálogo declara 18 HB e quatro AG lógicos. HB-04/05/06/13 não têm habilidade
-física própria; correspondência CAT/catálogo/playbook permanece pendente na 020.
+O catálogo declara 21 HB e quatro AG lógicos, reproduzindo CAT-01 v0.5 Anexos A e C. Toda HB está ligada à habilidade de uma etapa; P3b permanece sem HB/AG. A decisão 043 supera a regra provisória da 020.
 Habilidade não delegável não carrega mesmo com sessão e selo; nas camadas humanas,
 o apoio permitido segue as condições declaradas. As habilidades remetem ao método.
 
@@ -145,7 +144,7 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
 | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
-| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
+| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | superada por 043; regra provisória preservada como histórico |
 | 021 | Retirada da execução de contraste; verificação por estados do caso | firme; emendas 042 (selo Git) e retirada dos resumos CTX |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
 | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
@@ -168,12 +167,13 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
 | 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | aprovada; E1–E7 concluídos; limites locais e runtime testado registrados |
 | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
-
+| 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
 
 ## Suítes e evidências
 
-A linha de base em Python 3.12.12 passou com 919 verificações em 46 módulos.
-A revisão acrescenta citacoes.py: 1845 verificações em 48 módulos.
+A linha de base em Python 3.12.12 passou com 926 verificações em 47 módulos.
+Esta revisão acrescenta catalogo_cat01.py e prosseguimento.py e amplia citacoes.py.
+As contagens finais constam da evidência correspondencia-cat01 e de testes/README.md.
 O inventário completo e o executador estão em testes/README.md e
 .projectdocs/evidencias/documentacao-operacional/. Registre códigos, saídas e
 contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
@@ -201,7 +201,21 @@ Hooks MCP foram demonstrados no runtime testado; a guarda não comprova a
 confirmação no chat. Não há assinatura eletrônica integrada, aceite de entregáveis,
 gravação ou transcrição de sessões no escopo aprovado.
 
-Permanecem a revisão humana da carta, a pendência 020 e o aparato residual de
-isolamento da execução de contraste retirada. ESP-01 conserva o recorte histórico
+A revisão humana da carta integra a habilitação normal. A correspondência 020 foi
+resolvida pela 043. Permanece o aparato residual de isolamento da execução de contraste retirada. ESP-01 conserva o recorte histórico
 da prova de conceito; os limites operacionais estão em MAN-01 §3.6. Contrato RH,
 selo confirmado de P3b e colisão do código do roteiro já foram resolvidos.
+
+## Correspondência e prosseguimento — decisão 043
+
+CAT-01 v0.5 Anexo C é a fonte da relação etapa → HBs → AG. HB-09 está em P3d,
+com o estado declarado selado em P2 como entrada e candidatos para P4 como saída;
+as quatro frentes pertencem a P1 e são instrumento distinto. A camada das HBs
+é de preparação, limitada pela camada de encerramento da etapa em cada nível.
+
+O engenheiro executa prosseguimento.py --entrada rascunho/prosseguimento.json
+no terminal. O registro exige pessoa, data, desfecho, motivo e ficha E1 preparada.
+Ambos os desfechos encerram F0; não prosseguir bloqueia as etapas seguintes até
+nova decisão que preserva a anterior. Produtos e continuidade vêm do contrato
+copiado no caso; casos anteriores não são migrados automaticamente. Evidência:
+.projectdocs/evidencias/correspondencia-cat01/.

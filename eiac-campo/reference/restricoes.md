@@ -26,9 +26,10 @@ curadoria. As marcas incluem RH, F, item negado, restrição e motivo junto
 Se houver RH pendente, qualquer materialização fica bloqueada; por isso E1
 em um caso restrito só é materializado após os vínculos de P2.
 
-O manual base permanece preservado. `manual-emenda-041.json` registra a
-emenda local aprovada pela decisão 041 para a conferência do playbook
-0.4.18; a proposta para o MAN-01 v0.2 está na evidência da parte A.
+O MAN-01 v0.4 empacotado é conferido diretamente contra o playbook 0.4.19,
+sem emenda local. A correção do produto de F0 e o commit canônico estão
+registrados na decisão 043 e na evidência correspondencia-cat01. A emenda
+da decisão 041 permanece apenas como registro histórico da versão anterior.
 
 Demonstrações: `preparar-caso.sh <nome> <etapa> com-restricao` e
 `percurso-completo.sh <nome> com-restricao`. Usam somente dados sintéticos,
