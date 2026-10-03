@@ -4,7 +4,7 @@ etapa: P7
 camada: EX4
 modalidade: decisao_humana_registrada
 delegavel: false
-hb: ["HB-14"]
+hb: ["HB-13", "HB-14"]
 description: Minuta o termo de autonomia a partir do desenho operacional de P6. NAO decide autonomia — isso e sempre humano. Se um agente tentar registrar a decisao final, recuse e registre a tentativa.
 ---
 

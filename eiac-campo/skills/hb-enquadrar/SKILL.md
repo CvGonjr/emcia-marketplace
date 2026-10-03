@@ -3,13 +3,16 @@ name: hb-enquadrar
 etapa: F0
 camada: EX1
 modalidade: assincrono
-hb: ["HB-01", "HB-02", "HB-03"]
+hb: ["HB-01", "HB-02", "HB-03", "HB-04", "HB-05"]
 description: Estrutura a dor declarada e calcula o nivel de complexidade da organizacao. Use quando /enquadrar for invocado ou quando um caso novo nao tiver ficha.
 ---
 
 # Enquadramento e triagem — F0 · EX1
 
 **Procedimento:** documento do método, Fase 0. Não reproduza aqui.
+**HB-04 e HB-05:** conduza a preparação assistida dos cinco porquês e do
+custo do problema conforme EMCIA-MET-01 §3.3 (Fase 0). Cadeia causal e
+premissas são conferidas pelo engenheiro antes de avançar.
 **Instrumento:** EMCIA-TRI-01, seção 3.3 para as perguntas e seção 3.4 para
 a pontuação, no pacote controlado em `reference/metodo/`.
 As nove perguntas têm redação fixa e não podem ser reformuladas.
@@ -24,6 +27,13 @@ ao operador; não edite o estado para contorná-la.
 
 **Saída:** `caso/E1-ficha.md`, toda asserção marcada conforme `reference/procedencia.md`.
 **Encerramento:** critério da Fase 0 no documento do método.
+
+**Prosseguimento:** prepare a ficha E1 e o candidato JSON em
+`rascunho/prosseguimento.json`, conforme `registro/prosseguimento.schema.json`.
+Entregue ao engenheiro o comando com caminho absoluto resolvido:
+`python3 /caminho/eiac-campo/scripts/prosseguimento.py --entrada rascunho/prosseguimento.json`.
+Somente ele o executa no terminal. Os dois desfechos permitem encerrar F0;
+`não prosseguir` bloqueia as etapas seguintes até nova decisão, preservando a anterior.
 
 ## Execução das decisões humanas (A12)
 

@@ -10,6 +10,9 @@ description: Prioriza os casos levantados e define a zona de contencao. Use quan
 # Priorização e zona de contenção — P4 · EX2
 
 **Procedimento:** documento do método, passo 4.
+**Entrada da matriz:** candidatos do mapa de valor produzidos em P3d por
+HB-09, em `caso/P3d-mapa-valor.md`, com referência ao estado declarado selado
+em P2, conforme EMCIA-MET-01 §3.4.3. Preserve a procedência D ou I.
 **Instrumentos:** Matriz de Priorização, Matriz Problema→Tecnologia na passada de triagem.
 
 **Esta habilidade prepara; não decide.** Priorização e zona de contenção são EX4, e são decisão do cliente — o método estrutura, não substitui.

@@ -3,14 +3,18 @@ name: hb-mapear-contexto
 etapa: P1
 camada: EX2
 modalidade: video
-hb: ["HB-08", "HB-09"]
-description: Levanta o contexto de negocio e o mapa de valor da organizacao. Use quando /mapear-contexto for invocado, apos o enquadramento.
+hb: ["HB-08"]
+description: Organiza referências e o material de maturidade nas quatro frentes, patrocínio e caso de negócio para o engenheiro. Use quando /mapear-contexto for invocado, apos o enquadramento.
 ---
 
 # Contexto de negócio — P1 · EX2
 
-**Procedimento:** documento do método, passo 1. Aplique a calibragem do nível do caso.
-**Instrumentos:** Mapa de Valor, 5W2H, 5 Porquês, custo do problema.
+**Procedimento:** EMCIA-MET-01 §3.4.1, passo 1, conforme o nível do caso.
+**Preparação catalogada:** HB-08, consulta de referência na base curada.
+Organize fontes e o material fornecido pelo engenheiro sobre maturidade nas
+quatro frentes, patrocínio e caso de negócio. O levantamento de objetivos e
+posicionamento nas quatro frentes permanece com ele, conforme CAT-01 Anexo B;
+não foi criada HB para essa atividade. A avaliação do patrocínio é humana.
 
 **Toda saída nasce `D` ou `I`.** Nada aqui é `V` — não houve observação, documento-fonte admissível ou leitura de volta.
 

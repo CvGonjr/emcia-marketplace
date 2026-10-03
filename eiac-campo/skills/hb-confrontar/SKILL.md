@@ -4,6 +4,7 @@ etapa: P3d
 camada: EX3
 modalidade: remoto
 description: Confronta regra declarada contra regra observada, item a item, e produz o log de divergencia. Use quando /confrontar for invocado, apos a sessao de campo registrada.
+hb: ["HB-09", "HB-20"]
 ---
 
 # Confronto declarado × observado — P3d · EX3
@@ -11,6 +12,13 @@ description: Confronta regra declarada contra regra observada, item a item, e pr
 **Pré-requisito:** `caso/P3b-sessao.md` existe. Sem ele, pare — o confronto não tem contra o que confrontar.
 
 **Procedimento:** documento do método, passo 3, parte de confronto.
+**Mapa de valor — HB-09:** prepare a varredura conforme EMCIA-MET-01 §3.4.3,
+sobre o estado declarado preservado pelo selo confirmado posterior a P2.
+Leia esse estado pelo commit do selo; não o redesenhe com base no observado.
+Registre candidatos rastreáveis ao fluxo em `caso/P3d-mapa-valor.md`, com
+procedência D ou I e referência ao commit de entrada, para uso em P4.
+**Preparação do confronto — HB-20:** EMCIA-CAT-01 Anexo A.
+O confronto e a decisão de cada item continuam humanos, em EX3.
 **Instrumentos:** placar regra escrita × praticada, registro de divergência.
 
 **Um item por vez.** Cada correção exige justificativa escrita e autor nomeado. Correção sem justificativa não é correção, é reescrita.

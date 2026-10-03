@@ -4,11 +4,13 @@ etapa: P3a
 camada: EX3
 modalidade: remoto
 description: Produz a medicao inicial a partir das amostras enviadas pela organizacao. Use quando /medir for invocado.
+hb: ["HB-19"]
 ---
 
 # Medição inicial — P3a · EX3
 
 **Procedimento:** documento do método, passo 3, parte de medição.
+**HB-19:** registro da linha de base, conforme EMCIA-CAT-01 Anexo A.
 
 **O cálculo é feito em código, não por leitura.** Apresente a conta.
 

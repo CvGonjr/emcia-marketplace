@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.18",
+  "versao": "0.4.19",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -270,7 +270,9 @@
       "hb": [
         "HB-01",
         "HB-02",
-        "HB-03"
+        "HB-03",
+        "HB-04",
+        "HB-05"
       ],
       "camada": {
         "N1": "EX1",
@@ -286,8 +288,7 @@
       "modalidade": "video",
       "habilidade": "hb-mapear-contexto",
       "hb": [
-        "HB-08",
-        "HB-09"
+        "HB-08"
       ],
       "camada": {
         "N1": "EX2",
@@ -302,6 +303,7 @@
       "modalidade": "assincrono",
       "habilidade": "hb-extrair-regras",
       "hb": [
+        "HB-06",
         "HB-07"
       ],
       "camada": {
@@ -380,6 +382,9 @@
           ],
           "descricao": "linha de base registrada"
         }
+      ],
+      "hb": [
+        "HB-19"
       ]
     },
     {
@@ -394,7 +399,8 @@
         "N2": "EX4",
         "N3": "EX4"
       },
-      "produtos_encerramento": []
+      "produtos_encerramento": [],
+      "hb": []
     },
     {
       "id": "P3d",
@@ -407,7 +413,11 @@
         "N2": "EX3",
         "N3": "EX3"
       },
-      "produtos_encerramento": []
+      "produtos_encerramento": [],
+      "hb": [
+        "HB-09",
+        "HB-20"
+      ]
     },
     {
       "id": "P4",
@@ -476,6 +486,9 @@
           "preenchidos": [],
           "descricao": "OP validado"
         }
+      ],
+      "hb": [
+        "HB-21"
       ]
     },
     {
@@ -484,6 +497,7 @@
       "modalidade": "decisao_humana_registrada",
       "habilidade": "hb-governar",
       "hb": [
+        "HB-13",
         "HB-14"
       ],
       "delegavel": false,

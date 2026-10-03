@@ -4,11 +4,13 @@ etapa: P6
 camada: EX3
 modalidade: presencial_ou_remoto
 description: Estrutura a especificacao operacional a partir de E3-E/P5 e do contexto curado. Use quando /operacionalizar for invocado, apos P5 encerrada.
+hb: ["HB-21"]
 ---
 
 # Operacionalize a solução — P6 · EX3
 
 **Procedimento:** EMCIA-CAM-01 3.2, documento do método passo 6.
+**HB-21:** documentação do estado futuro, conforme EMCIA-CAT-01 Anexo A.
 **Entrada:** E3-E emitido (ou o candidato correspondente), caso classificado como agente em P5, camada de contexto registrada — não reexecute P4/P5.
 
 **Este passo produz especificação, não deployment.** O Estúdio não implanta sistema, não integra com o ambiente do cliente, não constrói o agente real. Ele documenta onde a solução entraria no fluxo.
