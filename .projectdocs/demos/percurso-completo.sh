@@ -122,10 +122,23 @@ def executar(fonte):
                      justificativa_decisao='Revisão sintética para demonstração')
 
     avancar('--apurar-nivel', 'N2', '--eixos', 'DAD 5, GOV 3, CRI 6')
+    (caso/'rascunho/E1-ficha.md').write_text('- [D · Celso do Vale] Enquadramento exclusivamente sintético: fila de pedidos fictícios.\n')
+    rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/E1-ficha.md'], caso)
+    (caso/'rascunho/prosseguimento.json').write_text(json.dumps(dict(versao=1, decisor=pessoa, data=hoje, desfecho='prosseguir', motivo='Prosseguimento exclusivamente sintético decidido no terminal', ficha='caso/E1-ficha.md'), ensure_ascii=False))
+    rodar([sys.executable, str(campo_scripts/'prosseguimento.py'), '--entrada', 'rascunho/prosseguimento.json'], caso)
     fases = {'F0': ('F0','E1'), 'P3d': ('F1','E2'), 'P5': ('F2','E3'),
              'P7': ('F3','E4'), 'P10': ('F4','E5')}
     for etapa in pb['etapas']:
         eid = etapa['id']
+        if eid == 'P2':
+            (caso/'rascunho/P2-estado-declarado.md').write_text('- [D · Celso do Vale] Etapa recebimento: pedido fictício chega à fila de controle.\n')
+            rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/P2-estado-declarado.md'], caso)
+        if eid == 'P3d':
+            selo_p2 = rodar(['git', 'rev-parse', 'HEAD'], caso).strip()
+            declarado = rodar(['git', 'show', selo_p2+':caso/P2-estado-declarado.md'], caso)
+            if 'Etapa recebimento' not in declarado: sys.exit('estado declarado selado ausente')
+            (caso/'rascunho/P3d-mapa-valor.md').write_text('- [I · premissa: etapa recebimento declarada em '+selo_p2+' · Celso do Vale] Candidato MV-001 para P4: organizar a fila de controle fictícia.\n')
+            rodar([sys.executable, str(nucleo/'validar.py'), '--arquivo', 'caso/P3d-mapa-valor.md'], caso)
         if eid == 'P2' and restrita:
             from apoio.restricoes import vincular
             bl['fontes'] = vincular(caso, fonte)

@@ -10,6 +10,7 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
 GUARDA = RAIZ / 'eiac-nucleo/scripts/guarda.py'
 # Contrato explícito para exercitar a versão anterior antes da implementação.
 REGRAS = [
+    {'id': 'decidir-prosseguimento', 'script': 'prosseguimento.py', 'condicao': {'tipo': 'sempre'}},
     {'id': 'decidir-autonomia', 'script': 'governanca.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'decidido', 'preparacao': ['rascunho', 'proposto']}},
     {'id': 'validar-operacional', 'script': 'operacional.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'estado', 'operador': 'igual', 'valor': 'validado', 'preparacao': ['proposta']}},
     {'id': 'decidir-recalibragem', 'script': 'calibragem.py', 'condicao': {'tipo': 'arquivo', 'argumento': '--arquivo', 'diretorio': 'rascunho', 'campo': 'decisao', 'operador': 'preenchido'}},
@@ -197,8 +198,10 @@ class DecisaoA12(unittest.TestCase):
 
     def test_29_template_declara_lista(self):
         pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
-        self.assertEqual(pb.get('decisoes_humanas')[:len(REGRAS)], REGRAS)
-        self.assertEqual({r["id"] for r in pb["decisoes_humanas"][len(REGRAS):]}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material", "registrar-listagem", "vincular-restricao"})
+        declaradas = {r['id']: r for r in pb.get('decisoes_humanas', [])}
+        for regra in REGRAS:
+            self.assertEqual(declaradas.get(regra['id']), regra)
+        self.assertEqual(set(declaradas) - {r['id'] for r in REGRAS}, {"revisar-piloto", "definir-rotina", "importar-habilitacao", "definir-canais", "receber-material", "entregar-material", "registrar-listagem", "vincular-restricao"})
 
     def test_30_satisfacao_por_wrapper_campo(self):
         self.recusa('python3 inegociaveis.py --verificar 2 --arquivo registro/governanca/autonomia/AUT-001.yaml --satisfazer --autor "Celso do Vale"', 'satisfazer-inegociavel-campo')

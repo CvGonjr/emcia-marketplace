@@ -26,6 +26,8 @@ class CamposA10(unittest.TestCase):
         st.update(responsavel='Celso do Vale', etapa_atual='P5', nivel='N2')
         st['cumprimentos'] = {}
         self.estado.write_text(json.dumps(st))
+        from apoio.prosseguimento import preparar
+        preparar(self.caso)
 
     def configurar(self, fn):
         pb = json.loads(self.pbpath.read_text())
@@ -121,7 +123,7 @@ class CamposA10(unittest.TestCase):
     def test_14_substituicao_tem_historico(self):
         self.assertEqual(self.registrar().returncode, 0)
         self.assertEqual(self.registrar(valor='caso isolado').returncode, 0)
-        ev = self.eventos()
+        ev = [e for e in self.eventos() if e['evento'] == 'CampoRegistrado']
         self.assertEqual([e['valor'] for e in ev], ['agente', 'caso isolado'])
         self.assertEqual(ev[-1]['anterior'], 'agente')
 

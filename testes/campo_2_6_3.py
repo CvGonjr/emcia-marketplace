@@ -157,6 +157,8 @@ def eventos(caso):
 
 def apurar_e_encerrar_f0(caso):
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     return avancar(caso, encerrar="F0", autor="Celso do Vale")
 
 

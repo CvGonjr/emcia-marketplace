@@ -112,7 +112,7 @@ class Canais(CasoHook):
         r = self.executar('resolver', 'E1', 'saida')
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(json.loads(r.stdout)['finalidade'], 'entregas')
-        self.assertEqual([e['evento'] for e in self.eventos()], ['CanaisDefinidos']*2)
+        self.assertEqual([e['evento'] for e in self.eventos()], ['ProsseguimentoDecidido', 'CanaisDefinidos', 'CanaisDefinidos'])
 
     def test_22_decisor_distinto_autoria_fixa(self):
         self.dados['decidido_por'] = 'Pessoa Engenheira'

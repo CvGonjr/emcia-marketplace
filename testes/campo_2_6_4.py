@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verificacao do catalogo de HB/AG -- pacote 2.6.4.
 
-Cobre: catalogo estrutural de 18 HB e 4 AG (eiac-campo/reference/), o
+Cobre: catalogo estrutural de 21 HB e 4 AG (eiac-campo/reference/), o
 resolvedor generico de capacidade/papel do nucleo (catalogo.py, que nao
 conhece HB/AG/EMCIA -- so "capacidade" e "papel" com "id"),
 resolucao playbook->HB, resolucao HB->skill, autorizacao AG->HB, a
@@ -110,6 +110,8 @@ def eventos(caso):
 
 def apurar_e_encerrar_f0(caso):
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     return avancar(caso, encerrar="F0", autor="Celso do Vale")
 
 
@@ -145,14 +147,14 @@ else:
     falha(f"2.6.4-T01 catalogo de HB invalido: {erro}")
 
 ids_hb = [h["id"] for h in hab_oficial["habilidades"]]
-if len(ids_hb) == 18:
-    ok("2.6.4-T02 exatamente 18 IDs HB")
+if len(ids_hb) == 21:
+    ok("2.6.4-T02 exatamente 21 IDs HB")
 else:
-    falha(f"2.6.4-T02 {len(ids_hb)} IDs HB, esperado 18")
+    falha(f"2.6.4-T02 {len(ids_hb)} IDs HB, esperado 21")
 
-esperado_hb = {f"HB-{i:02d}" for i in range(1, 19)}
+esperado_hb = {f"HB-{i:02d}" for i in range(1, 22)}
 if set(ids_hb) == esperado_hb:
-    ok("2.6.4-T03 conjunto HB-01..HB-18 completo")
+    ok("2.6.4-T03 conjunto HB-01..HB-21 completo")
 else:
     falha(f"2.6.4-T03 conjunto incompleto: faltam {esperado_hb - set(ids_hb)}, "
           f"sobram {set(ids_hb) - esperado_hb}")
@@ -314,8 +316,8 @@ else:
 # ================================================ T21-T24: mapa canonico =
 mapa_oficial = {
     "AG-01": {f"HB-{i:02d}" for i in range(1, 6)},
-    "AG-02": {"HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-13"},
-    "AG-03": {"HB-11", "HB-12", "HB-14"},
+    "AG-02": {"HB-06", "HB-07", "HB-08", "HB-09", "HB-10", "HB-19", "HB-20"},
+    "AG-03": {"HB-11", "HB-12", "HB-13", "HB-14", "HB-21"},
     "AG-04": {"HB-15", "HB-16", "HB-17", "HB-18"},
 }
 ag_por_id = {a["id"]: a for a in ag_oficial["agentes"]}
@@ -445,7 +447,7 @@ else:
 codigo, saida, erro = catalogo(
     "--capacidades", str(HABILIDADES), "--chave-capacidades", "habilidades")
 if codigo == 0:
-    ok("2.6.4-T33 mecanismo recebe as 18 HB reais, todas com criterio quando "
+    ok("2.6.4-T33 mecanismo recebe as 21 HB reais, todas com criterio quando "
        "automatizadas: PASS")
 else:
     falha(f"2.6.4-T33 mecanismo recusou catalogo real: {erro}")
@@ -475,7 +477,7 @@ else:
     falha(f"2.6.4-T36 HB-14 nao reflete a fronteira humana de P7: {hb14}")
 
 skill_levantar = (SKILLS_DIR / "hb-levantar-regras" / "SKILL.md").read_text(encoding="utf-8")
-if "hb-levantar-regras" not in skills_hb_referenciada and "NAO EXECUTAVEL POR AGENTE" in skill_levantar:
+if not next(e for e in pb_oficial['etapas'] if e['id'] == 'P3b').get('hb') and "NAO EXECUTAVEL POR AGENTE" in skill_levantar:
     ok("2.6.4-T37 nenhum AG possui autorizacao para substituir a sessao de P3b "
        "(hb-levantar-regras nao tem HB do catalogo associada e e explicitamente "
        "marcada 'NAO EXECUTAVEL POR AGENTE')")

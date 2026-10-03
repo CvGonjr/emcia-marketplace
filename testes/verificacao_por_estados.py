@@ -104,6 +104,8 @@ def levar_ate_p3b(caso):
     sessao humana ja registrada. G7 é conferida independentemente de G1;
     a sessão não autoriza carregar habilidade não delegável (A18)."""
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     avancar(caso, encerrar="F0", autor="Celso do Vale")
     avancar(caso, encerrar="P1", autor="Celso do Vale")
     codigo, saida, erro = avancar(caso, encerrar="P2", autor="Celso do Vale")
@@ -158,6 +160,8 @@ with tempfile.TemporaryDirectory() as tmp:
 with tempfile.TemporaryDirectory() as tmp:
     caso = preparar_caso(pathlib.Path(tmp))
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     avancar(caso, encerrar="F0", autor="Celso do Vale")
     avancar(caso, encerrar="P1", autor="Celso do Vale")
     # sela ANTES de encerrar P2 -- este selo e anterior ao EtapaEncerrada de P2
@@ -213,6 +217,8 @@ with tempfile.TemporaryDirectory() as tmp:
 with tempfile.TemporaryDirectory() as tmp:
     caso = preparar_caso(pathlib.Path(tmp))
     avancar(caso, apurar_nivel="N2", autor="Celso do Vale", eixos="DAD 4, GOV 5, CRI 7")
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     avancar(caso, encerrar="F0", autor="Celso do Vale")
     codigo, saida, erro = avancar(caso, encerrar="P1", autor="Celso do Vale")
     if codigo == 0:

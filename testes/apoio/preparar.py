@@ -10,6 +10,10 @@ PESSOA='Celso do Vale'
 def produto(caso, etapa, responsavel=None):
     caso=pathlib.Path(caso)
     st=json.loads((caso/'registro/estado.json').read_text())
+    if etapa == 'F0':
+        from apoio.prosseguimento import preparar
+        preparar(caso)
+        return
     if etapa=='P5':
         if st.get('cumprimentos',{}).get(etapa,{}).get('classificacao_tecnologica'): return
         r=subprocess.run(['python3',str(RAIZ/'eiac-nucleo/scripts/avancar.py'),'--registrar-campo',etapa,'--campo','classificacao_tecnologica','--valor','agente','--autor',PESSOA],cwd=caso,text=True,capture_output=True)

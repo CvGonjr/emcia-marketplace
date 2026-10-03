@@ -9,6 +9,8 @@ class Caso(unittest.TestCase):
         self.posicionar('P1')
         from apoio.canais import definir
         definir(self.caso)
+        from apoio.prosseguimento import preparar as preparar_prosseguimento
+        preparar_prosseguimento(self.caso)
     def posicionar(self, etapa):
         p=self.caso/'registro/estado.json'; st=json.loads(p.read_text())
         st.update(responsavel='Celso do Vale', nivel='N2', etapa_atual=etapa, cumprimentos={})

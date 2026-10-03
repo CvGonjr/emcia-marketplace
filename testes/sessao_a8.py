@@ -26,6 +26,8 @@ class SessaoA8(unittest.TestCase):
         self.posicionar("P3a", "N2")
         from apoio.canais import definir
         definir(self.caso)
+        from apoio.prosseguimento import preparar as preparar_prosseguimento
+        preparar_prosseguimento(self.caso)
 
     def configurar(self, editar):
         pb = json.loads(self.playbook.read_text())

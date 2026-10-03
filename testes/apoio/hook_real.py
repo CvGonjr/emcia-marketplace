@@ -14,6 +14,9 @@ class CasoHook(unittest.TestCase):
         self.estado.update(responsavel='Celso do Vale', nivel='N2')
         self.salvar()
         (self.caso/'rascunho').mkdir(exist_ok=True)
+        # Pré-condição sintética do novo contrato, pelo script real.
+        from apoio.prosseguimento import preparar
+        preparar(self.caso)
         self.env = dict(os.environ, CLAUDE_PROJECT_DIR=str(self.caso))
 
     def salvar(self):
@@ -57,7 +60,8 @@ class CasoHook(unittest.TestCase):
         self.salvar()
         log = self.caso/'registro/eventos.jsonl'
         # Selo real permite que A18 continue exercitando G1, sem mascará-la por G7.
-        log.write_text('')
+        log.write_text(''.join(json.dumps(e)+'\n' for e in self.eventos()
+                               if e['evento'] == 'ProsseguimentoDecidido'))
         self.rodar('avancar.py','--registrar-sessao','P3b','--autor','Celso do Vale','--participantes','Marina Prado')
         ev=self.eventos()[-1]
         with log.open('a') as f:

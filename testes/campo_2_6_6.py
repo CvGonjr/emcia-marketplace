@@ -194,6 +194,8 @@ def apurar_e_encerrar_f0(caso, nivel="N2"):
     eixos = {"N1": "DAD 3, GOV 3, CRI 3", "N2": "DAD 5, GOV 3, CRI 6",
              "N3": "DAD 4, GOV 3, CRI 8"}[nivel]
     avancar(caso, apurar_nivel=nivel, autor="Celso do Vale", eixos=eixos)
+    from apoio.prosseguimento import preparar as preparar_prosseguimento
+    preparar_prosseguimento(caso)
     return avancar(caso, encerrar="F0", autor="Celso do Vale")
 
 
@@ -780,12 +782,12 @@ avancar(caso_p6, emitir="E5", autor="Celso do Vale")
 entregavel(caso_p6, "E5", "Celso do Vale", emitir=True)
 
 # ======================================================================
-# C19 -- 18 HB resolviveis
+# C19 -- 21 HB resolviveis, CAT-01 v0.5
 # ======================================================================
 codigo, saida, erro = _catalogo("--capacidades", HABILIDADES_JSON, "--chave-capacidades", "habilidades")
 hb_dados = json.loads(HABILIDADES.read_text(encoding="utf-8"))
-if codigo == 0 and len(hb_dados["habilidades"]) == 18:
-    ok("2.6.6-C19 18/18 HB declaradas e estruturalmente resolviveis")
+if codigo == 0 and len(hb_dados["habilidades"]) == 21:
+    ok("2.6.6-C19 21/21 HB declaradas e estruturalmente resolviveis")
 else:
     falha(f"2.6.6-C19 catalogo de HB invalido ou incompleto: exit={codigo} {erro}")
 

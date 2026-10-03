@@ -20,6 +20,14 @@ import json, pathlib
 p = pathlib.Path('registro/estado.json'); d = json.loads(p.read_text())
 d['responsavel'] = 'Celso do Vale'; p.write_text(json.dumps(d))"
 
+# Pré-condição independente das negativas; não altera o estado de apuração.
+python3 - "$RAIZ" "$PWD" <<'PY_PROSSEGUIMENTO'
+import pathlib, sys
+sys.path.insert(0, str(pathlib.Path(sys.argv[1])/'testes'))
+from apoio.prosseguimento import preparar
+preparar(sys.argv[2])
+PY_PROSSEGUIMENTO
+
 falhas=0
 ok()   { printf '  ok    %s\n' "$1"; }
 falha(){ printf '  FALHA %s\n' "$1"; falhas=$((falhas+1)); }
