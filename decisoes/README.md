@@ -25,7 +25,7 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 017 | O campo empacota o método; o contraste registra ambiguidades como pendências | substituída por 021 |
 | 018 | Isolamento verificado no selo por carimbo de componente, não por nome de plugin | substituída por 021 (aparato de isolamento mantido no código, não removido, mas não rege mais um fluxo ativo) |
 | 019 | Autoria de registro é atribuída pelo componente, nunca informada pelo agente | firme quanto à autoria; exceção de --ator para decisões substituída por 027; parte de contraste substituída por 021 |
-| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | pendente de decisão de método (menção à execução de contraste substituída por 021; pendência de cruzamento continua aberta) |
+| 020 | Pendência única de correspondência entre CAT-01, catálogo e playbook | superada por 043; regra provisória preservada como histórico |
 | 021 | Retirada da execução de contraste; verificação por estados do caso | firme; emendas 042 (selo Git) e retirada dos resumos CTX |
 | 022 | Expediente administrativo de habilitação anterior ao caso; assinatura pelo painel escolhido pelo cliente | firme quanto ao escopo aprovado |
 | 023 | Regra de leitura da triagem declarada e conferida (A7) | firme |
@@ -48,3 +48,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 040 | Canais externos por caso, origem com hash e atos humanos na fronteira | aprovada; E1–E7 concluídos; limites locais e runtime testado registrados |
 | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
+| 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |

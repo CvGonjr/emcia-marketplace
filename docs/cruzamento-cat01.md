@@ -1,5 +1,13 @@
 # Cruzamento entre CAT-01, catálogo de HB e playbook executável
 
+**Registro histórico — superado pela
+[decisão 043](../decisoes/043-correspondencia-cat01-catalogo-playbook.md).**
+A fonte vigente da relação é CAT-01 v0.5 Anexo C. O texto abaixo preserva
+a auditoria de 22/09/2026; suas pendências e regra provisória não autorizam
+execução atual. A regra de camada de preparação e encerramento resolve a
+leitura antiga de contradição em P5, P8 e P9. D5 distingue quatro frentes
+e mapa de valor; HB-09 está em P3d, com estado selado em P2 e candidatos para P4.
+
 **Data da auditoria:** 22/09/2026
 
 **Documentos cruzados:** `EMCIA-CAT-01` v0.2, `reference/habilidades.json`

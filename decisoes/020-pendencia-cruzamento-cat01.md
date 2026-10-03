@@ -2,6 +2,15 @@
 
 **Data:** 22/09/2026 · **Estado:** pendente de decisão de método
 
+## Emenda de 03/10/2026 — superada pela decisão 043
+
+A decisão [043](043-correspondencia-cat01-catalogo-playbook.md) implementa
+CAT-01 v0.5 e a correção canônica MAN-01 v0.4. A correspondência e a regra
+provisória de autoria `hb-*` abaixo são históricas e não regem casos novos.
+P3b continua sem HB/AG e não realizada por agente. Os demais agrupamentos
+vêm dos Anexos A e C, sem autoria de agente em eventos. O registro original
+é preservado; casos anteriores conservam seu playbook pela decisão 002.
+
 ## Contexto
 
 O cruzamento integral das treze etapas, registrado em
