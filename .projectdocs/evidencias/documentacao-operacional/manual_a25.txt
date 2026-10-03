@@ -1,0 +1,13 @@
+$ /home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3 testes/manual_a25.py
+test_01_manual_confere_com_playbook (__main__.ManualA25.test_01_manual_confere_com_playbook) ... ok
+test_02_etapa_removida_e_detectada (__main__.ManualA25.test_02_etapa_removida_e_detectada) ... ok
+test_03_camada_trocada_e_detectada (__main__.ManualA25.test_03_camada_trocada_e_detectada) ... ok
+test_04_ato_inexistente_e_detectado (__main__.ManualA25.test_04_ato_inexistente_e_detectado) ... ok
+test_05_comando_inexistente_e_detectado (__main__.ManualA25.test_05_comando_inexistente_e_detectado) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+OK
+
+Código: 0
