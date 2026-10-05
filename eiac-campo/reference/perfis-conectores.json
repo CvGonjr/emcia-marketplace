@@ -481,7 +481,12 @@
       "precondicao_registrada": {
         "evento": "ConferenciaExternaRegistrada",
         "argumento": "formId",
-        "campo_evento": "objeto_id"
+        "campo_evento": "objeto_id",
+        "ultimo": true,
+        "valores": {
+          "resultado": "conferido"
+        },
+        "campo_motivo": "diferencas"
       }
     },
     "mcp__tally__fetch_submissions": {

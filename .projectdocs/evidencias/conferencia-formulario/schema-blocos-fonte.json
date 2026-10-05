@@ -1,0 +1,437 @@
+{
+  "fonte": "https://developers.tally.so/api-reference/openapi.json",
+  "sha256_fonte": "c9f99055e5dbf592416393025482354edfad5b99cd48fc14a8178234b5a51463",
+  "schemas": {
+    "TitleBlock": {
+      "type": "object",
+      "title": "TitleBlock",
+      "description": "A block with type TITLE. Used for section titles within the form.",
+      "properties": {
+        "uuid": {
+          "$ref": "#/components/schemas/BlockUuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TITLE"
+          ]
+        },
+        "groupUuid": {
+          "$ref": "#/components/schemas/GroupUuid"
+        },
+        "groupType": {
+          "type": "string",
+          "enum": [
+            "TITLE",
+            "QUESTION"
+          ]
+        },
+        "payload": {
+          "$ref": "#/components/schemas/TitlePayload"
+        }
+      },
+      "required": [
+        "uuid",
+        "type",
+        "groupUuid",
+        "groupType",
+        "payload"
+      ]
+    },
+    "TitlePayload": {
+      "type": "object",
+      "title": "TitlePayload",
+      "description": "Payload for TITLE block type. Used for title elements.",
+      "properties": {
+        "html": {
+          "$ref": "#/components/schemas/Html"
+        },
+        "isHidden": {
+          "$ref": "#/components/schemas/IsHidden"
+        },
+        "isFolded": {
+          "$ref": "#/components/schemas/IsFolded"
+        },
+        "columnListUuid": {
+          "$ref": "#/components/schemas/ColumnListUuid"
+        },
+        "columnUuid": {
+          "$ref": "#/components/schemas/ColumnUuid"
+        },
+        "columnRatio": {
+          "$ref": "#/components/schemas/ColumnRatio"
+        }
+      }
+    },
+    "InputTextBlock": {
+      "type": "object",
+      "title": "InputTextBlock",
+      "description": "A block with type INPUT_TEXT. Used for single-line text input.",
+      "properties": {
+        "uuid": {
+          "$ref": "#/components/schemas/BlockUuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "INPUT_TEXT"
+          ]
+        },
+        "groupUuid": {
+          "$ref": "#/components/schemas/GroupUuid"
+        },
+        "groupType": {
+          "type": "string",
+          "enum": [
+            "INPUT_TEXT"
+          ]
+        },
+        "payload": {
+          "$ref": "#/components/schemas/InputTextPayload"
+        }
+      },
+      "required": [
+        "uuid",
+        "type",
+        "groupUuid",
+        "groupType",
+        "payload"
+      ]
+    },
+    "InputTextPayload": {
+      "type": "object",
+      "title": "InputTextPayload",
+      "description": "Payload for INPUT_TEXT block type. Used for short text input fields.",
+      "properties": {
+        "isHidden": {
+          "$ref": "#/components/schemas/IsHidden"
+        },
+        "isRequired": {
+          "$ref": "#/components/schemas/IsRequired"
+        },
+        "hasDefaultAnswer": {
+          "$ref": "#/components/schemas/HasDefaultAnswer"
+        },
+        "defaultAnswer": {
+          "$ref": "#/components/schemas/DefaultAnswerString"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hasMinCharacters": {
+          "$ref": "#/components/schemas/HasMinCharacters"
+        },
+        "minCharacters": {
+          "$ref": "#/components/schemas/MinCharacters"
+        },
+        "hasMaxCharacters": {
+          "$ref": "#/components/schemas/HasMaxCharacters"
+        },
+        "maxCharacters": {
+          "$ref": "#/components/schemas/MaxCharacters"
+        },
+        "columnListUuid": {
+          "$ref": "#/components/schemas/ColumnListUuid"
+        },
+        "columnUuid": {
+          "$ref": "#/components/schemas/ColumnUuid"
+        },
+        "columnRatio": {
+          "$ref": "#/components/schemas/ColumnRatio"
+        },
+        "name": {
+          "$ref": "#/components/schemas/Name"
+        }
+      }
+    },
+    "TextareaBlock": {
+      "type": "object",
+      "title": "TextareaBlock",
+      "description": "A block with type TEXTAREA. Used for multi-line text input.",
+      "properties": {
+        "uuid": {
+          "$ref": "#/components/schemas/BlockUuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "TEXTAREA"
+          ]
+        },
+        "groupUuid": {
+          "$ref": "#/components/schemas/GroupUuid"
+        },
+        "groupType": {
+          "type": "string",
+          "enum": [
+            "TEXTAREA"
+          ]
+        },
+        "payload": {
+          "$ref": "#/components/schemas/TextareaPayload"
+        }
+      },
+      "required": [
+        "uuid",
+        "type",
+        "groupUuid",
+        "groupType",
+        "payload"
+      ]
+    },
+    "TextareaPayload": {
+      "type": "object",
+      "title": "TextareaPayload",
+      "description": "Payload for TEXTAREA block type. Used for long text input fields.",
+      "properties": {
+        "isHidden": {
+          "$ref": "#/components/schemas/IsHidden"
+        },
+        "isRequired": {
+          "$ref": "#/components/schemas/IsRequired"
+        },
+        "hasDefaultAnswer": {
+          "$ref": "#/components/schemas/HasDefaultAnswer"
+        },
+        "defaultAnswer": {
+          "$ref": "#/components/schemas/DefaultAnswerString"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "hasMinCharacters": {
+          "$ref": "#/components/schemas/HasMinCharacters"
+        },
+        "minCharacters": {
+          "$ref": "#/components/schemas/MinCharacters"
+        },
+        "hasMaxCharacters": {
+          "$ref": "#/components/schemas/HasMaxCharacters"
+        },
+        "maxCharacters": {
+          "$ref": "#/components/schemas/MaxCharacters"
+        },
+        "columnListUuid": {
+          "$ref": "#/components/schemas/ColumnListUuid"
+        },
+        "columnUuid": {
+          "$ref": "#/components/schemas/ColumnUuid"
+        },
+        "columnRatio": {
+          "$ref": "#/components/schemas/ColumnRatio"
+        },
+        "name": {
+          "$ref": "#/components/schemas/Name"
+        }
+      }
+    },
+    "HiddenFieldsBlock": {
+      "type": "object",
+      "title": "HiddenFieldsBlock",
+      "description": "A block with type HIDDEN_FIELDS. Used for hidden form fields.",
+      "properties": {
+        "uuid": {
+          "$ref": "#/components/schemas/BlockUuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "HIDDEN_FIELDS"
+          ]
+        },
+        "groupUuid": {
+          "$ref": "#/components/schemas/GroupUuid"
+        },
+        "groupType": {
+          "type": "string",
+          "enum": [
+            "HIDDEN_FIELDS"
+          ]
+        },
+        "payload": {
+          "$ref": "#/components/schemas/HiddenFieldsPayload"
+        }
+      },
+      "required": [
+        "uuid",
+        "type",
+        "groupUuid",
+        "groupType",
+        "payload"
+      ]
+    },
+    "HiddenFieldsPayload": {
+      "type": "object",
+      "title": "HiddenFieldsPayload",
+      "description": "Payload for HIDDEN_FIELDS block type. Used for hidden form fields.",
+      "required": [
+        "hiddenFields"
+      ],
+      "properties": {
+        "hiddenFields": {
+          "type": "array",
+          "description": "Array of hidden fields. Each hidden field captures a value from URL query parameters matching the field name.",
+          "items": {
+            "$ref": "#/components/schemas/HiddenField"
+          }
+        }
+      }
+    },
+    "HiddenField": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "$ref": "#/components/schemas/Name"
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "MultipleChoiceOptionBlock": {
+      "type": "object",
+      "title": "MultipleChoiceOptionBlock",
+      "description": "A block with type MULTIPLE_CHOICE_OPTION. Individual option within a multiple choice question.",
+      "properties": {
+        "uuid": {
+          "$ref": "#/components/schemas/BlockUuid"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "MULTIPLE_CHOICE_OPTION"
+          ]
+        },
+        "groupUuid": {
+          "$ref": "#/components/schemas/GroupUuid"
+        },
+        "groupType": {
+          "type": "string",
+          "enum": [
+            "MULTIPLE_CHOICE"
+          ]
+        },
+        "payload": {
+          "$ref": "#/components/schemas/MultipleChoiceOptionPayload"
+        }
+      },
+      "required": [
+        "uuid",
+        "type",
+        "groupUuid",
+        "groupType",
+        "payload"
+      ]
+    },
+    "MultipleChoiceOptionPayload": {
+      "type": "object",
+      "title": "MultipleChoiceOptionPayload",
+      "description": "Payload for MULTIPLE_CHOICE_OPTION block type. Used for single-select radio questions.",
+      "required": [
+        "index",
+        "isFirst",
+        "isLast"
+      ],
+      "properties": {
+        "isHidden": {
+          "$ref": "#/components/schemas/IsHidden"
+        },
+        "isRequired": {
+          "$ref": "#/components/schemas/IsRequired"
+        },
+        "hasDefaultAnswer": {
+          "$ref": "#/components/schemas/HasDefaultAnswer"
+        },
+        "defaultAnswer": {
+          "$ref": "#/components/schemas/DefaultAnswerString"
+        },
+        "index": {
+          "$ref": "#/components/schemas/OptionIndex"
+        },
+        "isFirst": {
+          "$ref": "#/components/schemas/IsFirstOption"
+        },
+        "isLast": {
+          "$ref": "#/components/schemas/IsLastOption"
+        },
+        "allowMultiple": {
+          "$ref": "#/components/schemas/AllowMultiple"
+        },
+        "hasMinChoices": {
+          "$ref": "#/components/schemas/HasMinChoices"
+        },
+        "minChoices": {
+          "$ref": "#/components/schemas/MinChoices"
+        },
+        "hasMaxChoices": {
+          "$ref": "#/components/schemas/HasMaxChoices"
+        },
+        "maxChoices": {
+          "$ref": "#/components/schemas/MaxChoices"
+        },
+        "colorCodeOptions": {
+          "$ref": "#/components/schemas/ColorCodeOptions"
+        },
+        "color": {
+          "$ref": "#/components/schemas/OptionColor"
+        },
+        "hasBadge": {
+          "type": "boolean",
+          "description": "Enable option badges (numbers or letters). Only needs to be set on the first option in the group."
+        },
+        "badgeType": {
+          "type": "string",
+          "enum": [
+            "OFF",
+            "NUMBERS",
+            "LETTERS"
+          ],
+          "description": "Badge display type. Only needs to be set on the first option in the group."
+        },
+        "hasOtherOption": {
+          "type": "boolean",
+          "description": "True if the question group has an 'Other' option enabled."
+        },
+        "isOtherOption": {
+          "type": "boolean",
+          "description": "True if this specific option is the 'Other' free-text field."
+        },
+        "randomize": {
+          "type": "boolean",
+          "description": "Randomize option order. Only needs to be set on the first option in the group."
+        },
+        "lockInPlace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of option UUIDs that should stay in their original position when randomize is enabled. Only needs to be set on the first option in the group."
+        },
+        "image": {
+          "type": "string",
+          "description": "URL of an image to display alongside the option."
+        },
+        "name": {
+          "$ref": "#/components/schemas/Name"
+        },
+        "text": {
+          "type": "string",
+          "description": "The display text of the option."
+        },
+        "columnListUuid": {
+          "$ref": "#/components/schemas/ColumnListUuid"
+        },
+        "columnUuid": {
+          "$ref": "#/components/schemas/ColumnUuid"
+        },
+        "columnRatio": {
+          "$ref": "#/components/schemas/ColumnRatio"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,160 @@
+test_01_texto_diferente_impede_publicacao_e_lista (__main__.Conferencia.test_01_texto_diferente_impede_publicacao_e_lista) ... ERROR
+test_02_ordem_trocada (__main__.Conferencia.test_02_ordem_trocada) ... ERROR
+test_03_campo_oculto_ausente (__main__.Conferencia.test_03_campo_oculto_ausente) ... ERROR
+test_04_tipo_diferente (__main__.Conferencia.test_04_tipo_diferente) ... ERROR
+test_05_formulario_alheio (__main__.Conferencia.test_05_formulario_alheio) ... ok
+test_06_ferramenta_fora_do_perfil (__main__.Conferencia.test_06_ferramenta_fora_do_perfil) ... ok
+test_07_sem_leitura_nao_compara (__main__.Conferencia.test_07_sem_leitura_nao_compara) ... FAIL
+test_08_formato_desconhecido_nao_aproxima (__main__.Conferencia.test_08_formato_desconhecido_nao_aproxima) ... ERROR
+test_09_retorno_com_id_alheio (__main__.Conferencia.test_09_retorno_com_id_alheio) ... ERROR
+test_10_relatorio_adulterado (__main__.Conferencia.test_10_relatorio_adulterado) ... ERROR
+test_20_identico_relatorio_md_hash_e_aguarda_humano (__main__.Conferencia.test_20_identico_relatorio_md_hash_e_aguarda_humano) ... ERROR
+
+======================================================================
+ERROR: test_01_texto_diferente_impede_publicacao_e_lista (__main__.Conferencia.test_01_texto_diferente_impede_publicacao_e_lista)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 56, in test_01_texto_diferente_impede_publicacao_e_lista
+    r = self.comparar(); self.assertTrue(any('texto' in d for d in r['diferencas']))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_02_ordem_trocada (__main__.Conferencia.test_02_ordem_trocada)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 61, in test_02_ordem_trocada
+    r = self.comparar(); self.assertTrue(any('ordem' in d for d in r['diferencas']))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_03_campo_oculto_ausente (__main__.Conferencia.test_03_campo_oculto_ausente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 66, in test_03_campo_oculto_ausente
+    r = self.comparar(); self.assertTrue(any('campo oculto caso' in d for d in r['diferencas']))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_04_tipo_diferente (__main__.Conferencia.test_04_tipo_diferente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 71, in test_04_tipo_diferente
+    r = self.comparar(); self.assertTrue(any('tipo' in d for d in r['diferencas']))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_08_formato_desconhecido_nao_aproxima (__main__.Conferencia.test_08_formato_desconhecido_nao_aproxima)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 85, in test_08_formato_desconhecido_nao_aproxima
+    r = self.comparar(); self.assertTrue(r['diferencas'])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_09_retorno_com_id_alheio (__main__.Conferencia.test_09_retorno_com_id_alheio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 90, in test_09_retorno_com_id_alheio
+    r = self.comparar(); self.assertTrue(any('formId' in d for d in r['diferencas']))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_10_relatorio_adulterado (__main__.Conferencia.test_10_relatorio_adulterado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 94, in test_10_relatorio_adulterado
+    r = self.comparar(); pathlib.Path(r['arquivo']).write_text('adulterado')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+ERROR: test_20_identico_relatorio_md_hash_e_aguarda_humano (__main__.Conferencia.test_20_identico_relatorio_md_hash_e_aguarda_humano)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 98, in test_20_identico_relatorio_md_hash_e_aguarda_humano
+    r = self.comparar(); self.assertEqual(r['diferencas'], [])
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 44, in comparar
+    return self.op('conferir-formulario', formulario_id='FORM', modelo=modelo)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+======================================================================
+FAIL: test_07_sem_leitura_nao_compara (__main__.Conferencia.test_07_sem_leitura_nao_compara)
+----------------------------------------------------------------------
+ValueError: decisão de método não executável pela sessão: conferir-formulario
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 81, in test_07_sem_leitura_nao_compara
+    self.negada(lambda:self.op('conferir-formulario', formulario_id='FORM', modelo='habilitacao'), 'load_form')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "load_form" does not match "decisão de método não executável pela sessão: conferir-formulario"
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.266s
+
+FAILED (failures=1, errors=8)

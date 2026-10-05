@@ -81,9 +81,14 @@ def conferir_eventos(dados, regra, ferramenta, entrada, eventos, autor, contexto
                    and e.get('contexto')==contexto and e.get('testemunho') for e in eventos):
             raise ValueError('efeito externo sem aprovação registrada para ferramenta, parâmetros e contexto')
     c=regra.get('precondicao_registrada')
-    if c and not any(e.get('evento')==c['evento'] and e.get(c['campo_evento'])==argumento(entrada,c['argumento'])
-                     and e.get('autor')==autor and e.get('contexto')==contexto for e in eventos):
-        raise ValueError('pré-condição externa não registrada')
+    if c:
+        candidatos=[e for e in eventos if e.get('evento')==c['evento']
+                    and e.get(c['campo_evento'])==argumento(entrada,c['argumento'])
+                    and e.get('autor')==autor and e.get('contexto')==contexto]
+        if c.get('ultimo'): candidatos=candidatos[-1:]
+        if not any(all(e.get(k)==v for k,v in c.get('valores',{}).items()) for e in candidatos):
+            motivos=candidatos[-1].get(c.get('campo_motivo'),[]) if candidatos else []
+            raise ValueError('pré-condição externa não registrada: '+str(c.get('valores',{}))+'; '+str(motivos))
 
 
 def ids(pb, regra):

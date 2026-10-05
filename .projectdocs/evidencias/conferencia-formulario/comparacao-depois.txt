@@ -1,0 +1,16 @@
+test_01_texto_diferente_impede_publicacao_e_lista (__main__.Conferencia.test_01_texto_diferente_impede_publicacao_e_lista) ... ok
+test_02_ordem_trocada (__main__.Conferencia.test_02_ordem_trocada) ... ok
+test_03_campo_oculto_ausente (__main__.Conferencia.test_03_campo_oculto_ausente) ... ok
+test_04_tipo_diferente (__main__.Conferencia.test_04_tipo_diferente) ... ok
+test_05_formulario_alheio (__main__.Conferencia.test_05_formulario_alheio) ... ok
+test_06_ferramenta_fora_do_perfil (__main__.Conferencia.test_06_ferramenta_fora_do_perfil) ... ok
+test_07_sem_leitura_nao_compara (__main__.Conferencia.test_07_sem_leitura_nao_compara) ... ok
+test_08_formato_desconhecido_nao_aproxima (__main__.Conferencia.test_08_formato_desconhecido_nao_aproxima) ... ok
+test_09_retorno_com_id_alheio (__main__.Conferencia.test_09_retorno_com_id_alheio) ... ok
+test_10_relatorio_adulterado (__main__.Conferencia.test_10_relatorio_adulterado) ... ok
+test_20_identico_relatorio_md_hash_e_aguarda_humano (__main__.Conferencia.test_20_identico_relatorio_md_hash_e_aguarda_humano) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.409s
+
+OK

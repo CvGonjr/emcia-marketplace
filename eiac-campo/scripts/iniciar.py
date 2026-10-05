@@ -213,7 +213,7 @@ def aprovar(p,op,entrada,literal,resumo):
 def operar(p,op,d,aprovacao):
     c=ler_config(p)
     try:
-        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual'}:
+        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario'}:
             raise ValueError('decisão de método não executável pela sessão: '+op)
         contexto=d.get('caso') or d.get('id') or d.get('habilitacao')
         r=A.conferir(aprovacao,op,c['responsavel'],contexto,cmd_operacao(op,d))
@@ -259,6 +259,7 @@ def operar(p,op,d,aprovacao):
             return {'caso':str(B.abrir(d['caso'],c['base_casos'],c['responsavel'],exp))}
         if op=='mcp':return autorizar_mcp(p,d,r)
         if op=='caminho-manual':return caminho_manual(p,c,d,r)
+        if op=='conferir-formulario':return conferir_formulario(p,c,d)
         with cwd(case):
             st=E.ler();pb=json.loads(pathlib.Path('registro/playbook.json').read_text())
             if not pb.get('operacoes_sessao'):raise ValueError('caso conserva playbook anterior; não delega estes atos')
@@ -365,6 +366,7 @@ def autorizar_mcp(p,d,r=None):
     if regra.get('exige_aprovacao') and r is None:raise ValueError('efeito externo sem aprovação no chat registrada')
     if r is not None:A.conferir(r,'mcp',c['responsavel'],caso,cmd_operacao('mcp',d))
     evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+    if nome=='mcp__tally__publish_form': conferir_relatorio_vigente(p,c,d,evs)
     # Os mesmos parâmetros, inclusive papel e destinatário, pertencem ao testemunho.
     aprovado=dict(evento=cfg['perfil']['evento_aprovacao'],ferramenta=nome,argumentos=args,autor=c['responsavel'],contexto=caso,testemunho=A.evento(r) if r else None)
     S.conferir_eventos(cfg['perfil'],regra,nome,args,[*evs,aprovado],c['responsavel'],caso)
@@ -407,6 +409,72 @@ def registrar_retorno(p,chamada,resultado):
     anteriores.append(dict(habilitacao=chamada['habilitacao'],chamada=chamada,ids=ids,resultado=resultado,sha256=H.digest(raw),chamada_sha256=chamada_sha))
     escrever(reg,anteriores);log(p,c,'RetornoMCPRegistrado',sha256=H.digest(raw),chamada_sha256=chamada_sha,ferramenta=nome)
     if regra['operacao']=='listar':log(p,c,'ListagemExternaRegistrada',conteiner_id=resultado.get('conteiner_id'),objetos=objetos,sha256=H.digest(raw))
+    if nome=='mcp__tally__load_form':
+        evento_conferencia(p,c,chamada,chamada['argumentos']['formId'],resultado='aguardando-comparacao',diferencas=['nova leitura load_form aguarda comparação e conferido'])
+
+
+def evento_conferencia(p,c,d,formulario,**dados):
+    evento=dict(objeto_id=formulario,contexto=d['caso'],habilitacao=d['habilitacao'],**dados)
+    log(p,c,'ConferenciaExternaRegistrada',**evento)
+    case=pathlib.Path(c['base_casos'])/H.identificador(d['caso'])
+    if case.is_dir():
+        with cwd(case):E.evento('ConferenciaExternaRegistrada',autor=c['responsavel'],**evento)
+
+
+def leitura_formulario(p,d,formulario):
+    regs=[r for r in registros_externos(p,d['habilitacao'])
+          if r['chamada'].get('caso')==d['caso'] and r['chamada']['ferramenta']=='mcp__tally__load_form'
+          and r['chamada']['argumentos']=={'formId':formulario}]
+    if not regs:raise ValueError('conferência exige retorno load_form do formulário declarado')
+    return regs[-1]
+
+
+def conferir_formulario(p,c,d):
+    import conferencia_formulario as F
+    formulario=d['formulario_id'];modelo=d['modelo']
+    if modelo not in ('habilitacao','triagem','ciclo'):raise ValueError('modelo não declarado em reference/formularios')
+    if formulario not in escopos(p,c,d['habilitacao'],d['caso'],'ler')['formulario_id']:
+        raise ValueError('formulário fora do escopo declarado')
+    leitura=leitura_formulario(p,d,formulario)
+    arq_modelo=RAIZ/'eiac-campo/reference/formularios'/(modelo+'.json')
+    sha_modelo=A.hash_arquivo(arq_modelo)
+    comp=F.comparar(json.loads(arq_modelo.read_text()),leitura['resultado'].get('resposta',{}),formulario,c['workspace_tally'])
+    reg=dict(habilitacao=d['habilitacao'],caso=d['caso'],formulario_id=formulario,modelo=modelo,
+             modelo_sha256=sha_modelo,retorno_sha256=leitura['sha256'])
+    md=F.markdown(reg,comp).encode('utf-8');sha=H.digest(md)
+    pasta=pathlib.Path(p).parent/'conferencias'
+    if any(x.is_symlink() for x in (pasta,*pasta.parents)):raise ValueError('relatório não admite symlink')
+    pasta.mkdir(exist_ok=True,mode=0o700);arquivo=pasta/(sha+'.md')
+    if arquivo.exists():
+        if A.hash_arquivo(arquivo)!=sha:raise ValueError('relatório existente adulterado')
+    else:
+        with arquivo.open('xb') as f:f.write(md)
+    reg.update(arquivo=str(arquivo.absolute()),sha256=sha,diferencas=comp['diferencas'])
+    evento_conferencia(p,c,d,formulario,resultado='divergente' if comp['diferencas'] else 'aguardando-conferido',
+                       diferencas=comp['diferencas'],relatorio=reg,evidencia_sha256=sha)
+    return reg
+
+
+def conferir_relatorio_vigente(p,c,d,eventos):
+    formulario=d.get('formulario_id') or d.get('argumentos',{}).get('formId')
+    evs=[e for e in eventos if e.get('evento')=='ConferenciaExternaRegistrada'
+         and e.get('objeto_id')==formulario and e.get('contexto')==d['caso']
+         and e.get('habilitacao')==d['habilitacao'] and e.get('autor')==c['responsavel']]
+    if not evs:return None
+    ev=evs[-1];reg=ev.get('relatorio')
+    if reg:
+        import conferencia_formulario as F
+        modelo=reg['modelo']
+        if modelo not in ('habilitacao','triagem','ciclo'):raise ValueError('relatório com modelo não declarado')
+        arq_modelo=RAIZ/'eiac-campo/reference/formularios'/(modelo+'.json')
+        leitura=leitura_formulario(p,d,formulario)
+        if leitura['sha256']!=reg['retorno_sha256'] or A.hash_arquivo(arq_modelo)!=reg['modelo_sha256']:
+            raise ValueError('relatório desatualizado: retorno/modelo mudou; execute conferir-formulario')
+        comp=F.comparar(json.loads(arq_modelo.read_text()),leitura['resultado'].get('resposta',{}),formulario,c['workspace_tally'])
+        if (A.hash_arquivo(reg['arquivo'])!=reg['sha256'] or H.digest(F.markdown(reg,comp).encode())!=reg['sha256']
+            or reg['sha256']!=ev['evidencia_sha256'] or reg['diferencas']!=comp['diferencas']):
+            raise ValueError('relatório de conferência adulterado')
+    return ev
 
 
 def caminho_manual(p,c,d,r):
@@ -427,7 +495,7 @@ def caminho_manual(p,c,d,r):
     registro_sha=H.digest(json.dumps(reg,sort_keys=True,ensure_ascii=False).encode())
     log(p,c,'CaminhoManualDecidido',**{k:v for k,v in reg.items() if k not in ('autor','data')},registro_sha256=registro_sha)
     if d['passo']=='preparar-formulario':
-        evento=dict(objeto_id=formulario,contexto=d['caso'],evidencia_sha256=sha,testemunho=A.evento(r))
+        evento=dict(objeto_id=formulario,contexto=d['caso'],habilitacao=d['habilitacao'],resultado='conferido',evidencia_sha256=sha,testemunho=A.evento(r))
         log(p,c,'ConferenciaExternaRegistrada',**evento)
         case=pathlib.Path(c['base_casos'])/H.identificador(d['caso'])
         if case.is_dir():
