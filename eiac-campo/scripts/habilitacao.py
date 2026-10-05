@@ -108,7 +108,7 @@ def registros_aprovados(caminho=None, linha_de_base=None):
                and (linha_de_base is None or base == linha_de_base),
                'hash, caminho ou linha de base inválidos no APR-01')
         bases.add(base)
-        registros[nome] = {'codigo': codigo, 'sha256': sha}
+        registros[nome] = {'codigo': codigo, 'sha256': sha, 'versao': versao}
     exigir(bool(registros) and len(bases) == 1, 'APR-01 sem documentos aprovados ou com linhas de base distintas')
     return registros
 
@@ -417,6 +417,13 @@ def aplicar(root, s, action, p):
         template_root = pathlib.Path(texto(p.get("templates")))
         browser = p.get("navegador", "google-chrome")
         prepared = {}
+        situacoes = {}
+        config_path = pathlib.Path(p.get("config_emcia", pathlib.Path.home()/".emcia/config.json"))
+        config = json.loads(config_path.read_text()) if config_path.is_file() and not config_path.is_symlink() else {}
+        aceitacao = config.get("aceitacao_minutas")
+        aceita = (isinstance(aceitacao,dict) and aceitacao.get("texto")=="uso as minutas sem ratificação jurídica"
+                  and aceitacao.get("responsavel")==s["responsavel"] and config.get("responsavel")==s["responsavel"]
+                  and bool(aceitacao.get("data")) and not aceitacao.get("revogada_em"))
         registros = registros_aprovados()
         caminhos = templates_aprovados(registros)
         for doc, caminho in caminhos.items():
@@ -427,8 +434,13 @@ def aplicar(root, s, action, p):
             md = documento_cliente(raw.decode('utf-8'), doc)
             juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
                              if r.get('resultado') == 'aprovado' and r['documentos'].get(doc) == digest(raw)), None)
-            exigir(doc == 'HAB-01' or juridica is not None,
-                   'registre revisao-juridica para o hash exato de ' + doc + ' antes de gerar')
+            exigir(doc == 'HAB-01' or juridica is not None or aceita,
+                   'registre revisao-juridica aprovada para o hash exato de ' + doc +
+                   ' ou aceite as minutas sem ratificação jurídica em /eiac-campo:iniciar antes de gerar')
+            situacoes[doc] = dict(estado='ratificada' if juridica else ('sem ratificação' if doc!='HAB-01' else 'não aplicável'),
+                                  data=agora(), revisao=copy.deepcopy(juridica),
+                                  aceitacao=copy.deepcopy(aceitacao) if doc!='HAB-01' and not juridica else None)
+            situacoes[doc]['minuta'] = dict(codigo=doc, arquivo=caminho, versao=registros[caminho]['versao'].split()[0], versao_aprovada=registros[caminho]['versao'], sha256=digest(raw))
             n = len(s["documentos"].get(doc, [])) + 1
             controls = {"caso_id": s["caso_reservado"], "responsavel_emcia": s["responsavel"],
                         "status_assinatura": "Aguardando assinatura", "versao_assinada": "Pendente",
@@ -456,6 +468,8 @@ def aplicar(root, s, action, p):
                 template=guardar(root, raw, ".md"), markdown=guardar(root, md.encode(), ".md"),
                 pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
                 revisao_juridica=copy.deepcopy(juridica),
+                situacao_juridica={k:v for k,v in situacoes[doc].items() if k!="minuta"},
+                minuta=situacoes[doc]["minuta"],
                 campos=copy.deepcopy(s["campos"]), liberacao=None, assinatura=None))
         s["acessos"] = None
     elif action in {"liberar", "assinatura", "ocorrencia"}:

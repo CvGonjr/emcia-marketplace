@@ -492,6 +492,52 @@ class Habilitacao(unittest.TestCase):
             self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md')
         self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
 
+    def aceitacao(self):
+        cfg=self.base/'config-emcia.json'
+        cfg.write_text(json.dumps({'responsavel':'Pessoa Responsavel','aceitacao_minutas':{
+            'texto':'uso as minutas sem ratificação jurídica','responsavel':'Pessoa Responsavel',
+            'data':'2026-10-05T10:00:00Z','revogada_em':None}}))
+        return cfg
+
+    def test_41_aceitacao_sem_ratificacao_libera_e_fica_interna(self):
+        self.prepare(gerar=False,juridica=False);cfg=self.aceitacao()
+        with patch.object(H,'pdf_bytes',return_value=b'%PDF-1.7\ncontrole\n%%EOF'):
+            self.run_action('gerar',templates=str(self.templates),config_emcia=str(cfg))
+        for doc in ('HAB-02','HAB-03'):
+            v=self.state()['documentos'][doc][-1]
+            self.assertEqual(v['situacao_juridica']['estado'],'sem ratificação')
+            self.assertEqual(v['minuta']['sha256'],v['template']['sha256'])
+            self.assertEqual(v['minuta']['versao'],'0.2')
+            md=H.ler_arquivo(self.root,v['markdown']).decode()
+            self.assertNotIn('ratificação',md);self.assertNotIn('aceitacao',md)
+            self.assertNotIn('Controle do modelo',md);self.assertNotIn('Revisão jurídica',md)
+
+    def test_42_revogacao_impede_nova_emissao(self):
+        self.prepare(gerar=False,juridica=False);cfg=self.aceitacao()
+        c=json.loads(cfg.read_text());c['aceitacao_minutas']['revogada_em']='2026-10-05T11:00:00Z';cfg.write_text(json.dumps(c))
+        with patch.object(H,'pdf_bytes') as pdf:
+            self.refused('gerar',templates=str(self.templates),config_emcia=str(cfg))
+            pdf.assert_not_called()
+
+    def test_43_ratificacao_prevalece_sobre_aceitacao(self):
+        self.prepare(gerar=False);cfg=self.aceitacao()
+        with patch.object(H,'pdf_bytes',return_value=b'%PDF-1.7\ncontrole\n%%EOF'):
+            self.run_action('gerar',templates=str(self.templates),config_emcia=str(cfg))
+        for doc in ('HAB-02','HAB-03'):
+            v=self.state()['documentos'][doc][-1]
+            self.assertEqual(v['situacao_juridica']['estado'],'ratificada')
+            self.assertEqual(v['situacao_juridica']['revisao']['resultado'],'aprovado')
+            self.assertIsNone(v['situacao_juridica'].get('aceitacao'))
+
+    def test_44_aceitacao_alheia_nao_libera(self):
+        self.prepare(gerar=False,juridica=False);cfg=self.aceitacao()
+        c=json.loads(cfg.read_text());c['aceitacao_minutas']['responsavel']='Outra Pessoa';cfg.write_text(json.dumps(c))
+        self.refused('gerar',templates=str(self.templates),config_emcia=str(cfg))
+
+    def test_45_aceitacao_nao_substitui_conferencia_carta(self):
+        cfg=self.aceitacao()
+        self.refused('gerar',templates=str(self.templates),config_emcia=str(cfg))
+
 
 if __name__ == "__main__":
     unittest.main()
