@@ -1,0 +1,88 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+test_10_exportacao_sem_linha_do_caso (__main__.Simplificada.test_10_exportacao_sem_linha_do_caso) ... ok
+test_11_duas_submissoes_nao_escolhe (__main__.Simplificada.test_11_duas_submissoes_nao_escolhe) ... ok
+test_12_permanente_ausente_bloqueia_coleta (__main__.Simplificada.test_12_permanente_ausente_bloqueia_coleta) ... ok
+test_13_filtra_antes_de_persistir (__main__.Simplificada.test_13_filtra_antes_de_persistir) ... ok
+test_14_selecao_explicita_dentre_duas (__main__.Simplificada.test_14_selecao_explicita_dentre_duas) ... ok
+test_15_arquivo_fora_da_entrada_recusa (__main__.Simplificada.test_15_arquivo_fora_da_entrada_recusa) ... ok
+test_20_mensagem_vazia_recusa (__main__.Simplificada.test_20_mensagem_vazia_recusa) ... ok
+test_21_mensagem_sem_novo_formulario_ou_pendencia (__main__.Simplificada.test_21_mensagem_sem_novo_formulario_ou_pendencia) ... ok
+test_30_tratamento_ausente_recusa (__main__.Simplificada.test_30_tratamento_ausente_recusa) ... ok
+test_31_tratamento_padrao_com_hash_sem_aprovacao (__main__.Simplificada.test_31_tratamento_padrao_com_hash_sem_aprovacao) ... ok
+test_40_revisao_conjunta_sem_aprovacao_recusa (__main__.Simplificada.test_40_revisao_conjunta_sem_aprovacao_recusa) ... ERROR
+test_41_ok_cobre_tres_documentos_com_mesmos_pdfs (__main__.Simplificada.test_41_ok_cobre_tres_documentos_com_mesmos_pdfs) ... ERROR
+test_42_assinatura_sem_aprovacao_recusa (__main__.Simplificada.test_42_assinatura_sem_aprovacao_recusa) ... ERROR
+test_43_pdf_assinado_de_outro_documento_recusa (__main__.Simplificada.test_43_pdf_assinado_de_outro_documento_recusa) ... ERROR
+test_44_aprovacao_de_documento_adulterado_recusa (__main__.Simplificada.test_44_aprovacao_de_documento_adulterado_recusa) ... ERROR
+
+======================================================================
+ERROR: test_40_revisao_conjunta_sem_aprovacao_recusa (__main__.Simplificada.test_40_revisao_conjunta_sem_aprovacao_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 192, in test_40_revisao_conjunta_sem_aprovacao_recusa
+    self.documentos()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 180, in documentos
+    H.executar(self.exp, 'preparar-documentos', self.geracao)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 607, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 373, in aplicar
+    import habilitacao_lotes as L
+ModuleNotFoundError: No module named 'habilitacao_lotes'
+
+======================================================================
+ERROR: test_41_ok_cobre_tres_documentos_com_mesmos_pdfs (__main__.Simplificada.test_41_ok_cobre_tres_documentos_com_mesmos_pdfs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 198, in test_41_ok_cobre_tres_documentos_com_mesmos_pdfs
+    self.documentos(); antes = json.loads((self.exp/'expediente.json').read_text())['rascunhos_documentos']
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 180, in documentos
+    H.executar(self.exp, 'preparar-documentos', self.geracao)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 607, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 373, in aplicar
+    import habilitacao_lotes as L
+ModuleNotFoundError: No module named 'habilitacao_lotes'
+
+======================================================================
+ERROR: test_42_assinatura_sem_aprovacao_recusa (__main__.Simplificada.test_42_assinatura_sem_aprovacao_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 207, in test_42_assinatura_sem_aprovacao_recusa
+    self.documentos(); self.aprovar_docs()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 180, in documentos
+    H.executar(self.exp, 'preparar-documentos', self.geracao)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 607, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 373, in aplicar
+    import habilitacao_lotes as L
+ModuleNotFoundError: No module named 'habilitacao_lotes'
+
+======================================================================
+ERROR: test_43_pdf_assinado_de_outro_documento_recusa (__main__.Simplificada.test_43_pdf_assinado_de_outro_documento_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 213, in test_43_pdf_assinado_de_outro_documento_recusa
+    import habilitacao_lotes as L
+ModuleNotFoundError: No module named 'habilitacao_lotes'
+
+======================================================================
+ERROR: test_44_aprovacao_de_documento_adulterado_recusa (__main__.Simplificada.test_44_aprovacao_de_documento_adulterado_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 220, in test_44_aprovacao_de_documento_adulterado_recusa
+    import habilitacao_lotes as L
+ModuleNotFoundError: No module named 'habilitacao_lotes'
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.597s
+
+FAILED (errors=5)

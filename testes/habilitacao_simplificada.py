@@ -165,4 +165,62 @@ class Simplificada(unittest.TestCase):
         self.assertEqual(s['tratamento']['referencia'], str(self.cfg)+'#tratamento_administrativo')
         self.assertFalse(any(e['tipo']=='AprovacaoChatRegistrada' for e in s['eventos']))
 
+    def documentos(self):
+        self.permanente(); self.exportacao(); self.coletar()
+        c = I.ler_config(self.cfg)
+        c['aceitacao_minutas'] = dict(texto='uso as minutas sem ratificação jurídica', responsavel=c['responsavel'], data=H.agora(), revogada_em=None)
+        I.escrever(self.cfg, c)
+        campos = {k:{'valor':'Conteúdo sintético '+k, 'fonte':'S1'} for f in H.TEMPLATES.values()
+                  for k in H.TOKEN.findall((ROOT/'eiac-campo/reference/metodo'/f).read_text())}
+        campos['signatario']['valor'] = 'Pessoa Cliente'
+        H.executar(self.exp, 'consolidar', {'campos':campos})
+        self.geracao = dict(templates=str(ROOT/'eiac-campo/reference/metodo'), navegador='google-chrome', config_emcia=str(self.cfg))
+        self.pdf_patch = patch.object(H, 'pdf_bytes', side_effect=lambda md,b:b'%PDF-1.7\n'+md.encode()+b'\n%%EOF')
+        self.pdf_patch.start(); self.addCleanup(self.pdf_patch.stop)
+        H.executar(self.exp, 'preparar-documentos', self.geracao)
+        self.plano_docs = dict(geracao=self.geracao, qualificacao_0a=True, conteudo_conferido=True,
+            liberacao=dict(ferramenta='Painel escolhido', operador='Pessoa Cliente',
+            signatarios=[dict(nome='Pessoa Cliente', papel='organizacao', competencia='Representante'),
+                        dict(nome='Pessoa Engenheira', papel='emcia', competencia='Responsável')]))
+
+    def aprovar_docs(self):
+        import habilitacao_lotes as L
+        r = L.criar_aprovacao(self.exp, 'aprovar-documentos', self.plano_docs, 'ok')
+        return H.executar(self.exp, 'aprovar-documentos', {'plano':self.plano_docs, 'testemunho':r})
+
+    def test_40_revisao_conjunta_sem_aprovacao_recusa(self):
+        self.documentos()
+        with self.assertRaisesRegex(ValueError, 'aprovação'):
+            H.executar(self.exp, 'aprovar-documentos', {'plano':self.plano_docs})
+        self.assertFalse(json.loads((self.exp/'expediente.json').read_text())['documentos'])
+
+    def test_41_ok_cobre_tres_documentos_com_mesmos_pdfs(self):
+        self.documentos(); antes = json.loads((self.exp/'expediente.json').read_text())['rascunhos_documentos']
+        self.aprovar_docs(); s = json.loads((self.exp/'expediente.json').read_text())
+        for doc in H.CODIGOS_HAB:
+            v = s['documentos'][doc][-1]
+            self.assertEqual(v['pdf']['sha256'], antes[doc]['pdf']['sha256']); self.assertTrue(v['liberacao'])
+        self.assertEqual(len([e for e in s['eventos'] if e['tipo']=='AprovacaoLoteRegistrada']), 1)
+        self.assertTrue(any(e.get('operacao')=='revisar' for e in s['eventos']))
+
+    def test_42_assinatura_sem_aprovacao_recusa(self):
+        self.documentos(); self.aprovar_docs()
+        with self.assertRaisesRegex(ValueError, 'aprovação'):
+            H.executar(self.exp, 'aprovar-assinaturas', {'plano':{}})
+        self.assertFalse(H.completa(json.loads((self.exp/'expediente.json').read_text())))
+
+    def test_43_pdf_assinado_de_outro_documento_recusa(self):
+        import habilitacao_lotes as L
+        self.documentos(); self.aprovar_docs()
+        for doc in H.CODIGOS_HAB: (self.entrada/(doc+'-assinado.pdf')).write_bytes(b'%PDF-1.7\nDocumento de outro cliente\n%%EOF')
+        with patch.object(L, 'texto_pdf', side_effect=lambda p:pathlib.Path(p).read_bytes().decode()), self.assertRaisesRegex(ValueError, 'corresponde'):
+            H.executar(self.exp, 'preparar-assinaturas', {'config_emcia':str(self.cfg)})
+
+    def test_44_aprovacao_de_documento_adulterado_recusa(self):
+        import habilitacao_lotes as L
+        self.documentos(); r = L.criar_aprovacao(self.exp, 'aprovar-documentos', self.plano_docs, 'ok')
+        s = json.loads((self.exp/'expediente.json').read_text())
+        (self.exp/s['rascunhos_documentos']['HAB-01']['pdf']['caminho']).write_bytes(b'alterado')
+        with self.assertRaises(ValueError): H.executar(self.exp, 'aprovar-documentos', {'plano':self.plano_docs, 'testemunho':r})
+
 if __name__ == '__main__': unittest.main(verbosity=2)

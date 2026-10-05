@@ -236,6 +236,8 @@ def integridade(root, node):
 
 
 def invalidar(state):
+    state["rascunhos_documentos"] = None
+    state["rascunhos_assinaturas"] = None
     state["revisao"] = None
     state["acessos"] = None
     for versions in state["documentos"].values():
@@ -311,6 +313,54 @@ def completa(state):
     return True
 
 
+def preparar_minutas(s, p):
+    template_root = pathlib.Path(texto(p.get("templates")))
+    prepared = {}
+    situacoes = {}
+    config_path = pathlib.Path(p.get("config_emcia", pathlib.Path.home()/".emcia/config.json"))
+    config = json.loads(config_path.read_text()) if config_path.is_file() and not config_path.is_symlink() else {}
+    aceitacao = config.get("aceitacao_minutas")
+    aceita = (isinstance(aceitacao,dict) and aceitacao.get("texto")=="uso as minutas sem ratificação jurídica"
+              and aceitacao.get("responsavel")==s["responsavel"] and config.get("responsavel")==s["responsavel"]
+              and bool(aceitacao.get("data")) and not aceitacao.get("revogada_em"))
+    registros = registros_aprovados()
+    caminhos = templates_aprovados(registros)
+    for doc, caminho in caminhos.items():
+        filename = pathlib.PurePosixPath(caminho).name
+        raw = (template_root / filename).read_bytes()
+        exigir(registros[caminho]['sha256'] == digest(raw),
+               'APR-01: hash do template divergente em ' + doc)
+        md = documento_cliente(raw.decode('utf-8'), doc)
+        juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
+                         if r.get('resultado') == 'aprovado' and r['documentos'].get(doc) == digest(raw)), None)
+        exigir(doc == 'HAB-01' or juridica is not None or aceita,
+               'registre revisao-juridica aprovada para o hash exato de ' + doc +
+               ' ou aceite as minutas sem ratificação jurídica em /eiac-campo:iniciar antes de gerar')
+        situacoes[doc] = dict(estado='ratificada' if juridica else ('sem ratificação' if doc!='HAB-01' else 'não aplicável'),
+                              data=agora(), revisao=copy.deepcopy(juridica),
+                              aceitacao=copy.deepcopy(aceitacao) if doc!='HAB-01' and not juridica else None)
+        situacoes[doc]['minuta'] = dict(codigo=doc, arquivo=caminho, versao=registros[caminho]['versao'].split()[0], versao_aprovada=registros[caminho]['versao'], sha256=digest(raw))
+        n = len(s["documentos"].get(doc, [])) + 1
+        controls = {"caso_id": s["caso_reservado"], "responsavel_emcia": s["responsavel"],
+                    "status_assinatura": "Aguardando assinatura", "versao_assinada": "Pendente",
+                    "evidencia_assinatura": "Pendente", "data_assinatura_cliente": "A registrar na assinatura",
+                    "data_assinatura_emcia": "A registrar na assinatura"}
+        fields = {k: v["valor"] for k, v in s["campos"].items()}
+        fields.update(controls)
+        missing = set(TOKEN.findall(md)) - fields.keys()
+        exigir(not missing, "campos ausentes em " + doc + ": " + ", ".join(sorted(missing)))
+        md = TOKEN.sub(lambda m: fields[m[1]], md)
+        md += (f"\n\n---\n\nIdentificação de emissão: {doc} · versão {n}.\n"
+               "Estado de emissão: Para assinatura.\n"
+               f"Habilitação: {s['habilitacao']}. Identificador do futuro caso reservado: {s['caso_reservado']}. "
+               "O caso ainda não foi aberto.\n"
+               "O controle acima descreve a emissão; a conclusão da assinatura será registrada "
+               "no expediente, preservando este arquivo e os comprovantes do serviço escolhido.\n")
+        exigir("{{" not in md and "}}" not in md, "placeholder não resolvido")
+        prepared[doc] = (raw, md, n, juridica)
+    return prepared, situacoes
+
+
 def aplicar(root, s, action, p):
     exigir(not ({"autor", "responsavel"} & p.keys()), "autoria vem do expediente, não do argumento")
     if action == "estado":
@@ -319,6 +369,9 @@ def aplicar(root, s, action, p):
                 "pendencias": s["pendencias"], "documentos": s["documentos"],
                 "tratamento_registrado": bool(s["tratamento"]), "acessos": s["acessos"],
                 "revisoes_juridicas": s.get('revisoes_juridicas', [])}
+    if action in {"preparar-documentos", "aprovar-documentos", "preparar-assinaturas", "aprovar-assinaturas"}:
+        import habilitacao_lotes as L
+        return L.aplicar(root, s, action, p)
     if action == "tratamento":
         exigir(not s["fontes"], "condições devem ser registradas antes da coleta")
         exigir(p.get("escopo") == "administrativo", "somente informações administrativas antes de 0d")
@@ -425,51 +478,17 @@ def aplicar(root, s, action, p):
         exigir(s["revisao"] is not None, "revisão humana ausente")
         template_root = pathlib.Path(texto(p.get("templates")))
         browser = p.get("navegador", "google-chrome")
-        prepared = {}
-        situacoes = {}
-        config_path = pathlib.Path(p.get("config_emcia", pathlib.Path.home()/".emcia/config.json"))
-        config = json.loads(config_path.read_text()) if config_path.is_file() and not config_path.is_symlink() else {}
-        aceitacao = config.get("aceitacao_minutas")
-        aceita = (isinstance(aceitacao,dict) and aceitacao.get("texto")=="uso as minutas sem ratificação jurídica"
-                  and aceitacao.get("responsavel")==s["responsavel"] and config.get("responsavel")==s["responsavel"]
-                  and bool(aceitacao.get("data")) and not aceitacao.get("revogada_em"))
-        registros = registros_aprovados()
-        caminhos = templates_aprovados(registros)
-        for doc, caminho in caminhos.items():
-            filename = pathlib.PurePosixPath(caminho).name
-            raw = (template_root / filename).read_bytes()
-            exigir(registros[caminho]['sha256'] == digest(raw),
-                   'APR-01: hash do template divergente em ' + doc)
-            md = documento_cliente(raw.decode('utf-8'), doc)
-            juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
-                             if r.get('resultado') == 'aprovado' and r['documentos'].get(doc) == digest(raw)), None)
-            exigir(doc == 'HAB-01' or juridica is not None or aceita,
-                   'registre revisao-juridica aprovada para o hash exato de ' + doc +
-                   ' ou aceite as minutas sem ratificação jurídica em /eiac-campo:iniciar antes de gerar')
-            situacoes[doc] = dict(estado='ratificada' if juridica else ('sem ratificação' if doc!='HAB-01' else 'não aplicável'),
-                                  data=agora(), revisao=copy.deepcopy(juridica),
-                                  aceitacao=copy.deepcopy(aceitacao) if doc!='HAB-01' and not juridica else None)
-            situacoes[doc]['minuta'] = dict(codigo=doc, arquivo=caminho, versao=registros[caminho]['versao'].split()[0], versao_aprovada=registros[caminho]['versao'], sha256=digest(raw))
-            n = len(s["documentos"].get(doc, [])) + 1
-            controls = {"caso_id": s["caso_reservado"], "responsavel_emcia": s["responsavel"],
-                        "status_assinatura": "Aguardando assinatura", "versao_assinada": "Pendente",
-                        "evidencia_assinatura": "Pendente", "data_assinatura_cliente": "A registrar na assinatura",
-                        "data_assinatura_emcia": "A registrar na assinatura"}
-            fields = {k: v["valor"] for k, v in s["campos"].items()}
-            fields.update(controls)
-            missing = set(TOKEN.findall(md)) - fields.keys()
-            exigir(not missing, "campos ausentes em " + doc + ": " + ", ".join(sorted(missing)))
-            md = TOKEN.sub(lambda m: fields[m[1]], md)
-            md += (f"\n\n---\n\nIdentificação de emissão: {doc} · versão {n}.\n"
-                   "Estado de emissão: Para assinatura.\n"
-                   f"Habilitação: {s['habilitacao']}. Identificador do futuro caso reservado: {s['caso_reservado']}. "
-                   "O caso ainda não foi aberto.\n"
-                   "O controle acima descreve a emissão; a conclusão da assinatura será registrada "
-                   "no expediente, preservando este arquivo e os comprovantes do serviço escolhido.\n")
-            exigir("{{" not in md and "}}" not in md, "placeholder não resolvido")
-            prepared[doc] = (raw, md, n, juridica)
+        prepared, situacoes = preparar_minutas(s, p)
         # Todas as pré-condições são conferidas antes de iniciar qualquer PDF.
-        pdfs = {doc: pdf_bytes(md, browser) for doc, (raw, md, n, juridica) in prepared.items()}
+        rascunhos = s.get('rascunhos_documentos')
+        if rascunhos:
+            for doc, (raw, md, n, juridica) in prepared.items():
+                r = rascunhos[doc]
+                exigir(ler_arquivo(root, r['template']) == raw and ler_arquivo(root, r['markdown']) == md.encode()
+                       and r['versao'] == n, 'rascunho mudou; prepare e confira novamente os documentos')
+            pdfs = {doc: ler_arquivo(root, rascunhos[doc]['pdf']) for doc in prepared}
+        else:
+            pdfs = {doc: pdf_bytes(md, browser) for doc, (raw, md, n, juridica) in prepared.items()}
         for doc, (raw, md, n, juridica) in prepared.items():
             for previous in s["documentos"].get(doc, []):
                 previous["vigente"] = False
