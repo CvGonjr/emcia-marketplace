@@ -223,4 +223,21 @@ class Simplificada(unittest.TestCase):
         (self.exp/s['rascunhos_documentos']['HAB-01']['pdf']['caminho']).write_bytes(b'alterado')
         with self.assertRaises(ValueError): H.executar(self.exp, 'aprovar-documentos', {'plano':self.plano_docs, 'testemunho':r})
 
+    def test_50_matriz_nao_presume_acesso_concedido(self):
+        self.permanente()
+        with self.csv.open('w', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=['Submission ID','caso','Respondente','HAB-0c-3','HAB-0c-5'])
+            w.writeheader(); w.writerow({'Submission ID':'SUB-1','caso':'CASO','Respondente':'Pessoa Cliente',
+                'HAB-0c-3':'Planilha de vendas', 'HAB-0c-5':'Sistema restrito'})
+        s = json.loads((self.exp/'expediente.json').read_text()); s['tratamento'] = {'escopo':'administrativo'}; H.salvar(self.exp,s)
+        self.coletar(); r = H.executar(self.exp, 'planejar-acessos', {})
+        self.assertEqual(r['itens'][0]['item'], 'Planilha de vendas')
+        self.assertEqual(r['itens'][0]['status'], 'a-confirmar'); self.assertEqual(r['respostas_0c']['HAB-0c-5'], 'Sistema restrito')
+        self.assertIsNone(json.loads((self.exp/'expediente.json').read_text())['acessos'])
+
+    def test_51_acessos_sem_mensagem_explicita_recusa(self):
+        self.permanente(); self.exportacao(); self.coletar()
+        with self.assertRaisesRegex(ValueError, 'mensagem'):
+            H.executar(self.exp, 'confirmar-acessos', {'matriz':{}})
+
 if __name__ == '__main__': unittest.main(verbosity=2)

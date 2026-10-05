@@ -372,6 +372,9 @@ def aplicar(root, s, action, p):
     if action in {"preparar-documentos", "aprovar-documentos", "preparar-assinaturas", "aprovar-assinaturas"}:
         import habilitacao_lotes as L
         return L.aplicar(root, s, action, p)
+    if action in {"planejar-acessos", "confirmar-acessos"}:
+        import acessos_administrativos as C
+        return C.planejar(root, s) if action == "planejar-acessos" else C.confirmar(root, s, p)
     if action == "tratamento":
         exigir(not s["fontes"], "condições devem ser registradas antes da coleta")
         exigir(p.get("escopo") == "administrativo", "somente informações administrativas antes de 0d")
