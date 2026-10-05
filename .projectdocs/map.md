@@ -11,7 +11,7 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 | Componente | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.28 | Método, scripts de campo, comandos, habilidades e template |
+| eiac-campo | 0.8.29 | Método, scripts de campo, comandos, habilidades e template |
 | Playbook do template | 0.4.21 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
@@ -280,3 +280,11 @@ conferido; publicação exige a última conferência vigente. PDF permanece alte
 Ciclo sem textos fixos não é inferido. conferencia_formulario.py: 29 testes;
 perfis_conectores.py: 47. Regressão integral: 1090/53 em 3.12 e 1092/53 em 3.14,
 somente A25 conhecida. Evidência: .projectdocs/evidencias/conferencia-formulario/.
+
+## Comparador no formato real do conector (046)
+
+Campo 0.8.29 lê payload.html ou safeHTMLSchema, com normalização restrita NFC,
+NBSP, bordas e formatação. Marcas/estrutura não reconhecidas são recusadas por
+blocks[i]. Prefixo de id nas perguntas continua divergindo. Bateria: 48 testes;
+regressão integral 1109/53 em 3.12 e 1111/53 em 3.14, somente A25 conhecida.
+Evidência: .projectdocs/evidencias/comparador-conector-real/.

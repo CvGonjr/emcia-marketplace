@@ -2,7 +2,7 @@
 
 Revisão: 05/10/2026. Linha de base integral do bloco inicial: **986 verificações
 em 49 módulos**, Python 3.12.12, sem exclusões/falhas. Regressão final:
-**1090 verificações em 53 módulos em Python 3.12** (1092 em Python 3.14.4,
+**1109 verificações em 53 módulos em Python 3.12** (1111 em Python 3.14.4,
 com duas verificações adicionais de PyYAML), com A25 como única falha conhecida, preservada
 visível; quatro negativas de A25 passam. Evidência e runner:
 `.projectdocs/evidencias/conferencia-formulario/`. Os pacotes anteriores permanecem
@@ -57,7 +57,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `entregar.py` | 10 | Entrega: negativas antes do controle de emissão e registro humano |
 | `escopo_mcp.py` | 11 | Escopo de ferramentas MCP e listagem registrada |
 | `esforco.py` | 1 | Registro de esforço e cálculo |
-| `conferencia_formulario.py` | 29 | Texto/ordem/tipo/campo oculto, relatório/hash, confirmação, PDF, retorno/contexto e última pré-condição; MCP sintético |
+| `conferencia_formulario.py` | 48 | Texto/ordem/tipo/campo oculto, formato real safeHTMLSchema e html, normalização (046), relatório/hash, confirmação, PDF, retorno/contexto e última pré-condição; MCP sintético |
 | `formularios.py` | 5 | Redação fixa da triagem e isolamento na preparação de submissões |
 | `habilidades_a18.py` | 13 | A18: rotas reais de carregamento, inclusive com sessão e selo |
 | `habilitacao.py` | 45 | Travas do expediente, resultado aprovado obrigatório, registros legados, nomes resolvidos por APR-01, ambiguidade e hashes; separação do modelo e emissão; dados sintéticos |
@@ -177,3 +177,8 @@ Evidência inicial/final nas duas versões: .projectdocs/evidencias/perfis-conec
 A conferência usa fixtures `apoio/tally-load-form*.json`, conforme schema público
 do Tally, e inventário real transcrito. Não chama servidor nem conta real. O percurso
 de início cobre load_form → comparar → conferido → publicar com scripts e hooks reais.
+
+A revisão 046 usa fixtures fornecidas com safeHTMLSchema e verifica normalização
+restrita, marcas malformadas/desconhecidas, elementos extras, bloco inválido com
+caminho, pontuação/palavras/acentos/espaços internos e prefixo de id divergente.
+Evidência integral em .projectdocs/evidencias/comparador-conector-real/.

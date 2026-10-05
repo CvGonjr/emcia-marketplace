@@ -1,0 +1,27 @@
+{
+  "figuras": {
+    ".projectdocs/figuras/README.md": "5bd684a255b7a08486f18236d5e1a4ef5f18b65c70185c69dbf2f1bc99f0afbd",
+    ".projectdocs/figuras/dados/apendice/fig23.png": "e819775ed193cffb09b1ad33fcb0f93c485726a85633ed1ad759dfd3f6b548a9",
+    ".projectdocs/figuras/dados/apendice/fig45.html": "11851d4cca2e2f2f78d2e9e011d3ff1be3efa4907a29a59bfe559a3349ff9282",
+    ".projectdocs/figuras/dados/apendice/fig45.png": "b12757ddaf6ea2a5bebc877b2c29ba8e772ecdf3440ccf91a456a4a7867ca496",
+    ".projectdocs/figuras/dados/apendice/fig46.html": "b8f553846b21575dd05f2a39305c333650153f89227becd62b5fc6502a67056a",
+    ".projectdocs/figuras/dados/apendice/fig46.png": "cc32ce98c8e1e4ad825a812b7ca8596e9975612824a8905e6a060f3c8076f70b",
+    ".projectdocs/figuras/dados/apendice/fig47.png": "7c696e46067051db1e5136d2127d64dc62727cbe7196e7e6a0fe913001ff928c",
+    ".projectdocs/figuras/dados/apendice/fig48.png": "17625456332d06f7e480126b9696e05d7972568ffabf22735edadc9be7fd0f7a",
+    ".projectdocs/figuras/dados/fig23.json": "69d9aaf8a911a41ec35d5b034be0370e42e3fcd758e1558e2ecd9eb3c56833a5",
+    ".projectdocs/figuras/dados/fig45.json": "8b70c8219cccd0940e04ef5aa1faddb9c60e59deecf67e638a3e2668906c224d",
+    ".projectdocs/figuras/dados/fig46.json": "ef24a9bf8f703f300dc1a8cdb99be404e2f305f567553d80f2e20d7932a69de1",
+    ".projectdocs/figuras/gerar_figuras.py": "41b164328a4bcb2c82400d9d99674387932478899e9452eea52d16d2464403b3",
+    ".projectdocs/figuras/saida/fig45.png": "3719985086cdf59ca6bc56a75c84b3aa5ea4c13d522ad9ee76fd3f182384ecd4",
+    ".projectdocs/figuras/saida/fig46.png": "50f4bc55dc961baf772e472968abca24f6de980d5ac034d197d6f6015ecf480d",
+    ".projectdocs/figuras/saida/fig47.png": "ad4a0f681813ba9de183dd6fbcfdc84def2016b81866e6c006e151dd555ea0fa",
+    ".projectdocs/figuras/saida/fig48.png": "4b30f44806d26587c0c55f8f12d092badabb93c9484ffe8670d05bad0fd58f70",
+    ".projectdocs/figuras/saida/fig49.png": "db1894571a1a081d19361a90123d597a12dc0196e9cd383ee07e3ee1050720fb"
+  },
+  "conferencia": {
+    "eiac-campo/scripts/conferencia_formulario.py": "6952752a4e7fdb349a0af817838b66b66f664b7a241ee0549ba08bfe92e8f314",
+    "testes/conferencia_formulario.py": "2b97cb2ea7b923e0fba2aaca27835090e2c7c1fcf931097d8da308cafe665d77",
+    "testes/apoio/tally-load-form-7R8Z20-identico.json": "b31ed8d003f603a2484a2ef4bf0330e790d19e60fa56933b7a6febadaf445c0e",
+    "testes/apoio/tally-load-form-7R8Z20-real.json": "f417fe5b340036726e119867c764bef4b41c50a290737677f16a9280f3a83543"
+  }
+}

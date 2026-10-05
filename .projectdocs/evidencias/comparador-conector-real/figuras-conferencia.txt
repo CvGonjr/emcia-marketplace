@@ -1,0 +1,7 @@
+Todas as 10 imagens PNG foram abertas e verificadas com Pillow.
+Os três JSONs têm colunas/linhas compatíveis. Script compilado por AST.
+Gerador executado com Playwright/Chromium numa cópia temporária:
+ok fig23.png
+ok fig45.png
+ok fig46.png
+Os arquivos originais foram preservados; saida/fig47–49 são capturas sem JSON neste conjunto.

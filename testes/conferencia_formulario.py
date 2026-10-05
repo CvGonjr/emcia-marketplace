@@ -196,6 +196,125 @@ class Conferencia(unittest.TestCase):
         self.assertEqual(json.loads(self.cfg.with_name('eventos.jsonl').read_text().splitlines()[-1])['evento'],'TentativaNegada')
 
 
+    def fixture(self, nome):
+        self.raw = json.loads((ROOT/'testes/apoio'/nome).read_text(encoding='utf-8'))
+
+    def trocar(self, antigo, novo):
+        for b in self.raw['data']['blocks']:
+            for seg in b['payload'].get('safeHTMLSchema', []):
+                if antigo in seg[0]:
+                    seg[0] = seg[0].replace(antigo, novo, 1); return
+        raise AssertionError('trecho ausente no fixture: '+antigo)
+
+    def test_28_real_com_prefixo_de_id_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-real.json')
+        r = self.comparar(); self.assertTrue(any('pergunta 1 (HAB-0a-1): texto' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'texto')
+
+    def test_29_identico_com_espaco_nao_separavel_e_negrito_confere(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        r = self.comparar(); self.assertEqual(r['diferencas'], [])
+        self.assertIn('"formatacao": true', pathlib.Path(r['arquivo']).read_text(encoding='utf-8'))
+        self.confirmar(r); self.assertTrue(self.publicar()['autorizada'])
+
+    def test_30_palavra_trocada_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json'); self.trocar('concreto', 'específico')
+        r = self.comparar(); self.assertTrue(any('pergunta 2 (HAB-0a-2): texto' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'texto')
+
+    def test_31_acento_removido_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json'); self.trocar('vocês', 'voces')
+        r = self.comparar(); self.assertTrue(any('pergunta 1 (HAB-0a-1): texto' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'texto')
+
+    def test_32_ordem_trocada_no_safehtml(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        b = self.raw['data']['blocks']; b[2:6] = b[4:6]+b[2:4]
+        r = self.comparar(); self.assertTrue(any('ordem' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'ordem')
+
+    def test_33_pergunta_a_mais_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        b = self.raw['data']['blocks']; b += copy.deepcopy(b[2:4]); self.raw['data']['blocksCount'] = len(b)
+        r = self.comparar(); self.assertTrue(any('quantidade de perguntas' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'quantidade')
+
+    def test_34_pergunta_a_menos_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        b = self.raw['data']['blocks']; del b[-2:]; self.raw['data']['blocksCount'] = len(b)
+        r = self.comparar(); self.assertTrue(any('quantidade de perguntas' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'quantidade')
+
+    def test_35_campo_oculto_com_outro_nome_diverge(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][1]['payload']['hiddenFields'][0]['name'] = 'Caso'
+        r = self.comparar(); self.assertTrue(any('campo oculto caso' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'campo oculto caso')
+
+    def test_36_html_e_safehtml_divergentes_recusam(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][2]['payload']['html'] = '<p>Outro texto</p>'
+        r = self.comparar(); self.assertTrue(any('divergentes' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'formato')
+
+    def test_37_bloco_desconhecido_recusa_com_caminho(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'].insert(5, {'type':'MAGICO','groupType':'X','payload':{},'uuid':'u','groupUuid':'g'})
+        r = self.comparar(); self.assertTrue(any('blocks[5]' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'formato')
+
+    def test_38_formid_nao_declarado_no_fixture_real(self):
+        self.fixture('tally-load-form-7R8Z20-real.json'); self.raw['data']['formId'] = 'ALHEIO'
+        r = self.comparar(); self.assertTrue(any('formId' in d for d in r['diferencas']))
+        self.negada(self.publicar, 'formId')
+
+    def test_39_marcas_malformadas_recusam_com_caminho(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][2]['payload']['safeHTMLSchema'][0][1]={'invalido':True}
+        self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+
+    def test_40_trecho_com_elemento_extra_recusa(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][2]['payload']['safeHTMLSchema'][0].append('não reconhecido')
+        self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+
+    def test_41_tipo_invalido_tem_caminho(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][3]['type']=None
+        self.comparar();self.negada(self.publicar,r'blocks\[3\]')
+
+    def test_42_marca_sem_mapeamento_recusa(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][2]['payload']['safeHTMLSchema'][0][1]=[['mention','referencia']]
+        self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+
+    def test_43_marcador_nao_pareado_nao_desaparece(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.trocar('concreto','**concreto')
+        self.comparar();self.negada(self.publicar,'texto')
+
+    def test_44_campo_oculto_ausente_no_formato_real(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'].pop(1);self.raw['data']['blocksCount']-=1
+        self.comparar();self.negada(self.publicar,'campo oculto caso')
+
+    def test_45_nfc_e_bordas_sem_alterar_espacos_internos(self):
+        import unicodedata
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        for b in self.raw['data']['blocks']:
+            for s in b['payload'].get('safeHTMLSchema',[]):s[0]=unicodedata.normalize('NFD',s[0])
+        p=self.raw['data']['blocks'][2]['payload']['safeHTMLSchema']
+        p[0][0]=' '+p[0][0];p[-1][0]+=' '
+        self.assertEqual(self.comparar()['diferencas'],[])
+        self.trocar('querem tratar','querem  tratar')
+        self.comparar();self.negada(self.publicar,'texto')
+
+    def test_46_tipo_desconhecido_com_prefixo_input_recusa_com_caminho(self):
+        self.fixture('tally-load-form-7R8Z20-identico.json')
+        self.raw['data']['blocks'][3]['type']='INPUT_DESCONHECIDO'
+        self.comparar();self.negada(self.publicar,r'blocks\[3\]')
+
+
 class ContratoGenerico(unittest.TestCase):
     def test_01_estado_mais_recente_invalida_anterior(self):
         import escopo_externo as S

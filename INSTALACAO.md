@@ -2,7 +2,7 @@
 
 Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
 O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
-A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.28, playbook 0.4.21.
+A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.29, playbook 0.4.21.
 
 ## 1. Instalar os plugins
 

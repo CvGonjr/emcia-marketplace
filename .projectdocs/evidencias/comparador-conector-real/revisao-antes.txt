@@ -1,0 +1,132 @@
+test_01_texto_diferente_impede_publicacao_e_lista (__main__.Conferencia.test_01_texto_diferente_impede_publicacao_e_lista) ... ok
+test_02_ordem_trocada (__main__.Conferencia.test_02_ordem_trocada) ... ok
+test_03_campo_oculto_ausente (__main__.Conferencia.test_03_campo_oculto_ausente) ... ok
+test_04_tipo_diferente (__main__.Conferencia.test_04_tipo_diferente) ... ok
+test_05_formulario_alheio (__main__.Conferencia.test_05_formulario_alheio) ... ok
+test_06_ferramenta_fora_do_perfil (__main__.Conferencia.test_06_ferramenta_fora_do_perfil) ... ok
+test_07_sem_leitura_nao_compara (__main__.Conferencia.test_07_sem_leitura_nao_compara) ... ok
+test_08_formato_desconhecido_nao_aproxima (__main__.Conferencia.test_08_formato_desconhecido_nao_aproxima) ... ok
+test_09_retorno_com_id_alheio (__main__.Conferencia.test_09_retorno_com_id_alheio) ... ok
+test_10_relatorio_adulterado (__main__.Conferencia.test_10_relatorio_adulterado) ... ok
+test_11_confirmacao_exige_literal_conferido (__main__.Conferencia.test_11_confirmacao_exige_literal_conferido) ... ok
+test_12_divergencia_nao_pode_ser_confirmada (__main__.Conferencia.test_12_divergencia_nao_pode_ser_confirmada) ... ok
+test_13_leitura_nova_invalida_confirmacao (__main__.Conferencia.test_13_leitura_nova_invalida_confirmacao) ... ok
+test_14_hash_de_outro_relatorio_nao_confirma (__main__.Conferencia.test_14_hash_de_outro_relatorio_nao_confirma) ... ok
+test_15_manual_exige_pdf (__main__.Conferencia.test_15_manual_exige_pdf) ... ok
+test_16_manual_nao_sobrepoe_divergencia (__main__.Conferencia.test_16_manual_nao_sobrepoe_divergencia) ... ok
+test_17_confirmacao_sem_aprovacao (__main__.Conferencia.test_17_confirmacao_sem_aprovacao) ... ok
+test_18_workspace_do_retorno_alheio (__main__.Conferencia.test_18_workspace_do_retorno_alheio) ... ok
+test_19_campo_oculto_duplicado (__main__.Conferencia.test_19_campo_oculto_duplicado) ... ok
+test_20_identico_relatorio_md_hash_e_aguarda_humano (__main__.Conferencia.test_20_identico_relatorio_md_hash_e_aguarda_humano) ... ok
+test_21_conferido_libera_sem_arquivo_externo (__main__.Conferencia.test_21_conferido_libera_sem_arquivo_externo) ... ok
+test_22_manual_pdf_continua_alternativa (__main__.Conferencia.test_22_manual_pdf_continua_alternativa) ... ok
+test_23_envelope_mcp_structured_content (__main__.Conferencia.test_23_envelope_mcp_structured_content) ... ok
+test_24_ciclo_sem_textos_fixos_nao_aproxima (__main__.Conferencia.test_24_ciclo_sem_textos_fixos_nao_aproxima) ... ok
+test_25_triagem_identica_e_alternativa_alterada (__main__.Conferencia.test_25_triagem_identica_e_alternativa_alterada) ... ok
+test_26_retorno_adulterado (__main__.Conferencia.test_26_retorno_adulterado) ... ok
+test_27_hook_recusa_depois_de_leitura_nova (__main__.Conferencia.test_27_hook_recusa_depois_de_leitura_nova) ... ok
+test_28_real_com_prefixo_de_id_diverge (__main__.Conferencia.test_28_real_com_prefixo_de_id_diverge) ... ok
+test_29_identico_com_espaco_nao_separavel_e_negrito_confere (__main__.Conferencia.test_29_identico_com_espaco_nao_separavel_e_negrito_confere) ... ok
+test_30_palavra_trocada_diverge (__main__.Conferencia.test_30_palavra_trocada_diverge) ... ok
+test_31_acento_removido_diverge (__main__.Conferencia.test_31_acento_removido_diverge) ... ok
+test_32_ordem_trocada_no_safehtml (__main__.Conferencia.test_32_ordem_trocada_no_safehtml) ... ok
+test_33_pergunta_a_mais_diverge (__main__.Conferencia.test_33_pergunta_a_mais_diverge) ... ok
+test_34_pergunta_a_menos_diverge (__main__.Conferencia.test_34_pergunta_a_menos_diverge) ... ok
+test_35_campo_oculto_com_outro_nome_diverge (__main__.Conferencia.test_35_campo_oculto_com_outro_nome_diverge) ... ok
+test_36_html_e_safehtml_divergentes_recusam (__main__.Conferencia.test_36_html_e_safehtml_divergentes_recusam) ... ok
+test_37_bloco_desconhecido_recusa_com_caminho (__main__.Conferencia.test_37_bloco_desconhecido_recusa_com_caminho) ... ok
+test_38_formid_nao_declarado_no_fixture_real (__main__.Conferencia.test_38_formid_nao_declarado_no_fixture_real) ... ok
+test_39_marcas_malformadas_recusam_com_caminho (__main__.Conferencia.test_39_marcas_malformadas_recusam_com_caminho) ... FAIL
+test_40_trecho_com_elemento_extra_recusa (__main__.Conferencia.test_40_trecho_com_elemento_extra_recusa) ... FAIL
+test_41_tipo_invalido_tem_caminho (__main__.Conferencia.test_41_tipo_invalido_tem_caminho) ... FAIL
+test_42_marca_sem_mapeamento_recusa (__main__.Conferencia.test_42_marca_sem_mapeamento_recusa) ... FAIL
+test_43_marcador_nao_pareado_nao_desaparece (__main__.Conferencia.test_43_marcador_nao_pareado_nao_desaparece) ... FAIL
+test_44_campo_oculto_ausente_no_formato_real (__main__.Conferencia.test_44_campo_oculto_ausente_no_formato_real) ... ok
+test_45_nfc_e_bordas_sem_alterar_espacos_internos (__main__.Conferencia.test_45_nfc_e_bordas_sem_alterar_espacos_internos) ... ok
+test_01_estado_mais_recente_invalida_anterior (__main__.ContratoGenerico.test_01_estado_mais_recente_invalida_anterior) ... ok
+test_02_outro_contexto_nao_altera_precondicao (__main__.ContratoGenerico.test_02_outro_contexto_nao_altera_precondicao) ... ok
+
+======================================================================
+FAIL: test_39_marcas_malformadas_recusam_com_caminho (__main__.Conferencia.test_39_marcas_malformadas_recusam_com_caminho)
+----------------------------------------------------------------------
+ValueError: pré-condição externa não registrada: {'resultado': 'conferido'}; []
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 274, in test_39_marcas_malformadas_recusam_com_caminho
+    self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "blocks\[2\]" does not match "pré-condição externa não registrada: {'resultado': 'conferido'}; []"
+
+======================================================================
+FAIL: test_40_trecho_com_elemento_extra_recusa (__main__.Conferencia.test_40_trecho_com_elemento_extra_recusa)
+----------------------------------------------------------------------
+ValueError: pré-condição externa não registrada: {'resultado': 'conferido'}; []
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 279, in test_40_trecho_com_elemento_extra_recusa
+    self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "blocks\[2\]" does not match "pré-condição externa não registrada: {'resultado': 'conferido'}; []"
+
+======================================================================
+FAIL: test_41_tipo_invalido_tem_caminho (__main__.Conferencia.test_41_tipo_invalido_tem_caminho)
+----------------------------------------------------------------------
+ValueError: pré-condição externa não registrada: {'resultado': 'conferido'}; ["formato de retorno não conferível: 'NoneType' object has no attribute 'startswith'"]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 284, in test_41_tipo_invalido_tem_caminho
+    self.comparar();self.negada(self.publicar,r'blocks\[3\]')
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "blocks\[3\]" does not match "pré-condição externa não registrada: {'resultado': 'conferido'}; ["formato de retorno não conferível: 'NoneType' object has no attribute 'startswith'"]"
+
+======================================================================
+FAIL: test_42_marca_sem_mapeamento_recusa (__main__.Conferencia.test_42_marca_sem_mapeamento_recusa)
+----------------------------------------------------------------------
+ValueError: pré-condição externa não registrada: {'resultado': 'conferido'}; []
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 289, in test_42_marca_sem_mapeamento_recusa
+    self.comparar();self.negada(self.publicar,r'blocks\[2\]')
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "blocks\[2\]" does not match "pré-condição externa não registrada: {'resultado': 'conferido'}; []"
+
+======================================================================
+FAIL: test_43_marcador_nao_pareado_nao_desaparece (__main__.Conferencia.test_43_marcador_nao_pareado_nao_desaparece)
+----------------------------------------------------------------------
+ValueError: pré-condição externa não registrada: {'resultado': 'conferido'}; []
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 294, in test_43_marcador_nao_pareado_nao_desaparece
+    self.comparar();self.negada(self.publicar,'texto')
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "texto" does not match "pré-condição externa não registrada: {'resultado': 'conferido'}; []"
+
+----------------------------------------------------------------------
+Ran 47 tests in 1.970s
+
+FAILED (failures=5)

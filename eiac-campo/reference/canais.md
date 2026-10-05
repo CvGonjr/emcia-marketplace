@@ -67,7 +67,8 @@ Use a entrada acima em `iniciar.py retorno`; `resposta` recebe o JSON real compl
 Aceita-se também o envelope MCP `structuredContent.data`. O retorno e a chamada
 ficam vinculados por hashes e evento. Não se usa o ledger textual para decidir
 conformidade. O adaptador aceita o [schema público dos blocos Tally](https://developers.tally.so/api-reference/openapi.json):
-`TITLE` de `groupType: QUESTION`, `payload.html`, entradas subsequentes e
+`TITLE` de `groupType: QUESTION`, `payload.html` ou `payload.safeHTMLSchema`
+conforme o retorno fornecido do conector (decisão 046), entradas subsequentes e
 `HIDDEN_FIELDS.payload.hiddenFields`. Formato desconhecido é divergência explícita.
 O ensaio usa fixtures desse schema; não autentica o servidor nem testa conta real.
 
@@ -81,9 +82,14 @@ A aprovação dessa entrada fixa a seleção do modelo correspondente. Modelos
 permitidos: `habilitacao`, `triagem`, `ciclo`, sempre da pasta `reference/formularios/`.
 O relatório MD fica em `conferencias/` junto da configuração; registra contexto,
 formulário, modelo/hash, retorno/hash, perguntas observadas e diferenças.
-Compara caracteres exatos do texto (incluindo espaços, acentos e pontuação),
-ordem e tipo, e exige uma ocorrência do campo oculto `caso`. Tags HTML de
-formatação não mudam o texto; não se reformula nem corrige a redação. `texto`
+Compara texto, ordem e tipo, e exige uma ocorrência do campo oculto `caso`.
+A decisão 046 autoriza somente NFC, NBSP convertido em espaço, remoção de
+espaços nas bordas e marcação de formatação. Marcação `**` pareada e marcas
+de negrito do schema capturado são ignoradas e registradas no relatório.
+Se `html` e `safeHTMLSchema` estiverem presentes, ambos devem coincidir após
+essa normalização. Marcas sem mapeamento, estrutura ou tipo inválido recusam
+com o caminho `blocks[i]`. Espaços internos, pontuação, palavras e acentos
+continuam exatos; não se reformula nem corrige a redação. `texto`
 corresponde a uma única entrada `INPUT_TEXT` ou `TEXTAREA`. As alternativas da
 triagem exigem escolha única `MULTIPLE_CHOICE_OPTION`, mesmos textos e ordem,
 sem seleção múltipla ou aleatorização. O modelo de ciclo não fixa redação de
@@ -218,3 +224,7 @@ permissões em contas reais ou assinatura de todas as versões dos conectores.
 Ferramenta incompatível fica recusada e exige perfil conferido, sem ampliar escopo.
 Aprovação no chat é testemunho, não autenticação. Disco e autoria fixa mantêm a
 fronteira de confiança da 022; não se verifica veracidade remota por modelo.
+
+Após atualizar para o comparador da decisão 046, leia novamente o formulário,
+gere o relatório e registre “conferido” para seu novo hash; os relatórios anteriores
+não recebem confirmação ou migração automática.

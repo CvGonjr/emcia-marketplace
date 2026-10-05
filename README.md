@@ -10,7 +10,7 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 | Componente | Versão | Responsabilidade |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.28 | Método, comandos, habilidades e operações administrativas |
+| eiac-campo | 0.8.29 | Método, comandos, habilidades e operações administrativas |
 | Playbook dos casos novos | 0.4.21 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
