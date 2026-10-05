@@ -325,6 +325,9 @@ def aplicar(root, s, action, p):
         s["tratamento"] = {"escopo": "administrativo", "condicoes": texto(p.get("condicoes")),
                            "provedor": texto(p.get("provedor")), "decisor": pessoa(p.get("decisor")),
                            "evidencia": importar(root, p.get("evidencia"))}
+    elif action == "receber-exportacao":
+        import coleta_administrativa as C
+        C.receber_exportacao(root, s, p)
     elif action == "receber":
         ident = identificador(p.get("id"))
         exigir(ident not in s["fontes"], "fonte já registrada")

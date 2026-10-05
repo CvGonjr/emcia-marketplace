@@ -23,6 +23,7 @@ class Simplificada(unittest.TestCase):
             calendario_casos='CAL', navegador='google-chrome'))
         self.exp = self.base/'expedientes/HAB'; self.entrada = self.base/'entrada'; self.entrada.mkdir()
         self.csv = self.entrada/'exportacao.csv'
+        c = I.ler_config(self.cfg); c['entrada_dir'] = str(self.entrada); I.escrever(self.cfg, c)
 
     def op(self, nome, literal='conferido', **extra):
         d = dict(habilitacao='HAB', caso='CASO', **extra)
@@ -81,5 +82,58 @@ class Simplificada(unittest.TestCase):
         I.registrar_retorno(self.cfg, d, {'resposta':json.loads((ROOT/'testes/apoio/tally-load-form.json').read_text())})
         with self.assertRaisesRegex(ValueError, 'conferência'):
             F.validar(self.cfg, I.ler_config(self.cfg), 'habilitacao')
+
+    def exportacao(self, casos=('OUTRO-A', 'CASO', 'OUTRO-B')):
+        with self.csv.open('w', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=['Submission ID', 'caso', 'Respondente', 'HAB-0a-1'])
+            w.writeheader()
+            for i,caso in enumerate(casos):
+                w.writerow({'Submission ID':'SUB-'+str(i), 'caso':caso, 'Respondente':'Pessoa Cliente',
+                            'HAB-0a-1': 'SEGREDO-'+caso})
+        s = json.loads((self.exp/'expediente.json').read_text())
+        s['tratamento'] = {'escopo':'administrativo', 'condicoes':'Condições sintéticas'}; H.salvar(self.exp, s)
+
+    def coletar(self, **extra):
+        return H.executar(self.exp, 'receber-exportacao', dict(config_emcia=str(self.cfg), arquivo=str(self.csv),
+            id='S1', **extra))
+
+    def test_10_exportacao_sem_linha_do_caso(self):
+        self.permanente(); self.exportacao(('OUTRO-A',))
+        with self.assertRaisesRegex(ValueError, 'nenhuma submissão'): self.coletar()
+        self.assertFalse((self.exp/'arquivos').exists())
+        self.assertNotIn('SEGREDO-OUTRO-A', (self.exp/'expediente.json').read_text())
+
+    def test_11_duas_submissoes_nao_escolhe(self):
+        self.permanente(); self.exportacao(('CASO', 'CASO'))
+        with self.assertRaisesRegex(ValueError, 'qual submissão'): self.coletar()
+        self.assertFalse((self.exp/'arquivos').exists())
+
+    def test_12_permanente_ausente_bloqueia_coleta(self):
+        H.iniciar(self.exp, 'HAB', 'Pessoa Engenheira', 'CASO')
+        self.exportacao()
+        with self.assertRaisesRegex(ValueError, 'conferido'): self.coletar()
+
+    def test_13_filtra_antes_de_persistir(self):
+        self.permanente(); self.exportacao(); original = self.csv.read_bytes(); self.coletar()
+        s = json.loads((self.exp/'expediente.json').read_text()); fonte = s['fontes']['S1']
+        self.assertEqual(fonte['canal'], 'tally-exportacao')
+        self.assertEqual(fonte['original_sha256'], H.digest(original))
+        self.assertNotEqual(fonte['arquivo']['sha256'], H.digest(original))
+        for arq in self.exp.rglob('*'):
+            if arq.is_file():
+                self.assertNotIn(b'SEGREDO-OUTRO', arq.read_bytes(), str(arq))
+        self.assertIn(b'SEGREDO-CASO', H.ler_arquivo(self.exp, fonte['arquivo']))
+
+    def test_14_selecao_explicita_dentre_duas(self):
+        self.permanente(); self.exportacao(('CASO', 'CASO', 'OUTRO-A')); self.coletar(submissao='SUB-1')
+        fonte = json.loads((self.exp/'expediente.json').read_text())['fontes']['S1']
+        self.assertEqual(fonte['submissao'], 'SUB-1')
+        linhas = list(csv.DictReader(io.StringIO(H.ler_arquivo(self.exp, fonte['arquivo']).decode())))
+        self.assertEqual(len(linhas), 1); self.assertEqual(linhas[0]['Submission ID'], 'SUB-1')
+
+    def test_15_arquivo_fora_da_entrada_recusa(self):
+        self.permanente(); self.exportacao()
+        outro = self.base/'fora.csv'; outro.write_bytes(self.csv.read_bytes()); self.csv = outro
+        with self.assertRaisesRegex(ValueError, 'entrada'): self.coletar()
 
 if __name__ == '__main__': unittest.main(verbosity=2)

@@ -1,0 +1,156 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+test_10_exportacao_sem_linha_do_caso (__main__.Simplificada.test_10_exportacao_sem_linha_do_caso) ... FAIL
+test_11_duas_submissoes_nao_escolhe (__main__.Simplificada.test_11_duas_submissoes_nao_escolhe) ... FAIL
+test_12_permanente_ausente_bloqueia_coleta (__main__.Simplificada.test_12_permanente_ausente_bloqueia_coleta) ... FAIL
+test_13_filtra_antes_de_persistir (__main__.Simplificada.test_13_filtra_antes_de_persistir) ... ERROR
+test_14_selecao_explicita_dentre_duas (__main__.Simplificada.test_14_selecao_explicita_dentre_duas) ... ERROR
+test_15_arquivo_fora_da_entrada_recusa (__main__.Simplificada.test_15_arquivo_fora_da_entrada_recusa) ... FAIL
+
+======================================================================
+ERROR: test_13_filtra_antes_de_persistir (__main__.Simplificada.test_13_filtra_antes_de_persistir)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 116, in test_13_filtra_antes_de_persistir
+    self.permanente(); self.exportacao(); original = self.csv.read_bytes(); self.coletar()
+                                                                            ^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 96, in coletar
+    return H.executar(self.exp, 'receber-exportacao', dict(config_emcia=str(self.cfg), arquivo=str(self.csv),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_14_selecao_explicita_dentre_duas (__main__.Simplificada.test_14_selecao_explicita_dentre_duas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 127, in test_14_selecao_explicita_dentre_duas
+    self.permanente(); self.exportacao(('CASO', 'CASO', 'OUTRO-A')); self.coletar(submissao='SUB-1')
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 96, in coletar
+    return H.executar(self.exp, 'receber-exportacao', dict(config_emcia=str(self.cfg), arquivo=str(self.csv),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+FAIL: test_10_exportacao_sem_linha_do_caso (__main__.Simplificada.test_10_exportacao_sem_linha_do_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: operação desconhecida
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 101, in test_10_exportacao_sem_linha_do_caso
+    with self.assertRaisesRegex(ValueError, 'nenhuma submissão'): self.coletar()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "nenhuma submissão" does not match "operação desconhecida"
+
+======================================================================
+FAIL: test_11_duas_submissoes_nao_escolhe (__main__.Simplificada.test_11_duas_submissoes_nao_escolhe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: operação desconhecida
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 107, in test_11_duas_submissoes_nao_escolhe
+    with self.assertRaisesRegex(ValueError, 'qual submissão'): self.coletar()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "qual submissão" does not match "operação desconhecida"
+
+======================================================================
+FAIL: test_12_permanente_ausente_bloqueia_coleta (__main__.Simplificada.test_12_permanente_ausente_bloqueia_coleta)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: operação desconhecida
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 113, in test_12_permanente_ausente_bloqueia_coleta
+    with self.assertRaisesRegex(ValueError, 'conferido'): self.coletar()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "conferido" does not match "operação desconhecida"
+
+======================================================================
+FAIL: test_15_arquivo_fora_da_entrada_recusa (__main__.Simplificada.test_15_arquivo_fora_da_entrada_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 558, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: operação desconhecida
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 136, in test_15_arquivo_fora_da_entrada_recusa
+    with self.assertRaisesRegex(ValueError, 'entrada'): self.coletar()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "entrada" does not match "operação desconhecida"
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.392s
+
+FAILED (failures=4, errors=2)
