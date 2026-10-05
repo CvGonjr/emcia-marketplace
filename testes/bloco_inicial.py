@@ -39,11 +39,11 @@ class BlocoInicial(unittest.TestCase):
         p.write_text('{"alterado":true}')
         with self.assertRaises(ValueError): A.conferir(r,'definir-canais','Pessoa Engenheira','CASO',cmd)
     def test_04_perfil_nao_afrouxa_escopo(self):
-        ferramentas=[{'name':'mcp__drive__list_files','inputSchema':{'properties':{'q':{'type':'string'}}}},
-            {'name':'mcp__drive__global_search','inputSchema':{'properties':{'q':{'type':'string'}}}}]
+        ferramentas=[{'nome':'mcp__claude_ai_Google_Drive__search_files','inputSchema':{'properties':{'query':{'type':'string'},'pageSize':{'type':'integer'},'pageToken':{'type':'string'},'excludeContentSnippets':{'type':'boolean'},'snippetVerbosity':{'type':'string'}}}},
+            {'nome':'mcp__claude_ai_Google_Drive__global_search','inputSchema':{'properties':{'query':{'type':'string'}}}}]
         p=I.calibrar(ferramentas)
         self.assertEqual(len(p['regras']),1)
-        self.assertEqual(p['recusadas'],['mcp__drive__global_search'])
+        self.assertEqual(p['recusadas'],['mcp__claude_ai_Google_Drive__global_search'])
         self.assertEqual(p['regras'][0]['argumentos'][0]['expressao'],"'{id}' in parents(?: and trashed = false)?")
         p['regras'][0]['argumentos'][0]['expressao']='.*'
         with self.assertRaises(ValueError): I.conferir_perfil(p,ferramentas)
@@ -51,7 +51,7 @@ class BlocoInicial(unittest.TestCase):
         self.assertEqual(I.configurar(self.cfg,self.config),self.config)
         with self.assertRaises(ValueError): I.configurar(self.cfg,dict(self.config,responsavel='Outra Pessoa'))
     def test_06_parametro_de_escopo_ausente_nao_gera_regra(self):
-        p=I.calibrar([{'name':'mcp__drive__list_files','inputSchema':{'properties':{'query':{'type':'string'}}}}])
+        p=I.calibrar([{'nome':'mcp__claude_ai_Google_Drive__search_files','inputSchema':{'properties':{'q':{'type':'string'}}}}])
         self.assertFalse(p['regras']); self.assertEqual(len(p['recusadas']),1)
 
     def test_10_nucleo_sem_instrumentos_ou_conectores(self):

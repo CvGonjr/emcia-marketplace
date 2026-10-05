@@ -80,47 +80,69 @@ def configurar(p,d):
     return d
 
 
-# Assinaturas conhecidas. A calibração nunca recebe uma expressão do agente.
-PERFIS={}
-def perfil(nomes,operacao,args):
-    for n in nomes:PERFIS[n]=(operacao,args)
-for ns in ('drive','gdrive','google_drive','claude_ai_Google_Drive'):
-    perfil([f'mcp__{ns}__{n}' for n in ('list_files','search_files')],'listar',
-           [{'campo':'q','tipo':'expressao','campo_id':'pasta_id','expressao':"'{id}' in parents(?: and trashed = false)?"}])
-    perfil([f'mcp__{ns}__{n}' for n in ('get_file','download_file')],'ler',[{'campo':'file_id','tipo':'id_listado'}])
-    perfil([f'mcp__{ns}__create_folder'],'provisionar',[{'campo':'parent_id','tipo':'id_de_canal','campo_id':'pasta_id'}])
-    perfil([f'mcp__{ns}__share_folder'],'compartilhar',[{'campo':'folder_id','tipo':'id_de_canal','campo_id':'pasta_id'}])
-    perfil([f'mcp__{ns}__upload_file'],'escrever',[{'campo':'parent_id','tipo':'id_de_canal','campo_id':'pasta_id','finalidade':'entregas','direcao':'saida'}])
-for ns in ('calendar','google_calendar','claude_ai_Google_Calendar'):
-    perfil([f'mcp__{ns}__{n}' for n in ('list_events','create_event')],'agenda',
-           [{'campo':'calendar_id','tipo':'id_de_canal','campo_id':'calendario_id'}])
-for n in ('get_submissions','list_submissions'):
-    perfil(['mcp__tally__'+n],'ler',[{'campo':'form_id','tipo':'id_de_canal','campo_id':'formulario_id'}])
-for n in ('create_form','publish_form'):
-    perfil(['mcp__tally__'+n],'provisionar',[{'campo':'workspace_id','tipo':'id_de_canal','campo_id':'workspace_id'}])
-# O Tally oficial também expõe nomes camelCase; somente os parâmetros reconhecidos.
-for original,alias in [('create_form','createForm'),('publish_form','publishForm'),('get_submissions','getSubmissions'),('list_submissions','listSubmissions')]:
-    op,args=PERFIS['mcp__tally__'+original]
-    traducao={'workspace_id':'workspaceId','form_id':'formId'}
-    perfil(['mcp__tally__'+alias],op,[dict(a,campo=traducao[a['campo']]) for a in args])
+# Contratos embutidos auditados contra o inventário fornecido pelo engenheiro.
+PERFIS = json.loads((RAIZ/'eiac-campo/reference/perfis-conectores.json').read_text())['perfis']
 
-for nome,(op,args) in list(PERFIS.items()):
-    if nome.startswith('mcp__tally__'):
-        PERFIS[nome.replace('mcp__tally__','mcp__claude_ai_Tally__')]=(op,copy.deepcopy(args))
+
+def inventario(ferramentas):
+    fs = ferramentas.get('ferramentas') if isinstance(ferramentas,dict) else ferramentas
+    if not isinstance(fs,list): raise ValueError('inventário MCP precisa conter ferramentas')
+    resultado = {}
+    for f in fs:
+        nome = f.get('nome',f.get('name'))
+        if not isinstance(nome,str) or nome in resultado: raise ValueError('nome ausente ou ferramenta duplicada')
+        schema = f.get('inputSchema')
+        if isinstance(schema,dict):
+            props = schema.get('properties',{})
+            obrigatorios = schema.get('required',[])
+        else:
+            ps = f.get('parametros')
+            props = {p['nome']:p for p in ps} if isinstance(ps,list) else {}
+            obrigatorios = [p['nome'] for p in ps if p.get('obrigatorio')] if isinstance(ps,list) else []
+        resultado[nome] = dict(properties=props,required=obrigatorios)
+    return resultado
+
+
+def validar_contrato_perfis(ferramentas,perfis=None):
+    inv = inventario(ferramentas)
+    for nome,r in (PERFIS if perfis is None else perfis).items():
+        if nome not in inv: raise ValueError('ferramenta do perfil ausente do inventário: '+nome)
+        props = inv[nome]['properties']
+        if r['ferramenta']!=nome or r['padrao']!=re.escape(nome): raise ValueError('nome/padrão do perfil divergente')
+        campos = set(r['parametros']) | set(r['obrigatorios'])
+        for parte in [r,*r.get('alternativas',[])]:
+            campos.update(a['campo'] for a in parte['argumentos'])
+            campos.update(parte.get('ausentes',[]));campos.update(parte.get('exige_um_de',[]))
+            if parte.get('quando'): campos.add(parte['quando']['campo'])
+        if r.get('precondicao_registrada'): campos.add(r['precondicao_registrada']['argumento'])
+        if not campos<=set(props): raise ValueError('parâmetro do perfil ausente do inventário: '+', '.join(sorted(campos-set(props))))
+        if not set(inv[nome]['required'])<=set(r['obrigatorios']): raise ValueError('perfil omite parâmetro obrigatório do inventário')
+        for campo,contrato in r['parametros'].items():
+            atual = props[campo]
+            tipo = atual.get('type') if 'type' in atual else atual.get('tipo','').split()[0]
+            if tipo!=contrato['type']: raise ValueError('tipo divergente do inventário: '+campo)
+    return True
 
 
 def calibrar(ferramentas):
-    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
-    regras=[]; recusadas=[]; vistos=set()
-    for f in ferramentas:
-        nome=f['name']
-        if nome in vistos:raise ValueError('ferramenta duplicada no inventário')
-        vistos.add(nome);p=PERFIS.get(nome)
-        props=f.get('inputSchema',{}).get('properties',{})
-        if not p or any(a['campo'] not in props or props[a['campo']].get('type')!='string' for a in p[1]):
-            recusadas.append(nome);continue
-        regras.append(dict(padrao=re.escape(nome),operacao=p[0],argumentos=copy.deepcopy(p[1])))
-    return dict(versao=2,regras=regras,recusadas=recusadas)
+    inv = inventario(ferramentas); regras=[];recusadas=[];motivos={};parametros_recusados={}
+    for nome,d in inv.items():
+        r = PERFIS.get(nome)
+        if r is None: motivo='ferramenta sem perfil auditado ou schema indisponível'
+        else:
+            try: validar_contrato_perfis(ferramentas,{nome:r});motivo=r.get('recusa')
+            except (ValueError,KeyError,TypeError) as exc: motivo=str(exc)
+            if not motivo or r.get('recusa')==motivo: regras.append(copy.deepcopy(r))
+            extras = sorted(set(d['properties'])-set(r['parametros']))
+            if extras: parametros_recusados[nome]=extras
+        if motivo: recusadas.append(nome);motivos[nome]=motivo
+    ativos={r['ferramenta'] for r in regras if not r.get('recusa')}
+    manuais=[dict(passo='preparar-formulario',ferramenta=None,motivo='Inventário não contém schema auditável para inserir perguntas e campo oculto do caso; preparar e conferir no painel Tally')]
+    for nome,passo in [('mcp__tally__create_new_form','criar-formulario'),('mcp__tally__publish_form','publicar-formulario'),('mcp__tally__fetch_submissions','coletar-submissoes')]:
+        if nome not in ativos:
+            manuais.append(dict(passo=passo,ferramenta=nome if nome in inv else None,motivo=motivos.get(nome,'ferramenta ausente do inventário; ação manual do engenheiro')))
+    return dict(versao=3,regras=regras,recusadas=recusadas,motivos=motivos,manuais=manuais,
+                parametros_recusados=parametros_recusados,evento_aprovacao='AprovacaoExternaRegistrada')
 
 
 def conferir_perfil(p,ferramentas):
