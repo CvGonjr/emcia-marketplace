@@ -142,9 +142,15 @@ class Citacoes(unittest.TestCase):
 
     def test_06_auxiliares_vem_do_manifesto_canonico(self):
         m = json.loads((PACOTE / 'manifesto.json').read_text())
-        for n in ('EMCIA-ROT-02-roteiro-de-habilitacao.md', 'EMCIA-HAB-fluxo-operacional-proposta.md'):
+        for n in ('EMCIA-ROT-02-roteiro-de-habilitacao.md', 'HAB-01-carta-de-escopo.md',
+                  'HAB-02-acordo-confidencialidade.md', 'HAB-03-termo-de-consentimento.md'):
             self.assertEqual(m['caminhos_canonicos'][n], 'auxiliares/' + n)
-            self.assertEqual(conferir('auxiliares/' + n + ' §3.3', self.docs), [])
+            self.assertEqual(conferir('auxiliares/' + n, self.docs), [])
+        self.assertEqual(conferir('auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md §3.3', self.docs), [])
+        for n in ('EMCIA-HAB-fluxo-operacional-proposta.md',
+                  'EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md',
+                  'EMCIA-VER-01-plano-de-verificacao.md'):
+            self.assertNotIn(n, m['documentos'])
 
     def test_07_formatos_e_continuacao(self):
         for t in ('EMCIA-TRI-01 §3.3 e §3.4', 'EMCIA-TRI-01, seção 3.3 e seção 3.4',

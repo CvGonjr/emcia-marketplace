@@ -94,6 +94,7 @@ jobs:
 
       - name: Pacote do método, manual operacional e citações
         run: |
+          git clone --depth 1 --branch metodo-v1.0 --single-branch https://github.com/CvGonjr/emcia-artefatos.git ../emcia-artefatos
           python3 testes/metodo_empacotado.py
           python3 testes/manual_a25.py
           python3 testes/citacoes.py
