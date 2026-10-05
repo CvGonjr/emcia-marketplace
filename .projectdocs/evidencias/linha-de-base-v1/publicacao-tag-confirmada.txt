@@ -1,0 +1,3 @@
+Consulta ao remoto em 04/10/2026; código de saída 0.
+e0cb22ba5d80d009e402f2693aa18171f794b18f	refs/tags/metodo-v1.0
+08bfb162d762935ed35f55e0a75bc700b81d5276	refs/tags/metodo-v1.0^{}

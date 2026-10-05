@@ -1,0 +1,44 @@
+{
+  "HAB-01": {
+    "template": "88e77fcb1a3d3458172b73e6c7e43afda91467850dda97494ccac67dd3872a03",
+    "markdown": "da3e2bf54559957e16d0a08706b42af19eeb5014f2bfe3ccdee0743d8f267334",
+    "pdf": "3bfb4b37189bfbfe8296240ed6f61114ebf1a880e1085dbe0069f565dbe41d24",
+    "revisao_juridica": null
+  },
+  "HAB-02": {
+    "template": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+    "markdown": "616d1ca15d4afd40dc9cf439c449fd0e489bffd0981bf348dda09da4497f79be",
+    "pdf": "ee1fbffe9b0cdd48f333fdff308131984b7aff4c8ec7fc4ea1ca4cebf49752c6",
+    "revisao_juridica": {
+      "revisor": "Pessoa Jurista",
+      "decisor": "Pessoa Engenheira",
+      "data": "2026-10-04",
+      "documentos": {
+        "HAB-02": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+        "HAB-03": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96"
+      },
+      "evidencia": {
+        "caminho": "arquivos/028f5dfa38374ed8b192fbc04fd3ebe8.bin",
+        "sha256": "90c409a1a8ce08aaeeee685a490f7c7a615f473812f22e0d0b7e48a864e7131a"
+      }
+    }
+  },
+  "HAB-03": {
+    "template": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96",
+    "markdown": "6bf4f0e831df2207d63c206da43e293131eec700f6f8c90b592dcbc19c208352",
+    "pdf": "c19fc1b78251cd05c846fb71c7e25734be1fdcb556a16498d5c03e47a9d1bd92",
+    "revisao_juridica": {
+      "revisor": "Pessoa Jurista",
+      "decisor": "Pessoa Engenheira",
+      "data": "2026-10-04",
+      "documentos": {
+        "HAB-02": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+        "HAB-03": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96"
+      },
+      "evidencia": {
+        "caminho": "arquivos/028f5dfa38374ed8b192fbc04fd3ebe8.bin",
+        "sha256": "90c409a1a8ce08aaeeee685a490f7c7a615f473812f22e0d0b7e48a864e7131a"
+      }
+    }
+  }
+}

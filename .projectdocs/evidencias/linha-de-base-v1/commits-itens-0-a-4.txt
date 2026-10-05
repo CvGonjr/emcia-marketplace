@@ -1,0 +1,5 @@
+9b6cad78bfda32c31e31c336a119d605a71f9033 fix(habilitacao): separar emissão do modelo e exigir revisão jurídica
+8795ba4e36d8a7bcaafdb14e81a3b0675286d6ab docs(metodo): empacotar a linha de base aprovada metodo-v1.0
+c8fae95a1842811178865b81904c943411a8dd8b test(metodo): conferir tag e hashes aprovados no APR-01
+96ea3dca42e349c0e8363e1426f223f942d736ed docs(habilitacao): orientar aprovação por hash e revisão jurídica
+28dee7a06797aa35bcda70fc640f65f27f5f74a3 docs(operacao): adotar somente a linha de base aprovada

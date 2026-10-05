@@ -1,0 +1,354 @@
+..........EEEE..EE.FE.EEEEEE
+======================================================================
+ERROR: test_11_partial_or_wrong_signer (__main__.Habilitacao.test_11_partial_or_wrong_signer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 142, in test_11_partial_or_wrong_signer
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_12_stale_version (__main__.Habilitacao.test_12_stale_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 153, in test_12_stale_version
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_13_three_docs_both_parties_and_different_hashes (__main__.Habilitacao.test_13_three_docs_both_parties_and_different_hashes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 161, in test_13_three_docs_both_parties_and_different_hashes
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_14_unsigned_or_unreviewed_pdf (__main__.Habilitacao.test_14_unsigned_or_unreviewed_pdf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 175, in test_14_unsigned_or_unreviewed_pdf
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_17_missing_field_and_pdf_failure_do_not_publish_versions (__main__.Habilitacao.test_17_missing_field_and_pdf_failure_do_not_publish_versions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 205, in test_17_missing_field_and_pdf_failure_do_not_publish_versions
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_18_expiration_blocks_completion (__main__.Habilitacao.test_18_expiration_blocks_completion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 213, in test_18_expiration_blocks_completion
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_21_cobertura_so_de_hab02_nao_autoriza_hab03 (__main__.Habilitacao.test_21_cobertura_so_de_hab02_nao_autoriza_hab03)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 241, in test_21_cobertura_so_de_hab02_nao_autoriza_hab03
+    self.run_action('revisao-juridica', **self.revisao_juridica(documentos={'HAB-02': sha}))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_23_evidencia_juridica_adulterada_bloqueia_gerar (__main__.Habilitacao.test_23_evidencia_juridica_adulterada_bloqueia_gerar)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 258, in test_23_evidencia_juridica_adulterada_bloqueia_gerar
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_24_hash_do_template_alterado_nao_herda_revisao (__main__.Habilitacao.test_24_hash_do_template_alterado_nao_herda_revisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 264, in test_24_hash_do_template_alterado_nao_herda_revisao
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_25_documentos_emitidos_preservam_contrato_e_identificacao (__main__.Habilitacao.test_25_documentos_emitidos_preservam_contrato_e_identificacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 272, in test_25_documentos_emitidos_preservam_contrato_e_identificacao
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_26_marcas_ausentes_recusam_com_motivo_sem_publicar (__main__.Habilitacao.test_26_marcas_ausentes_recusam_com_motivo_sem_publicar)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 307, in test_26_marcas_ausentes_recusam_com_motivo_sem_publicar
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato (__main__.Habilitacao.test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 327, in test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+ERROR: test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura (__main__.Habilitacao.test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 425, in aplicar
+    raise Recusa("operação desconhecida")
+habilitacao.Recusa: operação desconhecida
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 343, in test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 121, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 451, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: operação desconhecida
+
+======================================================================
+FAIL: test_20_gerar_sem_revisao_juridica_recusa_antes_do_pdf (__main__.Habilitacao.test_20_gerar_sem_revisao_juridica_recusa_antes_do_pdf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 444, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 339, in aplicar
+    pdf=guardar(root, pdf, ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 122, in guardar
+    f.write(data)
+TypeError: a bytes-like object is required, not 'MagicMock'
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: a bytes-like object is required, not 'MagicMock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 232, in test_20_gerar_sem_revisao_juridica_recusa_antes_do_pdf
+    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "revisao-juridica.*HAB-02" does not match "a bytes-like object is required, not 'MagicMock'"
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.182s
+
+FAILED (failures=1, errors=13)

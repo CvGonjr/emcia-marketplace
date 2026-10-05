@@ -1,5 +1,7 @@
 # 043 — Correspondência CAT-01, catálogo e playbook
 
+> Atualização de 04/10/2026: a decisão 044 supera as declarações de aprovação pendente deste registro histórico. A linha de base vigente metodo-v1.0 foi aprovada por Celso do Vale no APR-01. Os commits e estados descritos abaixo permanecem como evidência histórica.
+
 **Data:** 03/10/2026 · **Estado:** firme por instrução do engenheiro
 
 ## Contexto

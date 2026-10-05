@@ -1,0 +1,10 @@
+test_01_manual_confere_com_playbook (__main__.ManualA25.test_01_manual_confere_com_playbook) ... ok
+test_02_etapa_removida_e_detectada (__main__.ManualA25.test_02_etapa_removida_e_detectada) ... ok
+test_03_camada_trocada_e_detectada (__main__.ManualA25.test_03_camada_trocada_e_detectada) ... ok
+test_04_ato_inexistente_e_detectado (__main__.ManualA25.test_04_ato_inexistente_e_detectado) ... ok
+test_05_comando_inexistente_e_detectado (__main__.ManualA25.test_05_comando_inexistente_e_detectado) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.008s
+
+OK

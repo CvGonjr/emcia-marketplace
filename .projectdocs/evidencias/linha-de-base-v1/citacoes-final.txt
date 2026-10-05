@@ -1,0 +1,13 @@
+test_01_secao_inexistente_recusa (__main__.Citacoes.test_01_secao_inexistente_recusa) ... ok
+test_02_auxiliar_inexistente_recusa (__main__.Citacoes.test_02_auxiliar_inexistente_recusa) ... ok
+test_03_citacoes_do_campo_resolvem (__main__.Citacoes.test_03_citacoes_do_campo_resolvem) ... ok
+test_04_tri_perguntas_e_pontuacao (__main__.Citacoes.test_04_tri_perguntas_e_pontuacao) ... ok
+test_05_ctx_canonico_substitui_resumos (__main__.Citacoes.test_05_ctx_canonico_substitui_resumos) ... ok
+test_06_auxiliares_vem_do_manifesto_canonico (__main__.Citacoes.test_06_auxiliares_vem_do_manifesto_canonico) ... ok
+test_07_formatos_e_continuacao (__main__.Citacoes.test_07_formatos_e_continuacao) ... ok
+test_08_instrumentos_distintos_em_p1_e_p3d (__main__.Citacoes.test_08_instrumentos_distintos_em_p1_e_p3d) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.037s
+
+OK

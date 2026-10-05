@@ -1,0 +1,14 @@
+test_01_hash_divergente_do_apr_recusa_mesmo_com_manifesto_coerente (__main__.MetodoEmpacotado.test_01_hash_divergente_do_apr_recusa_mesmo_com_manifesto_coerente) ... ok
+test_02_tag_para_outro_commit_recusa (__main__.MetodoEmpacotado.test_02_tag_para_outro_commit_recusa) ... ok
+test_03_template_do_checkout_com_hash_divergente_recusa (__main__.MetodoEmpacotado.test_03_template_do_checkout_com_hash_divergente_recusa) ... ok
+test_04_hash_divergente_do_manifesto_recusa (__main__.MetodoEmpacotado.test_04_hash_divergente_do_manifesto_recusa) ... ok
+test_05_origem_e_linha_de_base_divergentes_recusam (__main__.MetodoEmpacotado.test_05_origem_e_linha_de_base_divergentes_recusam) ... ok
+test_06_fixtures_sao_os_templates_aprovados (__main__.MetodoEmpacotado.test_06_fixtures_sao_os_templates_aprovados) ... ok
+test_07_pacote_offline_confere_com_aprovacao (__main__.MetodoEmpacotado.test_07_pacote_offline_confere_com_aprovacao) ... ok
+test_08_pacote_confere_com_tag_e_checkout_quando_disponivel (__main__.MetodoEmpacotado.test_08_pacote_confere_com_tag_e_checkout_quando_disponivel) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.161s
+
+OK
+metodo empacotado: 22 documentos; tag metodo-v1.0; comparação Git: True

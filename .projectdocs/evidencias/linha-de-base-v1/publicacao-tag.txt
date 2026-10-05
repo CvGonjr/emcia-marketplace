@@ -1,0 +1,4 @@
+$ git ls-remote --exit-code https://github.com/CvGonjr/emcia-artefatos.git refs/tags/metodo-v1.0 refs/tags/metodo-v1.0^{}
+Código de saída: 2
+stdout:
+stderr:
