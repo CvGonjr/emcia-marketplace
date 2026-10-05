@@ -469,3 +469,15 @@ estiverem presentes. Não altera estado nem registra encerramento de F0.
 Apuração, decidir-prosseguimento, sessões, restrições, autonomia, recalibragem,
 encerramentos EX3/EX4 e selo após P2 continuam no terminal. Aprovação no chat
 não autoriza o agente a executá-los. Casos abertos conservam seu playbook.
+
+## Conferência do formulário antes da publicação
+
+A sessão lê o formulário declarado por `mcp__tally__load_form(formId)` e preserva
+o retorno bruto. `iniciar.py` executa `conferir-formulario` contra o modelo de
+`reference/formularios/`, produzindo relatório MD com SHA-256. O engenheiro
+confirma com o literal “conferido”; `confirmar-formulario` vincula essa decisão
+ao hash do relatório sem divergências. Não é necessário arquivo externo adicional.
+Texto, ordem, tipo ou campo oculto divergente impede publicação e aparece no
+relatório. Nova leitura invalida a confirmação anterior. A conferência manual
+com PDF permanece disponível por `caminho-manual`, passo `preparar-formulario`,
+com o mesmo literal. Consulte `reference/canais.md` para entradas e limites.

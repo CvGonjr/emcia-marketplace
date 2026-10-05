@@ -1,0 +1,134 @@
+test_01_texto_diferente_impede_publicacao_e_lista (__main__.Conferencia.test_01_texto_diferente_impede_publicacao_e_lista) ... ok
+test_02_ordem_trocada (__main__.Conferencia.test_02_ordem_trocada) ... ok
+test_03_campo_oculto_ausente (__main__.Conferencia.test_03_campo_oculto_ausente) ... ok
+test_04_tipo_diferente (__main__.Conferencia.test_04_tipo_diferente) ... ok
+test_05_formulario_alheio (__main__.Conferencia.test_05_formulario_alheio) ... ok
+test_06_ferramenta_fora_do_perfil (__main__.Conferencia.test_06_ferramenta_fora_do_perfil) ... ok
+test_07_sem_leitura_nao_compara (__main__.Conferencia.test_07_sem_leitura_nao_compara) ... ok
+test_08_formato_desconhecido_nao_aproxima (__main__.Conferencia.test_08_formato_desconhecido_nao_aproxima) ... ok
+test_09_retorno_com_id_alheio (__main__.Conferencia.test_09_retorno_com_id_alheio) ... ok
+test_10_relatorio_adulterado (__main__.Conferencia.test_10_relatorio_adulterado) ... ok
+test_11_confirmacao_exige_literal_conferido (__main__.Conferencia.test_11_confirmacao_exige_literal_conferido) ... FAIL
+test_12_divergencia_nao_pode_ser_confirmada (__main__.Conferencia.test_12_divergencia_nao_pode_ser_confirmada) ... FAIL
+test_13_leitura_nova_invalida_confirmacao (__main__.Conferencia.test_13_leitura_nova_invalida_confirmacao) ... ERROR
+test_14_hash_de_outro_relatorio_nao_confirma (__main__.Conferencia.test_14_hash_de_outro_relatorio_nao_confirma) ... FAIL
+test_15_manual_exige_pdf (__main__.Conferencia.test_15_manual_exige_pdf) ... FAIL
+test_16_manual_nao_sobrepoe_divergencia (__main__.Conferencia.test_16_manual_nao_sobrepoe_divergencia) ... FAIL
+test_20_identico_relatorio_md_hash_e_aguarda_humano (__main__.Conferencia.test_20_identico_relatorio_md_hash_e_aguarda_humano) ... ok
+test_21_conferido_libera_sem_arquivo_externo (__main__.Conferencia.test_21_conferido_libera_sem_arquivo_externo) ... ERROR
+test_22_manual_pdf_continua_alternativa (__main__.Conferencia.test_22_manual_pdf_continua_alternativa) ... ok
+
+======================================================================
+ERROR: test_13_leitura_nova_invalida_confirmacao (__main__.Conferencia.test_13_leitura_nova_invalida_confirmacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 110, in test_13_leitura_nova_invalida_confirmacao
+    r=self.comparar();self.confirmar(r)
+                      ~~~~~~~~~~~~~~^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 98, in confirmar
+    return self.op('confirmar-formulario', literal=literal, formulario_id='FORM', relatorio_sha256=r['sha256'])
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: confirmar-formulario
+
+======================================================================
+ERROR: test_21_conferido_libera_sem_arquivo_externo (__main__.Conferencia.test_21_conferido_libera_sem_arquivo_externo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 139, in test_21_conferido_libera_sem_arquivo_externo
+    r=self.comparar();self.confirmar(r)
+                      ~~~~~~~~~~~~~~^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 98, in confirmar
+    return self.op('confirmar-formulario', literal=literal, formulario_id='FORM', relatorio_sha256=r['sha256'])
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 32, in op
+    return I.operar(self.cfg, nome, d, r)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 217, in operar
+    raise ValueError('decisão de método não executável pela sessão: '+op)
+ValueError: decisão de método não executável pela sessão: confirmar-formulario
+
+======================================================================
+FAIL: test_11_confirmacao_exige_literal_conferido (__main__.Conferencia.test_11_confirmacao_exige_literal_conferido)
+----------------------------------------------------------------------
+ValueError: decisão de método não executável pela sessão: confirmar-formulario
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 102, in test_11_confirmacao_exige_literal_conferido
+    self.negada(lambda:self.confirmar(r,'aprovo'), 'conferido')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "conferido" does not match "decisão de método não executável pela sessão: confirmar-formulario"
+
+======================================================================
+FAIL: test_12_divergencia_nao_pode_ser_confirmada (__main__.Conferencia.test_12_divergencia_nao_pode_ser_confirmada)
+----------------------------------------------------------------------
+ValueError: decisão de método não executável pela sessão: confirmar-formulario
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 107, in test_12_divergencia_nao_pode_ser_confirmada
+    self.negada(lambda:self.confirmar(r), 'texto')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "texto" does not match "decisão de método não executável pela sessão: confirmar-formulario"
+
+======================================================================
+FAIL: test_14_hash_de_outro_relatorio_nao_confirma (__main__.Conferencia.test_14_hash_de_outro_relatorio_nao_confirma)
+----------------------------------------------------------------------
+ValueError: decisão de método não executável pela sessão: confirmar-formulario
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 118, in test_14_hash_de_outro_relatorio_nao_confirma
+    self.negada(lambda:self.confirmar(r),'hash')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: "hash" does not match "decisão de método não executável pela sessão: confirmar-formulario"
+
+======================================================================
+FAIL: test_15_manual_exige_pdf (__main__.Conferencia.test_15_manual_exige_pdf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 122, in test_15_manual_exige_pdf
+    self.negada(lambda:self.op('caminho-manual',literal='conferido',passo='preparar-formulario',
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        formulario_id='FORM',evidencia=str(p),decisao='executar manualmente'),'PDF')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_16_manual_nao_sobrepoe_divergencia (__main__.Conferencia.test_16_manual_nao_sobrepoe_divergencia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 128, in test_16_manual_nao_sobrepoe_divergencia
+    self.negada(lambda:self.op('caminho-manual',literal='conferido',passo='preparar-formulario',
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        formulario_id='FORM',evidencia=str(p),decisao='executar manualmente'),'texto')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/conferencia_formulario.py", line 50, in negada
+    with self.assertRaisesRegex(ValueError, trecho): acao()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.760s
+
+FAILED (failures=5, errors=2)

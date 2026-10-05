@@ -137,12 +137,17 @@ def calibrar(ferramentas):
             if extras: parametros_recusados[nome]=extras
         if motivo: recusadas.append(nome);motivos[nome]=motivo
     ativos={r['ferramenta'] for r in regras if not r.get('recusa')}
-    manuais=[dict(passo='preparar-formulario',ferramenta=None,motivo='Inventário não contém schema auditável para inserir perguntas e campo oculto do caso; preparar e conferir no painel Tally')]
+    manuais=[dict(passo='preparar-formulario',ferramenta=None,motivo='Preparar perguntas/campo oculto no painel; conferência automática por load_form quando disponível ou manual com PDF e conferido')]
     for nome,passo in [('mcp__tally__create_new_form','criar-formulario'),('mcp__tally__publish_form','publicar-formulario'),('mcp__tally__fetch_submissions','coletar-submissoes')]:
         if nome not in ativos:
             manuais.append(dict(passo=passo,ferramenta=nome if nome in inv else None,motivo=motivos.get(nome,'ferramenta ausente do inventário; ação manual do engenheiro')))
     return dict(versao=4,regras=regras,recusadas=recusadas,motivos=motivos,manuais=manuais,
-                parametros_recusados=parametros_recusados,evento_aprovacao='AprovacaoExternaRegistrada')
+                parametros_recusados=parametros_recusados,evento_aprovacao='AprovacaoExternaRegistrada',
+                conferencia_formulario=dict(leitura='mcp__tally__load_form' if 'mcp__tally__load_form' in ativos else None,
+                    argumento='formId',escopo='formulários criados/declarados no expediente ou caso corrente',
+                    comparar=['texto exato','ordem','tipo','campo oculto caso'],relatorio='MD com SHA-256',
+                    confirmacao='conferido',alternativa='PDF conferido pelo engenheiro',
+                    bloqueio='divergência ou formato não conferível impede publicação'))
 
 
 def conferir_perfil(p,ferramentas):
@@ -201,6 +206,12 @@ def aprovar(p,op,entrada,literal,resumo):
     c=ler_config(p);contexto=entrada.get('caso') or entrada.get('id') or entrada.get('habilitacao')
     if not contexto:raise ValueError('entrada precisa identificar habilitacao/caso')
     arquivos=[pathlib.Path(p),*arquivos_entrada(entrada)]
+    if op=='confirmar-formulario':
+        evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+        evs=[e for e in evs if e.get('evento')=='ConferenciaExternaRegistrada' and e.get('contexto')==contexto
+             and e.get('habilitacao')==entrada.get('habilitacao') and e.get('objeto_id')==entrada.get('formulario_id')]
+        if evs and evs[-1].get('relatorio'):
+            reg=evs[-1]['relatorio'];arquivos.append(pathlib.Path(reg['arquivo']))
     hab=entrada.get('habilitacao') or entrada.get('id')
     if hab:
         estado=pathlib.Path(c['base_expedientes'])/H.identificador(hab)/'expediente.json'
@@ -213,7 +224,7 @@ def aprovar(p,op,entrada,literal,resumo):
 def operar(p,op,d,aprovacao):
     c=ler_config(p)
     try:
-        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario'}:
+        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario','confirmar-formulario'}:
             raise ValueError('decisão de método não executável pela sessão: '+op)
         contexto=d.get('caso') or d.get('id') or d.get('habilitacao')
         r=A.conferir(aprovacao,op,c['responsavel'],contexto,cmd_operacao(op,d))
@@ -260,6 +271,7 @@ def operar(p,op,d,aprovacao):
         if op=='mcp':return autorizar_mcp(p,d,r)
         if op=='caminho-manual':return caminho_manual(p,c,d,r)
         if op=='conferir-formulario':return conferir_formulario(p,c,d)
+        if op=='confirmar-formulario':return confirmar_formulario(p,c,d,r)
         with cwd(case):
             st=E.ler();pb=json.loads(pathlib.Path('registro/playbook.json').read_text())
             if not pb.get('operacoes_sessao'):raise ValueError('caso conserva playbook anterior; não delega estes atos')
@@ -477,6 +489,20 @@ def conferir_relatorio_vigente(p,c,d,eventos):
     return ev
 
 
+def confirmar_formulario(p,c,d,r):
+    if r['literal']!='conferido':raise ValueError('confirmação exige texto literal: conferido')
+    evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+    ev=conferir_relatorio_vigente(p,c,d,evs)
+    if not ev or not ev.get('relatorio'):raise ValueError('execute conferir-formulario antes de confirmar-formulario')
+    reg=ev['relatorio']
+    if d.get('relatorio_sha256')!=reg['sha256']:raise ValueError('hash do relatório diverge da confirmação')
+    if reg['diferencas']:raise ValueError('conferência divergente: '+str(reg['diferencas']))
+    if reg['arquivo'] not in r['arquivos']:raise ValueError('relatório sem hash na aprovação')
+    evento_conferencia(p,c,d,d['formulario_id'],resultado='conferido',diferencas=[],relatorio=reg,
+                       evidencia_sha256=reg['sha256'],testemunho=A.evento(r))
+    return dict(conferido=True,relatorio=reg)
+
+
 def caminho_manual(p,c,d,r):
     cfg=json.loads(pathlib.Path(p).with_name('perfil-mcp.json').read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
     opcoes=[m for m in cfg['perfil']['manuais'] if m['passo']==d.get('passo')]
@@ -487,6 +513,14 @@ def caminho_manual(p,c,d,r):
     if formulario is not None and (not isinstance(formulario,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',formulario)):
         raise ValueError('formulário manual exige id')
     if d['passo']=='preparar-formulario' and not formulario:raise ValueError('conferência manual exige formulário declarado')
+    if d['passo']=='preparar-formulario':
+        if r['literal']!='conferido':raise ValueError('confirmação manual exige texto literal: conferido')
+        raw=evidencia.read_bytes()
+        if not raw.startswith(b'%PDF-') or b'%%EOF' not in raw[-2048:]:raise ValueError('conferência manual exige PDF completo')
+        evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+        ev=conferir_relatorio_vigente(p,c,d,evs)
+        if ev and ev.get('diferencas') and ev.get('resultado')=='divergente':
+            raise ValueError('corrija divergências antes da publicação: '+str(ev['diferencas']))
     if d.get('workspace_id',c['workspace_tally'])!=c['workspace_tally']:raise ValueError('workspace manual diverge da configuração')
     reg=dict(opcoes[0],habilitacao=d['habilitacao'],caso=d['caso'],decisao=d['decisao'],autor=c['responsavel'],data=H.agora(),
              evidencia=str(evidencia.absolute()),evidencia_sha256=sha,formulario_id=formulario,testemunho=A.evento(r))
