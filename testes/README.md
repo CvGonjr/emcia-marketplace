@@ -1,12 +1,11 @@
 # Testes — inventário operacional
 
-Revisão: 05/10/2026. Linha de base antes das alterações em Python 3.12.12:
-**975 verificações em 49 módulos**, sem exclusões e sem falhas. Resultado
-jurídico obrigatório e resolução por APR-01 acrescentam onze testes de
-habilitação. Suíte final: **986 verificações em 49 módulos**. Saídas integrais
-e executador estão em `.projectdocs/evidencias/revisao-juridica-resultado/`.
-A evidência anterior da geração e do pacote aprovado permanece em
-`.projectdocs/evidencias/linha-de-base-v1/`.
+Revisão: 05/10/2026. Linha de base integral do bloco inicial: **986 verificações
+em 49 módulos**, Python 3.12.12, sem exclusões/falhas. Regressão final:
+**1014 verificações em 51 módulos**, com A25 como única falha conhecida, preservada
+visível; quatro negativas de A25 passam. Evidência e runner:
+`.projectdocs/evidencias/bloco-inicial-conduzido/`. Os pacotes anteriores permanecem
+históricos em `linha-de-base-v1/` e `revisao-juridica-resultado/`.
 
 ## Executar
 
@@ -20,11 +19,12 @@ python3 testes/contexto.py
 Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
 
 ```bash
-python3 .projectdocs/evidencias/revisao-juridica-resultado/reexecutar-suite.py /tmp/emcia-suite.txt
+python3 .projectdocs/evidencias/bloco-inicial-conduzido/reexecutar-suite.py /tmp/emcia-suite.txt
 ```
 
 O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
-registra saídas, códigos e contagens e falha se algum módulo falhar. Os auxiliares
+registra saídas, códigos e contagens e falha diante de qualquer falha inesperada; a única exceção é A25, com lista
+exata de divergências e somente test_01 falhando. A saída bruta não é escondida. Os auxiliares
 em testes/apoio/ não são módulos independentes. Há negativas e controles positivos;
 recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 
@@ -33,6 +33,8 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | Módulo | Verificações | Cobertura |
 |---|---:|---|
 | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
+| `bloco_inicial.py` | 19 | Recusas, testemunhos, escopo, decisões humanas, autoria/configuração, saída e núcleo sem instrumentos/conectores |
+| `iniciar_percurso.py` | 4 | Percurso completo com MCP simulado, cinco aprovações, três retomadas e selo Git; ratificação prevalece |
 | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
 | `campo_2_6_2.py` | 38 | Verificacao operacional de P6 e P7 -- pacote 2.6.2 |
 | `campo_2_6_3.py` | 57 | Verificacao operacional de P8, P9 e P10 -- pacote 2.6.3 |
@@ -56,7 +58,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `esforco.py` | 1 | Registro de esforço e cálculo |
 | `formularios.py` | 5 | Redação fixa da triagem e isolamento na preparação de submissões |
 | `habilidades_a18.py` | 13 | A18: rotas reais de carregamento, inclusive com sessão e selo |
-| `habilitacao.py` | 40 | Travas do expediente, resultado aprovado obrigatório, registros legados, nomes resolvidos por APR-01, ambiguidade e hashes; separação do modelo e emissão; dados sintéticos |
+| `habilitacao.py` | 45 | Travas do expediente, resultado aprovado obrigatório, registros legados, nomes resolvidos por APR-01, ambiguidade e hashes; separação do modelo e emissão; dados sintéticos |
 | `habilitacao_0d.py` | 35 | Passagem 0d: negativas primeiro, sobre componentes reais e dados sintéticos |
 | `integracao.py` | 17 | Integracao P2/P3 -> CTX -> P4/P5 do pacote 2.5.5 |
 | `manual_a25.py` | 5 | MAN-01 sem emenda: conformidade e quatro mutações negativas |
@@ -137,3 +139,21 @@ conteúdo contratual e a identificação, verifica remoção do controle e hist�
 internos e do aviso jurídico e confere o estado “Para assinatura”. Somente o
 renderizador de PDF é substituído nas fixtures de integração; nenhuma trava
 é dispensada. A demonstração separada gera PDFs reais com Chrome e usa pdftotext.
+
+
+## A25 — falha conhecida, sem alteração do teste
+
+O MAN-01 aprovado v1.0 não declara o ato humano selar-apos-P2. A divergência
+esperada é exatamente `ato humano selar-apos-P2 ausente das seções 3.3 e 3.4`.
+manual_a25.py permanece byte a byte o anterior: test_01 falha, test_02–05 passam.
+`python3 testes/apoio/falha_conhecida_a25.py` reproduz o teste original e só retorna
+0 quando são cinco testes, uma falha em test_01, nenhum erro e a lista exata.
+Não há continue-on-error ou exclusão genérica. Se desaparecer ou mudar a falha,
+o contrato da exceção exige revisão, não aceitação silenciosa.
+
+Os testes legados de A12 e importação continuam verificando os casos com
+playbook 0.4.19 (fixture preservada pela decisão 002). As negativas de atos sem
+aprovação no contrato novo e seus controles positivos estão no bloco inicial.
+PDF é substituído por emissão sintética nos testes integrados; o pacote de
+evidência também confere um PDF real Chrome com texto extraído. APIs externas
+são simuladas, sem credenciais ou dados reais de cliente.

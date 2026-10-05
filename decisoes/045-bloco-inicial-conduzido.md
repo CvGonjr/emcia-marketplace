@@ -1,0 +1,115 @@
+# 045 — Bloco inicial conduzido com aprovação nominal no chat
+
+**Data:** 05/10/2026 · **Estado:** firme por instrução do engenheiro
+
+## Contexto
+
+O engenheiro decidiu que ambiente, habilitação administrativa 0a–0d e abertura
+até F0 liberado sejam conduzidos pela sessão do Claude Code. A saída verificável
+rege a entrega. O pedido aprova a mudança de autoridade dos atos administrativos,
+a aceitação de minutas sem ratificação e o agrupamento dos efeitos externos.
+O método documental aprovado permanece metodo-v1.0, tag 08bfb16, sem reempacotamento.
+
+## Decisão
+
+Todas as operações de habilitacao.py, canais definir, importação do expediente,
+listagem e recebimento durante o bloco inicial, validação e selo de 00-habilitacao
+podem ser executados pela sessão depois de aprovação explícita registrada.
+Cada ato conserva operação, resumo, trecho literal, data e responsável, com
+contexto, comando/entrada e hashes dos arquivos conferidos. Conferência humana
+da carta e dos PDFs permanece obrigatória; execução administrativa é do agente.
+
+Aprovação no chat é **testemunho registrado, não autenticação**. Não se verifica
+criptograficamente autor do chat, identidade profissional ou mérito do parecer.
+O responsável nomeado da configuração/expediente/caso continua autor fixo.
+O disco é a fronteira de confiança, conforme 019 e 022; nome de agente não vira autor.
+
+Apuração do nível, decidir-prosseguimento, sessões, vincular-restricao, autonomia,
+recalibragem, encerramentos EX3/EX4 e selo após P2 continuam atos humanos no terminal.
+A guarda recusa a sessão mesmo com testemunho nominal. O núcleo recebe contratos
+genéricos e continua sem instrumentos, conectores ou atos do método em seu código.
+
+O template retira de decisoes_humanas somente importar-habilitacao, definir-canais,
+receber-material e registrar-listagem. As operações são declaradas em
+operacoes_sessao, com etapas autorizadas, entradas e hashes. Receber/listar fora
+do bloco inicial é recusado pela sessão. O selo após P2 é explicitamente humano,
+por condição genérica apos_etapa. Demais decisões permanecem intactas.
+Casos abertos conservam o playbook copiado, conforme 002; não há migração automática.
+
+O comando /eiac-campo:iniciar verifica ambiente, reutiliza ~/.emcia/config.json,
+calibra perfis pelas assinaturas MCP e conduz até o checklist final.
+Perfis embutidos são restritos: parâmetro de contêiner, formulário ou calendário,
+expressão de pai limitada ou objeto previamente listado. Assinatura sem perfil
+é recusada e relatada; a presença dos três conectores não supre operação ausente.
+A confirmação inicial vincula inventário e perfil; nenhuma expressão ampla é gerada.
+
+No percurso sem retrabalho, cinco aprovações cobrem envio/plano administrativo de
+rodadas, carta, PDFs/plano de retorno, abertura com árvore inteira/plano local e
+compartilhamentos. A aprovação de abertura contém a aprovação da árvore inteira;
+a do conjunto de compartilhamentos é separada e lista destinatário, pasta e papel.
+O mesmo trecho pode cobrir os atos mecânicos descritos nesse plano; não autoriza
+novo conteúdo, destinatário ou papel. Mudança exige atualização. Perfil e aceitação
+são confirmações da primeira execução. Retorno de assinatura e sua conferência
+precisam ser indicados pelo engenheiro, sem aprovação presumida por silêncio.
+
+## Situação jurídica e emissão
+
+Revisao-juridica permanece e exige resultado exato aprovado, hashes e evidência;
+ciclo é texto opcional. Parecer condicionado não é convertido em aprovado.
+Quando existe revisão aprovada para o hash usado, ela prevalece.
+
+Sem ratificação, gerar aceita somente a declaração nominal explícita “uso as
+minutas sem ratificação jurídica”, com texto, data e responsável na configuração.
+A aceitação é reutilizada e revogável. Sem ela e sem revisão aprovada, gerar recusa
+com as duas saídas possíveis. Revogação impede novas emissões, preservando anteriores.
+Não há flag que dispense guarda, conferência da carta ou conferência dos PDFs.
+
+Cada emissão guarda versão/hash da minuta, data e situação ratificada ou sem
+ratificação, referindo revisão/aceitação. Controle do modelo, histórico interno,
+aviso jurídico e aceitação não entram no MD/PDF do cliente. O estado da emissão
+é Para assinatura. O checklist mostra minutas sem ratificação como pendência
+não bloqueante; isso não representa aprovação jurídica nem documental de minuta nova.
+
+## Relação com decisões e documentos anteriores
+
+Esta decisão supera parcialmente 003 e 027 quanto aos atos administrativos do
+bloco inicial; mantém a reserva terminal das decisões de método. Supera a exigência
+de inicialização anterior à sessão em 019/022 para esse fluxo, preservando autoria
+fixa e assinatura como testemunho. Ajusta 039/040 quanto ao executor da importação,
+definição, recebimento/listagem e agrupamento dos compartilhamentos. Supera somente
+a obrigatoriedade de ratificação jurídica da 044 para geração com aceitação explícita;
+suas regras de APR-01, hashes, controle interno, resultado aprovado e base documental
+permanecem. As decisões anteriores conservam seus textos históricos.
+
+HAB-01, ROT-02, CAN-01, CAT-01 e MAN-01 precisam incorporar a interface aprovada:
+propostas-artefatos.md registra as propostas, sem editar reference/metodo/.
+O MAN-01 v1.0 não declara selar-apos-P2 no quadro transversal. A divergência exata
+é **ato humano selar-apos-P2 ausente das seções 3.3 e 3.4**. manual_a25.py permanece
+inalterado e falha em test_01; as quatro negativas continuam passando. Falha conhecida
+é conferida por código, nome do teste e lista exata de divergências, nunca por
+continue-on-error genérico. Nova divergência interrompe regressão e commit.
+
+## Verificação e limites
+
+Núcleo 0.2.46, campo 0.8.26 e playbook 0.4.20. A evidência em
+.projectdocs/evidencias/bloco-inicial-conduzido/ registra linha de base integral
+986/49 em Python 3.12.12, testes negativos anteriores à implementação, regressão
+final integral, comparação do pacote e busca de vocabulário no núcleo.
+
+O percurso sintético usa MCP simulado e scripts reais; cobre rodadas, PDFs,
+assinaturas/evidências sintéticas, árvore, compartilhamento, canais, importação,
+validação, Git e três retomadas. Não há cliente real ou conexão com conta de cliente.
+A guarda depende dos hooks do runtime; a suíte não comprova todas as versões de
+interfaces Google/Tally. Perfis desconhecidos continuam recusados.
+
+Retomada lê estado e saídas; não repete operação já confirmada. API interrompida
+antes da preservação do retorno exige conferir objeto remoto por id antes de
+repetir. Não se promete execução única de efeitos externos sem essa conferência.
+F0 liberado para execução não é F0 encerrado e não decide prosseguimento.
+
+A busca identificou remissões antigas a instrumentos em comentários/mensagens do
+núcleo. Os rótulos de diagnóstico da curadoria foram declarados no schema do campo;
+condições de autoria, procedência, versão, histórico e referência permanecem iguais.
+Casos sem rótulos continuam recusando pelas mesmas condições, com diagnóstico genérico.
+Remissões em comentários foram retiradas. Saída de grep anterior/final e teste de
+ausência de vocabulário de instrumentos/conectores acompanham a evidência.

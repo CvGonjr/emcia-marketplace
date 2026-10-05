@@ -10,9 +10,45 @@ por hash dos modelos e templates. Metadado interno do template não substitui
 o hash aprovado. Documento fora desse registro não rege caso real.
 Esta referência descreve a interface técnica, sem substituir o procedimento.
 
-## Inicialização humana
+## Fluxo conduzido
 
-Antes da sessão do agente, no terminal do engenheiro:
+Use `/eiac-campo:iniciar`. Ambiente, configuração reutilizada, calibração do perfil,
+coleta, rodadas, conferências humanas, assinaturas e passagem até F0 liberado são
+conduzidos pela sessão. A decisão 045 autoriza somente os atos administrativos.
+Cada execução tem aprovação registrada com operação, resumo, trecho literal,
+data, responsável e hashes. Aprovação é testemunho, não autenticação.
+
+A sessão prepara entradas e executa `iniciar.py aprovar`/`executar`. O JSON externo
+para executar tem `operacao` e `entrada`; esta identifica `habilitacao` e `caso`,
+e `entrada` interna contém o payload da habilitação. Exemplo sintético:
+
+```json
+{"operacao":"revisar","entrada":{"habilitacao":"HAB-0001","caso":"caso-0001","entrada":{"decisor":"Nome Sobrenome","motivo":"Carta conferida","qualificacao_0a":true,"conteudo_conferido":true,"evidencia":"/pasta/revisao.md"}}}
+```
+
+Para `aprovar`, use o mesmo objeto e acrescente `literal` e `resumo`; preserve
+sua saída JSON como testemunho. Não invente aprovação nem registre silêncio.
+
+```bash
+python3 /caminho/eiac-campo/scripts/iniciar.py aprovar --entrada /pasta/ato-aprovado.json > /pasta/aprovacao.json
+python3 /caminho/eiac-campo/scripts/iniciar.py executar --entrada /pasta/ato.json --aprovacao /pasta/aprovacao.json
+```
+
+`retomar` recebe `{"habilitacao":"HAB-0001","caso":"caso-0001"}` e lê o estado.
+Na primeira configuração, `configurar` recebe os sete campos: responsavel,
+base_casos, base_expedientes, workspace_tally, pasta_drive, calendario_casos,
+navegador. As bases são absolutas e externas; ids são retornados pelo conector
+ou informados explicitamente. O perfil usa inventário real `name`/`inputSchema`.
+
+As cinco aprovações do percurso sem retrabalho são envio/plano de rodadas, carta,
+PDFs/plano de assinaturas, abertura com árvore inteira/plano local, compartilhamentos
+com destinatário/pasta/papel. Um trecho pode cobrir operações mecânicas desse plano;
+mudança de conteúdo, árvore ou destino exige atualização. PDFs e evidências devolvidos
+precisam ser indicados e conferidos pelo engenheiro; o agente não autentica assinatura.
+
+## Inicialização manual alternativa
+
+Como alternativa ao comando conduzido, no terminal do engenheiro:
 
 ```bash
 python3 /caminho/eiac-campo/scripts/habilitacao.py iniciar \
@@ -139,8 +175,8 @@ revisão mesmo se a nova informação não mudar uma cláusula.
 
 ## Geração e liberação dos PDFs
 
-Antes de gerar HAB-02 e HAB-03, o engenheiro registra a operação humana
-`revisao-juridica` no terminal, com entrada JSON:
+A operação `revisao-juridica` permanece disponível, executada pela sessão após
+aprovação humana registrada ou pelo terminal. Seu JSON é:
 
 ```json
 {
@@ -183,10 +219,30 @@ separados, mas ambos os hashes precisam estar cobertos antes de `gerar`.
 sem resultado são preservados e não liberam nova geração. É necessário registrar
 o resultado do ato humano com sua evidência, sem completar dados antigos por
 inferência. A emissão conserva a revisão aprovada selecionada para cada hash.
-Ausência ou divergência recusa com o nome da operação que falta, antes de
-iniciar qualquer PDF. Não há dispensa. Aprovação documental não substitui
-revisão jurídica; o registro testemunha o ato humano e não verifica por modelo
+Ausência de revisão aprovada pode ser coberta somente pela aceitação explícita
+descrita abaixo. Aprovação documental não é ratificação jurídica; o registro testemunha o ato humano e não verifica por modelo
 o mérito jurídico, a identidade ou a qualificação profissional do revisor.
+
+## Aceitação das minutas e revogação
+
+Sem revisão aprovada para o hash, o engenheiro pode aceitar uma única vez o texto
+exato **“uso as minutas sem ratificação jurídica”**. `aceitar-minutas` em
+`iniciar.py executar` recebe habilitacao, caso e texto; a aprovação mantém o mesmo
+texto literal. A configuração guarda texto, data, responsável, testemunho e
+revogada_em. `revogar-minutas` recebe habilitacao e caso e exige testemunho de
+revogação; impede emissões futuras, sem apagar as anteriores.
+
+A aceitação é reutilizada nas execuções seguintes. O responsável precisa coincidir
+com o expediente. Revisão aprovada para os hashes usados prevalece sobre aceitação.
+Sem uma dessas duas condições, `gerar` recusa antes de qualquer PDF, informando
+`revisao-juridica` ou aceitação explícita. Não há flag de dispensa da guarda.
+
+Cada versão registra `minuta` (código, arquivo, versão e SHA-256),
+`situacao_juridica` (“ratificada” ou “sem ratificação”), data e referência à revisão
+ou aceitação. Nenhum metadado jurídico ou de aceitação é inserido no MD ou PDF.
+O checklist mostra minutas sem ratificação como pendência não bloqueante.
+A emissão conduzida lê a configuração; na alternativa manual, `gerar` pode informar
+`config_emcia` para o arquivo de configuração, mantendo responsável e aceitação exatos.
 
 `gerar`:
 
@@ -283,9 +339,9 @@ ficam preservados. Signatários divergentes, faltantes e versões anteriores rec
 
 Não importe dados operacionais para comprovar acesso antes de 0d; registre a
 conferência administrativa humana. Item negado exige `motivo` e `restricao`.
-`preparar-0d` confere prontidão e apresenta o desfecho proposto. O engenheiro abre o
-caso com o identificador reservado usando `novo-caso.sh`, importa o expediente
-com os mecanismos autorizados e segue o roteiro canônico para registrar e selar.
+`preparar-0d` confere prontidão e apresenta o desfecho proposto. O engenheiro aprova o desfecho; a sessão abre com `iniciar.py`, importa pelos
+mecanismos aprovados, valida e sela. O terminal com `novo-caso.sh` permanece
+alternativa. A preparação não decide o prosseguimento de F0.
 Nenhuma operação deste script escreve no caso ou muda a guarda de F0.
 
 `nao-prosseguir` registra a decisão negativa e invalida documentos/revisões:
@@ -305,7 +361,7 @@ Arquivos sem referência, deixados por falha de operação, não contam como evi
 nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
 
 
-## Importação humana no caso
+## Importação aprovada no caso e alternativa manual
 
 A sequência é abertura → planejar/provisionar → definir (ou `--canais`) →
 importar → gravar `00-habilitacao` pelo validador → selar → F0.
@@ -328,8 +384,8 @@ python3 /caminho/eiac-campo/scripts/importar_habilitacao.py --expediente /caminh
 
 O importador exige formalização vigente, acesso efetivo, qualificação registrada,
 integridade, mesmo caso reservado e mesmo responsável. Recusa expediente com
-decisão de não prosseguir e caso com etapa encerrada. A guarda recusa essa
-operação pela sessão e devolve o comando exato para o terminal humano.
+decisão de não prosseguir e caso com etapa encerrada. No playbook novo, a sessão pode executar pelo plano de abertura aprovado;
+chamada sem testemunho recusa. Casos antigos conservam o contrato humano.
 
 Somente os três PDFs assinados, suas evidências e a matriz entram em
 `fontes/habilitacao/importacao-NNN-AAAA-MM-DD/`. A matriz é conferida contra o
@@ -361,7 +417,7 @@ Casos existentes conservam seu playbook; a mudança alcança novos casos.
 
 Na abertura, `--expediente` é opcional; quando informado, confere prontidão,
 identificador reservado e responsável antes de criar o caso. A importação
-continua sendo uma operação humana separada:
+continua sendo uma operação separada, aprovada no fluxo ou executada no terminal:
 
 ```bash
 /caminho/emcia-marketplace/novo-caso.sh caso-0001 --responsavel "Nome Sobrenome" /base/casos --expediente /caminho/expediente
@@ -397,3 +453,16 @@ REC resolve por relação `recebimentos` explícita em fonte curada; relação
 ausente recusa. Não se infere destino por texto nem se substitui por ressalva.
 Procedimento: EMCIA-HAB-01 §3.4 e EMCIA-CTX-01 §3.7; instrumento em
 `reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md`.
+
+
+## Saída e decisões de método
+
+`saida_inicial.py --expediente <dir> --caso <dir>` confere respostas, campos com
+fonte, carta, três PDFs assinados com evidência, matriz/desfecho, método, canais,
+importação, validação, selo Git e F0 liberado. `--json` retorna o mesmo checklist.
+Ausência bloqueante retorna 1. Pendência jurídica retorna 0 se os demais itens
+estiverem presentes. Não altera estado nem registra encerramento de F0.
+
+Apuração, decidir-prosseguimento, sessões, restrições, autonomia, recalibragem,
+encerramentos EX3/EX4 e selo após P2 continuam no terminal. Aprovação no chat
+não autoriza o agente a executá-los. Casos abertos conservam seu playbook.

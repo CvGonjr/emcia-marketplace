@@ -1,113 +1,104 @@
 # Interface dos canais externos
 
-Procedimento: EMCIA-CAN-01, MAN-01 §3.2 e
-`auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6, na origem fixada
-em `reference/metodo/manifesto.json`. As cópias empacotadas conservam os bytes
-canônicos e seus estados de aprovação.
+O fluxo inicial é conduzido por `/eiac-campo:iniciar`, conforme decisão 045.
+O procedimento canônico é EMCIA-CAN-01, MAN-01 §3.2 e ROT-02 §3.6 na linha de
+base do manifesto. As diferenças aprovadas estão em `propostas-artefatos.md`;
+o pacote permanece byte a byte o da tag.
 
-O playbook declara finalidades e direções; `registro/canais.json` declara ids.
-`canais.schema.json` documenta o contrato; o script aplica as mesmas condições
-e as relações com o playbook, sem bibliotecas novas nem chamadas de API.
+## Planejar, provisionar e definir
 
-`canais.py planejar` é somente leitura e propõe no drive compartilhado EMCIA
-`<caso>/00-habilitacao`, `entrada-documentos`, `entrada-amostras`, `entregas`
-e `trabalho-interno`. Os nomes não são referências de roteamento.
+`canais.py planejar` é somente leitura: propõe a raiz do caso com
+`00-habilitacao`, `entrada-documentos`, `entrada-amostras`, `entregas` e
+`trabalho-interno`. Roteamento usa ids, não nomes. O agente executa os MCPs
+somente depois de registrar e conferir as aprovações dos efeitos externos.
 
-No terminal humano, use `canais.py definir --entrada <json>`. Declare `versao`
-inteira sequencial, `caso`, `decidido_por` nominal, `data` no formato ISO de data
-(AAAA-MM-DD) e `canais`. O evento é atribuído ao responsável fixado no caso;
-`decidido_por` registra a pessoa comunicada na declaração.
-Cada canal contém os campos da especificação em `registro/canais.schema.json`.
-Tally usa `workspace_id`/`formulario_id`; Drive, `drive_id`/`pasta_id`;
-Calendar, `calendario_id`. Proprietário é `emcia` ou `cliente`. Filtro Tally
-é `{"campo":"caso","valor":"<id-do-caso>"}`; marcador da agenda é
-`[{caso}/{etapa}]`, expandido ao registrar a sessão. Todos os ids são reais
-informados pelo engenheiro ou retornados pelo conector; não substitua por nomes.
+Uma aprovação cobre a árvore inteira, apresentada junto da decisão de abrir.
+Outra cobre o conjunto de compartilhamentos: destinatário, pasta/id e papel
+em cada linha. Trabalho-interno tem acesso do cliente `nenhum`. Uma alteração
+de destino, destinatário ou papel exige aprovação atualizada.
 
-Versões anteriores ficam em `registro/canais/versao-NNNN.json`. O evento
-`CanaisDefinidos` fixa o SHA-256 da versão vigente. `resolver <alvo> <direcao>`
-recusa ausência, ambiguidade ou adulteração, indicando a definição humana.
-O núcleo exige o canal ao carregar e encerrar etapas que o declaram.
+A calibração lê nomes e `inputSchema` e gera regras pelos perfis embutidos de
+`iniciar.py`, para assinaturas conhecidas de Google Drive/Calendar e Tally oficial.
+O perfil e o inventário recebem confirmação inicial; ferramenta sem perfil ou
+sem parâmetro restritivo é recusada. Expressões não são fornecidas pelo agente.
+Uma busca Drive admite apenas `'<id>' in parents`, com opção `and trashed = false`.
+IDs retornados só entram no contexto do expediente e da operação correspondente.
+Retorno não autentica servidor nem comprova permissão remota.
 
-## Passagem em 0d
+Antes de existir caso, `guarda_inicial.py` confere aprovações, tratamento e ids
+pela configuração/expediente. Durante o bloco, mantenha a sessão na pasta de
+trabalho administrativa para provisionar a raiz antes da declaração dos canais;
+ainda não há contrato de canais no caso vazio. Os atos locais usam o wrapper e
+entram no caso pelo script. Dentro de caso com canais declarados, a guarda do
+núcleo também aplica seu contrato; a autorização local não contorna a guarda.
 
-Depois da abertura, planeje e provisione; defina os canais antes da importação
-ou na própria importação com `--canais`. Grave o desfecho pelo validador e sele
-antes de F0. `planejar` não chama APIs nem grava a declaração.
+A ordem é abertura → planejar/provisionar → definir (ou `--canais`) → importar
+→ validar `00-habilitacao` → selar → F0 liberado. Na sessão, `iniciar.py executar`
+confere testemunho e hashes antes do ato. O responsável fixado é o autor.
+O núcleo aplica `operacoes_sessao` declarado no playbook, sem nomes do método.
 
-Prepare os endereços com `/eiac-campo:canais`, com as confirmações de criação
-e compartilhamento. O engenheiro define os canais e importa a habilitação.
-Alternativamente, `importar_habilitacao.py --expediente <dir> --canais <json>`
-usa a declaração humana na própria importação. Antes de F0, valide o desfecho
-e sele conforme a decisão 039. Sem canais definidos, F0 continua bloqueado.
+## Declaração e alternativa manual
 
-Na importação, os ids dos formulários registrados no expediente substituem
-os endereços de habilitação, preservando `origem` com id da habilitação, fontes
-e hash do expediente. Workspace conhecido no expediente é conferido contra
-a declaração humana; quando o expediente antigo não o contém, ele precisa
-vir da declaração. Nenhum id é inventado. Rodadas conservam seus formulários.
+No terminal, continua disponível:
 
-## Coleta e publicação
+```bash
+python3 /caminho/eiac-campo/scripts/canais.py definir --entrada /pasta/canais.json
+```
 
-Downloads e manifestos são preparação em `rascunho/entrada/`. O engenheiro
-executa `receber.py --arquivo <caminho> --manifesto <json>` no caso. O manifesto
-traz `ferramenta`, `objeto_id`, `conteiner_id`, `modificado_em` e `coletado_em`;
-Tally acrescenta `submissao_id` e `campos_ocultos`. As datas são ISO com fuso.
-O arquivo e o manifesto precisam estar em `rascunho/entrada/`. O script
-confere que a coleta não antecede a modificação e recusa hash ou objeto
-já recebido sem decisão de nova versão. Novas versões requerem `--nova-versao <json>` com decisor, motivo, data e id
-do recebimento anterior. A decisão fica em `rascunho/`. Arquivos e manifestos anteriores ficam preservados.
+O JSON declara `versao` sequencial, `caso`, `decidido_por` nominal, `data` ISO e
+`canais`, conforme `registro/canais.schema.json`. Cada canal possui finalidade,
+ferramenta, direção, etapas, entregáveis, proprietário, ids, acesso do cliente,
+sensibilidade, filtro e marcador. Tally usa workspace_id/formulario_id; Drive,
+drive_id/pasta_id; Calendar, calendario_id. Todos os ids vêm da fonte ou conector.
+Filtro Tally é `{"campo":"caso","valor":"<caso>"}`. Agenda usa `[{caso}/{etapa}]`.
+Não use nomes de organizações como ids nem declare contêiner de outro caso.
 
-O engenheiro registra a publicação com `entregar.py --entrada <json>`:
-`entregavel`, `versao`, `sha256`, `arquivo_id`, `destino_id`, `destinatario`
-nominal e `data` (AAAA-MM-DD). A entrada precisa estar em `rascunho/`. O destino precisa ser o canal `entregas`. O hash é conferido
-contra a emissão e os bytes locais. Esse registro não é aceite.
+Versões anteriores ficam em `registro/canais/versao-NNNN.json`. `CanaisDefinidos`
+fixa o hash vigente. `resolver <alvo> <direcao>` recusa falta, ambiguidade e
+adulteração. Etapas e emissão conferem os canais que o playbook exige.
 
-Scripts conferem os dados trazidos pelo agente contra a declaração; não
-autenticam conteúdo remoto, identidade ou acesso efetivo. Confirmações no
-chat são requisitos operacionais do comando, não credenciais dos scripts.
+`importar_habilitacao.py --expediente <dir> --canais <json>` também define na
+importação. Os formulários e rodadas do expediente migram com origem, fontes e
+hash, sem perder versões. Workspace informado no expediente precisa coincidir;
+workspace ausente em expediente antigo vem da declaração humana, nunca de palpite.
 
-Asserções sobre material recebido usam `fonte: REC-NNNNNN` na marca de
-procedência. O validador encontra a origem e confere o hash completo. A marca
-de procedência continua dependendo do instrumento: recebimento não transforma
-automaticamente uma declaração em verificação.
+## Coleta, listagem e entrega
 
-## Sessões e escopo MCP
+Preparação fica em `rascunho/entrada/`. No bloco inicial, `registrar-listagem`
+e `receber-material` podem ser executados pela sessão com aprovação registrada.
+Fora de F0, a sessão recusa esses atos: o engenheiro usa o terminal. Caso anterior
+conserva as exigências de seu playbook.
 
-Registro de sessão aceita `--referencia-externa <id>` junto com
-`--canal-externo <id>` e `--marcador "[<caso>/<etapa>]"`. No template a referência
-é opcional; `exige_referencia_externa_por_camada` pode torná-la obrigatória
-no playbook do caso. Referência informada sempre exige canal e marcador coerentes.
+`registrar_listagem.py --entrada <json>` confere ferramenta_externa, argumentos,
+conteiner_id, objetos e coletado_em com fuso; canal e parâmetros devem corresponder.
+`ListagemRegistrada` fixa o hash. Leitura por id exige listagem íntegra do contêiner
+declarado. Isso não transforma a coleta em prova nem autoriza escrita direta.
 
-O teste real confirmou hooks MCP no Claude Code 2.1.283. Os hooks do núcleo
-incluem `mcp__.*` e leem `registro/ferramentas-externas.json`. As regras padrão
-mostram nomes e argumentos de interfaces MCP; o engenheiro ajusta esses dados
-aos nomes e argumentos efetivos do conector instalado, no terminal, sem
-afrouxar o escopo. Ferramenta desconhecida recusa. Não existe uma interface
-universal de argumentos MCP. A confirmação em chat permanece necessária.
+`receber.py --arquivo <arquivo> --manifesto <json>` exige preparação no caso,
+canal/etapa/filtro e hash. Manifesto traz ferramenta, objeto_id, conteiner_id,
+modificado_em e coletado_em; Tally acrescenta submissao_id e campos_ocultos.
+Nova versão exige decisor nominal, motivo, data e recebimento_anterior, com
+`--nova-versao <json>`; os anteriores permanecem. Procedência da asserção continua
+sendo verificada pelo validador, usando `fonte: REC-NNNNNN` e hash completo.
 
-Leitura por id exige manifesto de listagem prévia. O agente prepara JSON em
-`rascunho/entrada/` com `ferramenta_externa`, `argumentos`, `conteiner_id`,
-`objetos` (lista de ids) e `coletado_em`; o engenheiro confere e executa
-`registrar_listagem.py --entrada <json>`. O script exige correspondência entre
-argumentos, contêiner e canal, fixa o hash e emite `ListagemRegistrada`.
-Registro não autentica a resposta remota. Coleta segue em preparação até o
-recebimento humano; listagem não autoriza escrita em `fontes/`.
-
-Para provisionar, declare primeiro um contêiner EMCIA já existente e exclusivo
-do caso como endereço inicial. Não use o espaço compartilhado de outros casos
-como canal de leitura. O agente cria divisões dentro desse id apenas com confirmação;
-o engenheiro então define a versão com os ids provisionados. Sem endereço
-inicial declarado ou sem regra compatível, use a interface externa.
-Provisionamento de estrutura tem regra própria; escrita de material só vai
-para `entregas`. Cada compartilhamento continua exigindo confirmação própria.
-
-Essas guardas dependem do runtime que executa os hooks. Não foi comprovado
-disparo em outro ambiente; o resultado do Claude Code não é garantia para
-conectores executados por clientes que não suportem esses hooks.
+`entregar.py --entrada <json>` permanece humano: confere entregável, versão, hash,
+arquivo_id, destino_id, destinatario e data contra a emissão e o canal de entregas.
+Registro de publicação não é aceite. Não há mensagem ou publicação automática.
 
 | Ato na fronteira externa | Executor |
 |---|---|
-| `receber-material` | Engenheiro no terminal, após conferir a coleta |
+| `receber-material` | Sessão aprovada em F0; terminal fora do bloco inicial |
+| `registrar-listagem` | Sessão aprovada em F0; terminal fora do bloco inicial |
 | `entregar-material` | Engenheiro no terminal, após conferir a publicação |
-| `registrar-listagem` | Engenheiro no terminal, após conferir a listagem |
+
+## Sessões e limites
+
+Sessões continuam humanas. Referência externa opcional no template deve coincidir
+com canal, id do calendário e marcador do caso/etapa; o playbook pode exigi-la
+por camada. Agendamento não registra realização da sessão.
+
+Os hooks precisam disparar no runtime. A suíte usa MCP simulado; não comprova
+permissões em contas reais ou assinatura de todas as versões dos conectores.
+Ferramenta incompatível fica recusada e exige perfil conferido, sem ampliar escopo.
+Aprovação no chat é testemunho, não autenticação. Disco e autoria fixa mantêm a
+fronteira de confiança da 022; não se verifica veracidade remota por modelo.

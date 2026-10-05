@@ -1,0 +1,63 @@
+{
+  "HAB-01": {
+    "minuta": {
+      "codigo": "HAB-01",
+      "arquivo": "auxiliares/HAB-01-carta-de-escopo.md",
+      "versao": "0.2",
+      "versao_aprovada": "0.2 (por hash)",
+      "sha256": "88e77fcb1a3d3458172b73e6c7e43afda91467850dda97494ccac67dd3872a03"
+    },
+    "situacao_juridica": {
+      "estado": "não aplicável",
+      "data": "2026-10-05T14:52:35.486764+00:00",
+      "revisao": null,
+      "aceitacao": null
+    },
+    "markdown_sha256": "da3e2bf54559957e16d0a08706b42af19eeb5014f2bfe3ccdee0743d8f267334",
+    "pdf_sha256": "819289b7fba315e3943bbb05915f59efbf5efcad2e569d5f920e4ee7892af58b"
+  },
+  "HAB-02": {
+    "minuta": {
+      "codigo": "HAB-02",
+      "arquivo": "auxiliares/HAB-02-acordo-confidencialidade.md",
+      "versao": "0.2",
+      "versao_aprovada": "0.2 (por hash)",
+      "sha256": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4"
+    },
+    "situacao_juridica": {
+      "estado": "sem ratificação",
+      "data": "2026-10-05T14:52:35.487069+00:00",
+      "revisao": null,
+      "aceitacao": {
+        "texto": "uso as minutas sem ratificação jurídica",
+        "responsavel": "Pessoa Responsavel",
+        "data": "2026-10-05T10:00:00Z",
+        "revogada_em": null
+      }
+    },
+    "markdown_sha256": "616d1ca15d4afd40dc9cf439c449fd0e489bffd0981bf348dda09da4497f79be",
+    "pdf_sha256": "668b56522728a289de38f1c9853f697a56689d91d615ef338c7a556fe9a35255"
+  },
+  "HAB-03": {
+    "minuta": {
+      "codigo": "HAB-03",
+      "arquivo": "auxiliares/HAB-03-termo-de-consentimento.md",
+      "versao": "0.2",
+      "versao_aprovada": "0.2 (por hash)",
+      "sha256": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96"
+    },
+    "situacao_juridica": {
+      "estado": "sem ratificação",
+      "data": "2026-10-05T14:52:35.487292+00:00",
+      "revisao": null,
+      "aceitacao": {
+        "texto": "uso as minutas sem ratificação jurídica",
+        "responsavel": "Pessoa Responsavel",
+        "data": "2026-10-05T10:00:00Z",
+        "revogada_em": null
+      }
+    },
+    "markdown_sha256": "6bf4f0e831df2207d63c206da43e293131eec700f6f8c90b592dcbc19c208352",
+    "pdf_sha256": "faed2ff14907120ff7f362610d86656afde29c1991eadb87f6a7b21fadeb6a3b"
+  }
+}

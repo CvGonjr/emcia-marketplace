@@ -1,7 +1,8 @@
 # Fontes — material preservado do caso
 
-Esta área só recebe arquivos pela importação humana da habilitação
-(`importar_habilitacao.py`) e pelo recebimento humano (`receber.py`).
+Esta área só recebe arquivos pela importação da habilitação
+(`importar_habilitacao.py`) e pelo recebimento (`receber.py`), no terminal ou
+durante o bloco inicial pela sessão após aprovação registrada conforme a 045.
 O agente prepara coletas em `rascunho/entrada/`; não copia nem altera arquivos
 em `fontes/`. O validador e o curador também não escrevem nesta área.
 

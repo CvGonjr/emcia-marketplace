@@ -1,0 +1,39 @@
+........................................E.E..
+======================================================================
+ERROR: test_41_aceitacao_sem_ratificacao_libera_e_fica_interna (__main__.Habilitacao.test_41_aceitacao_sem_ratificacao_libera_e_fica_interna)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 565, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 430, in aplicar
+    exigir(doc == 'HAB-01' or juridica is not None,
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 54, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: registre revisao-juridica para o hash exato de HAB-02 antes de gerar
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 505, in test_41_aceitacao_sem_ratificacao_libera_e_fica_interna
+    self.run_action('gerar',templates=str(self.templates),config_emcia=str(cfg))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 572, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: registre revisao-juridica para o hash exato de HAB-02 antes de gerar
+
+======================================================================
+ERROR: test_43_ratificacao_prevalece_sobre_aceitacao (__main__.Habilitacao.test_43_ratificacao_prevalece_sobre_aceitacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 528, in test_43_ratificacao_prevalece_sobre_aceitacao
+    self.assertEqual(v['situacao_juridica']['estado'],'ratificada')
+                     ~^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'situacao_juridica'
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.490s
+
+FAILED (errors=2)

@@ -1,0 +1,23 @@
+eiac-nucleo/scripts/curar.py:17:(CTX-01 3.11-3.13) — nunca como sobrescrita do registro anterior.
+eiac-nucleo/scripts/curar.py:41:    """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
+eiac-nucleo/scripts/curar.py:55:            erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
+eiac-nucleo/scripts/curar.py:60:    """CTX-V04/V10: mudanca de procedencia so entra como versao nova,
+eiac-nucleo/scripts/curar.py:67:    o objeto participa do regime de versionamento do CTX-01 3.11-3.13.
+eiac-nucleo/scripts/curar.py:96:        # CTX-V04 nomeia literalmente a transicao I->V; a mesma exigencia de
+eiac-nucleo/scripts/curar.py:98:        # confronto) segue o principio geral do CTX-01 3.12, sem codigo proprio.
+eiac-nucleo/scripts/curar.py:99:        codigo = "CTX-V04" if (proc_antes == "I" and proc_depois == "V") else "CTX-01 3.12"
+eiac-nucleo/scripts/curar.py:112:                f"CTX-V10: mudanca de {motivo} exige historico com a versao anterior "
+eiac-nucleo/scripts/curar.py:123:                    f"CTX-V10: entrada de historico incompleta para a versao anterior: "
+eiac-nucleo/scripts/curar.py:129:                        "CTX-V10: historico nao referencia a versao imediatamente anterior"
+eiac-nucleo/scripts/curar.py:132:                erros.append("CTX-V10: historico sem numero de versao anterior valido")
+eiac-nucleo/scripts/curar.py:140:                f"CTX-V04: versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
+eiac-nucleo/scripts/curar.py:146:    """CTX-V05/V06/V07: toda referencia a Termo, Entidade ou Fonte listada
+eiac-nucleo/scripts/curar.py:159:    codigo_por_tipo = {"termo": "CTX-V05", "entidade": "CTX-V06", "fonte": "CTX-V07"}
+eiac-nucleo/scripts/curar.py:176:            codigo = codigo_por_tipo.get(entrada["tipo"], "CTX-V05/V06/V07")
+eiac-nucleo/scripts/curar.py:204:    """CTX-V11: toda classificacao_confronto possui classe e referencia_p3d
+eiac-nucleo/scripts/curar.py:206:    `divergente` e verificada aqui — e a unica para a qual o CTX-01 3.5
+eiac-nucleo/scripts/curar.py:218:        return [f"CTX-V11: classe '{classe}' exige referencia_p3d preenchida"]
+eiac-nucleo/scripts/curar.py:222:        return [f"CTX-V11: referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
+eiac-nucleo/scripts/fronteira.py:8:so faz sentido depois da triagem.
+eiac-nucleo/scripts/guarda.py:222:            "autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).",
+eiac-nucleo/scripts/playbook.py:175:    o nivel mais permissivo enquanto a triagem nao apurou.

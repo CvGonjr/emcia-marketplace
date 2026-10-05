@@ -1,0 +1,11 @@
+test_01_sem_aprovacao_recusa_e_registra (__main__.BlocoInicial.test_01_sem_aprovacao_recusa_e_registra) ... ok
+test_02_decisao_metodo_nao_tem_rota (__main__.BlocoInicial.test_02_decisao_metodo_nao_tem_rota) ... ok
+test_03_recibo_nao_aceita_entrada_alterada (__main__.BlocoInicial.test_03_recibo_nao_aceita_entrada_alterada) ... ok
+test_04_perfil_nao_afrouxa_escopo (__main__.BlocoInicial.test_04_perfil_nao_afrouxa_escopo) ... ok
+test_05_config_reutilizada_sem_trocar_autor (__main__.BlocoInicial.test_05_config_reutilizada_sem_trocar_autor) ... ok
+test_06_parametro_de_escopo_ausente_nao_gera_regra (__main__.BlocoInicial.test_06_parametro_de_escopo_ausente_nao_gera_regra) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.013s
+
+OK

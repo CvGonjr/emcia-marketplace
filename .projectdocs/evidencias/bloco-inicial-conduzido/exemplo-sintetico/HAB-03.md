@@ -1,0 +1,98 @@
+# Termo de Consentimento e Autorização — EMCIA
+
+## Identificação do caso
+
+| Metadado | Valor | Metadado | Valor |
+| :--- | :--- | :--- | :--- |
+| **Cliente** | Organização Sintética | **Caso** | HAB-TESTE |
+| **Origem** | EMCIA-HAB-01 | **Responsável EMCIA** | Pessoa Responsavel |
+
+---
+
+## 1. Objetivo
+
+Registrar as autorizações e restrições aplicáveis à gravação de sessões, acesso a documentos e dados e eventual processamento por modelos de IA no caso EMCIA.
+
+
+## 2. Identificação
+
+**Organização:** Organização Sintética  
+**Processo-alvo:** Controle sintético processo_alvo  
+**Responsável pela autorização:** Pessoa Cliente
+
+## 3. Gravação das sessões
+
+**Autorização:** Controle sintético autorizacao_gravacao
+
+**Condições ou restrições:**  
+Controle sintético restricoes_gravacao
+
+## 4. Acesso a documentos e dados
+
+**Fontes autorizadas:**  
+Controle sintético fontes_autorizadas
+
+**Período disponibilizável:** Controle sintético periodo_amostra  
+**Representatividade do período:** Controle sintético representatividade_periodo
+
+**Itens não autorizados ou restritos:**  
+Controle sintético restricoes_acesso
+
+**Situação da autorização escrita:**  
+Controle sintético autorizacao_escrita
+
+## 5. Processamento com IA
+
+**Autorização:** Controle sintético autorizacao_ia
+
+**Condições:**  
+Controle sintético condicoes_ia
+
+**Provedores ou ambientes permitidos:**  
+Controle sintético provedores_ia
+
+## 6. Dados pessoais ou sensíveis
+
+**Foram identificados dados pessoais ou sensíveis?** Controle sintético dados_sensiveis
+
+**Regras para tratamento/anonimização:**  
+Controle sintético regras_dados_sensiveis
+
+## 7. Limites da autorização
+
+Esta autorização aplica-se exclusivamente às atividades necessárias à execução do caso **HAB-TESTE** e ao processo-alvo confirmado na Carta de Escopo correspondente.
+
+Qualquer ampliação material do acesso deverá ser registrada antes de sua utilização.
+
+## 8. Aceite
+
+### Organização
+**Nome:** Pessoa Cliente  
+**Cargo:** Controle sintético cargo_signatario  
+**Data:** A registrar na assinatura
+
+### EMCIA
+**Nome:** Pessoa Responsavel  
+**Função:** Controle sintético funcao_responsavel_emcia  
+**Data:** A registrar na assinatura
+
+---
+
+## 9. Controle de assinatura
+
+| Campo | Valor |
+| :--- | :--- |
+| Status | Aguardando assinatura |
+| Versão assinada | Pendente |
+| Evidência | Pendente |
+
+---
+
+
+
+---
+
+Identificação de emissão: HAB-03 · versão 1.
+Estado de emissão: Para assinatura.
+Habilitação: HAB-TESTE. Identificador do futuro caso reservado: HAB-TESTE. O caso ainda não foi aberto.
+O controle acima descreve a emissão; a conclusão da assinatura será registrada no expediente, preservando este arquivo e os comprovantes do serviço escolhido.

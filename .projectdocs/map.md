@@ -10,9 +10,9 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 
 | Componente | Versão | Papel |
 |---|---|---|
-| eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.25 | Método, scripts de campo, comandos, habilidades e template |
-| Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+| eiac-nucleo | 0.2.46 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+| eiac-campo | 0.8.26 | Método, scripts de campo, comandos, habilidades e template |
+| Playbook do template | 0.4.20 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
 Origem controlada: tag `metodo-v1.0`, commit `08bfb162d762935ed35f55e0a75bc700b81d5276`.
@@ -26,7 +26,7 @@ playbook do plugin pelo caso; migração de caso existente é humana e explícit
 
 README.md apresenta operação e limites; INSTALACAO.md apresenta instalação,
 conectores e provas locais. AGENTS.md e CLAUDE.md fixam as regras de trabalho.
-O manual de aplicação é MAN-01 v1.0, conferido contra o playbook vigente.
+O manual de aplicação é MAN-01 v1.0; A25 registra a falha conhecida da 045 contra o novo playbook.
 CAN-01 declara canais por id; HAB-01 rege habilitação e vínculo de restrição;
 ROT-02 substitui o identificador anterior do roteiro, preservando HAB-02 como
 template do acordo de confidencialidade. Os três templates HAB são extraídos da tag e empacotados
@@ -74,8 +74,9 @@ Habilitação administrativa fora de repositórios → abertura → planejar/pro
 → definir canais (ou --canais na importação) → importar expediente → gravar
 00-habilitacao pelo validador → selar → F0. Planejamento não chama API.
 Provisionamento MCP exige contêiner inicial declarado e exclusivo do caso;
-sem ele, use a interface externa. Confirmação no chat é própria de cada efeito
-externo e compartilhamento; não delega decisões humanas do terminal.
+sem ele, o comando informa a falta. A árvore inteira e o conjunto de
+compartilhamentos recebem aprovações próprias, com destinatário/id/papel;
+os testemunhos não delegam decisões de método reservadas ao terminal.
 
 fontes/ recebe bytes apenas por importar_habilitacao.py e receber.py.
 A importação copia PDFs assinados, evidências e matriz; recebimento copia coleta
@@ -94,7 +95,7 @@ Ambos exigem confirmação no Git; eventos de commit recusado não liberam a tra
 
 ### Núcleo
 
-Scripts: `apuracao.py`, `avancar.py`, `caminhos.py`, `canais_registro.py`, `catalogo.py`, `consultar.py`, `curar.py`, `decisao_humana.py`, `escopo_externo.py`, `esforco.py`, `estado.py`, `estrutura.py`, `fontes_registro.py`, `fronteira.py`, `guarda.py`, `integridade.py`, `pessoa.py`, `playbook.py`, `produtos.py`, `quadro.py`, `recorrencia.py`, `selar.py`, `validar.py`.
+Scripts: `aprovacao.py`, `apuracao.py`, `avancar.py`, `caminhos.py`, `canais_registro.py`, `catalogo.py`, `consultar.py`, `curar.py`, `decisao_humana.py`, `escopo_externo.py`, `esforco.py`, `estado.py`, `estrutura.py`, `fontes_registro.py`, `fronteira.py`, `guarda.py`, `integridade.py`, `pessoa.py`, `playbook.py`, `produtos.py`, `quadro.py`, `recorrencia.py`, `selar.py`, `validar.py`.
 
 Comandos: `apurar-nivel.md`, `consultar.md`, `curar.md`, `emitir.md`, `encerrar.md`, `esforco.md`, `estado.md`, `fronteira.md`, `gravar.md`, `quadro.md`, `registrar-campo.md`, `registrar-recorrencia.md`, `registrar-sessao.md`, `satisfazer-inegociavel.md`, `selar.md`.
 
@@ -173,7 +174,8 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
 | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
 | 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
-| 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica obrigatória | firme por instrução do engenheiro |
+| 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica | obrigatoriedade de ratificação parcialmente superada por 045 |
+| 045 | Bloco inicial conduzido com aprovação nominal e aceitação revogável | firme por instrução do engenheiro |
 
 ## Suítes e evidências
 
@@ -182,22 +184,22 @@ A geração acrescenta dez testes e a conferência do pacote passa de um control
 por processo a oito testes, incluindo negativas de APR-01, tag e templates.
 As contagens finais constam da evidência linha-de-base-v1 e de testes/README.md.
 O inventário completo e o executador atual estão em testes/README.md e
-.projectdocs/evidencias/revisao-juridica-resultado/. Registre códigos, saídas e
-contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
+.projectdocs/evidencias/bloco-inicial-conduzido/. Registre códigos, saídas e
+contagens; falha inesperada impede commit; a exceção A25 exige divergência exata. Antes de alterações, rode negativos.sh
 e contexto.py; para pacote específico, rode seus módulos e a regressão completa.
 
 metodo_empacotado.py confere inventário, caminhos de origem e hashes; com checkout
 canônico irmão, resolve a tag, compara bytes aos objetos do commit e confere
 os templates do checkout pelos hashes do APR-01. habilitacao.py resolve os nomes
 pelos códigos no APR-01, recusando ausência ou ambiguidade; exige revisão
-jurídica de HAB-02 e HAB-03 com resultado aprovado para os hashes exatos antes de qualquer PDF e retira
+jurídica com resultado aprovado para os hashes ou aceitação nominal ativa; retira
 controle, histórico e avisos internos, preservando cláusulas e identificação.
 A evidência contém PDFs reais sintéticos antes/depois e extrações pdftotext.
 Resultado obrigatório, registros legados sem liberação e os dois nomes de
 HAB-03 são cobertos em .projectdocs/evidencias/revisao-juridica-resultado/:
 linha de base de 975 verificações e regressão de 986, em 49 módulos, Python 3.12.
-manual_a25.py exige conferir()
-vazio para o manual empacotado, sem emenda, mantendo quatro negativos.
+manual_a25.py permanece inalterado e acusa a divergência da decisão 045;
+somente test_01 é falha conhecida, mantendo quatro negativos aprovados.
 citacoes.py confere seções, instrumentos JSON, auxiliares e o TRI-01 real.
 restricoes.py e selo_p3b.py cobrem as decisões 041 e 042; habilitacao_0d.py cobre
 passagem e selo de F0. Os módulos de canais cobrem a fronteira externa.
@@ -235,3 +237,26 @@ Ambos os desfechos encerram F0; não prosseguir bloqueia as etapas seguintes at�
 nova decisão que preserva a anterior. Produtos e continuidade vêm do contrato
 copiado no caso; casos anteriores não são migrados automaticamente. Evidência:
 .projectdocs/evidencias/correspondencia-cat01/.
+
+
+## Bloco inicial conduzido — decisão 045
+
+/iniciar verifica ambiente, reutiliza ~/.emcia/config.json, calibra perfis conhecidos
+pela assinatura real e conduz 0a–0d até F0 liberado. Testemunhos de aprovação
+vinculam operações, entradas e hashes; não autenticam o chat. Cinco aprovações
+cobrem envio/rodadas, carta, PDFs, abertura com árvore e compartilhamentos.
+Perfil e aceitação sem ratificação são confirmações iniciais; aceitação é revogável.
+Revisão aprovada para o hash prevalece. A situação jurídica fica no expediente,
+nunca na emissão ao cliente; pendência não bloqueia o checklist de saída.
+
+iniciar.py, guarda_inicial.py, saida_inicial.py e o contrato operacoes_sessao
+instrumentam essa autorização. Decisões de método e selo após P2 continuam
+humanos. Rótulos antigos de curadoria ficam no schema do campo; o núcleo lê dados.
+Casos existentes conservam seu playbook; há fixture íntegra de 0.4.19 nos testes.
+Pacote/manifesto metodo-v1.0 permanecem idênticos. Propostas de HAB-01, ROT-02,
+CAN-01, CAT-01 e MAN-01 estão em propostas-artefatos.md, sem aprovação presumida.
+
+Evidência: .projectdocs/evidencias/bloco-inicial-conduzido/. Linha de base 986/49
+em Python 3.12.12. Regressão final 1014 verificações/51 módulos, com somente A25
+como falha conhecida. O runner e o CI conferem a divergência exata e as quatro
+negativas de A25; não excluem o teste nem toleram outra falha.

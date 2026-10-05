@@ -1,10 +1,10 @@
 # Instalação — marketplace emcia
 
-Use Python 3.12 ou superior no PATH, Git e Claude Code. Para PDFs da habilitação,
-instale Google Chrome ou Chromium. Nenhuma biblioteca Python externa é
-obrigatória; o leitor YAML funciona sem PyYAML.
+Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
+O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
+A regressão do projeto usa Python 3.12. Núcleo 0.2.46, campo 0.8.26, playbook 0.4.20.
 
-## 1. Instalar os dois plugins
+## 1. Instalar os plugins
 
 No Claude Code:
 
@@ -14,157 +14,109 @@ No Claude Code:
 /plugin install eiac-campo@emcia
 ```
 
-Reinicie a sessão e confira os plugins e comandos. A revisão operacional usa
-núcleo 0.2.45, campo 0.8.24, playbook 0.4.19 e manifesto v6. Para trabalhar pelo
-checkout local:
+Se o marketplace já estiver instalado, atualize os dois plugins e reinicie a sessão.
+Confira as versões instaladas. A alteração de playbook vale somente para casos novos;
+caso existente conserva seu contrato e exige migração humana deliberada.
 
-```bash
-git clone https://github.com/CvGonjr/emcia-marketplace.git
-cd emcia-marketplace
-python3 --version
-python3 testes/metodo_empacotado.py
-```
-
-O teste confere SHA-256 do manifesto e do APR-01. Com o checkout irmão de
-emcia-artefatos na tag metodo-v1.0, confere que a tag resolve para o commit
-`08bfb162d762935ed35f55e0a75bc700b81d5276`, compara os bytes aos objetos Git
-e confere os templates HAB do checkout pelos hashes aprovados. O CI obtém esse
-checkout pela tag publicada. O pacote instalado funciona offline.
-
-Caso real usa somente o pacote da linha de base aprovada **metodo-v1.0**,
-aprovada por Celso do Vale em 03/10/2026 no
+Caso real usa somente a linha de base aprovada **metodo-v1.0**, registrada no
 [APR-01](eiac-campo/reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md).
-Documento em revisão ou fora da aprovação não entra em caso real.
-Alteração posterior exige nova aprovação e nova linha de base antes do uso real.
-As três referências históricas ESP-01, VER-01 e fluxo auxiliar não são empacotadas.
+Documento em revisão ou fora da aprovação não entra em caso real. O pacote é
+byte a byte o da tag `metodo-v1.0`; a autorização operacional da decisão 045 não
+reescreve documentos canônicos. O MAN-01 ainda requer revisão: A25 é falha conhecida.
 
-## 2. Configurar os conectores
+Para testar o checkout da ferramenta, mantenha um checkout irmão de
+`emcia-artefatos` na tag `metodo-v1.0`; os testes conferem também os templates
+canônicos usados pela habilitação contra os hashes do APR-01.
 
-Configure no Claude Code os conectores MCP de Tally, Google Drive e Google
-Calendar, com credenciais e acessos do engenheiro. Confira na interface MCP
-as ferramentas carregadas, seus nomes e seus argumentos efetivos antes de
-preparar a declaração do caso. A instalação dos plugins não instala nem
-configura esses conectores.
+## 2. Conectar o Tally
 
-Tally usa workspace e formulário por id; Drive usa drive e pasta por id;
-Calendar usa calendário por id e marcador `[caso/etapa]`. Não procure canais
-pelo nome da organização. Ajuste `registro/ferramentas-externas.json` no terminal
-às assinaturas do conector instalado, mantendo ids e escopo restritos.
-
-A evidência E7 demonstrou chamada real e hook PreToolUse numa ferramenta MCP
-stdio sintética, usando **Claude Code 2.1.283**. Essa é a versão testada;
-não constitui demonstração de hooks em outros clientes ou versões. Confira
-`.projectdocs/evidencias/canais-externos/pacote-E7/` e a decisão 040.
-Cada efeito externo e cada compartilhamento exige confirmação explícita no chat.
-
-## 3. Habilitar e abrir
-
-Leia [MAN-01 §3.2](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
-[CAN-01](eiac-campo/reference/metodo/EMCIA-CAN-01-protocolo-de-canais-externos.md) e
-[ROT-02](eiac-campo/reference/metodo/EMCIA-ROT-02-roteiro-de-habilitacao.md).
-Consulte [reference/habilitacao.md](eiac-campo/reference/habilitacao.md) para
-as operações e os campos JSON do expediente. Os templates HAB-01/02/03 são
-lidos de `eiac-campo/reference/metodo/` do pacote, ou de `auxiliares/` de um
-checkout canônico na tag metodo-v1.0, e precisam coincidir com os hashes do APR-01.
-
-Antes do primeiro cliente, registre a revisão jurídica de HAB-02 e HAB-03 pela
-operação humana `revisao-juridica`: revisor, decisor, data, hashes cobertos e
-evidência importada. `gerar` recusa sem a cobertura exata, sem flag de dispensa.
-O controle do modelo, seu histórico interno e o aviso jurídico não são enviados
-ao cliente. A identificação e as cláusulas são preservadas, e a emissão declara
-“Para assinatura”. Os templates originais e os documentos gerados conservam
-hashes próprios no expediente. Os PDFs exigem conferência humana antes da
-liberação; a assinatura ocorre pelo painel externo.
-
-Inicialize o expediente no terminal, antes da sessão, fora de repositórios:
+No terminal:
 
 ```bash
-python3 eiac-campo/scripts/habilitacao.py iniciar --expediente /base/habilitacoes/HAB-0001 --id HAB-0001 --caso caso-0001 --responsavel "Nome Sobrenome"
+claude mcp add tally --transport http --scope user https://api.tally.so/mcp
 ```
 
-Depois da formalização e dos acessos, abra no terminal:
+Conclua a autenticação do conector. A orientação e o endpoint estão na
+[documentação oficial do Tally](https://tally.so/help/mcp).
+Não grave credenciais, tokens ou respostas de clientes neste repositório.
+
+## 3. Confirmar os conectores Google
+
+Abra `/mcp` e confirme Google Drive e Google Calendar, com as contas EMCIA.
+Consulte a [documentação dos conectores Google no Claude](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors).
+O comando lê nomes completos e parâmetros disponíveis; uma ferramenta desconhecida
+ou sem parâmetro restritivo fica recusada. Conector presente sem operações necessárias
+não basta: o diagnóstico informa as ferramentas sem perfil e a correção necessária.
+Não substitua leitura por id por busca global nem afrouxe expressões de escopo.
+
+## 4. Rodar o bloco inicial
+
+```text
+/eiac-campo:iniciar
+```
+
+A primeira execução verifica ambiente e prepara `~/.emcia/config.json` com:
+responsável nominal, base local de casos, base local de expedientes, id do workspace
+Tally, id da pasta raiz Drive, id do calendário e navegador. O agente obtém ids pelos
+MCPs quando possível e pergunta somente o que faltar. As bases ficam fora de
+repositórios da ferramenta e do método. A configuração é privada e reutilizada.
+
+Confira uma vez o perfil de escopo mostrado. O perfil gerado é determinístico;
+o inventário e sua aprovação ficam preservados. Nome e assinatura incompatíveis
+permanecem recusados. Não edite estado, expediente ou perfil com Write/Edit direto.
+
+Sem revisão jurídica aprovada para os hashes das minutas, a primeira execução pede
+**“uso as minutas sem ratificação jurídica”**. Essa aceitação nominal e datada é
+revogável. Sem revisão aprovada ou aceitação ativa, a geração recusa. Revisão aprovada
+prevalece para o hash coberto. Parecer condicionado não é registrado como aprovado.
+A situação jurídica fica no expediente e no checklist, nunca no documento do cliente.
+
+O percurso sem retrabalho reúne cinco aprovações: envio do formulário/plano de
+rodadas; carta; três PDFs/plano de assinatura; abertura com a árvore inteira; conjunto
+de compartilhamentos com destinatário, pasta e papel. Não existe efeito externo sem
+aprovação. Alterações de conteúdo ou destino exigem nova conferência. Indique os PDFs
+assinados e evidências quando devolvidos; a sessão aguarda esse retorno sem inventá-lo.
+
+A sequência local é abertura → planejar/provisionar → definir (ou `--canais`) →
+importar → validar `00-habilitacao` → selar → conferir F0 liberado.
+A aprovação de abertura inclui uma aprovação da árvore inteira; a aprovação de
+compartilhamentos é separada. Trabalho-interno não é compartilhado com o cliente.
+
+## 5. Retomar e conferir
+
+Execute `/eiac-campo:iniciar HAB-0001 caso-0001` após interrupção. A sessão consulta
+expediente e caso e continua pela saída ausente. Retorno MCP perdido exige conferir
+objeto remoto por id antes de repetir criação, publicação ou compartilhamento.
+
+O relatório também pode ser executado no terminal:
 
 ```bash
-./novo-caso.sh caso-0001 /base/casos --responsavel "Nome Sobrenome" --expediente /base/habilitacoes/HAB-0001
-cd /base/casos/caso-0001
+python3 /caminho/eiac-campo/scripts/saida_inicial.py \
+  --expediente /base/expedientes/HAB-0001 --caso /base/casos/caso-0001
 ```
 
-`--expediente` é opcional na abertura e não importa material. A base opcional
-não pode estar dentro de Git; o destino precisa ser novo. O responsável precisa
-ser pessoa nomeada. A abertura confere SHA-256, copia o pacote para `metodo/` e
-prepara o commit inicial; se esse commit falhar, configure Git e registre-o.
+Cada item sai como presente ou ausente. Saída 0 exige todos os itens bloqueantes;
+“Minutas sem ratificação jurídica” é pendência não bloqueante. O selo precisa estar
+confirmado no Git e conter `00-habilitacao`; um evento sem commit não basta.
 
-## 4. Definir canais, importar, gravar e selar
+F0 liberado para execução não é encerrado. Apuração de nível, sessão e decisão de
+prosseguimento continuam no terminal humano, assim como restrições, autonomia,
+recalibragem, encerramentos EX3/EX4 e selo após P2. A aprovação no chat não libera
+essas decisões pela sessão.
 
-Em caso aberto, planeje e provisione os canais com `/eiac-campo:canais`.
-Provisionar pelo MCP exige declaração prévia de contêiner exclusivo do caso;
-sem ela, use a interface externa e depois declare os ids. O engenheiro executa:
+## Alternativa manual
 
-```bash
-python3 /checkout/emcia-marketplace/eiac-campo/scripts/canais.py planejar
-python3 /checkout/emcia-marketplace/eiac-campo/scripts/canais.py definir --entrada rascunho/canais.json
-python3 /checkout/emcia-marketplace/eiac-campo/scripts/importar_habilitacao.py --expediente /base/habilitacoes/HAB-0001
-python3 /checkout/emcia-marketplace/eiac-nucleo/scripts/validar.py --arquivo caso/00-habilitacao.md
-python3 /checkout/emcia-marketplace/eiac-nucleo/scripts/selar.py --nota "habilitação importada e conferida"
-```
+As interfaces completas e JSON de entrada estão em
+[reference/habilitacao.md](eiac-campo/reference/habilitacao.md) e
+[reference/canais.md](eiac-campo/reference/canais.md). O engenheiro pode executar
+os scripts administrativos diretamente no terminal; as conferências de conteúdo,
+assinatura, integridade, origem e situação jurídica permanecem. Casos anteriores
+continuam seguindo seu próprio playbook.
 
-Prepare antes uma declaração completa conforme
-[reference/canais.md](eiac-campo/reference/canais.md). Como alternativa a definir
-antes, passe `--canais rascunho/canais.json` à importação. A ordem é abertura →
-planejar/provisionar → definir (ou `--canais`) → importar → gravar → selar → F0.
-Sem canais coerentes, importação recusa. Sem selo confirmado no histórico Git
-contendo a importação, F0 permanece bloqueado.
+Aprovação e assinatura registradas são testemunhos, sem autenticação. O ambiente
+local e os hooks do runtime são a fronteira de confiança; a suíte sintética não
+comprova permissões remotas reais nem suporte universal dos conectores.
 
-Abra a sessão na raiz do caso. `CLAUDE_PROJECT_DIR` identifica essa raiz para
-os hooks; execute os scripts de operação nela. `/eiac-nucleo:estado` mostra a
-etapa, camada, referência do método e último selo confirmado. O estado
-corrente F0, sozinho, não significa que suas condições de entrada foram satisfeitas.
-
-## 5. Conferir as recusas
-
-Em um caso sintético, verifique que escrita direta em `caso/`, `contexto/`,
-`registro/` e `fontes/` produz negativa e evento. Conteúdo começa em `rascunho/`
-e segue validação, curadoria ou recebimento. A referência do contexto é somente
+Instrumento de contexto:
 [EMCIA-CTX-01](eiac-campo/reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md).
-
-Tente importar ou definir canais pela sessão: a guarda deve recusar e devolver
-o comando para o terminal humano. Teste uma ferramenta MCP não declarada ou
-com id fora do caso: a guarda deve recusar antes da chamada. Teste asserção
-sem D/I/V: o validador deve recusar. Com P3b corrente, selo ausente ou deixado
-por commit recusado não pode liberar encerramento; a habilidade continua
-não delegável mesmo com selo e sessão humana.
-
-Para regressão determinística no checkout, use Python 3.12 e rode os módulos
-indicados em [testes/README.md](testes/README.md). As suítes incluem controles
-positivos e negativos, sem dados de cliente. O executador completo e as saídas
-estão em `.projectdocs/evidencias/documentacao-operacional/`.
-
-## 6. Operar e atualizar
-
-Recebimento e entrega são registrados no terminal por `receber.py` e `entregar.py`.
-Listagem registrada precede leitura MCP por id. Em P2, todo RH é vinculado a fonte
-curada ou dispensado com motivo por `restricoes.py` (`vincular-restricao`).
-Depois do último encerramento de P2, sele antes de P3b. Não copie arquivos
-manualmente para `fontes/` nem escreva registros pelo chat.
-
-Os scripts conferem coerência local e hashes; não autenticam pessoas, origem
-remota ou permissões efetivas. Acesso humano de escrita ao disco é a fronteira
-de confiança. Confirmação no chat não substitui os atos humanos do terminal.
-Assinatura eletrônica integrada, aceite, gravação e transcrição ficam fora
-do escopo aprovado.
-
-Atualize o marketplace pela interface de plugins e reinicie a sessão. Casos
-existentes conservam seus contratos; a migração é humana e explícita.
-Não substitua o playbook do caso por leitura do plugin.
-
-| Sintoma | Conferência |
-|---|---|
-| Comandos ausentes | Instalação dos dois plugins e reinício da sessão |
-| MCP ausente | Configuração e credenciais dos conectores no Claude Code |
-| Importação recusa canais ausentes | Definição prévia ou `--canais` completo |
-| F0 bloqueado | Importação, gravação e selo confirmado no Git |
-| P2 não encerra | RH vinculados ou dispensados; hashes e fontes curadas |
-| P3b bloqueado | Sessão exigida e selo confirmado após o último encerramento de P2 |
-| PDF não é gerado | Chrome/Chromium, campos dos templates e revisão humana |
-| Hash do método divergente | Pacote e manifesto preservados, sem edição manual |
-| Hook não dispara | Runtime e instalação; repetir as provas no ambiente efetivo |
+Use essa referência controlada ao conferir termos, regras e fontes.

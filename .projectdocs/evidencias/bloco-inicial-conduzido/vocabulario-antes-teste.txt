@@ -1,0 +1,31 @@
+test_01_operacional_sem_aprovacao (__main__.AutorizacaoCaso.test_01_operacional_sem_aprovacao) ... ok
+test_02_operacional_aprovado (__main__.AutorizacaoCaso.test_02_operacional_aprovado) ... ok
+test_03_aprovacao_nao_delega_metodo (__main__.AutorizacaoCaso.test_03_aprovacao_nao_delega_metodo) ... ok
+test_04_apos_p2_selo_humano (__main__.AutorizacaoCaso.test_04_apos_p2_selo_humano) ... ok
+test_05_operacional_fora_f0 (__main__.AutorizacaoCaso.test_05_operacional_fora_f0) ... ok
+test_06_caso_anterior_conserva_trava_humana (__main__.AutorizacaoCaso.test_06_caso_anterior_conserva_trava_humana) ... ok
+test_07_aprovacao_sem_hash_da_entrada (__main__.AutorizacaoCaso.test_07_aprovacao_sem_hash_da_entrada) ... ok
+test_08_comando_composto_recusado (__main__.AutorizacaoCaso.test_08_comando_composto_recusado) ... ok
+test_01_sem_aprovacao_recusa_e_registra (__main__.BlocoInicial.test_01_sem_aprovacao_recusa_e_registra) ... ok
+test_02_decisao_metodo_nao_tem_rota (__main__.BlocoInicial.test_02_decisao_metodo_nao_tem_rota) ... ok
+test_03_recibo_nao_aceita_entrada_alterada (__main__.BlocoInicial.test_03_recibo_nao_aceita_entrada_alterada) ... ok
+test_04_perfil_nao_afrouxa_escopo (__main__.BlocoInicial.test_04_perfil_nao_afrouxa_escopo) ... ok
+test_05_config_reutilizada_sem_trocar_autor (__main__.BlocoInicial.test_05_config_reutilizada_sem_trocar_autor) ... ok
+test_06_parametro_de_escopo_ausente_nao_gera_regra (__main__.BlocoInicial.test_06_parametro_de_escopo_ausente_nao_gera_regra) ... ok
+test_07_saida_ausente_nao_libera (__main__.BlocoInicial.test_07_saida_ausente_nao_libera) ... ok
+test_08_recusa_bootstrap_tambem_fica_na_trilha (__main__.BlocoInicial.test_08_recusa_bootstrap_tambem_fica_na_trilha) ... ok
+test_09_aceitacao_revogavel_pela_operacao_aprovada (__main__.BlocoInicial.test_09_aceitacao_revogavel_pela_operacao_aprovada) ... ok
+test_10_nucleo_sem_instrumentos_ou_conectores (__main__.BlocoInicial.test_10_nucleo_sem_instrumentos_ou_conectores) ... FAIL
+
+======================================================================
+FAIL: test_10_nucleo_sem_instrumentos_ou_conectores (__main__.BlocoInicial.test_10_nucleo_sem_instrumentos_ou_conectores)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/bloco_inicial.py", line 61, in test_10_nucleo_sem_instrumentos_ou_conectores
+    self.assertIsNone(termos.search(p.read_text()),p.name)
+AssertionError: <re.Match object; span=(885, 890), match='CTX-0'> is not None : curar.py
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.974s
+
+FAILED (failures=1)
