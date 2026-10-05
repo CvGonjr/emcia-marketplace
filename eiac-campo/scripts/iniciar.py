@@ -211,7 +211,7 @@ def aprovar(p,op,entrada,literal,resumo):
 def operar(p,op,d,aprovacao):
     c=ler_config(p)
     try:
-        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas'}:
+        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual'}:
             raise ValueError('decisão de método não executável pela sessão: '+op)
         contexto=d.get('caso') or d.get('id') or d.get('habilitacao')
         r=A.conferir(aprovacao,op,c['responsavel'],contexto,cmd_operacao(op,d))
@@ -284,38 +284,90 @@ def operar(p,op,d,aprovacao):
         log(p,c,'TentativaNegada',operacao=op,motivo=str(exc));raise
 
 
+def registros_externos(p,hab):
+    diario=pathlib.Path(p).with_name('mcp-retornos.json')
+    registros=json.loads(diario.read_text()) if diario.exists() else []
+    evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+    selecionados=[]
+    for reg in registros:
+        if reg['habilitacao']!=hab: continue
+        sha=H.digest(json.dumps(reg['resultado'],sort_keys=True,ensure_ascii=False).encode())
+        chamada_sha=H.digest(json.dumps(reg['chamada'],sort_keys=True,ensure_ascii=False).encode())
+        if reg['sha256']!=sha or reg.get('chamada_sha256')!=chamada_sha or not any(
+            e.get('evento')=='RetornoMCPRegistrado' and e.get('sha256')==sha and e.get('chamada_sha256')==chamada_sha for e in evs):
+            raise ValueError('retorno MCP adulterado ou sem registro íntegro')
+        selecionados.append(reg)
+    return selecionados
+
+
+def declaracoes_manuais(p,hab):
+    path=pathlib.Path(p).with_name('caminhos-manuais.json')
+    regs=json.loads(path.read_text()) if path.exists() else []
+    evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+    for r in regs:
+        if r['habilitacao']!=hab:continue
+        sha=H.digest(json.dumps(r,sort_keys=True,ensure_ascii=False).encode())
+        if A.hash_arquivo(r['evidencia'])!=r['evidencia_sha256'] or not any(e.get('evento')=='CaminhoManualDecidido' and e.get('registro_sha256')==sha for e in evs):
+            raise ValueError('decisão manual adulterada ou sem evidência íntegra')
+        yield r
+
+
+def escopos(p,c,hab,caso,operacao):
+    conhecidos={'workspace_id':[c['workspace_tally']],'calendario_id':[c['calendario_casos']],
+                'pasta_id':[],'formulario_id':[],'objeto_id':[],'entregas':[]}
+    if operacao=='provisionar':conhecidos['pasta_id'].append(c['pasta_drive'])
+    exp=pathlib.Path(c['base_expedientes'])/hab
+    if (exp/'expediente.json').exists():
+        state=json.loads((exp/'expediente.json').read_text());H.integridade(exp,state)
+        if state['caso_reservado']!=caso or state['responsavel']!=c['responsavel']:
+            raise ValueError('escopo externo diverge do caso/responsável fixado no expediente')
+        conhecidos['formulario_id'].extend(f['formulario'] for f in state['fontes'].values())
+    for retorno in registros_externos(p,hab):
+        for k,v in retorno['ids'].items():conhecidos.setdefault(k,[]).append(v)
+        if retorno['chamada'].get('finalidade')=='entregas' and retorno['ids'].get('pasta_id'):
+            conhecidos['entregas'].append(retorno['ids']['pasta_id'])
+        conhecidos['objeto_id'].extend(retorno['resultado'].get('objetos',[]))
+    for manual in declaracoes_manuais(p,hab):
+        if manual.get('formulario_id'): conhecidos['formulario_id'].append(manual['formulario_id'])
+    case=pathlib.Path(c['base_casos'])/H.identificador(caso)
+    if (case/'registro/canais.json').exists():
+        import canais_registro as K
+        with cwd(case):
+            pb=json.loads(pathlib.Path('registro/playbook.json').read_text())
+            for canal in K.carregar(pb)['canais']:
+                for k,v in canal['ids'].items():conhecidos.setdefault(k,[]).append(v)
+                if canal['finalidade']=='entregas' and canal['direcao']=='saida':conhecidos['entregas'].append(canal['ids']['pasta_id'])
+    return conhecidos
+
+
 def autorizar_mcp(p,d,r=None):
     """Conferência anterior à chamada. Não executa API, não inventa retorno."""
+    import escopo_externo as S
     c=ler_config(p);arq=pathlib.Path(p).with_name('perfil-mcp.json')
     cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
     nome=d['ferramenta'];args=d['argumentos']
-    regras=[x for x in cfg['perfil']['regras'] if re.fullmatch(x['padrao'],nome)]
-    if len(regras)!=1:raise ValueError('ferramenta sem perfil: '+nome)
-    regra=regras[0]; hab=H.identificador(d['habilitacao']);exp=pathlib.Path(c['base_expedientes'])/hab
-    state=json.loads((exp/'expediente.json').read_text()) if (exp/'expediente.json').exists() else {}
-    if regra['operacao']=='ler' and 'tally' in nome.lower() and not state.get('tratamento'):
-        raise ValueError('tratamento administrativo ausente antes da consulta Tally')
-    conhecidos={'workspace_id':[c['workspace_tally']],'calendario_id':[c['calendario_casos']],
-                'pasta_id':[],'formulario_id':list({f['formulario'] for f in state.get('fontes',{}).values()})}
-    if regra['operacao']=='provisionar':conhecidos['pasta_id'].append(c['pasta_drive'])
-    diario=pathlib.Path(p).with_name('mcp-retornos.json')
-    registros=json.loads(diario.read_text()) if diario.exists() else []
-    for retorno in registros:
-        if retorno['habilitacao']==hab:
-            if H.digest(json.dumps(retorno['resultado'],sort_keys=True,ensure_ascii=False).encode())!=retorno['sha256']:raise ValueError('retorno MCP adulterado')
-            for k,v in retorno['ids'].items():conhecidos.setdefault(k,[]).append(v)
+    regra=S.regra_aplicavel(cfg['perfil'],nome,args)
+    hab=H.identificador(d['habilitacao']);caso=H.identificador(d.get('caso') or hab)
+    conhecidos=escopos(p,c,hab,caso,regra['operacao'])
     for a in regra['argumentos']:
-        val=args.get(a['campo']);vals=conhecidos.get(a.get('campo_id'),[])
+        val=S.argumento(args,a['campo'])
+        vals=conhecidos['entregas'] if a.get('finalidade')=='entregas' else conhecidos.get(a.get('campo_id'),[])
         if a['tipo']=='expressao':ok=isinstance(val,str) and any(re.fullmatch(a['expressao'].replace('{id}',re.escape(v)),val) for v in vals)
-        elif a['tipo']=='id_listado':ok=val in conhecidos.get('objeto_id',[])
+        elif a['tipo']=='id_listado':ok=val in conhecidos['objeto_id']
+        elif a['tipo']=='constante':ok=val==a['valor']
         else:ok=isinstance(val,str) and val in vals
         if not ok:raise ValueError('id/expressão fora do escopo declarado: '+a['campo'])
-    if regra['operacao']=='compartilhar' and args.get('folder_id')==c['pasta_drive']:raise ValueError('não compartilhe a raiz EMCIA')
-    efeito=regra['operacao'] in ('provisionar','compartilhar','escrever') or nome.endswith('create_event')
-    if efeito and r is None:raise ValueError('efeito externo sem aprovação no chat registrada')
-    if r is not None:A.conferir(r,'mcp',c['responsavel'],d.get('caso') or hab,cmd_operacao('mcp',d))
-    log(p,c,'ChamadaMCPAutorizada',ferramenta=nome,argumentos=args,habilitacao=hab,
-        testemunho=A.evento(r) if r else None)
+    if regra['operacao']=='compartilhar' and args.get('fileId')==c['pasta_drive']:raise ValueError('não compartilhe a raiz EMCIA')
+    if regra.get('exige_aprovacao') and r is None:raise ValueError('efeito externo sem aprovação no chat registrada')
+    if r is not None:A.conferir(r,'mcp',c['responsavel'],caso,cmd_operacao('mcp',d))
+    evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
+    # Os mesmos parâmetros, inclusive papel e destinatário, pertencem ao testemunho.
+    aprovado=dict(evento=cfg['perfil']['evento_aprovacao'],ferramenta=nome,argumentos=args,autor=c['responsavel'],contexto=caso,testemunho=A.evento(r) if r else None)
+    S.conferir_eventos(cfg['perfil'],regra,nome,args,[*evs,aprovado],c['responsavel'],caso)
+    log(p,c,'ChamadaMCPAutorizada',ferramenta=nome,argumentos=args,habilitacao=hab,chamada=d,testemunho=A.evento(r) if r else None)
+    case=pathlib.Path(c['base_casos'])/caso
+    if case.is_dir() and regra.get('exige_aprovacao'):
+        with cwd(case): E.evento(cfg['perfil']['evento_aprovacao'],**{k:v for k,v in aprovado.items() if k!='evento'})
     return dict(autorizada=True,ferramenta=nome,argumentos=args)
 
 

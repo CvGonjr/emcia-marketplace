@@ -9,7 +9,11 @@ from apoio.canais import definir
 
 class Escopo(CasoHook):
     def setUp(self):
-        super().setUp(); definir(self.caso)
+        super().setUp()
+        # Contrato de caso anterior preservado; perfis novos têm suíte própria.
+        (self.caso/'registro/ferramentas-externas.json').write_bytes(
+            (RAIZ/'testes/apoio/ferramentas-externas-v1.json').read_bytes())
+        definir(self.caso)
         self.entrada = self.caso/'rascunho/entrada/listagem.json'; self.entrada.parent.mkdir()
         self.pasta = 'SINTETICO-documentos-pasta_id'
 

@@ -1,0 +1,104 @@
+{
+  "versao": 1,
+  "regras": [
+    {
+      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:search_files|list_files)",
+      "operacao": "listar",
+      "argumentos": [
+        {
+          "campo": "q",
+          "tipo": "expressao",
+          "campo_id": "pasta_id",
+          "expressao": "'{id}' in parents(?: and trashed = false)?"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:get_file|download_file)",
+      "operacao": "ler",
+      "argumentos": [
+        {
+          "campo": "file_id",
+          "tipo": "id_listado"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:tally)__(?:get_submissions|list_submissions)",
+      "operacao": "ler",
+      "argumentos": [
+        {
+          "campo": "form_id",
+          "tipo": "id_de_canal",
+          "campo_id": "formulario_id",
+          "direcao": "entrada"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:google_drive|gdrive|drive)__upload_file",
+      "operacao": "escrever",
+      "argumentos": [
+        {
+          "campo": "parent_id",
+          "tipo": "id_de_canal",
+          "campo_id": "pasta_id",
+          "finalidade": "entregas",
+          "direcao": "saida"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:google_calendar|calendar)__(?:create_event|list_events)",
+      "operacao": "agenda",
+      "argumentos": [
+        {
+          "campo": "calendar_id",
+          "tipo": "id_de_canal",
+          "campo_id": "calendario_id",
+          "finalidade": "sessoes",
+          "direcao": "agenda"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:tally)__(?:create_form|publish_form)",
+      "operacao": "provisionar",
+      "argumentos": [
+        {
+          "campo": "workspace_id",
+          "tipo": "id_de_canal",
+          "campo_id": "workspace_id"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:create_folder|share_folder)",
+      "operacao": "provisionar",
+      "argumentos": [
+        {
+          "campo": "parent_id",
+          "tipo": "id_de_canal",
+          "campo_id": "pasta_id"
+        }
+      ]
+    },
+    {
+      "padrao": "mcp__(?:google_drive|gdrive|drive)__update_file",
+      "operacao": "escrever",
+      "argumentos": [
+        {
+          "campo": "parent_id",
+          "tipo": "id_de_canal",
+          "campo_id": "pasta_id",
+          "finalidade": "entregas",
+          "direcao": "saida"
+        },
+        {
+          "campo": "file_id",
+          "tipo": "id_listado"
+        }
+      ]
+    }
+  ]
+}

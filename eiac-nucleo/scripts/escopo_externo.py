@@ -30,6 +30,62 @@ def argumento(dados, campo):
     return valor
 
 
+def validar_valor(valor, schema, caminho):
+    tipos = {'string': str, 'boolean': bool, 'integer': int, 'object': dict, 'array': list}
+    tipo = schema.get('type')
+    if tipo not in tipos or type(valor) is not tipos[tipo]:
+        raise ValueError('tipo externo inválido: '+caminho)
+    if 'enum' in schema and valor not in schema['enum']:
+        raise ValueError('valor externo fora dos permitidos: '+caminho)
+    if tipo == 'integer' and (valor < schema.get('minimum',valor) or valor > schema.get('maximum',valor)):
+        raise ValueError('valor externo fora dos limites: '+caminho)
+    if tipo == 'array':
+        for i,v in enumerate(valor): validar_valor(v,schema.get('items',{}),f'{caminho}.{i}')
+    if tipo == 'object':
+        conferir_parametros(valor,schema.get('properties',{}),schema.get('required',[]),caminho+'.')
+
+
+def conferir_parametros(entrada, parametros, obrigatorios, prefixo=''):
+    if not isinstance(entrada,dict): raise ValueError('argumentos externos precisam ser objeto')
+    extras=set(entrada)-set(parametros)
+    if extras: raise ValueError('parâmetro extra não previsto no perfil: '+prefixo+', '.join(sorted(extras)))
+    if not set(obrigatorios)<=set(entrada): raise ValueError('parâmetro externo obrigatório ausente')
+    for campo,valor in entrada.items(): validar_valor(valor,parametros[campo],prefixo+campo)
+
+
+def regra_aplicavel(dados, ferramenta, entrada):
+    regras=[r for r in dados['regras'] if re.fullmatch(r['padrao'],ferramenta)]
+    if len(regras)!=1: raise ValueError('ferramenta externa não declarada ou ambígua')
+    regra=regras[0]
+    if regra.get('recusa'): raise ValueError(regra['recusa'])
+    if 'parametros' in regra: conferir_parametros(entrada,regra['parametros'],regra.get('obrigatorios',[]))
+    alternativas=regra.get('alternativas')
+    if alternativas is not None:
+        candidatas=[]
+        for alt in alternativas:
+            c=alt['quando'];valor=argumento(entrada,c['campo'])
+            if ('igual' in c and valor==c['igual']) or ('diferente' in c and valor!=c['diferente']): candidatas.append(alt)
+        if len(candidatas)!=1: raise ValueError('variante externa ausente ou ambígua')
+        regra=dict(regra,**candidatas[0])
+    if any(c in entrada for c in regra.get('ausentes',[])): raise ValueError('variante externa contém parâmetro proibido')
+    campos=regra.get('exige_um_de')
+    if campos and sum(c in entrada for c in campos)!=1: raise ValueError('variante externa exige um conteúdo exclusivo')
+    return regra
+
+
+def conferir_eventos(dados, regra, ferramenta, entrada, eventos, autor, contexto):
+    if regra.get('exige_aprovacao'):
+        nome=dados.get('evento_aprovacao','AprovacaoExternaRegistrada')
+        if not any(e.get('evento')==nome and e.get('ferramenta')==ferramenta
+                   and e.get('argumentos')==entrada and e.get('autor')==autor
+                   and e.get('contexto')==contexto and e.get('testemunho') for e in eventos):
+            raise ValueError('efeito externo sem aprovação registrada para ferramenta, parâmetros e contexto')
+    c=regra.get('precondicao_registrada')
+    if c and not any(e.get('evento')==c['evento'] and e.get(c['campo_evento'])==argumento(entrada,c['argumento'])
+                     and e.get('autor')==autor and e.get('contexto')==contexto for e in eventos):
+        raise ValueError('pré-condição externa não registrada')
+
+
 def ids(pb, regra):
     canais = K.carregar(pb)['canais']
     return [c['ids'][regra['campo_id']] for c in canais if regra['campo_id'] in c['ids']
@@ -64,10 +120,7 @@ def conferir(pb, ferramenta, entrada):
         if not re.fullmatch(declaracao['padrao'], ferramenta):
             return None
         dados = contrato(pb)
-        regras = [r for r in dados['regras'] if re.fullmatch(r['padrao'], ferramenta)]
-        if len(regras) != 1:
-            raise ValueError('ferramenta externa não declarada ou ambígua')
-        regra = regras[0]
+        regra = regra_aplicavel(dados, ferramenta, entrada)
         if not isinstance(regra.get('argumentos'), list) or not regra['argumentos']:
             raise ValueError('regra externa sem argumentos de escopo')
         for a in regra['argumentos']:
@@ -85,6 +138,8 @@ def conferir(pb, ferramenta, entrada):
                     raise ValueError('expressão externa sem restrição declarada')
             else:
                 raise ValueError('tipo de argumento externo desconhecido')
+        st=E.ler() or {}
+        conferir_eventos(dados,regra,ferramenta,entrada,E.eventos(),st.get('responsavel'),st.get('caso'))
     except (OSError, ValueError, KeyError, TypeError, AttributeError, re.error) as exc:
         return str(exc)
     return None

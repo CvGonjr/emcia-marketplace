@@ -1,12 +1,46 @@
 {
-  "versao": 1,
+  "versao": 3,
   "regras": [
     {
-      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:search_files|list_files)",
+      "ferramenta": "mcp__claude_ai_Google_Drive__search_files",
+      "padrao": "mcp__claude_ai_Google_Drive__search_files",
       "operacao": "listar",
+      "parametros": {
+        "query": {
+          "description": "The search query.",
+          "type": "string"
+        },
+        "pageSize": {
+          "description": "The maximum number of files to return in each page.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "pageToken": {
+          "description": "The page token to use for pagination.",
+          "type": "string"
+        },
+        "excludeContentSnippets": {
+          "description": "If true, the content snippet will be excluded from the response.",
+          "type": "boolean"
+        },
+        "snippetVerbosity": {
+          "description": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set.",
+          "enum": [
+            "UNSPECIFIED",
+            "BRIEF",
+            "MEDIUM",
+            "DETAILED",
+            "MAX_ALLOWED"
+          ],
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "query"
+      ],
       "argumentos": [
         {
-          "campo": "q",
+          "campo": "query",
           "tipo": "expressao",
           "campo_id": "pasta_id",
           "expressao": "'{id}' in parents(?: and trashed = false)?"
@@ -14,91 +48,477 @@
       ]
     },
     {
-      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:get_file|download_file)",
+      "ferramenta": "mcp__claude_ai_Google_Drive__get_file_metadata",
+      "padrao": "mcp__claude_ai_Google_Drive__get_file_metadata",
       "operacao": "ler",
+      "parametros": {
+        "fileId": {
+          "description": "Required. The ID of the file to retrieve.",
+          "type": "string"
+        },
+        "excludeContentSnippets": {
+          "description": "If true, the content snippet will be excluded from the response.",
+          "type": "boolean"
+        },
+        "snippetVerbosity": {
+          "description": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set.",
+          "enum": [
+            "UNSPECIFIED",
+            "BRIEF",
+            "MEDIUM",
+            "DETAILED",
+            "MAX_ALLOWED"
+          ],
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "fileId"
+      ],
       "argumentos": [
         {
-          "campo": "file_id",
+          "campo": "fileId",
           "tipo": "id_listado"
         }
       ]
     },
     {
-      "padrao": "mcp__(?:tally)__(?:get_submissions|list_submissions)",
+      "ferramenta": "mcp__claude_ai_Google_Drive__read_file_content",
+      "padrao": "mcp__claude_ai_Google_Drive__read_file_content",
       "operacao": "ler",
+      "parametros": {
+        "fileId": {
+          "description": "Required. The ID of the file to retrieve.",
+          "type": "string"
+        },
+        "includeComments": {
+          "description": "Whether to include comments in the response. Comments will be inlined in the text content of the file with a mapping to the comment threads. Note: Comments are only supported for Google Docs, Slides, and Sheets.",
+          "type": "boolean"
+        }
+      },
+      "obrigatorios": [
+        "fileId"
+      ],
       "argumentos": [
         {
-          "campo": "form_id",
+          "campo": "fileId",
+          "tipo": "id_listado"
+        }
+      ]
+    },
+    {
+      "ferramenta": "mcp__claude_ai_Google_Drive__download_file_content",
+      "padrao": "mcp__claude_ai_Google_Drive__download_file_content",
+      "operacao": "ler",
+      "parametros": {
+        "fileId": {
+          "description": "Required. The ID of the file to retrieve.",
+          "type": "string"
+        },
+        "exportMimeType": {
+          "description": "Optional. For Google native files, the MIME type to export the file to, ignored otherwise. Defaults to text if not specified.",
+          "type": "string"
+        },
+        "revisionId": {
+          "description": "Optional. The revision id for the version of the file to download. If not specified, the latest revision will be downloaded.",
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "fileId"
+      ],
+      "argumentos": [
+        {
+          "campo": "fileId",
+          "tipo": "id_listado"
+        }
+      ]
+    },
+    {
+      "ferramenta": "mcp__claude_ai_Google_Drive__create_file",
+      "padrao": "mcp__claude_ai_Google_Drive__create_file",
+      "operacao": "criar",
+      "parametros": {
+        "title": {
+          "description": "Required. The title of the file.",
+          "type": "string"
+        },
+        "parentId": {
+          "description": "The parent id of the file.",
+          "type": "string"
+        },
+        "contentMimeType": {
+          "description": "The mime type of the content being uploaded. Required when any type of content is provided.",
+          "type": "string"
+        },
+        "textContent": {
+          "description": "Optional. The (UTF-8) text content to upload. It's an error to set this and `base64Content`.",
+          "type": "string"
+        },
+        "base64Content": {
+          "description": "Optional. The base64 encoded content to upload. It's an error to set this and `textContent`.",
+          "type": "string"
+        },
+        "disableConversionToGoogleType": {
+          "description": "Set to true to retain the passed in content mime type and not convert to a Google type. For example, without this a `text/plain` content mime type will be converted to to `application/vnd.google-apps.document`. Has no effect for types that do not have a Google equivalent.",
+          "type": "boolean"
+        }
+      },
+      "obrigatorios": [
+        "title",
+        "parentId",
+        "contentMimeType"
+      ],
+      "argumentos": [],
+      "exige_aprovacao": true,
+      "alternativas": [
+        {
+          "quando": {
+            "campo": "contentMimeType",
+            "igual": "application/vnd.google-apps.folder"
+          },
+          "operacao": "provisionar",
+          "argumentos": [
+            {
+              "campo": "parentId",
+              "tipo": "id_de_canal",
+              "campo_id": "pasta_id"
+            }
+          ],
+          "ausentes": [
+            "textContent",
+            "base64Content"
+          ]
+        },
+        {
+          "quando": {
+            "campo": "contentMimeType",
+            "diferente": "application/vnd.google-apps.folder"
+          },
+          "operacao": "escrever",
+          "argumentos": [
+            {
+              "campo": "parentId",
+              "tipo": "id_de_canal",
+              "campo_id": "pasta_id",
+              "finalidade": "entregas",
+              "direcao": "saida"
+            }
+          ],
+          "exige_um_de": [
+            "textContent",
+            "base64Content"
+          ]
+        }
+      ]
+    },
+    {
+      "ferramenta": "mcp__claude_ai_Google_Drive__share_file",
+      "padrao": "mcp__claude_ai_Google_Drive__share_file",
+      "operacao": "compartilhar",
+      "parametros": {
+        "fileId": {
+          "description": "Required. The ID of the file to share.",
+          "type": "string"
+        },
+        "emailAddress": {
+          "description": "Required. The email address of the user or group to share with.",
+          "type": "string"
+        },
+        "role": {
+          "description": "Required. The role to grant. Supported roles (in descending order of access level): * `writer` * `commenter` * `reader`",
+          "type": "string",
+          "enum": [
+            "writer",
+            "commenter",
+            "reader"
+          ]
+        }
+      },
+      "obrigatorios": [
+        "fileId",
+        "emailAddress",
+        "role"
+      ],
+      "argumentos": [
+        {
+          "campo": "fileId",
+          "tipo": "id_de_canal",
+          "campo_id": "pasta_id"
+        }
+      ],
+      "exige_aprovacao": true
+    },
+    {
+      "ferramenta": "mcp__claude_ai_Google_Calendar__list_events",
+      "padrao": "mcp__claude_ai_Google_Calendar__list_events",
+      "operacao": "agenda",
+      "parametros": {
+        "calendarId": {
+          "description": "Optional. ID of the calendar containing the events. Email address - can be resolved using `list_calendars`. Default: primary calendar.",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "Optional. The upper bound of a time range. Must only be set when a specific timeframe or a time in the past is requested by the user. Must be an ISO 8601 timestamp greater than `start_time`. Default: `start_time` + 7 days.",
+          "type": "string"
+        },
+        "eventType": {
+          "description": "Optional. The event types to return. If empty, only the following event types are returned: `DEFAULT`, `OUT_OF_OFFICE`, `FOCUS_TIME`, `FROM_GMAIL`",
+          "items": {
+            "enum": [
+              "EVENT_TYPE_UNSPECIFIED",
+              "DEFAULT",
+              "OUT_OF_OFFICE",
+              "FOCUS_TIME",
+              "WORKING_LOCATION",
+              "BIRTHDAY",
+              "FROM_GMAIL"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fullText": {
+          "description": "Optional. Free-form case-insensitive search matching title, description, location, or attendees. Matches events containing all query terms verbatim (AND search).",
+          "type": "string"
+        },
+        "orderBy": {
+          "description": "Optional. The order in which events should be returned. Possible values are: - `default` - Unspecified, but deterministic ordering (default). - `startTime` - Order by start time ascending. - `startTimeDesc` - Order by start time descending. - `lastModified` - Order by last modification time ascending. ",
+          "type": "string"
+        },
+        "pageSize": {
+          "description": "Optional. Max events per page (default `100`, max `250`). Recommended: `10`.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "pageToken": {
+          "description": "Optional. Next page token. Use the value from the previous page's `nextPageToken`.",
+          "type": "string"
+        },
+        "startTime": {
+          "description": "Optional. The lower bound of a time range. Must only be set when a specific timeframe is requested by the user. Must be an ISO 8601 timestamp less than `end_time`. Default: now.",
+          "type": "string"
+        },
+        "timeZone": {
+          "description": "Optional. Time zone (IANA ID, for example `Europe/Zurich`) used to resolve timezone-less dates. Default: calendar's timezone.",
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "calendarId"
+      ],
+      "argumentos": [
+        {
+          "campo": "calendarId",
+          "tipo": "id_de_canal",
+          "campo_id": "calendario_id"
+        }
+      ]
+    },
+    {
+      "ferramenta": "mcp__claude_ai_Google_Calendar__create_event",
+      "padrao": "mcp__claude_ai_Google_Calendar__create_event",
+      "operacao": "agenda",
+      "parametros": {
+        "calendarId": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string"
+        },
+        "endTime": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "timeZone": {
+          "type": "string"
+        },
+        "allDay": {
+          "type": "boolean"
+        },
+        "addGoogleMeetUrl": {
+          "type": "boolean"
+        },
+        "googleMeetUrl": {
+          "type": "string"
+        },
+        "availability": {
+          "type": "string",
+          "enum": [
+            "AVAILABILITY_UNSPECIFIED",
+            "AVAILABILITY_BUSY",
+            "AVAILABILITY_FREE"
+          ]
+        },
+        "colorId": {
+          "type": "string"
+        },
+        "eventType": {
+          "type": "string",
+          "enum": [
+            "EVENT_TYPE_UNSPECIFIED",
+            "DEFAULT",
+            "OUT_OF_OFFICE",
+            "FOCUS_TIME",
+            "WORKING_LOCATION",
+            "BIRTHDAY",
+            "FROM_GMAIL"
+          ]
+        },
+        "notificationLevel": {
+          "type": "string",
+          "enum": [
+            "NOTIFICATION_LEVEL_UNSPECIFIED",
+            "NONE",
+            "EXTERNAL_ONLY",
+            "ALL"
+          ]
+        },
+        "useDefaultReminders": {
+          "type": "boolean"
+        },
+        "recurrenceData": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "default",
+            "public",
+            "private"
+          ]
+        }
+      },
+      "obrigatorios": [
+        "calendarId",
+        "summary",
+        "startTime",
+        "endTime"
+      ],
+      "argumentos": [
+        {
+          "campo": "calendarId",
+          "tipo": "id_de_canal",
+          "campo_id": "calendario_id"
+        }
+      ],
+      "exige_aprovacao": true
+    },
+    {
+      "ferramenta": "mcp__tally__create_new_form",
+      "padrao": "mcp__tally__create_new_form",
+      "operacao": "provisionar",
+      "parametros": {
+        "title": {
+          "description": "Form title",
+          "type": "string"
+        },
+        "workspaceId": {
+          "description": "Workspace ID from list_workspaces. Required when the user has more than one workspace; without it the form lands in their oldest workspace.",
+          "type": "string"
+        },
+        "coverImageUrl": {
+          "description": "Cover image URL. Only set this when the user explicitly provides a URL in the conversation. Do NOT invent, guess, or use placeholder URLs just because a cover seems thematically appropriate. Public URL only — uploaded images cannot be used.",
+          "format": "uri",
+          "type": "string"
+        },
+        "logoUrl": {
+          "description": "Logo image URL. Only set this when the user explicitly provides a URL in the conversation. Do NOT invent, guess, or use placeholder URLs (e.g. tally.so/logo.png, example.com/logo.png) just because a logo seems thematically appropriate. Public URL only — uploaded images cannot be used.",
+          "format": "uri",
+          "type": "string"
+        },
+        "submitButtonText": {
+          "description": "Submit button text",
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "title",
+        "workspaceId"
+      ],
+      "argumentos": [
+        {
+          "campo": "workspaceId",
+          "tipo": "id_de_canal",
+          "campo_id": "workspace_id"
+        }
+      ],
+      "exige_aprovacao": true
+    },
+    {
+      "ferramenta": "mcp__tally__publish_form",
+      "padrao": "mcp__tally__publish_form",
+      "operacao": "provisionar",
+      "parametros": {
+        "formId": {
+          "description": "The form to act on: its id, or a share, edit or embed link to it. Use the formId from create_new_form or load_form.",
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "formId"
+      ],
+      "argumentos": [
+        {
+          "campo": "formId",
+          "tipo": "id_de_canal",
+          "campo_id": "formulario_id"
+        }
+      ],
+      "exige_aprovacao": true,
+      "precondicao_registrada": {
+        "evento": "ConferenciaExternaRegistrada",
+        "argumento": "formId",
+        "campo_evento": "objeto_id"
+      }
+    },
+    {
+      "ferramenta": "mcp__tally__fetch_submissions",
+      "padrao": "mcp__tally__fetch_submissions",
+      "operacao": "ler",
+      "parametros": {
+        "formId": {
+          "description": "Form ID to fetch submissions for",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of submissions per page",
+          "maximum": 500,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "obrigatorios": [
+        "formId"
+      ],
+      "argumentos": [
+        {
+          "campo": "formId",
           "tipo": "id_de_canal",
           "campo_id": "formulario_id",
           "direcao": "entrada"
         }
-      ]
-    },
-    {
-      "padrao": "mcp__(?:google_drive|gdrive|drive)__upload_file",
-      "operacao": "escrever",
-      "argumentos": [
-        {
-          "campo": "parent_id",
-          "tipo": "id_de_canal",
-          "campo_id": "pasta_id",
-          "finalidade": "entregas",
-          "direcao": "saida"
-        }
-      ]
-    },
-    {
-      "padrao": "mcp__(?:google_calendar|calendar)__(?:create_event|list_events)",
-      "operacao": "agenda",
-      "argumentos": [
-        {
-          "campo": "calendar_id",
-          "tipo": "id_de_canal",
-          "campo_id": "calendario_id",
-          "finalidade": "sessoes",
-          "direcao": "agenda"
-        }
-      ]
-    },
-    {
-      "padrao": "mcp__(?:tally)__(?:create_form|publish_form)",
-      "operacao": "provisionar",
-      "argumentos": [
-        {
-          "campo": "workspace_id",
-          "tipo": "id_de_canal",
-          "campo_id": "workspace_id"
-        }
-      ]
-    },
-    {
-      "padrao": "mcp__(?:google_drive|gdrive|drive)__(?:create_folder|share_folder)",
-      "operacao": "provisionar",
-      "argumentos": [
-        {
-          "campo": "parent_id",
-          "tipo": "id_de_canal",
-          "campo_id": "pasta_id"
-        }
-      ]
-    },
-    {
-      "padrao": "mcp__(?:google_drive|gdrive|drive)__update_file",
-      "operacao": "escrever",
-      "argumentos": [
-        {
-          "campo": "parent_id",
-          "tipo": "id_de_canal",
-          "campo_id": "pasta_id",
-          "finalidade": "entregas",
-          "direcao": "saida"
-        },
-        {
-          "campo": "file_id",
-          "tipo": "id_listado"
-        }
-      ]
+      ],
+      "recusa": "Inventário sem filtro estruturado pelo campo oculto do caso; use coleta manual conferida"
     }
-  ]
+  ],
+  "evento_aprovacao": "AprovacaoExternaRegistrada"
 }
