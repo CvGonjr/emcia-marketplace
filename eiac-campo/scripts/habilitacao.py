@@ -18,6 +18,7 @@ import subprocess
 import tempfile
 import uuid
 from contextvars import ContextVar
+from collections.abc import Mapping
 REGRA_PESSOA = ContextVar("regra_pessoa", default=None)
 
 
@@ -25,11 +26,25 @@ class Recusa(ValueError):
     pass
 
 
-TEMPLATES = {
-    "HAB-01": "HAB-01-carta-de-escopo.md",
-    "HAB-02": "HAB-02-acordo-confidencialidade.md",
-    "HAB-03": "HAB-03-termo-de-consentimento.md",
-}
+CODIGOS_HAB = ('HAB-01', 'HAB-02', 'HAB-03')
+
+
+class Templates(Mapping):
+    """Códigos estáveis; nomes resolvidos no APR-01 vigente, sem cache."""
+
+    def __iter__(self):
+        return iter(CODIGOS_HAB)
+
+    def __len__(self):
+        return len(CODIGOS_HAB)
+
+    def __getitem__(self, codigo):
+        if codigo not in CODIGOS_HAB:
+            raise KeyError(codigo)
+        return pathlib.PurePosixPath(templates_aprovados()[codigo]).name
+
+
+TEMPLATES = Templates()
 TOKEN = re.compile(r"\{\{([a-z_]+)\}\}")
 APR = pathlib.Path(__file__).resolve().parents[1] / 'reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md'
 
@@ -71,14 +86,15 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def aprovacoes(caminho=None, linha_de_base='metodo-v1.0'):
-    """Hashes declarados na tabela do APR-01; metadados do template não aprovam bytes."""
+def registros_aprovados(caminho=None, linha_de_base=None):
+    """Código, caminho e hash da tabela; uma única linha de base aprovada."""
     registro = (caminho or APR).read_text(encoding='utf-8')
     exigir('| **Estado** | Aprovado |' in registro, 'APR-01 não aprovado')
     exigir('## 2. Documentos aprovados' in registro and '## 3. Regra de aprovação' in registro,
            'tabela de aprovação do APR-01 ausente')
     tabela = registro.split('## 2. Documentos aprovados', 1)[1].split('## 3. Regra de aprovação', 1)[0]
-    hashes = {}
+    registros = {}
+    bases = set()
     for linha in tabela.splitlines():
         if not re.match(r'^\| (?:EMCIA-|HAB-)', linha):
             continue
@@ -86,12 +102,31 @@ def aprovacoes(caminho=None, linha_de_base='metodo-v1.0'):
         exigir(len(cols) == 7, 'linha inválida no APR-01')
         codigo, nome, versao, sha, data, aprovador, base = cols
         p = pathlib.PurePosixPath(nome)
-        exigir(not p.is_absolute() and '..' not in p.parts and nome not in hashes
-               and re.fullmatch(r'[0-9a-f]{64}', sha) and base == linha_de_base,
+        exigir(not p.is_absolute() and '..' not in p.parts and nome not in registros
+               and re.fullmatch(r'[0-9a-f]{64}', sha)
+               and re.fullmatch(r'metodo-v\d+\.\d+', base)
+               and (linha_de_base is None or base == linha_de_base),
                'hash, caminho ou linha de base inválidos no APR-01')
-        hashes[nome] = sha
-    exigir(bool(hashes), 'APR-01 sem documentos aprovados')
-    return hashes
+        bases.add(base)
+        registros[nome] = {'codigo': codigo, 'sha256': sha}
+    exigir(bool(registros) and len(bases) == 1, 'APR-01 sem documentos aprovados ou com linhas de base distintas')
+    return registros
+
+
+def aprovacoes(caminho=None, linha_de_base=None):
+    """Hashes por caminho; conserva a interface usada na conferência do pacote."""
+    return {nome: r['sha256'] for nome, r in registros_aprovados(caminho, linha_de_base).items()}
+
+
+def templates_aprovados(registros=None):
+    registros = registros if registros is not None else registros_aprovados()
+    caminhos = {}
+    for codigo in CODIGOS_HAB:
+        candidatos = [nome for nome, r in registros.items() if r['codigo'] == codigo]
+        exigir(len(candidatos) == 1,
+               f'APR-01: exige exatamente um arquivo aprovado para {codigo}; encontrados {len(candidatos)}')
+        caminhos[codigo] = candidatos[0]
+    return caminhos
 
 
 def documento_cliente(md, doc):
@@ -368,10 +403,11 @@ def aplicar(root, s, action, p):
         docs = p.get('documentos')
         exigir(isinstance(docs, dict) and bool(docs) and set(docs) <= TEMPLATES.keys(),
                'documentos inválidos na revisao-juridica')
-        aprovados = aprovacoes()
+        registros = registros_aprovados()
+        caminhos = templates_aprovados(registros)
         for doc, sha in docs.items():
             exigir(isinstance(sha, str) and re.fullmatch(r'[0-9a-f]{64}', sha)
-                   and aprovados.get('auxiliares/' + TEMPLATES[doc]) == sha,
+                   and registros[caminhos[doc]]['sha256'] == sha,
                    'APR-01: hash não aprovado para ' + doc)
         s.setdefault('revisoes_juridicas', []).append(dict(revisor=revisor, decisor=decisor, data=data,
             resultado='aprovado', **ciclo,
@@ -381,10 +417,12 @@ def aplicar(root, s, action, p):
         template_root = pathlib.Path(texto(p.get("templates")))
         browser = p.get("navegador", "google-chrome")
         prepared = {}
-        aprovados = aprovacoes()
-        for doc, filename in TEMPLATES.items():
+        registros = registros_aprovados()
+        caminhos = templates_aprovados(registros)
+        for doc, caminho in caminhos.items():
+            filename = pathlib.PurePosixPath(caminho).name
             raw = (template_root / filename).read_bytes()
-            exigir(aprovados.get('auxiliares/' + filename) == digest(raw),
+            exigir(registros[caminho]['sha256'] == digest(raw),
                    'APR-01: hash do template divergente em ' + doc)
             md = documento_cliente(raw.decode('utf-8'), doc)
             juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))

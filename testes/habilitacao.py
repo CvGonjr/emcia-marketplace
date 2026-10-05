@@ -433,6 +433,65 @@ class Habilitacao(unittest.TestCase):
             self.assertEqual(r['resultado'], 'aprovado')
             self.assertEqual(r['revisor'], 'Pessoa Jurista')
 
+    def test_36_apr_atual_resolve_nome_e_gera_hab03(self):
+        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
+        self.prepare()
+        v = self.state()['documentos']['HAB-03'][-1]
+        self.assertEqual(v['template']['sha256'], self.revisao_juridica()['documentos']['HAB-03'])
+        self.assertEqual(v['revisao_juridica']['resultado'], 'aprovado')
+
+    def test_37_apr_proxima_base_resolve_nome_novo_e_gera_hab03(self):
+        shutil.rmtree(self.templates)
+        shutil.copytree(ROOT / 'testes/apoio/templates-hab-proxima-base', self.templates)
+        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md')
+        self.prepare()
+        v = self.state()['documentos']['HAB-03'][-1]
+        raw = (self.templates / 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md').read_bytes()
+        self.assertEqual(H.ler_arquivo(self.root, v['template']), raw)
+        self.assertEqual(v['template']['sha256'], hashlib.sha256(raw).hexdigest())
+        self.assertEqual(v['revisao_juridica']['documentos']['HAB-03'], v['template']['sha256'])
+        md = H.ler_arquivo(self.root, v['markdown']).decode()
+        self.assertIn('Cláusula exclusivamente sintética de teste', md)
+        self.assertIn('Estado de emissão: Para assinatura', md)
+        self.assertNotIn('Controle do modelo', md)
+
+    def test_38_apr_ambiguo_recusa_revisao_e_gerar_com_evento(self):
+        self.prepare(gerar=False)
+        dados = self.revisao_juridica()
+        apr = H.APR
+        original = apr.read_text()
+        linha = next(l for l in original.splitlines() if l.startswith('| HAB-03 |'))
+        extra = linha.replace('HAB-03-termo-de-consentimento.md', 'HAB-03-outro-modelo.md')
+        apr.write_text(original.replace(linha, linha + '\n' + extra))
+        for action, payload in [('revisao-juridica', dados), ('gerar', {'templates': str(self.templates)})]:
+            with self.subTest(action=action), patch.object(H, 'pdf_bytes') as pdf:
+                self.refused(action, **payload)
+                self.assertRegex(self.state()['eventos'][-1]['motivo'], 'APR-01.*HAB-03.*2')
+                pdf.assert_not_called()
+                self.assertEqual(self.state()['documentos'], {})
+        self.assertEqual(len(self.state()['revisoes_juridicas']), 1)
+
+    def test_39_apr_sem_codigo_hab03_recusa_mesmo_com_nome_e_hash(self):
+        self.prepare(gerar=False)
+        dados = self.revisao_juridica()
+        # O arquivo e o hash ainda estão aprovados, mas para outro código.
+        # O gerador precisa ler o código da tabela, sem inferi-lo pelo nome.
+        H.APR.write_text(H.APR.read_text().replace('| HAB-03 |', '| HAB-99 |'))
+        for action, payload in [('revisao-juridica', dados), ('gerar', {'templates': str(self.templates)})]:
+            with self.subTest(action=action), patch.object(H, 'pdf_bytes') as pdf:
+                self.refused(action, **payload)
+                self.assertRegex(self.state()['eventos'][-1]['motivo'], 'APR-01.*HAB-03.*0')
+                pdf.assert_not_called()
+        self.assertEqual(self.state()['documentos'], {})
+        self.assertEqual(len(self.state()['revisoes_juridicas']), 1)
+
+    def test_40_resolucao_nao_congela_apr_na_importacao_do_modulo(self):
+        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
+        novo = ROOT / 'testes/apoio/templates-hab-proxima-base/EMCIA-APR-01-registro-de-aprovacoes.md'
+        with patch.object(H, 'APR', novo):
+            self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md')
+        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
+
 
 if __name__ == "__main__":
     unittest.main()
