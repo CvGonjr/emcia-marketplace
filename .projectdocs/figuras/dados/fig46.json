@@ -1,0 +1,28 @@
+{
+  "titulo": "Figura 46 — Matriz final de camadas confrontada com a fronteira da ação 1.2 (ação 4.2)",
+  "coluna_situacao": 5,
+  "colunas": [
+    {"titulo": "Etapa", "largura": 90},
+    {"titulo": "Camada\nN1 / N2 / N3", "largura": 150},
+    {"titulo": "Atos reservados ao engenheiro no Estúdio", "largura": 270},
+    {"titulo": "Atividades humanas na ação 1.2", "largura": 260},
+    {"titulo": "Verificada em", "largura": 100},
+    {"titulo": "Confronto", "largura": 250}
+  ],
+  "linhas": [
+    {"celulas": ["F0", "EX1 / EX1 / EX1", "Registrar o nível", "Decidir o prosseguimento", "3.2, 3.7", "Diverge: nível mais restrito que no método; prosseguimento sem trava"]},
+    {"celulas": ["P1", "EX2 / EX2 / EX3", "Encerrar a etapa (N3)", "Avaliar o patrocínio real", "3.3", "Diverge em N1 e N2"]},
+    {"celulas": ["P2", "EX2 / EX2 / EX3", "Encerrar a etapa (N3)", "Verificar o dado; detectar divergência de uso", "3.3", "Diverge em N1 e N2"]},
+    {"celulas": ["P3a", "EX2 / EX3 / EX3", "Registrar sessão; encerrar (N2, N3)", "Validar a linha de base", "3.3", "Coincide"]},
+    {"celulas": ["P3b", "EX4 · não delegável", "Carregar a habilidade; encerrar; exige selo após P2", "Levantar as regras não documentadas", "3.3, 3.7", "Diverge no rótulo: EX3 no método, EX4 no Estúdio"]},
+    {"celulas": ["P3d", "EX3", "Confirmar o confronto; encerrar", "Distinguir documentado de praticado", "3.3", "Coincide"]},
+    {"celulas": ["P4", "EX2 / EX3 / EX3", "Encerrar a etapa (N2, N3)", "Decidir a prioridade", "3.4", "Diverge em N1"]},
+    {"celulas": ["P5", "EX3", "Registrar a classificação; encerrar", "Construir o contexto; decidir construção", "3.4", "Coincide"]},
+    {"celulas": ["P6", "EX3", "Validar a especificação operacional", "Redesenhar o processo com as áreas", "3.5", "Coincide"]},
+    {"celulas": ["P7", "EX4 · não delegável", "Decidir a autonomia", "Definir autonomia; nomear responsáveis", "3.5, 3.7", "Coincide"]},
+    {"celulas": ["P8", "EX3", "Revisar o conjunto de casos", "Julgar a falha; aprovar a passagem", "3.6, 3.7", "Coincide"]},
+    {"celulas": ["P9", "EX3", "Encerrar a etapa", "Interpretar a causa; apresentar ao patrocinador", "3.6", "Coincide"]},
+    {"celulas": ["P10", "EX4 decisão\nEX2 monitoramento", "Definir a rotina; decidir a recalibragem; registrar recorrência", "Diagnosticar a causa; decidir", "3.6, 3.7", "Coincide"]},
+    {"celulas": ["Transversal", "—", "Satisfazer inegociável; registrar sessão; alterar o registro", "Não classificado", "3.3–3.8", "Não previsto no método"]}
+  ]
+}

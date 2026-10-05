@@ -1,0 +1,21 @@
+{
+  "titulo": "Figura 23 — Indicadores e critérios de verificação (ação 1.7)",
+  "colunas": [
+    {"titulo": "Indicador", "largura": 190},
+    {"titulo": "O que mede", "largura": 430},
+    {"titulo": "Sucesso declarado", "largura": 210},
+    {"titulo": "Limiar de falha", "largura": 250}
+  ],
+  "linhas": [
+    {"grupo": "Indicadores do objetivo"},
+    {"celulas": ["Entregáveis", "Entregáveis concluídos e revisados com o responsável pelo processo, sobre cinco", "100%", "Qualquer entregável sem revisão registrada"]},
+    {"celulas": ["Conhecimento recuperado em campo", "Regras obtidas só em campo, sobre o total de regras registradas em campo", "≥ 25%", "< 25%"]},
+    {"celulas": ["Consequência sobre a classificação", "Casos priorizados cuja classificação tecnológica depende de regra obtida só em campo", "Toda mudança registrada, com justificativa", "Classificação sem justificativa registrada"]},
+    {"celulas": ["Regra inferida sem validação", "Regras inferidas incorporadas ao blueprint sem validação humana, sobre o total de regras do blueprint", "0%", "Qualquer valor acima de zero"]},
+    {"celulas": ["Distribuição de esforço", "Horas do engenheiro entre atividades delegáveis e não delegáveis", "Sem limiar: sustenta a leitura de custo e tempo", "Registro de esforço incompleto"]},
+    {"grupo": "Indicadores complementares"},
+    {"celulas": ["Cobertura de encerramento", "Passos encerrados com o critério integralmente satisfeito, sobre dez", "≥ 0,90", "< 0,70"]},
+    {"celulas": ["Taxa de divergência", "Itens corrigidos ou refutados sobre o total de itens verificados", "≥ 15%", "0%: verificação rasa ou declaração exata, a distinguir"]},
+    {"celulas": ["Pendências bloqueantes", "Pendências bloqueantes abertas no encerramento de cada fase", "Toda bloqueante impede o avanço", "Fase encerrada com bloqueante em aberto"]}
+  ]
+}

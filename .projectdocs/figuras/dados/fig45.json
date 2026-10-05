@@ -1,0 +1,24 @@
+{
+  "titulo": "Figura 45 — Quadro de resultados da prova de conceito (ação 4.1)",
+  "coluna_situacao": 4,
+  "colunas": [
+    {"titulo": "Indicador", "largura": 150},
+    {"titulo": "Critério declarado", "largura": 260},
+    {"titulo": "Resultado apurado", "largura": 420},
+    {"titulo": "Comprovação", "largura": 120},
+    {"titulo": "Situação", "largura": 170}
+  ],
+  "linhas": [
+    {"grupo": "Horizonte do relatório"},
+    {"celulas": ["Cobertura", "13 de 13 etapas; 5 entregáveis materializados", "13 etapas encerradas; 5 entregáveis emitidos com arquivo; 6 selos; 57 eventos, nenhum de tentativa negada. Percurso em N2", "3.8", "Confirmado em N2"]},
+    {"celulas": ["Fronteira", "100% das tentativas de agente em etapa humana recusadas, com evento", "9 de 9 operações humanas recusadas com registro, em sessão real sobre a v-sprint3-poc.6; a .7 não alterou a guarda. Primeira sessão, sobre a .5: 6 de 8", "3.5, 3.7", "Confirmado na versão final"]},
+    {"celulas": ["Procedência", "0% de asserção sem marca; 0% de inferida promovida sem curadoria", "Toda gravação sem marca recusada; promoção de inferida a verificada só por versão nova, com autoria humana", "3.3", "Confirmado"]},
+    {"celulas": ["Inegociáveis", "5 de 5 bloqueiam a emissão", "I1 bloqueia E2; I2 bloqueia E4; I3, I4 e I5 bloqueiam E5. Os cinco satisfeitos com artefato no percurso", "3.3, 3.5, 3.6, 3.8", "Confirmado, com ressalva no I5"]},
+    {"grupo": "Horizonte de dezembro"},
+    {"celulas": ["Entregáveis", "5 artefatos revisados com o responsável pelo processo", "—", "—", "Não apurado"]},
+    {"celulas": ["Conhecimento recuperado", "≥ 25% das regras verificadas ausentes do estado declarado", "—", "—", "Não apurado"]},
+    {"celulas": ["Consequência", "Casos cuja classificação depende de regra obtida só em campo", "—", "—", "Não apurado"]},
+    {"celulas": ["Governança", "0% de regra inferida no blueprint sem validação humana", "Mecanismo verificado; indicador depende de caso real", "3.3", "Não apurado"]},
+    {"celulas": ["Esforço", "Horas do engenheiro por passo, delegável × não delegável", "Registro de esforço implementado; sem dados de campo", "—", "Não apurado"]}
+  ]
+}
