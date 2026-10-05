@@ -1,0 +1,612 @@
+..........EEEE..EE..E.EEEEEEEFFFFFFFFFE.FFFFE
+======================================================================
+ERROR: test_11_partial_or_wrong_signer (__main__.Habilitacao.test_11_partial_or_wrong_signer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 143, in test_11_partial_or_wrong_signer
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_12_stale_version (__main__.Habilitacao.test_12_stale_version)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 154, in test_12_stale_version
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_13_three_docs_both_parties_and_different_hashes (__main__.Habilitacao.test_13_three_docs_both_parties_and_different_hashes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 162, in test_13_three_docs_both_parties_and_different_hashes
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_14_unsigned_or_unreviewed_pdf (__main__.Habilitacao.test_14_unsigned_or_unreviewed_pdf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 176, in test_14_unsigned_or_unreviewed_pdf
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_17_missing_field_and_pdf_failure_do_not_publish_versions (__main__.Habilitacao.test_17_missing_field_and_pdf_failure_do_not_publish_versions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 206, in test_17_missing_field_and_pdf_failure_do_not_publish_versions
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_18_expiration_blocks_completion (__main__.Habilitacao.test_18_expiration_blocks_completion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 218, in test_18_expiration_blocks_completion
+    self.prepare()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_21_cobertura_so_de_hab02_nao_autoriza_hab03 (__main__.Habilitacao.test_21_cobertura_so_de_hab02_nao_autoriza_hab03)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 246, in test_21_cobertura_so_de_hab02_nao_autoriza_hab03
+    self.run_action('revisao-juridica', **self.revisao_juridica(documentos={'HAB-02': sha}))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_23_evidencia_juridica_adulterada_bloqueia_gerar (__main__.Habilitacao.test_23_evidencia_juridica_adulterada_bloqueia_gerar)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 263, in test_23_evidencia_juridica_adulterada_bloqueia_gerar
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_24_hash_do_template_alterado_nao_herda_revisao (__main__.Habilitacao.test_24_hash_do_template_alterado_nao_herda_revisao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 269, in test_24_hash_do_template_alterado_nao_herda_revisao
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_25_documentos_emitidos_preservam_contrato_e_identificacao (__main__.Habilitacao.test_25_documentos_emitidos_preservam_contrato_e_identificacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 277, in test_25_documentos_emitidos_preservam_contrato_e_identificacao
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_26_marcas_ausentes_recusam_com_motivo_sem_publicar (__main__.Habilitacao.test_26_marcas_ausentes_recusam_com_motivo_sem_publicar)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 312, in test_26_marcas_ausentes_recusam_com_motivo_sem_publicar
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato (__main__.Habilitacao.test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 332, in test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura (__main__.Habilitacao.test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 348, in test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_29_falha_no_pdf_nao_publica_versoes_parciais (__main__.Habilitacao.test_29_falha_no_pdf_nao_publica_versoes_parciais)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 357, in test_29_falha_no_pdf_nao_publica_versoes_parciais
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_32_aprovado_preserva_resultado_ciclo_hashes_e_evidencia (__main__.Habilitacao.test_32_aprovado_preserva_resultado_ciclo_hashes_e_evidencia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 382, in test_32_aprovado_preserva_resultado_ciclo_hashes_e_evidencia
+    self.run_action('revisao-juridica', **dados)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+ERROR: test_35_gerar_seleciona_somente_registro_aprovado (__main__.Habilitacao.test_35_gerar_seleciona_somente_registro_aprovado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 359, in aplicar
+    exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 39, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 423, in test_35_gerar_seleciona_somente_registro_aprovado
+    self.prepare(gerar=False)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 122, in prepare
+    self.run_action('revisao-juridica', **self.revisao_juridica())
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 30, in run_action
+    return H.executar(self.root, action, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 527, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa
+
+======================================================================
+FAIL: test_30_revisao_sem_resultado_recusa_com_evento (__main__.Habilitacao.test_30_revisao_sem_resultado_recusa_com_evento)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 367, in test_30_revisao_sem_resultado_recusa_com_evento
+    self.refused('revisao-juridica', **dados)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 36, in refused
+    with self.assertRaises(H.Recusa):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Recusa not raised
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado='condicionado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado='reprovado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado='Texto livre')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado='Aprovado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado=' aprovado ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_31_somente_resultado_literal_aprovado_e_aceito (__main__.Habilitacao.test_31_somente_resultado_literal_aprovado_e_aceito) (resultado=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 376, in test_31_somente_resultado_literal_aprovado_e_aceito
+    self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+AssertionError: 'resultado' not found in 'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa'
+
+======================================================================
+FAIL: test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas (__main__.Habilitacao.test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas) (resultado=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 414, in aplicar
+    pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 171, in guardar
+    f.write(data)
+TypeError: a bytes-like object is required, not 'MagicMock'
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: a bytes-like object is required, not 'MagicMock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 415, in test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas
+    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "revisao-juridica.*HAB-02" does not match "a bytes-like object is required, not 'MagicMock'"
+
+======================================================================
+FAIL: test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas (__main__.Habilitacao.test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas) (resultado='condicionado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 414, in aplicar
+    pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 171, in guardar
+    f.write(data)
+TypeError: a bytes-like object is required, not 'MagicMock'
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: a bytes-like object is required, not 'MagicMock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 415, in test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas
+    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "revisao-juridica.*HAB-02" does not match "a bytes-like object is required, not 'MagicMock'"
+
+======================================================================
+FAIL: test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas (__main__.Habilitacao.test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas) (resultado='reprovado')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 414, in aplicar
+    pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 171, in guardar
+    f.write(data)
+TypeError: a bytes-like object is required, not 'MagicMock'
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: a bytes-like object is required, not 'MagicMock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 415, in test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas
+    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "revisao-juridica.*HAB-02" does not match "a bytes-like object is required, not 'MagicMock'"
+
+======================================================================
+FAIL: test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas (__main__.Habilitacao.test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas) (resultado='texto livre')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 520, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 414, in aplicar
+    pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 171, in guardar
+    f.write(data)
+TypeError: a bytes-like object is required, not 'MagicMock'
+
+The above exception was the direct cause of the following exception:
+
+habilitacao.Recusa: a bytes-like object is required, not 'MagicMock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao.py", line 415, in test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas
+    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "revisao-juridica.*HAB-02" does not match "a bytes-like object is required, not 'MagicMock'"
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.221s
+
+FAILED (failures=13, errors=16)

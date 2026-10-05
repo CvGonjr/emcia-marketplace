@@ -1,0 +1,731 @@
+diff --git a/.projectdocs/map.md b/.projectdocs/map.md
+index 03ecebe..e0e11a4 100644
+--- a/.projectdocs/map.md
++++ b/.projectdocs/map.md
+@@ -1,6 +1,6 @@
+ # Mapa de documentação — emcia-marketplace
+ 
+-Retrato operacional de 04/10/2026; substitui integralmente o mapa anterior.
++Retrato operacional de 05/10/2026; substitui integralmente o mapa anterior.
+ 
+ ## Repositórios e versões
+ 
+@@ -11,7 +11,7 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
+ | Componente | Versão | Papel |
+ |---|---|---|
+ | eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+-| eiac-campo | 0.8.24 | Método, scripts de campo, comandos, habilidades e template |
++| eiac-campo | 0.8.25 | Método, scripts de campo, comandos, habilidades e template |
+ | Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+ | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
+ 
+@@ -181,17 +181,21 @@ A linha de base inicial em Python 3.12.12 passou com 958 verificações em 49 m
+ A geração acrescenta dez testes e a conferência do pacote passa de um controle
+ por processo a oito testes, incluindo negativas de APR-01, tag e templates.
+ As contagens finais constam da evidência linha-de-base-v1 e de testes/README.md.
+-O inventário completo e o executador estão em testes/README.md e
+-.projectdocs/evidencias/linha-de-base-v1/. Registre códigos, saídas e
++O inventário completo e o executador atual estão em testes/README.md e
++.projectdocs/evidencias/revisao-juridica-resultado/. Registre códigos, saídas e
+ contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
+ e contexto.py; para pacote específico, rode seus módulos e a regressão completa.
+ 
+ metodo_empacotado.py confere inventário, caminhos de origem e hashes; com checkout
+ canônico irmão, resolve a tag, compara bytes aos objetos do commit e confere
+-os templates do checkout pelos hashes do APR-01. habilitacao.py exige revisão
+-jurídica de HAB-02 e HAB-03 para os hashes exatos antes de qualquer PDF e retira
++os templates do checkout pelos hashes do APR-01. habilitacao.py resolve os nomes
++pelos códigos no APR-01, recusando ausência ou ambiguidade; exige revisão
++jurídica de HAB-02 e HAB-03 com resultado aprovado para os hashes exatos antes de qualquer PDF e retira
+ controle, histórico e avisos internos, preservando cláusulas e identificação.
+ A evidência contém PDFs reais sintéticos antes/depois e extrações pdftotext.
++Resultado obrigatório, registros legados sem liberação e os dois nomes de
++HAB-03 são cobertos em .projectdocs/evidencias/revisao-juridica-resultado/:
++linha de base de 975 verificações e regressão de 986, em 49 módulos, Python 3.12.
+ manual_a25.py exige conferir()
+ vazio para o manual empacotado, sem emenda, mantendo quatro negativos.
+ citacoes.py confere seções, instrumentos JSON, auxiliares e o TRI-01 real.
+diff --git a/README.md b/README.md
+index 44034ca..d36b1ab 100644
+--- a/README.md
++++ b/README.md
+@@ -19,7 +19,7 @@ próprios; não entram no marketplace.
+ | Plugin | Versão | Papel |
+ |---|---|---|
+ | eiac-nucleo | 0.2.45 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
+-| eiac-campo | 0.8.24 | Método, habilidades, comandos, scripts e template de caso |
++| eiac-campo | 0.8.25 | Método, habilidades, comandos, scripts e template de caso |
+ 
+ O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
+ esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
+@@ -57,8 +57,16 @@ expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
+    A revisão humana da carta HAB-01 integra o procedimento normal:
+    o engenheiro confere conteúdo, condições e evidências antes da formalização.
+    **Antes do primeiro cliente**, registre a revisão jurídica de HAB-02 e HAB-03
+-   pela operação humana `revisao-juridica`, com os hashes exatos e evidência.
+-   `gerar` exige essa cobertura e recusa sem ela; não há dispensa. O MD e o PDF
++   pela operação humana `revisao-juridica`, com `resultado: "aprovado"`, hashes
++   exatos e evidência; `ciclo` é texto opcional. Parecer condicionado ou reprovado
++   não é registrado no expediente como revisão autorizadora. Campo resultado
++   ausente ou diferente de `aprovado` recusa com evento, sem dispensa.
++   `gerar` considera somente revisões aprovadas; registros antigos sem resultado
++   não liberam nova geração. Os nomes dos três templates são resolvidos pelos
++   códigos no APR-01 do pacote, com exatamente um arquivo aprovado por código.
++   A ausência ou ambiguidade recusa; o novo nome de HAB-03 será aceito quando
++   constar de uma próxima linha de base aprovada, com os hashes correspondentes.
++   O MD e o PDF
+    emitidos preservam identificação e cláusulas, declaram “Para assinatura” e
+    retiram controle, histórico e avisos internos do modelo.
+ 2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
+@@ -238,8 +246,10 @@ execução integral comprovada. A conferência do manual cobre o contrato declar
+ do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
+ o recorte histórico da prova de conceito no repositório canônico. ESP-01,
+ VER-01 e o fluxo auxiliar de habilitação ficam fora do pacote e da aprovação.
+-A revisão jurídica é registrada por pessoa nomeada; o sistema confere cobertura
+-e integridade da evidência, sem substituir o julgamento jurídico.
++A revisão jurídica é registrada por pessoa nomeada; o sistema confere o resultado
++declarado `aprovado`, cobertura por hash e integridade da evidência, sem interpretar
++o PDF nem substituir o julgamento jurídico. Parecer condicionado aguarda
++ratificação e não libera geração.
+ 
+ O material público de 0a fica fora do caso nessa etapa. Se usado depois da
+ abertura, segue validação ou curadoria, com procedência, premissa, URL e limite
+@@ -268,4 +278,5 @@ Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso ex
+ decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
+ do playbook e versão do manifesto são registradas separadamente. Mudança em
+ scripts do núcleo exige incremento da versão do núcleo; esta revisão incrementa
+-somente o campo para 0.8.24 e o manifesto para v6. Casos anteriores não são migrados automaticamente.
++somente o campo para 0.8.25; o pacote e o manifesto v6 permanecem intactos.
++Casos anteriores não são migrados automaticamente.
+diff --git a/decisoes/044-linha-de-base-aprovada.md b/decisoes/044-linha-de-base-aprovada.md
+index 646a76b..7a94ff2 100644
+--- a/decisoes/044-linha-de-base-aprovada.md
++++ b/decisoes/044-linha-de-base-aprovada.md
+@@ -66,3 +66,36 @@ Testes negativos precederam a correção. A evidência em
+ `.projectdocs/evidencias/linha-de-base-v1/` contém a linha de base completa em
+ Python 3.12, regressão final, conferência de tag/bytes/hashes e exemplos reais
+ de PDFs com dados e revisão jurídica exclusivamente sintéticos, antes e depois.
++
++## Nota de emenda — resultado jurídico e resolução dos templates, 05/10/2026
++
++Por instrução do engenheiro, `revisao-juridica` exige o campo `resultado`, cujo
++único valor aceito é a string exata `aprovado`. O campo `ciclo` é texto opcional
++para identificar o ciclo. Parecer condicionado ou reprovado não é registrado
++como revisão autorizadora no expediente; uma tentativa inválida produz evento
++`Recusado`, com o mesmo tipo de erro das demais validações. Não há dispensa.
++
++`gerar` seleciona somente revisões com resultado `aprovado` e cobertura do hash
++exato. Registros anteriores sem resultado permanecem no histórico e não liberam
++nova geração. É necessário registrar o ato e sua evidência sem inferir ou completar
++o resultado de uma revisão legada. Uma revisão não aprovada não substitui a
++revisão aprovada usada pela emissão.
++
++Os arquivos de HAB-01, HAB-02 e HAB-03 passam a ser localizados pelo código na
++tabela do APR-01 do pacote. Cada código exige exatamente um arquivo aprovado;
++ausência ou ambiguidade recusa revisão e geração antes de produzir PDF. Os hashes
++continuam sendo conferidos contra a mesma tabela. A resolução é feita na operação,
++sem congelar nomes na importação do módulo, e aceita a linha de base declarada no
++registro, sem fixar metodo-v1.0 no script. A conferência do pacote continua exigindo
++que o APR-01 corresponda à tag declarada em seu manifesto.
++
++Campo 0.8.25; núcleo 0.2.45 e playbook 0.4.19 permanecem. Não há reempacotamento,
++alteração de documento canônico nem liberação das minutas do ciclo 2. A próxima
++linha de base aprovada poderá declarar o novo nome de HAB-03 sem nova alteração
++do script; a fixture metodo-v1.1 é exclusivamente sintética e não aprova documento
++real. A emenda conserva a fronteira de confiança da 022: o resultado é declarado
++pelo responsável humano, o script não interpreta o parecer nem autentica seu mérito.
++
++Testes de recusa precederam as implementações dos dois itens. Linha de base,
++falhas iniciais, regressão e conferências estão em
++`.projectdocs/evidencias/revisao-juridica-resultado/`.
+diff --git a/eiac-campo/.claude-plugin/plugin.json b/eiac-campo/.claude-plugin/plugin.json
+index 4b05b70..da09744 100644
+--- a/eiac-campo/.claude-plugin/plugin.json
++++ b/eiac-campo/.claude-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "eiac-campo",
+-  "version": "0.8.24",
++  "version": "0.8.25",
+   "description": "Playbook Engenharia de IA de Campo: habilitação administrativa, etapas F0 a P10, habilidades de emissão E1 a E5 e comandos por etapa.",
+   "author": {
+     "name": "EMCIA"
+diff --git a/eiac-campo/commands/habilitacao.md b/eiac-campo/commands/habilitacao.md
+index 743786f..c574cc5 100644
+--- a/eiac-campo/commands/habilitacao.md
++++ b/eiac-campo/commands/habilitacao.md
+@@ -3,7 +3,7 @@ description: Conduz o expediente administrativo de habilitação anterior ao cas
+ ---
+ Uso: `/eiac-campo:habilitacao <caminho-absoluto-do-expediente> [ação]`
+ 
+-Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` e o registro `EMCIA-APR-01-registro-de-aprovacoes.md` na tag `metodo-v1.0`, commit fixado no manifesto do método; as cópias exatas ficam em `${CLAUDE_PLUGIN_ROOT}/reference/metodo/`. Consulte também EMCIA-CAN-01 para os canais. Modelos e templates são aprovados pelo hash do APR-01; seus metadados internos não substituem essa conferência. Documento fora da aprovação não rege caso real. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
++Leia o protocolo canônico `EMCIA-HAB-01-protocolo-de-habilitacao.md`, o roteiro `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` e o registro `EMCIA-APR-01-registro-de-aprovacoes.md` na linha de base e no commit fixados no manifesto do método (atualmente tag `metodo-v1.0`); as cópias exatas ficam em `${CLAUDE_PLUGIN_ROOT}/reference/metodo/`. Consulte também EMCIA-CAN-01 para os canais. Modelos e templates são aprovados pelo hash do APR-01; seus metadados internos não substituem essa conferência. Documento fora da aprovação não rege caso real. A interface executável e os formatos JSON estão em `${CLAUDE_PLUGIN_ROOT}/reference/habilitacao.md`.
+ 
+ Consulte primeiro:
+ 
+@@ -19,9 +19,11 @@ Use as ferramentas Tally disponíveis para consultar o formulário de habilitaç
+ 
+ Sugira perguntas e campos consolidados ao engenheiro. Não decida autoridade, resolução de pendência, qualificação, revisão de conteúdo ou conferência de assinatura. Só registre essas decisões quando a pessoa nomeada as comunicar, apontando para a evidência. Não classifique procedência por modelo: respostas permanecem declarações; o expediente preserva origem e não atribui D/I/V automaticamente.
+ 
+-Execute as operações documentadas com `--entrada <arquivo.json>`. Para gerar documentos, indique `templates` como `${CLAUDE_PLUGIN_ROOT}/reference/metodo/`, onde estão as cópias dos três templates aprovados. Se usar `auxiliares/` do checkout canônico, ele deve estar na tag `metodo-v1.0`; os hashes precisam coincidir com o APR-01 do pacote. A revisão humana da carta é obrigatória. Antes de `liberar`, apresente os PDFs finais para conferência visual e obtenha ferramenta, operador e signatários definidos pelas pessoas envolvidas.
++Execute as operações documentadas com `--entrada <arquivo.json>`. Para gerar documentos, indique `templates` como `${CLAUDE_PLUGIN_ROOT}/reference/metodo/`, onde estão as cópias dos três templates aprovados. Os arquivos são localizados pelo código HAB-01, HAB-02 ou HAB-03 na tabela do APR-01 do pacote; não deduza o nome pela memória nem escolha entre entradas ambíguas. Nenhuma ou mais de uma entrada para o mesmo código recusa. Se usar `auxiliares/` do checkout canônico, ele deve estar na tag declarada pelo manifesto; os hashes precisam coincidir com o APR-01 do pacote. A revisão humana da carta é obrigatória. Antes de `liberar`, apresente os PDFs finais para conferência visual e obtenha ferramenta, operador e signatários definidos pelas pessoas envolvidas.
+ 
+-Antes de `gerar`, o engenheiro registra `revisao-juridica` no terminal, conforme a referência: pessoa responsável pela revisão, pessoa que registra o ato, data, hashes exatos de HAB-02 e HAB-03 e evidência importada. Apresente o comando para execução humana; não atribua ao agente a revisão jurídica nem use aprovação documental como substituto. A operação não admite dispensa. O gerador recusa cobertura ausente ou divergente e confere os templates pelo APR-01. O controle e o histórico internos do modelo e os avisos jurídicos ficam preservados no template original do expediente; o MD e o PDF enviados ao cliente conservam identificação, cláusulas e estado de emissão “Para assinatura”.
++Antes de `gerar`, o engenheiro registra `revisao-juridica` no terminal, conforme a referência: pessoa responsável pela revisão, pessoa que registra o ato, data, `resultado: "aprovado"`, hashes exatos de HAB-02 e HAB-03 e evidência importada. `ciclo` é texto opcional para identificar a revisão. O campo resultado é obrigatório e só aceita a string exata `aprovado`. Parecer condicionado ou reprovado não é registrado como revisão no expediente; aguarde ratificação sem condição sobre os hashes exatos. A tentativa inválida produz evento `Recusado`. Não declare resultado em nome do revisor nem transforme condição em aprovação.
++
++Apresente o comando para execução humana; não atribua ao agente a revisão jurídica nem use aprovação documental como substituto. A operação não admite dispensa. O gerador considera somente revisões com resultado aprovado e recusa cobertura ausente ou divergente; registros antigos sem resultado não liberam nova geração. Confere nomes e hashes pelo APR-01. O controle e o histórico internos do modelo e os avisos jurídicos ficam preservados no template original do expediente; o MD e o PDF enviados ao cliente conservam identificação, cláusulas e estado de emissão “Para assinatura”.
+ 
+ A assinatura ocorre exclusivamente pelo painel escolhido pelo cliente, sem API, MCP ou webhook de assinatura. Registre os PDFs assinados e as evidências devolvidas, após conferência humana. Uma imagem de assinatura ou uma resposta “sim” não substitui esse retorno.
+ 
+diff --git a/eiac-campo/reference/habilitacao.md b/eiac-campo/reference/habilitacao.md
+index cbe370d..6f43b8f 100644
+--- a/eiac-campo/reference/habilitacao.md
++++ b/eiac-campo/reference/habilitacao.md
+@@ -2,7 +2,8 @@
+ 
+ Procedimento: EMCIA-HAB-01 §3.3.4 e §3.4, EMCIA-CAN-01 e
+ `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6, na tag canônica
+-`metodo-v1.0` e no commit fixado em `reference/metodo/manifesto.json`.
++da linha de base e no commit fixados em `reference/metodo/manifesto.json`
++(atualmente `metodo-v1.0`).
+ O pacote contém cópias exatas; `caminhos_canonicos` identifica os auxiliares
+ e sua origem. `EMCIA-APR-01-registro-de-aprovacoes.md` registra a aprovação
+ por hash dos modelos e templates. Metadado interno do template não substitui
+@@ -145,7 +146,9 @@ Antes de gerar HAB-02 e HAB-03, o engenheiro registra a operação humana
+ {
+   "revisor": "Nome Jurista",
+   "decisor": "Nome Engenheiro",
+-  "data": "2026-10-04",
++  "data": "2026-10-05",
++  "resultado": "aprovado",
++  "ciclo": "identificador-do-ciclo-aprovado",
+   "documentos": {
+     "HAB-02": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+     "HAB-03": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96"
+@@ -161,9 +164,25 @@ python3 /caminho/eiac-campo/scripts/habilitacao.py revisao-juridica \
+ 
+ Os nomes e a data devem corresponder ao ato real; os hashes acima são os dos
+ templates aprovados em metodo-v1.0. A evidência é importada com SHA-256.
+-Cada registro preserva revisor, decisor, data, documentos e evidência;
++`resultado` é obrigatório e aceita somente a string exata `aprovado`.
++Campo ausente, `condicionado`, `reprovado`, texto livre ou outra grafia recusam
++com `Recusado`, como as demais validações. `ciclo` é opcional; quando informado,
++deve ser texto não vazio e identifica o ciclo de revisão.
++
++Parecer condicionado não é registrado no expediente como revisão jurídica:
++permanece no registro documental dos ciclos até ratificação sem condição sobre
++os hashes exatos. O engenheiro só declara `aprovado` se esse for o resultado
++real da evidência; não converte condição em aprovação. Uma tentativa inválida
++produz evento `Recusado`, sem acrescentar revisão autorizadora.
++
++Cada registro preserva revisor, decisor, data, resultado, ciclo quando informado,
++documentos e evidência;
+ registros anteriores permanecem. A revisão pode cobrir os documentos em atos
+ separados, mas ambos os hashes precisam estar cobertos antes de `gerar`.
++`gerar` considera somente registros com resultado `aprovado`; registros legados
++sem resultado são preservados e não liberam nova geração. É necessário registrar
++o resultado do ato humano com sua evidência, sem completar dados antigos por
++inferência. A emissão conserva a revisão aprovada selecionada para cada hash.
+ Ausência ou divergência recusa com o nome da operação que falta, antes de
+ iniciar qualquer PDF. Não há dispensa. Aprovação documental não substitui
+ revisão jurídica; o registro testemunha o ato humano e não verifica por modelo
+@@ -175,9 +194,17 @@ o mérito jurídico, a identidade ou a qualificação profissional do revisor.
+ {"templates":"/checkout/emcia-marketplace/eiac-campo/reference/metodo","navegador":"google-chrome"}
+ ```
+ 
+-Usa HAB-01, HAB-02 e HAB-03 do diretório indicado e exige seus hashes exatos no
+-APR-01 da linha de base. Também aceita `auxiliares/` de um checkout canônico
+-na tag metodo-v1.0, com os mesmos hashes. Preserva a cópia exata e o hash de cada
++Resolve os nomes de HAB-01, HAB-02 e HAB-03 pelo código na tabela do APR-01 do
++pacote, sem nomes de arquivo fixos. Cada código deve ter exatamente um arquivo
++aprovado; ausência ou ambiguidade recusa tanto `revisao-juridica` quanto `gerar`,
++antes de produzir PDF. A tabela deve pertencer a uma única linha de base;
++metadados do template não substituem o registro.
++
++Usa os arquivos resolvidos do diretório indicado e exige seus hashes exatos no
++APR-01. Também aceita `auxiliares/` de um checkout canônico na tag declarada
++pelo manifesto do pacote, com os mesmos hashes. A resolução admite o nome atual
++ou o novo nome de HAB-03 quando declarado em uma próxima linha de base aprovada;
++não aprova minutas nem atualiza o pacote. Preserva a cópia exata e o hash de cada
+ template, campos com origem, Markdown e PDF, cada um com seu hash.
+ Remove deterministicamente a seção “Controle do modelo” até a seção seguinte,
+ os blocos de citação iniciados por “Revisão jurídica” e o histórico interno do
+diff --git a/eiac-campo/scripts/habilitacao.py b/eiac-campo/scripts/habilitacao.py
+index 3eb1419..fa590df 100644
+--- a/eiac-campo/scripts/habilitacao.py
++++ b/eiac-campo/scripts/habilitacao.py
+@@ -18,6 +18,7 @@ import subprocess
+ import tempfile
+ import uuid
+ from contextvars import ContextVar
++from collections.abc import Mapping
+ REGRA_PESSOA = ContextVar("regra_pessoa", default=None)
+ 
+ 
+@@ -25,11 +26,25 @@ class Recusa(ValueError):
+     pass
+ 
+ 
+-TEMPLATES = {
+-    "HAB-01": "HAB-01-carta-de-escopo.md",
+-    "HAB-02": "HAB-02-acordo-confidencialidade.md",
+-    "HAB-03": "HAB-03-termo-de-consentimento.md",
+-}
++CODIGOS_HAB = ('HAB-01', 'HAB-02', 'HAB-03')
++
++
++class Templates(Mapping):
++    """Códigos estáveis; nomes resolvidos no APR-01 vigente, sem cache."""
++
++    def __iter__(self):
++        return iter(CODIGOS_HAB)
++
++    def __len__(self):
++        return len(CODIGOS_HAB)
++
++    def __getitem__(self, codigo):
++        if codigo not in CODIGOS_HAB:
++            raise KeyError(codigo)
++        return pathlib.PurePosixPath(templates_aprovados()[codigo]).name
++
++
++TEMPLATES = Templates()
+ TOKEN = re.compile(r"\{\{([a-z_]+)\}\}")
+ APR = pathlib.Path(__file__).resolve().parents[1] / 'reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md'
+ 
+@@ -71,14 +86,15 @@ def digest(data):
+     return hashlib.sha256(data).hexdigest()
+ 
+ 
+-def aprovacoes(caminho=None, linha_de_base='metodo-v1.0'):
+-    """Hashes declarados na tabela do APR-01; metadados do template não aprovam bytes."""
++def registros_aprovados(caminho=None, linha_de_base=None):
++    """Código, caminho e hash da tabela; uma única linha de base aprovada."""
+     registro = (caminho or APR).read_text(encoding='utf-8')
+     exigir('| **Estado** | Aprovado |' in registro, 'APR-01 não aprovado')
+     exigir('## 2. Documentos aprovados' in registro and '## 3. Regra de aprovação' in registro,
+            'tabela de aprovação do APR-01 ausente')
+     tabela = registro.split('## 2. Documentos aprovados', 1)[1].split('## 3. Regra de aprovação', 1)[0]
+-    hashes = {}
++    registros = {}
++    bases = set()
+     for linha in tabela.splitlines():
+         if not re.match(r'^\| (?:EMCIA-|HAB-)', linha):
+             continue
+@@ -86,12 +102,31 @@ def aprovacoes(caminho=None, linha_de_base='metodo-v1.0'):
+         exigir(len(cols) == 7, 'linha inválida no APR-01')
+         codigo, nome, versao, sha, data, aprovador, base = cols
+         p = pathlib.PurePosixPath(nome)
+-        exigir(not p.is_absolute() and '..' not in p.parts and nome not in hashes
+-               and re.fullmatch(r'[0-9a-f]{64}', sha) and base == linha_de_base,
++        exigir(not p.is_absolute() and '..' not in p.parts and nome not in registros
++               and re.fullmatch(r'[0-9a-f]{64}', sha)
++               and re.fullmatch(r'metodo-v\d+\.\d+', base)
++               and (linha_de_base is None or base == linha_de_base),
+                'hash, caminho ou linha de base inválidos no APR-01')
+-        hashes[nome] = sha
+-    exigir(bool(hashes), 'APR-01 sem documentos aprovados')
+-    return hashes
++        bases.add(base)
++        registros[nome] = {'codigo': codigo, 'sha256': sha}
++    exigir(bool(registros) and len(bases) == 1, 'APR-01 sem documentos aprovados ou com linhas de base distintas')
++    return registros
++
++
++def aprovacoes(caminho=None, linha_de_base=None):
++    """Hashes por caminho; conserva a interface usada na conferência do pacote."""
++    return {nome: r['sha256'] for nome, r in registros_aprovados(caminho, linha_de_base).items()}
++
++
++def templates_aprovados(registros=None):
++    registros = registros if registros is not None else registros_aprovados()
++    caminhos = {}
++    for codigo in CODIGOS_HAB:
++        candidatos = [nome for nome, r in registros.items() if r['codigo'] == codigo]
++        exigir(len(candidatos) == 1,
++               f'APR-01: exige exatamente um arquivo aprovado para {codigo}; encontrados {len(candidatos)}')
++        caminhos[codigo] = candidatos[0]
++    return caminhos
+ 
+ 
+ def documento_cliente(md, doc):
+@@ -356,34 +391,42 @@ def aplicar(root, s, action, p):
+         s["revisao"] = dict(decisor=pessoa(p.get("decisor")), motivo=texto(p.get("motivo")),
+                              evidencia=importar(root, p.get("evidencia")), data=agora())
+     elif action == 'revisao-juridica':
+-        exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+-               'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa')
++        obrigatorios = {'revisor', 'decisor', 'data', 'documentos', 'evidencia', 'resultado'}
++        exigir(obrigatorios <= set(p) <= obrigatorios | {'ciclo'},
++               'revisao-juridica exige revisor, decisor, data, documentos, evidencia e resultado; '
++               'somente ciclo é opcional; não admite dispensa')
++        exigir(p.get('resultado') == 'aprovado', 'resultado jurídico obrigatório: somente "aprovado" é aceito')
++        ciclo = {'ciclo': texto(p['ciclo'])} if 'ciclo' in p else {}
+         revisor, decisor = pessoa(p.get('revisor')), pessoa(p.get('decisor'))
+         data = texto(p.get('data'))
+         exigir(datetime.date.fromisoformat(data).isoformat() == data, 'data jurídica inválida; use AAAA-MM-DD')
+         docs = p.get('documentos')
+         exigir(isinstance(docs, dict) and bool(docs) and set(docs) <= TEMPLATES.keys(),
+                'documentos inválidos na revisao-juridica')
+-        aprovados = aprovacoes()
++        registros = registros_aprovados()
++        caminhos = templates_aprovados(registros)
+         for doc, sha in docs.items():
+             exigir(isinstance(sha, str) and re.fullmatch(r'[0-9a-f]{64}', sha)
+-                   and aprovados.get('auxiliares/' + TEMPLATES[doc]) == sha,
++                   and registros[caminhos[doc]]['sha256'] == sha,
+                    'APR-01: hash não aprovado para ' + doc)
+         s.setdefault('revisoes_juridicas', []).append(dict(revisor=revisor, decisor=decisor, data=data,
++            resultado='aprovado', **ciclo,
+             documentos=copy.deepcopy(docs), evidencia=importar(root, p.get('evidencia'))))
+     elif action == "gerar":
+         exigir(s["revisao"] is not None, "revisão humana ausente")
+         template_root = pathlib.Path(texto(p.get("templates")))
+         browser = p.get("navegador", "google-chrome")
+         prepared = {}
+-        aprovados = aprovacoes()
+-        for doc, filename in TEMPLATES.items():
++        registros = registros_aprovados()
++        caminhos = templates_aprovados(registros)
++        for doc, caminho in caminhos.items():
++            filename = pathlib.PurePosixPath(caminho).name
+             raw = (template_root / filename).read_bytes()
+-            exigir(aprovados.get('auxiliares/' + filename) == digest(raw),
++            exigir(registros[caminho]['sha256'] == digest(raw),
+                    'APR-01: hash do template divergente em ' + doc)
+             md = documento_cliente(raw.decode('utf-8'), doc)
+             juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
+-                             if r['documentos'].get(doc) == digest(raw)), None)
++                             if r.get('resultado') == 'aprovado' and r['documentos'].get(doc) == digest(raw)), None)
+             exigir(doc == 'HAB-01' or juridica is not None,
+                    'registre revisao-juridica para o hash exato de ' + doc + ' antes de gerar')
+             n = len(s["documentos"].get(doc, [])) + 1
+diff --git a/testes/README.md b/testes/README.md
+index c438c3c..cef7a7a 100644
+--- a/testes/README.md
++++ b/testes/README.md
+@@ -1,10 +1,11 @@
+ # Testes — inventário operacional
+ 
+-Revisão: 04/10/2026. Linha de base antes das alterações em Python 3.12.12:
+-**958 verificações em 49 módulos**, sem exclusões e sem falhas. A geração
+-com templates aprovados acrescenta dez testes; o pacote passa de uma
+-verificação por processo a oito testes. Suíte final: **975 verificações em
+-49 módulos**. Saídas integrais, executador e exemplos sintéticos estão em
++Revisão: 05/10/2026. Linha de base antes das alterações em Python 3.12.12:
++**975 verificações em 49 módulos**, sem exclusões e sem falhas. Resultado
++jurídico obrigatório e resolução por APR-01 acrescentam onze testes de
++habilitação. Suíte final: **986 verificações em 49 módulos**. Saídas integrais
++e executador estão em `.projectdocs/evidencias/revisao-juridica-resultado/`.
++A evidência anterior da geração e do pacote aprovado permanece em
+ `.projectdocs/evidencias/linha-de-base-v1/`.
+ 
+ ## Executar
+@@ -19,7 +20,7 @@ python3 testes/contexto.py
+ Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
+ 
+ ```bash
+-python3 .projectdocs/evidencias/linha-de-base-v1/reexecutar-suite.py /tmp/emcia-suite.txt
++python3 .projectdocs/evidencias/revisao-juridica-resultado/reexecutar-suite.py /tmp/emcia-suite.txt
+ ```
+ 
+ O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
+@@ -55,7 +56,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ | `esforco.py` | 1 | Registro de esforço e cálculo |
+ | `formularios.py` | 5 | Redação fixa da triagem e isolamento na preparação de submissões |
+ | `habilidades_a18.py` | 13 | A18: rotas reais de carregamento, inclusive com sessão e selo |
+-| `habilitacao.py` | 29 | Travas do expediente, hashes aprovados, revisão jurídica exata, separação do modelo e emissão; dados sintéticos |
++| `habilitacao.py` | 40 | Travas do expediente, resultado aprovado obrigatório, registros legados, nomes resolvidos por APR-01, ambiguidade e hashes; separação do modelo e emissão; dados sintéticos |
+ | `habilitacao_0d.py` | 35 | Passagem 0d: negativas primeiro, sobre componentes reais e dados sintéticos |
+ | `integracao.py` | 17 | Integracao P2/P3 -> CTX -> P4/P5 do pacote 2.5.5 |
+ | `manual_a25.py` | 5 | MAN-01 sem emenda: conformidade e quatro mutações negativas |
+@@ -80,7 +81,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
+ | `sessao_externa.py` | 6 | Referência de sessão genérica: camada, id declarado e marcador |
+ | `triagem_a7.py` | 24 | A7: recusas primeiro; regra de apuração declarada no playbook do caso |
+ | `verificacao_por_estados.py` | 7 | Verificacao por estados do caso (decisao 021, substitui 004/014-020) |
+-| **Total** | **975** | **49 módulos** |
++| **Total** | **986** | **49 módulos** |
+ 
+ esforco.py é uma verificação por processo e conta como uma; os demais módulos
+ declaram unittest ou imprimem verificações `ok`.
+diff --git a/testes/apoio/habilitacao_0d.py b/testes/apoio/habilitacao_0d.py
+index a833ed5..615476e 100644
+--- a/testes/apoio/habilitacao_0d.py
++++ b/testes/apoio/habilitacao_0d.py
+@@ -41,6 +41,7 @@ def criar(root, caso, responsavel, acessos=True, assinaturas=True, restricao=Fal
+         op('revisar', decisor=responsavel, motivo='Revisão exclusivamente sintética',
+            qualificacao_0a=True, conteudo_conferido=True, evidencia=str(origem))
+         op('revisao-juridica', revisor='Pessoa Jurista', decisor=responsavel, data='2026-10-04',
++           resultado='aprovado',
+            documentos={doc: hashlib.sha256((templates/H.TEMPLATES[doc]).read_bytes()).hexdigest()
+                        for doc in ('HAB-02', 'HAB-03')}, evidencia=str(origem))
+         with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\ncontrole sintetico\n%%EOF'):
+diff --git a/testes/apoio/templates-hab-proxima-base/EMCIA-APR-01-registro-de-aprovacoes.md b/testes/apoio/templates-hab-proxima-base/EMCIA-APR-01-registro-de-aprovacoes.md
+new file mode 100644
+index 0000000..4e62642
+--- /dev/null
++++ b/testes/apoio/templates-hab-proxima-base/EMCIA-APR-01-registro-de-aprovacoes.md
+@@ -0,0 +1,18 @@
++# APR-01 exclusivamente sintético — próxima linha de base
++
++Este registro não aprova documento real e não integra o pacote do método.
++
++| Código | EMCIA-APR-01 | Versão | 1.1 |
++| **Estado** | Aprovado | Responsável | Pessoa Sintetica |
++
++## 2. Documentos aprovados
++
++| Código | Arquivo | Versão aprovada | SHA-256 | Data | Aprovador | Linha de base |
++| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
++| HAB-01 | auxiliares/HAB-01-carta-de-escopo.md | 0.3 (por hash) | 03370d16f4ef0f0b619612040319af3432a63b176cc9b0aa381a5e598e1708de | 05/10/2026 | Pessoa Sintetica | metodo-v1.1 |
++| HAB-02 | auxiliares/HAB-02-acordo-confidencialidade.md | 0.3 (por hash) | 08e7fe9eee2d4534ff78784e703e7fb8f959ebbb276143c19a40d51d0ecdee1b | 05/10/2026 | Pessoa Sintetica | metodo-v1.1 |
++| HAB-03 | auxiliares/HAB-03-termo-de-autorizacao-e-governanca-de-dados.md | 0.3 (por hash) | df28af3af2fc5c460dac509d83f5bafc85ecce24f13a85faca91bd97b8334512 | 05/10/2026 | Pessoa Sintetica | metodo-v1.1 |
++
++## 3. Regra de aprovação
++
++Fixture exclusivamente sintética para testar resolução dos códigos por APR-01.
+diff --git a/testes/apoio/templates-hab-proxima-base/HAB-01-carta-de-escopo.md b/testes/apoio/templates-hab-proxima-base/HAB-01-carta-de-escopo.md
+new file mode 100644
+index 0000000..c93f035
+--- /dev/null
++++ b/testes/apoio/templates-hab-proxima-base/HAB-01-carta-de-escopo.md
+@@ -0,0 +1,24 @@
++# HAB-01 — documento exclusivamente sintético
++
++## Controle do modelo
++
++| Código | HAB-01 | Versão | 0.3 |
++| Estado | Aprovado | Aprovação | Pessoa Sintetica — controle de teste |
++
++## Identificação do caso
++
++| Cliente | {{organizacao}} | Caso | {{caso_id}} |
++| Responsável | {{responsavel_emcia}} | Origem | Controle sintético |
++
++## 1. Objetivo
++
++Cláusula exclusivamente sintética de teste. Não utilizar com cliente.
++
++## 2. Aceite
++
++Signatário: {{signatario}}.
++
++## 3. Histórico de revisões do modelo
++
++| Versão | Descrição |
++| 0.3 | Fixture sintética, sem aprovação de documento real |
+diff --git a/testes/apoio/templates-hab-proxima-base/HAB-02-acordo-confidencialidade.md b/testes/apoio/templates-hab-proxima-base/HAB-02-acordo-confidencialidade.md
+new file mode 100644
+index 0000000..e96f557
+--- /dev/null
++++ b/testes/apoio/templates-hab-proxima-base/HAB-02-acordo-confidencialidade.md
+@@ -0,0 +1,26 @@
++# HAB-02 — documento exclusivamente sintético
++
++## Controle do modelo
++
++| Código | HAB-02 | Versão | 0.3 |
++| Estado | Aprovado | Aprovação | Pessoa Sintetica — controle de teste |
++
++## Identificação do caso
++
++| Cliente | {{organizacao}} | Caso | {{caso_id}} |
++| Responsável | {{responsavel_emcia}} | Origem | Controle sintético |
++
++## 1. Objetivo
++
++Cláusula exclusivamente sintética de teste. Não utilizar com cliente.
++
++> **Revisão jurídica:** aviso interno exclusivamente sintético.
++
++## 2. Aceite
++
++Signatário: {{signatario}}.
++
++## 3. Histórico de revisões do modelo
++
++| Versão | Descrição |
++| 0.3 | Fixture sintética, sem aprovação de documento real |
+diff --git a/testes/apoio/templates-hab-proxima-base/HAB-03-termo-de-autorizacao-e-governanca-de-dados.md b/testes/apoio/templates-hab-proxima-base/HAB-03-termo-de-autorizacao-e-governanca-de-dados.md
+new file mode 100644
+index 0000000..866e060
+--- /dev/null
++++ b/testes/apoio/templates-hab-proxima-base/HAB-03-termo-de-autorizacao-e-governanca-de-dados.md
+@@ -0,0 +1,26 @@
++# HAB-03 — documento exclusivamente sintético
++
++## Controle do modelo
++
++| Código | HAB-03 | Versão | 0.3 |
++| Estado | Aprovado | Aprovação | Pessoa Sintetica — controle de teste |
++
++## Identificação do caso
++
++| Cliente | {{organizacao}} | Caso | {{caso_id}} |
++| Responsável | {{responsavel_emcia}} | Origem | Controle sintético |
++
++## 1. Objetivo
++
++Cláusula exclusivamente sintética de teste. Não utilizar com cliente.
++
++> **Revisão jurídica:** aviso interno exclusivamente sintético.
++
++## 2. Aceite
++
++Signatário: {{signatario}}.
++
++## 3. Histórico de revisões do modelo
++
++| Versão | Descrição |
++| 0.3 | Fixture sintética, sem aprovação de documento real |
+diff --git a/testes/habilitacao.py b/testes/habilitacao.py
+index 70828d6..91280b6 100644
+--- a/testes/habilitacao.py
++++ b/testes/habilitacao.py
+@@ -102,6 +102,7 @@ class Habilitacao(unittest.TestCase):
+ 
+     def revisao_juridica(self, documentos=None, **mudancas):
+         dados = dict(revisor='Pessoa Jurista', decisor='Pessoa Engenheira', data='2026-10-04',
++                     resultado='aprovado',
+                      documentos=({doc: hashlib.sha256((self.templates / H.TEMPLATES[doc]).read_bytes()).hexdigest()
+                                   for doc in ('HAB-02', 'HAB-03')} if documentos is None else documentos),
+                      evidencia=str(self.base / 'S1.json'))
+@@ -359,6 +360,138 @@ class Habilitacao(unittest.TestCase):
+         self.assertEqual(self.state()['documentos'], {})
+         self.assertEqual(self.state()['eventos'][-1]['motivo'], 'falha sintética de PDF')
+ 
++    def test_30_revisao_sem_resultado_recusa_com_evento(self):
++        self.source()
++        dados = self.revisao_juridica()
++        del dados['resultado']
++        self.refused('revisao-juridica', **dados)
++        self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
++        self.assertFalse(self.state().get('revisoes_juridicas'))
++
++    def test_31_somente_resultado_literal_aprovado_e_aceito(self):
++        self.source()
++        for resultado in ('condicionado', 'reprovado', 'Texto livre', 'Aprovado', ' aprovado ', '', None, True):
++            with self.subTest(resultado=resultado):
++                self.refused('revisao-juridica', **self.revisao_juridica(resultado=resultado))
++                self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
++                self.assertFalse(self.state().get('revisoes_juridicas'))
++
++    def test_32_aprovado_preserva_resultado_ciclo_hashes_e_evidencia(self):
++        self.source()
++        dados = self.revisao_juridica(ciclo='2026-10-ciclo-2')
++        self.run_action('revisao-juridica', **dados)
++        revisao = self.state()['revisoes_juridicas'][0]
++        self.assertEqual(revisao['resultado'], 'aprovado')
++        self.assertEqual(revisao['ciclo'], '2026-10-ciclo-2')
++        self.assertEqual(revisao['documentos'], dados['documentos'])
++        self.assertEqual(revisao['evidencia']['sha256'], hashlib.sha256((self.base / 'S1.json').read_bytes()).hexdigest())
++        self.assertEqual(self.state()['eventos'][-1]['entrada'], dados)
++        self.run_action('revisao-juridica', **self.revisao_juridica())
++        self.assertEqual(self.state()['revisoes_juridicas'][-1]['resultado'], 'aprovado')
++        self.assertNotIn('ciclo', self.state()['revisoes_juridicas'][-1])
++
++    def test_33_ciclo_invalido_recusa_sem_dispensa(self):
++        self.source()
++        for ciclo in (None, True, 2, [], '', '   '):
++            with self.subTest(ciclo=ciclo):
++                self.refused('revisao-juridica', **self.revisao_juridica(ciclo=ciclo))
++        self.assertFalse(self.state().get('revisoes_juridicas'))
++
++    def test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas(self):
++        # Simula registros preservados de versões anteriores, sem usar uma
++        # operação que já deve recusar o resultado. Não toca nas evidências.
++        self.prepare(gerar=False, juridica=False)
++        dados = self.revisao_juridica()
++        original = self.state()
++        original['revisoes_juridicas'] = [dict(revisor=dados['revisor'], decisor=dados['decisor'],
++            data=dados['data'], documentos=dados['documentos'], evidencia=original['fontes']['S1']['arquivo'])]
++        for resultado in (None, 'condicionado', 'reprovado', 'texto livre'):
++            with self.subTest(resultado=resultado):
++                registro = json.loads(json.dumps(original))
++                if resultado is not None:
++                    registro['revisoes_juridicas'][0]['resultado'] = resultado
++                (self.root / 'expediente.json').write_text(json.dumps(registro))
++                with patch.object(H, 'pdf_bytes') as pdf:
++                    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
++                        self.run_action('gerar', templates=str(self.templates))
++                    pdf.assert_not_called()
++                self.assertEqual(self.state()['documentos'], {})
++                self.assertEqual(self.state()['eventos'][-1]['tipo'], 'Recusado')
++                self.assertEqual(self.state()['eventos'][-1]['autor'], 'Pessoa Responsavel')
++
++    def test_35_gerar_seleciona_somente_registro_aprovado(self):
++        self.prepare(gerar=False)
++        registro = self.state()
++        condicionado = json.loads(json.dumps(registro['revisoes_juridicas'][0]))
++        condicionado.update(resultado='condicionado', revisor='Outra Jurista')
++        registro['revisoes_juridicas'].append(condicionado)
++        (self.root / 'expediente.json').write_text(json.dumps(registro))
++        with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\n%%EOF'):
++            self.run_action('gerar', templates=str(self.templates))
++        for doc in ('HAB-02', 'HAB-03'):
++            r = self.state()['documentos'][doc][-1]['revisao_juridica']
++            self.assertEqual(r['resultado'], 'aprovado')
++            self.assertEqual(r['revisor'], 'Pessoa Jurista')
++
++    def test_36_apr_atual_resolve_nome_e_gera_hab03(self):
++        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
++        self.prepare()
++        v = self.state()['documentos']['HAB-03'][-1]
++        self.assertEqual(v['template']['sha256'], self.revisao_juridica()['documentos']['HAB-03'])
++        self.assertEqual(v['revisao_juridica']['resultado'], 'aprovado')
++
++    def test_37_apr_proxima_base_resolve_nome_novo_e_gera_hab03(self):
++        shutil.rmtree(self.templates)
++        shutil.copytree(ROOT / 'testes/apoio/templates-hab-proxima-base', self.templates)
++        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md')
++        self.prepare()
++        v = self.state()['documentos']['HAB-03'][-1]
++        raw = (self.templates / 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md').read_bytes()
++        self.assertEqual(H.ler_arquivo(self.root, v['template']), raw)
++        self.assertEqual(v['template']['sha256'], hashlib.sha256(raw).hexdigest())
++        self.assertEqual(v['revisao_juridica']['documentos']['HAB-03'], v['template']['sha256'])
++        md = H.ler_arquivo(self.root, v['markdown']).decode()
++        self.assertIn('Cláusula exclusivamente sintética de teste', md)
++        self.assertIn('Estado de emissão: Para assinatura', md)
++        self.assertNotIn('Controle do modelo', md)
++
++    def test_38_apr_ambiguo_recusa_revisao_e_gerar_com_evento(self):
++        self.prepare(gerar=False)
++        dados = self.revisao_juridica()
++        apr = H.APR
++        original = apr.read_text()
++        linha = next(l for l in original.splitlines() if l.startswith('| HAB-03 |'))
++        extra = linha.replace('HAB-03-termo-de-consentimento.md', 'HAB-03-outro-modelo.md')
++        apr.write_text(original.replace(linha, linha + '\n' + extra))
++        for action, payload in [('revisao-juridica', dados), ('gerar', {'templates': str(self.templates)})]:
++            with self.subTest(action=action), patch.object(H, 'pdf_bytes') as pdf:
++                self.refused(action, **payload)
++                self.assertRegex(self.state()['eventos'][-1]['motivo'], 'APR-01.*HAB-03.*2')
++                pdf.assert_not_called()
++                self.assertEqual(self.state()['documentos'], {})
++        self.assertEqual(len(self.state()['revisoes_juridicas']), 1)
++
++    def test_39_apr_sem_codigo_hab03_recusa_mesmo_com_nome_e_hash(self):
++        self.prepare(gerar=False)
++        dados = self.revisao_juridica()
++        # O arquivo e o hash ainda estão aprovados, mas para outro código.
++        # O gerador precisa ler o código da tabela, sem inferi-lo pelo nome.
++        H.APR.write_text(H.APR.read_text().replace('| HAB-03 |', '| HAB-99 |'))
++        for action, payload in [('revisao-juridica', dados), ('gerar', {'templates': str(self.templates)})]:
++            with self.subTest(action=action), patch.object(H, 'pdf_bytes') as pdf:
++                self.refused(action, **payload)
++                self.assertRegex(self.state()['eventos'][-1]['motivo'], 'APR-01.*HAB-03.*0')
++                pdf.assert_not_called()
++        self.assertEqual(self.state()['documentos'], {})
++        self.assertEqual(len(self.state()['revisoes_juridicas']), 1)
++
++    def test_40_resolucao_nao_congela_apr_na_importacao_do_modulo(self):
++        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
++        novo = ROOT / 'testes/apoio/templates-hab-proxima-base/EMCIA-APR-01-registro-de-aprovacoes.md'
++        with patch.object(H, 'APR', novo):
++            self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-autorizacao-e-governanca-de-dados.md')
++        self.assertEqual(H.TEMPLATES['HAB-03'], 'HAB-03-termo-de-consentimento.md')
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

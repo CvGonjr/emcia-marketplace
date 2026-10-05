@@ -66,3 +66,36 @@ Testes negativos precederam a correção. A evidência em
 `.projectdocs/evidencias/linha-de-base-v1/` contém a linha de base completa em
 Python 3.12, regressão final, conferência de tag/bytes/hashes e exemplos reais
 de PDFs com dados e revisão jurídica exclusivamente sintéticos, antes e depois.
+
+## Nota de emenda — resultado jurídico e resolução dos templates, 05/10/2026
+
+Por instrução do engenheiro, `revisao-juridica` exige o campo `resultado`, cujo
+único valor aceito é a string exata `aprovado`. O campo `ciclo` é texto opcional
+para identificar o ciclo. Parecer condicionado ou reprovado não é registrado
+como revisão autorizadora no expediente; uma tentativa inválida produz evento
+`Recusado`, com o mesmo tipo de erro das demais validações. Não há dispensa.
+
+`gerar` seleciona somente revisões com resultado `aprovado` e cobertura do hash
+exato. Registros anteriores sem resultado permanecem no histórico e não liberam
+nova geração. É necessário registrar o ato e sua evidência sem inferir ou completar
+o resultado de uma revisão legada. Uma revisão não aprovada não substitui a
+revisão aprovada usada pela emissão.
+
+Os arquivos de HAB-01, HAB-02 e HAB-03 passam a ser localizados pelo código na
+tabela do APR-01 do pacote. Cada código exige exatamente um arquivo aprovado;
+ausência ou ambiguidade recusa revisão e geração antes de produzir PDF. Os hashes
+continuam sendo conferidos contra a mesma tabela. A resolução é feita na operação,
+sem congelar nomes na importação do módulo, e aceita a linha de base declarada no
+registro, sem fixar metodo-v1.0 no script. A conferência do pacote continua exigindo
+que o APR-01 corresponda à tag declarada em seu manifesto.
+
+Campo 0.8.25; núcleo 0.2.45 e playbook 0.4.19 permanecem. Não há reempacotamento,
+alteração de documento canônico nem liberação das minutas do ciclo 2. A próxima
+linha de base aprovada poderá declarar o novo nome de HAB-03 sem nova alteração
+do script; a fixture metodo-v1.1 é exclusivamente sintética e não aprova documento
+real. A emenda conserva a fronteira de confiança da 022: o resultado é declarado
+pelo responsável humano, o script não interpreta o parecer nem autentica seu mérito.
+
+Testes de recusa precederam as implementações dos dois itens. Linha de base,
+falhas iniciais, regressão e conferências estão em
+`.projectdocs/evidencias/revisao-juridica-resultado/`.

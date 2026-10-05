@@ -1,10 +1,11 @@
 # Testes — inventário operacional
 
-Revisão: 04/10/2026. Linha de base antes das alterações em Python 3.12.12:
-**958 verificações em 49 módulos**, sem exclusões e sem falhas. A geração
-com templates aprovados acrescenta dez testes; o pacote passa de uma
-verificação por processo a oito testes. Suíte final: **975 verificações em
-49 módulos**. Saídas integrais, executador e exemplos sintéticos estão em
+Revisão: 05/10/2026. Linha de base antes das alterações em Python 3.12.12:
+**975 verificações em 49 módulos**, sem exclusões e sem falhas. Resultado
+jurídico obrigatório e resolução por APR-01 acrescentam onze testes de
+habilitação. Suíte final: **986 verificações em 49 módulos**. Saídas integrais
+e executador estão em `.projectdocs/evidencias/revisao-juridica-resultado/`.
+A evidência anterior da geração e do pacote aprovado permanece em
 `.projectdocs/evidencias/linha-de-base-v1/`.
 
 ## Executar
@@ -19,7 +20,7 @@ python3 testes/contexto.py
 Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
 
 ```bash
-python3 .projectdocs/evidencias/linha-de-base-v1/reexecutar-suite.py /tmp/emcia-suite.txt
+python3 .projectdocs/evidencias/revisao-juridica-resultado/reexecutar-suite.py /tmp/emcia-suite.txt
 ```
 
 O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
@@ -55,7 +56,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `esforco.py` | 1 | Registro de esforço e cálculo |
 | `formularios.py` | 5 | Redação fixa da triagem e isolamento na preparação de submissões |
 | `habilidades_a18.py` | 13 | A18: rotas reais de carregamento, inclusive com sessão e selo |
-| `habilitacao.py` | 29 | Travas do expediente, hashes aprovados, revisão jurídica exata, separação do modelo e emissão; dados sintéticos |
+| `habilitacao.py` | 40 | Travas do expediente, resultado aprovado obrigatório, registros legados, nomes resolvidos por APR-01, ambiguidade e hashes; separação do modelo e emissão; dados sintéticos |
 | `habilitacao_0d.py` | 35 | Passagem 0d: negativas primeiro, sobre componentes reais e dados sintéticos |
 | `integracao.py` | 17 | Integracao P2/P3 -> CTX -> P4/P5 do pacote 2.5.5 |
 | `manual_a25.py` | 5 | MAN-01 sem emenda: conformidade e quatro mutações negativas |
@@ -80,7 +81,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `sessao_externa.py` | 6 | Referência de sessão genérica: camada, id declarado e marcador |
 | `triagem_a7.py` | 24 | A7: recusas primeiro; regra de apuração declarada no playbook do caso |
 | `verificacao_por_estados.py` | 7 | Verificacao por estados do caso (decisao 021, substitui 004/014-020) |
-| **Total** | **975** | **49 módulos** |
+| **Total** | **986** | **49 módulos** |
 
 esforco.py é uma verificação por processo e conta como uma; os demais módulos
 declaram unittest ou imprimem verificações `ok`.

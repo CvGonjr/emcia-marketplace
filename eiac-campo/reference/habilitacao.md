@@ -2,7 +2,8 @@
 
 Procedimento: EMCIA-HAB-01 §3.3.4 e §3.4, EMCIA-CAN-01 e
 `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` §3.6, na tag canônica
-`metodo-v1.0` e no commit fixado em `reference/metodo/manifesto.json`.
+da linha de base e no commit fixados em `reference/metodo/manifesto.json`
+(atualmente `metodo-v1.0`).
 O pacote contém cópias exatas; `caminhos_canonicos` identifica os auxiliares
 e sua origem. `EMCIA-APR-01-registro-de-aprovacoes.md` registra a aprovação
 por hash dos modelos e templates. Metadado interno do template não substitui
@@ -145,7 +146,9 @@ Antes de gerar HAB-02 e HAB-03, o engenheiro registra a operação humana
 {
   "revisor": "Nome Jurista",
   "decisor": "Nome Engenheiro",
-  "data": "2026-10-04",
+  "data": "2026-10-05",
+  "resultado": "aprovado",
+  "ciclo": "identificador-do-ciclo-aprovado",
   "documentos": {
     "HAB-02": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
     "HAB-03": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96"
@@ -161,9 +164,25 @@ python3 /caminho/eiac-campo/scripts/habilitacao.py revisao-juridica \
 
 Os nomes e a data devem corresponder ao ato real; os hashes acima são os dos
 templates aprovados em metodo-v1.0. A evidência é importada com SHA-256.
-Cada registro preserva revisor, decisor, data, documentos e evidência;
+`resultado` é obrigatório e aceita somente a string exata `aprovado`.
+Campo ausente, `condicionado`, `reprovado`, texto livre ou outra grafia recusam
+com `Recusado`, como as demais validações. `ciclo` é opcional; quando informado,
+deve ser texto não vazio e identifica o ciclo de revisão.
+
+Parecer condicionado não é registrado no expediente como revisão jurídica:
+permanece no registro documental dos ciclos até ratificação sem condição sobre
+os hashes exatos. O engenheiro só declara `aprovado` se esse for o resultado
+real da evidência; não converte condição em aprovação. Uma tentativa inválida
+produz evento `Recusado`, sem acrescentar revisão autorizadora.
+
+Cada registro preserva revisor, decisor, data, resultado, ciclo quando informado,
+documentos e evidência;
 registros anteriores permanecem. A revisão pode cobrir os documentos em atos
 separados, mas ambos os hashes precisam estar cobertos antes de `gerar`.
+`gerar` considera somente registros com resultado `aprovado`; registros legados
+sem resultado são preservados e não liberam nova geração. É necessário registrar
+o resultado do ato humano com sua evidência, sem completar dados antigos por
+inferência. A emissão conserva a revisão aprovada selecionada para cada hash.
 Ausência ou divergência recusa com o nome da operação que falta, antes de
 iniciar qualquer PDF. Não há dispensa. Aprovação documental não substitui
 revisão jurídica; o registro testemunha o ato humano e não verifica por modelo
@@ -175,9 +194,17 @@ o mérito jurídico, a identidade ou a qualificação profissional do revisor.
 {"templates":"/checkout/emcia-marketplace/eiac-campo/reference/metodo","navegador":"google-chrome"}
 ```
 
-Usa HAB-01, HAB-02 e HAB-03 do diretório indicado e exige seus hashes exatos no
-APR-01 da linha de base. Também aceita `auxiliares/` de um checkout canônico
-na tag metodo-v1.0, com os mesmos hashes. Preserva a cópia exata e o hash de cada
+Resolve os nomes de HAB-01, HAB-02 e HAB-03 pelo código na tabela do APR-01 do
+pacote, sem nomes de arquivo fixos. Cada código deve ter exatamente um arquivo
+aprovado; ausência ou ambiguidade recusa tanto `revisao-juridica` quanto `gerar`,
+antes de produzir PDF. A tabela deve pertencer a uma única linha de base;
+metadados do template não substituem o registro.
+
+Usa os arquivos resolvidos do diretório indicado e exige seus hashes exatos no
+APR-01. Também aceita `auxiliares/` de um checkout canônico na tag declarada
+pelo manifesto do pacote, com os mesmos hashes. A resolução admite o nome atual
+ou o novo nome de HAB-03 quando declarado em uma próxima linha de base aprovada;
+não aprova minutas nem atualiza o pacote. Preserva a cópia exata e o hash de cada
 template, campos com origem, Markdown e PDF, cada um com seu hash.
 Remove deterministicamente a seção “Controle do modelo” até a seção seguinte,
 os blocos de citação iniciados por “Revisão jurídica” e o histórico interno do

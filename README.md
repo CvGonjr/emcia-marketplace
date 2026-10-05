@@ -19,7 +19,7 @@ próprios; não entram no marketplace.
 | Plugin | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.45 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
-| eiac-campo | 0.8.24 | Método, habilidades, comandos, scripts e template de caso |
+| eiac-campo | 0.8.25 | Método, habilidades, comandos, scripts e template de caso |
 
 O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
 esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
@@ -57,8 +57,16 @@ expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
    A revisão humana da carta HAB-01 integra o procedimento normal:
    o engenheiro confere conteúdo, condições e evidências antes da formalização.
    **Antes do primeiro cliente**, registre a revisão jurídica de HAB-02 e HAB-03
-   pela operação humana `revisao-juridica`, com os hashes exatos e evidência.
-   `gerar` exige essa cobertura e recusa sem ela; não há dispensa. O MD e o PDF
+   pela operação humana `revisao-juridica`, com `resultado: "aprovado"`, hashes
+   exatos e evidência; `ciclo` é texto opcional. Parecer condicionado ou reprovado
+   não é registrado no expediente como revisão autorizadora. Campo resultado
+   ausente ou diferente de `aprovado` recusa com evento, sem dispensa.
+   `gerar` considera somente revisões aprovadas; registros antigos sem resultado
+   não liberam nova geração. Os nomes dos três templates são resolvidos pelos
+   códigos no APR-01 do pacote, com exatamente um arquivo aprovado por código.
+   A ausência ou ambiguidade recusa; o novo nome de HAB-03 será aceito quando
+   constar de uma próxima linha de base aprovada, com os hashes correspondentes.
+   O MD e o PDF
    emitidos preservam identificação e cláusulas, declaram “Para assinatura” e
    retiram controle, histórico e avisos internos do modelo.
 2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
@@ -238,8 +246,10 @@ execução integral comprovada. A conferência do manual cobre o contrato declar
 do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
 o recorte histórico da prova de conceito no repositório canônico. ESP-01,
 VER-01 e o fluxo auxiliar de habilitação ficam fora do pacote e da aprovação.
-A revisão jurídica é registrada por pessoa nomeada; o sistema confere cobertura
-e integridade da evidência, sem substituir o julgamento jurídico.
+A revisão jurídica é registrada por pessoa nomeada; o sistema confere o resultado
+declarado `aprovado`, cobertura por hash e integridade da evidência, sem interpretar
+o PDF nem substituir o julgamento jurídico. Parecer condicionado aguarda
+ratificação e não libera geração.
 
 O material público de 0a fica fora do caso nessa etapa. Se usado depois da
 abertura, segue validação ou curadoria, com procedência, premissa, URL e limite
@@ -268,4 +278,5 @@ Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso ex
 decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
 do playbook e versão do manifesto são registradas separadamente. Mudança em
 scripts do núcleo exige incremento da versão do núcleo; esta revisão incrementa
-somente o campo para 0.8.24 e o manifesto para v6. Casos anteriores não são migrados automaticamente.
+somente o campo para 0.8.25; o pacote e o manifesto v6 permanecem intactos.
+Casos anteriores não são migrados automaticamente.

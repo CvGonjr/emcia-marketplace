@@ -1,6 +1,6 @@
 # Mapa de documentação — emcia-marketplace
 
-Retrato operacional de 04/10/2026; substitui integralmente o mapa anterior.
+Retrato operacional de 05/10/2026; substitui integralmente o mapa anterior.
 
 ## Repositórios e versões
 
@@ -11,7 +11,7 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 | Componente | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.24 | Método, scripts de campo, comandos, habilidades e template |
+| eiac-campo | 0.8.25 | Método, scripts de campo, comandos, habilidades e template |
 | Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
@@ -181,17 +181,21 @@ A linha de base inicial em Python 3.12.12 passou com 958 verificações em 49 m�
 A geração acrescenta dez testes e a conferência do pacote passa de um controle
 por processo a oito testes, incluindo negativas de APR-01, tag e templates.
 As contagens finais constam da evidência linha-de-base-v1 e de testes/README.md.
-O inventário completo e o executador estão em testes/README.md e
-.projectdocs/evidencias/linha-de-base-v1/. Registre códigos, saídas e
+O inventário completo e o executador atual estão em testes/README.md e
+.projectdocs/evidencias/revisao-juridica-resultado/. Registre códigos, saídas e
 contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
 e contexto.py; para pacote específico, rode seus módulos e a regressão completa.
 
 metodo_empacotado.py confere inventário, caminhos de origem e hashes; com checkout
 canônico irmão, resolve a tag, compara bytes aos objetos do commit e confere
-os templates do checkout pelos hashes do APR-01. habilitacao.py exige revisão
-jurídica de HAB-02 e HAB-03 para os hashes exatos antes de qualquer PDF e retira
+os templates do checkout pelos hashes do APR-01. habilitacao.py resolve os nomes
+pelos códigos no APR-01, recusando ausência ou ambiguidade; exige revisão
+jurídica de HAB-02 e HAB-03 com resultado aprovado para os hashes exatos antes de qualquer PDF e retira
 controle, histórico e avisos internos, preservando cláusulas e identificação.
 A evidência contém PDFs reais sintéticos antes/depois e extrações pdftotext.
+Resultado obrigatório, registros legados sem liberação e os dois nomes de
+HAB-03 são cobertos em .projectdocs/evidencias/revisao-juridica-resultado/:
+linha de base de 975 verificações e regressão de 986, em 49 módulos, Python 3.12.
 manual_a25.py exige conferir()
 vazio para o manual empacotado, sem emenda, mantendo quatro negativos.
 citacoes.py confere seções, instrumentos JSON, auxiliares e o TRI-01 real.
