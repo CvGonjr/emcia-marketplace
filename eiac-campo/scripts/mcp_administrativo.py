@@ -69,7 +69,9 @@ def registrar_retorno(config,c,chamada,resultado):
             H.executar(exp,'receber-submissoes',payload)
         s=json.loads((exp/'expediente.json').read_text());f=s['fontes'][payload['id']]
         I.log(config,c,'SubmissaoDoCasoRegistrada',habilitacao=hab,caso=caso,submissao=f['submissao'],sha256=f['arquivo']['sha256'])
-        return dict(registrado=True,fonte=payload['id'],submissao=f['submissao'],sha256=f['arquivo']['sha256'])
+        return dict(registrado=True,fonte=payload['id'],submissao=f['submissao'],sha256=f['arquivo']['sha256'],
+                    csv=str((exp/f['arquivo']['caminho']).absolute()),
+                    resumo='Resposta do Tally recebida; CSV do caso gerado automaticamente no expediente.')
     H.exigir(isinstance(resultado,dict),'retorno MCP deve ser objeto')
     tipos=({'formulario_id'} if nome=='mcp__tally__create_new_form' else {'pasta_id'}
            if nome==PREFIXOS[1]+'create_file' and chamada['argumentos'].get('contentMimeType')=='application/vnd.google-apps.folder' else set())

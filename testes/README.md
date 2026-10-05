@@ -228,3 +228,10 @@ Recebimento sem depósito: regressão integral 1158/55 em Python 3.12.12 e
 1160/55 em 3.14.4, somente A25 conhecida e zero inesperadas. Percurso sintético
 com coleta direta, três confirmações e zero depósitos na entrada. Evidência em
 `.projectdocs/evidencias/recebimento-sem-deposito/`.
+
+Coleta direta da habilitação: `habilitacao_mcp.py` inclui quatro verificações
+adicionais para o formato do conector (questions.label e HIDDEN_FIELDS sem rótulo,
+com answer.caso). Recusa campo visível, identificação oculta duplicada e outro
+caso; gera um CSV da submissão selecionada e devolve seu caminho, sem depósito
+na entrada. A fixture mistura respostas de dois casos e confere que o CSV, a fonte
+e o avanço seguinte conservam só o caso reservado. Os dados são sintéticos.

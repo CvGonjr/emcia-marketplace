@@ -10,7 +10,7 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 | Componente | Versão | Responsabilidade |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.31 | Método, comandos, habilidades e operações administrativas |
+| eiac-campo | 0.8.33 | Método, comandos, habilidades e operações administrativas |
 | Playbook dos casos novos | 0.4.22 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
@@ -59,11 +59,16 @@ fixam texto, ordem, tipo e campo oculto caso; relatório sem divergências receb
 “conferido”. `formularios_permanentes` guarda tipo, id, versão/hash do contrato,
 data/hash da conferência. Alteração exige nova conferência, sem recriar por cliente.
 
+O início da coleta apresenta nome operacional, id e link do formulário permanente
+conferido na configuração. A seleção usa esse id, sem escolha por título no Tally
+nem cópia por cliente. O nome operacional não consulta o título remoto.
 O engenheiro envia o link `?caso=<caso>` e indica os PDFs assinados no Drive ou
 nos caminhos locais originais. A sessão baixa e recebe os arquivos; não é preciso
 exportar ou movê-los para `~/emcia-op/entrada/`, que permanece alternativa.
 A sessão lê fetch_submissions; o script registra apenas
-a submissão cujo campo oculto caso corresponde ao expediente, com hashes.
+a submissão cujo campo oculto caso corresponde ao expediente, com hashes, e gera
+automaticamente o CSV no expediente, apresentando seu caminho. O engenheiro não
+precisa baixar ou depositar um CSV para a habilitação pelo conector.
 Zero ou várias aguardam indicação humana. CSV filtrado é alternativa manual,
 também pelo caminho original. A sessão prepara as entradas técnicas.
 Antes da abertura, Tally/Drive/Calendar leem, listam, criam rascunhos e comparam

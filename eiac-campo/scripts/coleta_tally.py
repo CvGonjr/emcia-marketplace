@@ -28,7 +28,7 @@ def perguntas(p):
     resultado={}
     for q in p.get('questions',[]):
         H.exigir(isinstance(q,dict) and isinstance(q.get('id'),str),'metadados de pergunta não conferíveis')
-        itens=[dict(id=q['id'],label=q.get('title'),type=q.get('type'))]
+        itens=[dict(id=q['id'],label=q.get('title',q.get('label')),type=q.get('type'))]
         itens.extend(dict(id=f.get('uuid'),label=f.get('title'),type=f.get('type')) for f in q.get('fields',[]) if isinstance(f,dict))
         for item in itens:
             if not item['id']:continue
@@ -48,8 +48,13 @@ def caso_oculto(s,qs):
     h=s.get('hiddenFields')
     candidatos=[h['caso']] if isinstance(h,dict) and 'caso' in h else []
     for f in respostas(s,qs):
-        if isinstance(f,dict) and f.get('type') in ('HIDDEN_FIELDS','HIDDEN_FIELD') and f.get('label')=='caso':
-            candidatos.append(f.get('answer',f.get('value')))
+        if not isinstance(f,dict) or f.get('type') not in ('HIDDEN_FIELDS','HIDDEN_FIELD'):continue
+        valor=f.get('answer',f.get('value'))
+        if f.get('label')=='caso':
+            candidatos.append(valor)
+        elif f.get('type')=='HIDDEN_FIELDS' and f.get('label') is None and isinstance(valor,dict) and 'caso' in valor:
+            # O conector devolve o grupo oculto sem rótulo e os campos por nome.
+            candidatos.append(valor['caso'])
     return candidatos[0] if len(candidatos)==1 and isinstance(candidatos[0],str) else None
 
 

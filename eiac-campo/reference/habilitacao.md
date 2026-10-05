@@ -75,10 +75,17 @@ visível de mesmo nome não serve. Zero/várias respostas recusam e pedem indica
 mostrando somente ids do caso. O lote nunca entra em mcp-retornos ou no expediente;
 o temporário do script é removido inclusive na recusa. Fonte tally conserva
 CSV somente da submissão escolhida, hash do filtrado e hash do retorno original.
+O CSV é gerado automaticamente pelo script em arquivos/ do expediente; não exige
+exportação no painel nem depósito em pasta de entrada. A saída de retorno informa
+csv com o caminho absoluto, fonte, submissao e sha256. Depois, proximo usa essa
+fonte para os esclarecimentos e a preparação dos documentos.
 
 O adaptador lê o [formato público de submissões Tally](https://developers.tally.so/api-reference/endpoint/forms/submissions/list):
-questions com id/title/type e submissions.responses com questionId/answer; também
-aceita responses/fields com label/type e hiddenFields.caso. Preserve metadados
+questions com id/title/type ou id/label/type e submissions.responses com
+questionId/answer; também aceita responses/fields com label/type e hiddenFields.caso.
+No formato do conector, HIDDEN_FIELDS sem rótulo traz answer como objeto com
+caso; esse objeto só identifica o caso quando a pergunta é declarada oculta.
+Campos visíveis e origens ocultas duplicadas não identificam o caso. Preserve metadados
 que demonstram que caso é oculto. Campos/formato ambíguos não são aproximados.
 Leia todas as páginas: para várias, resposta.paginas contém páginas completas
 em ordem, desde a primeira; hasMore precisa ser true nas anteriores e false

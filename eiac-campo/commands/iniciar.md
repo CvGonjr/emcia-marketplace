@@ -8,6 +8,12 @@ Use `scripts/iniciar.py proximo --entrada <json-local>` por avanço e apresente
 resumo, próximo passo, artefatos e hashes. Consulte a referência específica
 somente para preparação, entradas, recusa ou alternativa manual.
 
+No início da coleta, apresente o nome operacional, id e link de `formulario`
+retornado por `proximo`. Use o permanente conferido na configuração; não peça
+escolha por título no Tally nem crie uma cópia por cliente. O nome operacional
+não é uma leitura atual do título remoto. Sem permanente válido, conduza a
+conferência contra `reference/formularios/habilitacao.json` e aguarde “conferido”.
+
 Antes da abertura, Tally, Google Drive e Google Calendar funcionam sem perfil
 nem escopo por id. Leia, liste, crie rascunhos e compare sem aprovação por chamada.
 Não calibre na preparação. Publicação, envio de mensagem/convite e compartilhamento
@@ -15,10 +21,17 @@ exigem “ok” simples: registre chamada, resumo, trecho e data com iniciar.py 
 O hook confere essa autorização. Nenhum efeito externo é autorizado por silêncio.
 
 Leia todas as páginas de fetch_submissions; entregue o retorno ao script pelo
-iniciar.py retorno. O script filtra pelo campo oculto caso antes de gravar a fonte.
+iniciar.py retorno, usando a chamada apresentada por proximo. O script filtra
+pelo campo oculto caso e gera o CSV automaticamente no expediente. Apresente
+o caminho csv retornado e siga com proximo para os esclarecimentos e documentos.
+Não peça exportação, download ou depósito de CSV ao engenheiro no fluxo padrão.
+Se faltar o nome do respondente, peça apenas a identificação nominal e informe
+respondente na chamada local, sem enviá-lo como parâmetro da API.
 Não selecione por semelhança, não transcreva o lote na conversa nem o copie para
-o expediente. Zero ou várias submissões exigem indicação do engenheiro.
-A exportação CSV é alternativa: coleta: csv, com exportacao indicando o caminho
+o expediente. Zero ou várias submissões exigem indicação do engenheiro; mantenha
+a coleta pelo conector e não troque para CSV manual por causa dessa recusa.
+A exportação CSV é alternativa escolhida pelo engenheiro ou quando o conector
+estiver indisponível: coleta: csv, com exportacao indicando o caminho
 original. Esclarecimentos e matriz usam mensagem. Receba os três PDFs assinados
 pelos caminhos originais ou pelo Drive, sem exigir exportação/movimentação do
 engenheiro para ~/emcia-op/entrada/. Essa pasta permanece alternativa.

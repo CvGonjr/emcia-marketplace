@@ -10,7 +10,7 @@ python3 <plugin>/scripts/iniciar.py proximo --entrada <entrada-local.json>
 
 Entrada: habilitacao e caso. Apresente resumo, artefatos e hashes; consulte reference/habilitacao.md somente para entradas/alternativa manual.
 
-1. Entregue o link ?caso=<caso>. Leia todas as páginas de fetch_submissions; passe o retorno ao script (iniciar.py retorno). Ele grava só o caso; zero/várias submissões exigem indicação humana. CSV: coleta: csv.
+1. Apresente formulario (nome operacional, id e link ?caso=<caso>) de proximo: use o permanente configurado. Leia todas as páginas de fetch_submissions; passe chamada e retorno ao script (iniciar.py retorno). Ele gera o CSV só do caso no expediente: apresente o caminho csv e siga com proximo. Não peça download/depósito de CSV. Zero/várias submissões exigem indicação humana; nome ausente exige respondente. CSV manual só por escolha do engenheiro ou conector indisponível: coleta: csv.
 2. Redija perguntas para lacunas. Resposta colada entra em mensagem (id, pergunta, texto, respondente). Prepare campos com fonte e plano_documentos.
 3. Apresente três PDFs. Primeira confirmação: aprovacao com ponto documentos, confirmado true e trecho real; cobre revisar/gerar/liberar aqueles bytes.
 4. Receba três PDFs assinados pelo Drive (download pela sessão) ou pelos caminhos originais: assinados, com evidencias opcionais por HAB. Entrada é alternativa. Informe plano_assinaturas com nomes, papéis, datas e referência. Confira associação/evidências: segunda confirmação, ponto assinaturas.

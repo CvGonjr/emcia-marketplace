@@ -147,6 +147,54 @@ class Administrativa(unittest.TestCase):
         with self.assertRaises(ValueError):I.autorizar_mcp(self.cfg,d)
         with self.assertRaises(ValueError):I.registrar_retorno(self.cfg,d,self.resposta())
 
+    def resposta_conector(self, caso='CASO', tipo='HIDDEN_FIELDS', oculto=None):
+        return {'resposta':{'data':dict(page=1,hasMore=False,questions=[
+            dict(id='Q-OCULTO',label=None,type=tipo),
+            dict(id='Q-PROCESSO',label='Qual processo vocês querem tratar?',type='INPUT_TEXT')],
+            submissions=[dict(id='SUB-REAL-FORMATO',isCompleted=True,responses=[
+                dict(questionId='Q-OCULTO',answer={'caso':caso} if oculto is None else oculto),
+                dict(questionId='Q-PROCESSO',answer='Conciliação sintética')])])}}
+
+    def test_10d_objeto_visivel_nao_identifica_caso(self):
+        with self.assertRaisesRegex(ValueError,'nenhuma submissão'):
+            self.coletar(self.resposta_conector(tipo='INPUT_TEXT'),respondente='Pessoa Cliente')
+        self.assertFalse(json.loads((self.exp/'expediente.json').read_text())['fontes'])
+
+    def test_10e_caso_oculto_ambiguo_nao_gera_csv(self):
+        retorno=self.resposta_conector()
+        retorno['resposta']['data']['submissions'][0]['hiddenFields']={'caso':'CASO'}
+        with self.assertRaisesRegex(ValueError,'nenhuma submissão'):
+            self.coletar(retorno,respondente='Pessoa Cliente')
+        self.assertFalse(json.loads((self.exp/'expediente.json').read_text())['fontes'])
+
+    def test_10f_objeto_oculto_de_outro_caso_nao_gera_csv(self):
+        with self.assertRaisesRegex(ValueError,'nenhuma submissão'):
+            self.coletar(self.resposta_conector(caso='OUTRO-A'),respondente='Pessoa Cliente')
+        self.assertFalse(json.loads((self.exp/'expediente.json').read_text())['fontes'])
+
+    def test_10g_formato_conector_gera_csv_sem_deposito(self):
+        import csv
+        retorno=self.resposta_conector()
+        retorno['resposta']['data']['submissions'].append(dict(id='OUTRO',responses=[
+            dict(questionId='Q-OCULTO',answer={'caso':'OUTRO-A'}),
+            dict(questionId='Q-PROCESSO',answer='SEGREDO-OUTRO')]))
+        r=self.coletar(retorno,respondente='Pessoa Cliente')
+        arquivo=pathlib.Path(r['csv'])
+        self.assertTrue(arquivo.is_relative_to(self.exp))
+        self.assertEqual(H.digest(arquivo.read_bytes()),r['sha256'])
+        with arquivo.open(newline='') as f:linhas=list(csv.DictReader(f))
+        self.assertEqual(len(linhas),1)
+        self.assertEqual(linhas[0]['caso'],'CASO')
+        self.assertEqual(linhas[0]['Respondente'],'Pessoa Cliente')
+        self.assertEqual(linhas[0]['Qual processo vocês querem tratar?'],'Conciliação sintética')
+        self.assertFalse(list(self.entrada.iterdir()))
+        self.assertFalse(list(self.cfg.parent.glob('.coleta-*')))
+        for p in self.exp.rglob('*'):
+            if p.is_file():self.assertNotIn(b'SEGREDO-OUTRO',p.read_bytes())
+        proximo=I.proximo(self.cfg,dict(habilitacao='HAB',caso='CASO'))
+        self.assertEqual(proximo['proximo'],'esclarecer')
+        self.assertEqual(proximo['fonte'],str(arquivo))
+
     def test_11_percurso_conector_e_perfil_na_abertura(self):
         self.percurso(direta=True,originais=True)
         self.assertFalse(list(self.entrada.iterdir()))

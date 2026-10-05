@@ -142,6 +142,9 @@ def executar(config,d):
         return Q.proximo(config,d)
     I.retomar(config,hab,caso)
     form=F.validar(config,c,'habilitacao')
+    # Nome operacional; o id conferido na configuração determina a seleção.
+    formulario=dict(nome='EMCIA — Habilitação — formulário permanente',
+                    id=form['formId'],link=F.link(form,caso))
     exp=pathlib.Path(c['base_expedientes'])/hab
     if not (exp/'expediente.json').exists():
         H.iniciar(exp,hab,c['responsavel'],caso)
@@ -155,13 +158,16 @@ def executar(config,d):
         c['fluxo_habilitacao']='simplificado';I.escrever(config,c)
     if not s.get('tratamento'):H.executar(exp,'tratamento-padrao',{'config_emcia':str(config)})
     if not s['fontes'] and not (d.get('exportacao') or d.get('coleta')=='csv'):
-        return dict(proximo='coletar-submissoes',resumo='Envie o link; leia todas as páginas com fetch_submissions e passe o retorno ao script. Somente o caso será registrado.',
-                    link=F.link(form,caso),ferramenta='mcp__tally__fetch_submissions',argumentos={'formId':form['formId']})
+        args={'formId':form['formId']}
+        return dict(proximo='coletar-submissoes',resumo='Envie o link e leia as respostas pelo Tally. Passe todas as páginas ao script: ele gera automaticamente o CSV somente deste caso no expediente, sem download ou depósito pelo engenheiro.',
+                    formulario=formulario,link=formulario['link'],ferramenta='mcp__tally__fetch_submissions',argumentos=args,
+                    chamada=dict(habilitacao=hab,caso=caso,ferramenta='mcp__tally__fetch_submissions',argumentos=args))
     if not s['fontes']:
         base=pathlib.Path(c.get('entrada_dir',pathlib.Path.home()/'emcia-op/entrada'))
         arquivos=[pathlib.Path(d['exportacao'])] if d.get('exportacao') else sorted(base.glob('*.csv'))
         if len(arquivos)!=1:
-            return dict(proximo='depositar-exportacao',resumo='Indique o caminho original do CSV; coleta direta por fetch_submissions é o padrão. Pasta de entrada é alternativa.',link=F.link(form,caso))
+            return dict(proximo='depositar-exportacao',resumo='Use o formulário permanente configurado para este caso e indique o caminho original do CSV. Coleta direta por fetch_submissions é o padrão; pasta de entrada é alternativa.',
+                        formulario=formulario,link=formulario['link'])
         H.executar(exp,'receber-exportacao',dict(config_emcia=str(config),arquivo=str(arquivos[0]),id='S1',
             **{k:d[k] for k in ('submissao','coluna_submissao','coluna_respondente','respondente') if k in d}))
         s=ler(exp)
