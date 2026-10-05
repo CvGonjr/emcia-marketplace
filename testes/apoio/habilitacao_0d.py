@@ -41,6 +41,7 @@ def criar(root, caso, responsavel, acessos=True, assinaturas=True, restricao=Fal
         op('revisar', decisor=responsavel, motivo='Revisão exclusivamente sintética',
            qualificacao_0a=True, conteudo_conferido=True, evidencia=str(origem))
         op('revisao-juridica', revisor='Pessoa Jurista', decisor=responsavel, data='2026-10-04',
+           resultado='aprovado',
            documentos={doc: hashlib.sha256((templates/H.TEMPLATES[doc]).read_bytes()).hexdigest()
                        for doc in ('HAB-02', 'HAB-03')}, evidencia=str(origem))
         with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\ncontrole sintetico\n%%EOF'):

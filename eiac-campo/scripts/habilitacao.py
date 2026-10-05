@@ -356,8 +356,12 @@ def aplicar(root, s, action, p):
         s["revisao"] = dict(decisor=pessoa(p.get("decisor")), motivo=texto(p.get("motivo")),
                              evidencia=importar(root, p.get("evidencia")), data=agora())
     elif action == 'revisao-juridica':
-        exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
-               'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa')
+        obrigatorios = {'revisor', 'decisor', 'data', 'documentos', 'evidencia', 'resultado'}
+        exigir(obrigatorios <= set(p) <= obrigatorios | {'ciclo'},
+               'revisao-juridica exige revisor, decisor, data, documentos, evidencia e resultado; '
+               'somente ciclo é opcional; não admite dispensa')
+        exigir(p.get('resultado') == 'aprovado', 'resultado jurídico obrigatório: somente "aprovado" é aceito')
+        ciclo = {'ciclo': texto(p['ciclo'])} if 'ciclo' in p else {}
         revisor, decisor = pessoa(p.get('revisor')), pessoa(p.get('decisor'))
         data = texto(p.get('data'))
         exigir(datetime.date.fromisoformat(data).isoformat() == data, 'data jurídica inválida; use AAAA-MM-DD')
@@ -370,6 +374,7 @@ def aplicar(root, s, action, p):
                    and aprovados.get('auxiliares/' + TEMPLATES[doc]) == sha,
                    'APR-01: hash não aprovado para ' + doc)
         s.setdefault('revisoes_juridicas', []).append(dict(revisor=revisor, decisor=decisor, data=data,
+            resultado='aprovado', **ciclo,
             documentos=copy.deepcopy(docs), evidencia=importar(root, p.get('evidencia'))))
     elif action == "gerar":
         exigir(s["revisao"] is not None, "revisão humana ausente")
@@ -383,7 +388,7 @@ def aplicar(root, s, action, p):
                    'APR-01: hash do template divergente em ' + doc)
             md = documento_cliente(raw.decode('utf-8'), doc)
             juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
-                             if r['documentos'].get(doc) == digest(raw)), None)
+                             if r.get('resultado') == 'aprovado' and r['documentos'].get(doc) == digest(raw)), None)
             exigir(doc == 'HAB-01' or juridica is not None,
                    'registre revisao-juridica para o hash exato de ' + doc + ' antes de gerar')
             n = len(s["documentos"].get(doc, [])) + 1

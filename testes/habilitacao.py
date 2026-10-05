@@ -102,6 +102,7 @@ class Habilitacao(unittest.TestCase):
 
     def revisao_juridica(self, documentos=None, **mudancas):
         dados = dict(revisor='Pessoa Jurista', decisor='Pessoa Engenheira', data='2026-10-04',
+                     resultado='aprovado',
                      documentos=({doc: hashlib.sha256((self.templates / H.TEMPLATES[doc]).read_bytes()).hexdigest()
                                   for doc in ('HAB-02', 'HAB-03')} if documentos is None else documentos),
                      evidencia=str(self.base / 'S1.json'))
@@ -358,6 +359,79 @@ class Habilitacao(unittest.TestCase):
             self.refused('gerar', templates=str(self.templates))
         self.assertEqual(self.state()['documentos'], {})
         self.assertEqual(self.state()['eventos'][-1]['motivo'], 'falha sintética de PDF')
+
+    def test_30_revisao_sem_resultado_recusa_com_evento(self):
+        self.source()
+        dados = self.revisao_juridica()
+        del dados['resultado']
+        self.refused('revisao-juridica', **dados)
+        self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+        self.assertFalse(self.state().get('revisoes_juridicas'))
+
+    def test_31_somente_resultado_literal_aprovado_e_aceito(self):
+        self.source()
+        for resultado in ('condicionado', 'reprovado', 'Texto livre', 'Aprovado', ' aprovado ', '', None, True):
+            with self.subTest(resultado=resultado):
+                self.refused('revisao-juridica', **self.revisao_juridica(resultado=resultado))
+                self.assertIn('resultado', self.state()['eventos'][-1]['motivo'])
+                self.assertFalse(self.state().get('revisoes_juridicas'))
+
+    def test_32_aprovado_preserva_resultado_ciclo_hashes_e_evidencia(self):
+        self.source()
+        dados = self.revisao_juridica(ciclo='2026-10-ciclo-2')
+        self.run_action('revisao-juridica', **dados)
+        revisao = self.state()['revisoes_juridicas'][0]
+        self.assertEqual(revisao['resultado'], 'aprovado')
+        self.assertEqual(revisao['ciclo'], '2026-10-ciclo-2')
+        self.assertEqual(revisao['documentos'], dados['documentos'])
+        self.assertEqual(revisao['evidencia']['sha256'], hashlib.sha256((self.base / 'S1.json').read_bytes()).hexdigest())
+        self.assertEqual(self.state()['eventos'][-1]['entrada'], dados)
+        self.run_action('revisao-juridica', **self.revisao_juridica())
+        self.assertEqual(self.state()['revisoes_juridicas'][-1]['resultado'], 'aprovado')
+        self.assertNotIn('ciclo', self.state()['revisoes_juridicas'][-1])
+
+    def test_33_ciclo_invalido_recusa_sem_dispensa(self):
+        self.source()
+        for ciclo in (None, True, 2, [], '', '   '):
+            with self.subTest(ciclo=ciclo):
+                self.refused('revisao-juridica', **self.revisao_juridica(ciclo=ciclo))
+        self.assertFalse(self.state().get('revisoes_juridicas'))
+
+    def test_34_gerar_ignora_revisoes_legadas_ou_nao_aprovadas(self):
+        # Simula registros preservados de versões anteriores, sem usar uma
+        # operação que já deve recusar o resultado. Não toca nas evidências.
+        self.prepare(gerar=False, juridica=False)
+        dados = self.revisao_juridica()
+        original = self.state()
+        original['revisoes_juridicas'] = [dict(revisor=dados['revisor'], decisor=dados['decisor'],
+            data=dados['data'], documentos=dados['documentos'], evidencia=original['fontes']['S1']['arquivo'])]
+        for resultado in (None, 'condicionado', 'reprovado', 'texto livre'):
+            with self.subTest(resultado=resultado):
+                registro = json.loads(json.dumps(original))
+                if resultado is not None:
+                    registro['revisoes_juridicas'][0]['resultado'] = resultado
+                (self.root / 'expediente.json').write_text(json.dumps(registro))
+                with patch.object(H, 'pdf_bytes') as pdf:
+                    with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+                        self.run_action('gerar', templates=str(self.templates))
+                    pdf.assert_not_called()
+                self.assertEqual(self.state()['documentos'], {})
+                self.assertEqual(self.state()['eventos'][-1]['tipo'], 'Recusado')
+                self.assertEqual(self.state()['eventos'][-1]['autor'], 'Pessoa Responsavel')
+
+    def test_35_gerar_seleciona_somente_registro_aprovado(self):
+        self.prepare(gerar=False)
+        registro = self.state()
+        condicionado = json.loads(json.dumps(registro['revisoes_juridicas'][0]))
+        condicionado.update(resultado='condicionado', revisor='Outra Jurista')
+        registro['revisoes_juridicas'].append(condicionado)
+        (self.root / 'expediente.json').write_text(json.dumps(registro))
+        with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\n%%EOF'):
+            self.run_action('gerar', templates=str(self.templates))
+        for doc in ('HAB-02', 'HAB-03'):
+            r = self.state()['documentos'][doc][-1]['revisao_juridica']
+            self.assertEqual(r['resultado'], 'aprovado')
+            self.assertEqual(r['revisor'], 'Pessoa Jurista')
 
 
 if __name__ == "__main__":
