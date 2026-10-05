@@ -1,6 +1,20 @@
 # Blueprint da solução
 ### Decisão sobre os casos e, quando couber, especificação do agente
 
+## Controle do modelo
+
+| Metadado | Valor | Metadado | Valor |
+| :--- | :--- | :--- | :--- |
+| **Código** | EMCIA-E3-01 | **Versão** | 0.1 |
+| **Data** | 2026-10 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale — 03/10/2026 |
+| **Fase** | F2 — Desenho e arquitetura da solução | **Passo** | 4 e 5 |
+| **Tipo** | Modelo de entregável | **Origem** | EMCIA-MET-01 |
+
+## Identificação do entregável
+
+A tabela seguinte é preenchida por caso e registra a versão e o aceite do entregável.
+
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
 | **Organização** | «razão social» | **Engajamento** | «código do caso» |
@@ -386,3 +400,12 @@ No processo do cliente não existe resposta equivalente disponível. Antes de ap
 | **B5 Avaliação e riscos** | 15 a 30 casos; tabela de riscos | 50 a 100 casos; lista de verificação | Por cenário e subgrupo; modelo formal de risco |
 | **B6 Plano** | Marcos em semanas | Cronograma por onda | Cronograma, custo por caso e portões em comitê |
 | **B7 Passagem** | Uma página | Completo | Completo, com aceite da equipe de construção |
+
+---
+
+## Histórico de revisões do modelo
+
+| Versão | Data | Autor | Descrição da alteração | Aprovação |
+| :---: | :---: | :--- | :--- | :---: |
+| Sem versão explícita | — | Celso do Vale | Edição anterior sem controle de versão do modelo; o campo de versão existente pertencia ao entregável de cada caso | — |
+| 0.1 | 2026-10 | Celso do Vale | Inclusão de tabela de metadados e histórico próprios do modelo; aprovação documental por Celso do Vale | Celso do Vale — 03/10/2026 |

@@ -3,9 +3,9 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-MAN-01 | **Versão** | 0.4 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-MAN-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | Todas | **Passo** | Todos |
 
 ---
@@ -16,7 +16,7 @@ Permitir que um engenheiro de campo que não participou da construção do méto
 ## 2. Escopo e aplicação
 Aplica-se a quem conduz um caso. Pressupõe a leitura do EMCIA-MET-01. Não se aplica à manutenção do Estúdio, que segue o EMCIA-ESP-01, o EMCIA-ARQ-01 e o EMCIA-IMP-01. Substitui o Guia do Engenheiro de Campo de setembro de 2026, que descrevia a versão 0.3.0 do playbook.
 
-Esta revisão toma como referência o playbook operacional **0.4.18**, campo **0.8.22** e núcleo **0.2.44**, após as decisões 039–042, e incorpora a decisão humana de prosseguimento em F0 definida no CAT-01 v0.5. O ato ainda depende de implementação no marketplace, conforme a validação da seção 4; o manual não afirma que a versão atual já o executa. O ESP-01 permanece como documento da prova de conceito; não é a referência da lista de limites operacionais desta versão. Casos existentes conservam o playbook com que foram abertos; migração exige decisão humana.
+Esta revisão toma como referência o playbook operacional **0.4.19**, campo **0.8.23** e núcleo **0.2.45**, após as decisões 039–043. A decisão 043 implementa a correspondência do CAT-01 Anexo C e o ato humano decidir-prosseguimento em F0, conforme a validação da seção 4. O ESP-01 permanece como documento da prova de conceito; não é a referência da lista de limites operacionais desta versão. Casos existentes conservam o playbook com que foram abertos; migração exige decisão humana.
 
 ## 3. Conteúdo
 
@@ -73,14 +73,14 @@ Para cada etapa: o comando que o agente executa, os atos que só o engenheiro ex
 
 P3b não tem comando, por desenho: o levantamento é presencial e não delegável, e segue o EMCIA-ROT-01. Em P10, o monitoramento opera em EX2 e a decisão em EX4. Os entregáveis são materializados com `/eiac-campo:emitir`, depois que todas as etapas do seu portão estiverem encerradas.
 
-A camada da tabela é a camada de encerramento e decisão; as HBs conservam a camada de preparação do CAT-01 Anexo A, que não pode ser superior à camada da etapa no mesmo nível. A fonte da correspondência etapa → HBs → AG é o CAT-01 v0.5 Anexo C. As decisões humanas resolveram essa correspondência no método; sua reprodução no catálogo e no playbook depende da revisão do marketplace, conforme o Anexo D do CAT-01.
+A camada da tabela é a camada de encerramento e decisão; as HBs conservam a camada de preparação do CAT-01 Anexo A, que não pode ser superior à camada da etapa no mesmo nível. A fonte da correspondência etapa → HBs → AG é o CAT-01 v1.0 Anexo C. O catálogo e o playbook 0.4.19 reproduzem essa correspondência conforme a decisão 043 do marketplace; o Anexo D do CAT-01 registra a implementação e a resolução da natureza de HB-16.
 
 Antes de P3b, aplique um selo confirmado no Git após o último encerramento de P2; a tentativa de selo sem commit confirmado não basta. Em P2, vincular-restricao cobre o vínculo a fonte F curada e a dispensa motivada por restricoes.py, no terminal humano, em todos os níveis. Sem RH importado, a cobertura é vazia. Revisão exige decisão que cite RH e versão anterior, com pessoa, motivo e data; após P2, somente revisão de registro existente. A marca acompanha cada asserção que cita fonte restrita, conforme HAB-01 §3.4 e CTX-01 §3.7.
 
 ### 3.4 Atos transversais
 Valem em qualquer etapa e são sempre do engenheiro: `registrar-sessao`, `satisfazer-inegociavel`, `satisfazer-inegociavel-campo` e `encerrar-camada-humana`. A selagem do caso também é ato do engenheiro, com autor nomeado.
 
-**Ato específico de F0.** Nos três níveis, `decidir-prosseguimento` é executado pelo engenheiro no próprio terminal, fora da sessão do agente. Ele confere o conteúdo da ficha E1 preparado para o enquadramento e registra a decisão de prosseguir, com pessoa nomeada e referência à ficha que a fundamenta. Esse registro é condição de encerramento de F0 e não é substituído por apurar o nível ou confirmar no chat. A ficha usada como fundamento precede a emissão formal de E1, que continua sujeita ao portão e à resolução de RH pendente. Não há comando operacional deste ato no playbook 0.4.18; sua declaração e sua trava dependem da implementação no marketplace. O agente pode preparar o conteúdo e, quando houver implementação, o comando; não pode registrar a decisão.
+**Ato específico de F0.** Nos três níveis, `decidir-prosseguimento` é executado pelo engenheiro no próprio terminal, fora da sessão do agente. Ele confere o conteúdo da ficha E1 preparado para o enquadramento e registra decisor, data, desfecho e motivo, com pessoa nomeada e referência à ficha que a fundamenta. Os desfechos são prosseguir e não prosseguir; ambos encerram F0. Não prosseguir bloqueia as etapas seguintes até nova decisão que autorize prosseguir, preservando o registro anterior. Esse registro é condição de encerramento de F0 e não é substituído por apurar o nível ou confirmar no chat. A ficha usada como fundamento precede a emissão formal de E1, que continua sujeita ao portão e à resolução de RH pendente. O ato está declarado no playbook 0.4.19. O engenheiro executa prosseguimento.py com o candidato conforme registro/prosseguimento.schema.json; a guarda recusa a chamada pela sessão do agente, registra TentativaNegada e devolve o comando exato. O agente prepara o conteúdo e o comando; não registra a decisão.
 
 Os atos na fronteira externa seguem CAN-01 e são executados no próprio terminal, fora da sessão do agente:
 
@@ -117,10 +117,22 @@ As conferências operacionais incluem manifesto na abertura, importação e selo
 O marketplace mantém em `decisoes/` o registro de cada decisão de construção, com contexto, decisão e consequência. Antes de propor mudança no que parecer burocracia, leia a decisão correspondente.
 
 ## 4. Condição de aceite
-O manual corresponde integralmente à versão operacional quando a tabela da seção 3.3 coincide com o playbook declarado: mesmas etapas, mesmas camadas, comandos existentes, atos declarados, produtos e portões. Esta revisão foi conferida diretamente pela função conferir() de testes/manual_a25.py, sem alterar código ou playbook, contra o playbook 0.4.18 no commit ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f do marketplace master. O único resultado admitido nesta revisão é a lista com “F0: ato decidir-prosseguimento não declarado”, dependente da implementação no marketplace. Qualquer outra divergência interrompe a revisão. Os quatro testes negativos de etapa, camada, ato e comando acompanham a conferência. Após a implementação do novo ato, a validação deve devolver lista vazia. A validação não concede aprovação documental; esta permanece pendente.
+O manual corresponde integralmente à versão operacional quando a tabela da seção 3.3 coincide com o playbook declarado: mesmas etapas, mesmas camadas, comandos existentes, atos declarados, produtos e portões. Esta revisão foi conferida diretamente pela função conferir() de testes/manual_a25.py contra o rascunho canônico e o playbook 0.4.19 no commit d9551a90b5ee3cec5006bbbfcbdebca4cbfe0f35 do marketplace master, sem alterar código ou playbook. O resultado exigido e obtido é lista vazia. Os quatro testes negativos de etapa, camada, ato e comando passaram contra o mesmo rascunho. Qualquer divergência interrompe a revisão. A conformidade operacional e a aprovação documental são registros distintos: Celso do Vale aprovou esta revisão em 03/10/2026, após a aprovação dos documentos e modelos relacionados.
 
 ## 5. Referências
-EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-01, EMCIA-ROT-02, EMCIA-CTX-01, EMCIA-HAB-01, EMCIA-CAN-01, EMCIA-GLO-01 e EMCIA-E1 a EMCIA-E5. EMCIA-ESP-01, EMCIA-ARQ-01 e EMCIA-IMP-01 permanecem referências da PoC e da construção. Referência operacional: emcia-marketplace, decisões 039–042, playbook 0.4.18 e evidências habilitacao-0d, canais-externos e parte-a-operacional.
+EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-01, EMCIA-ROT-02, EMCIA-CTX-01, EMCIA-HAB-01, EMCIA-CAN-01, EMCIA-GLO-01 e EMCIA-E1 a EMCIA-E5. EMCIA-ESP-01, EMCIA-ARQ-01 e EMCIA-IMP-01 permanecem referências da PoC e da construção. Referência operacional: emcia-marketplace, decisões 039–043, playbook 0.4.19, núcleo 0.2.45, campo 0.8.23 e evidências habilitacao-0d, canais-externos, parte-a-operacional e correspondencia-cat01.
+
+Versões documentais aprovadas por Celso do Vale em 03/10/2026 e referenciadas por esta revisão:
+
+| Grupo | Documentos e versões |
+| :--- | :--- |
+| Base do método | MET-01 1.0; GLO-01 1.0; TRI-01 1.0; CAT-01 1.0; TRA-01 1.0; CTX-01 1.0 |
+| Campo | CAM-01 1.0; ROT-01 1.0; FER-01 1.0 |
+| Habilitação e canais | EMCIA-HAB-01 1.0; ROT-02 1.0; CAN-01 1.0 |
+| Modelos de entregáveis | EMCIA-E1-01 a EMCIA-E5-01, versão 0.1 do modelo |
+| Modelos de habilitação | HAB-01, HAB-02 e HAB-03, versão 0.2 |
+
+A aprovação dos modelos HAB-02 e HAB-03 é documental; a revisão jurídica indicada nos modelos precede seu uso com cliente real.
 
 ## 6. Histórico de revisões
 
@@ -130,3 +142,5 @@ EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-CAM-01, EMCIA-TRA-01, EMCIA-ROT-
 | 0.2 | 2026-10 | Celso do Vale | Operação das decisões 039–042 e playbook 0.4.18; canais antes ou junto da importação, RH em P2, fronteira externa e limites próprios. Validação autorizada em checkout temporário, sem alterar código: conferir() do A25 retornou lista vazia e os quatro testes negativos passaram; dispensada a expectativa histórica de lacunas do manual v0.1 | pendente |
 | 0.3 | 2026-10 | Celso do Vale | Ato humano decidir-prosseguimento em F0 nas seções 3.3 e 3.4, como condição de encerramento baseada na ficha E1; retirada desse item dos limites de 3.6; correspondência canônica de HBs no CAT-01 v0.5, sem manter lacunas da decisão 020 como indefinição de método. Validação sem alterar código: conferir() do A25 contra o playbook 0.4.18 retornou somente “F0: ato decidir-prosseguimento não declarado”; os quatro testes negativos passaram. Divergência dependente da implementação no marketplace; lista vazia exigida após essa implementação | pendente |
 | 0.4 | 2026-10 | Celso do Vale | produto de F0 alinhado ao contrato de decidir-prosseguimento | pendente |
+| 0.5 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale após os demais documentos e modelos; referência ao núcleo 0.2.45, campo 0.8.23 e playbook 0.4.19, decisão 043; ambos os desfechos encerram F0 e não prosseguir bloqueia etapas seguintes até nova decisão; conferir() do A25 devolveu lista vazia contra o rascunho canônico e os quatro testes negativos passaram, sem alterar código ou playbook | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.5 | Celso do Vale |

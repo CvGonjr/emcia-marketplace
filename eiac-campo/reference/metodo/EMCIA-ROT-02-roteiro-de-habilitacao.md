@@ -2,9 +2,9 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-ROT-02 | **Versão** | 0.2 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-ROT-02 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | Anterior a F0 | **Passo** | 0a–0d |
 
 ---
@@ -171,10 +171,12 @@ Retomar sem substituir produz entregável sem autoridade. Um termo de autonomia 
 O roteiro está pronto quando o engenheiro consegue aplicar as perguntas de 0a–0c, conferir os pré-requisitos e executar o checklist de 0d na ordem declarada, distinguindo confirmação no chat de ato humano no terminal. F0 exige importação e selo confirmado; o encerramento de P2 exige resolução de todos os RH importados.
 
 ## 5. Referências
-EMCIA-HAB-01, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CTX-01 §3.7 e EMCIA-TRA-01; auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md. Referência operacional: emcia-marketplace, decisões 039–042 e playbook 0.4.18. Templates HAB-01/02/03 permanecem próprios da formalização.
+EMCIA-HAB-01, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CTX-01 §3.7 e EMCIA-TRA-01; auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md. Referência operacional: emcia-marketplace, decisões 039–043 e playbook 0.4.19. Templates HAB-01/02/03 permanecem próprios da formalização.
 
 ## 6. Histórico de revisões
 
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | 0.2 | 2026-10 | Celso do Vale | Revisão da edição anterior sem versão explícita; renomeação de EMCIA-HAB-02 para EMCIA-ROT-02 devido ao conflito com o template HAB-02; checklist de 0d conforme decisões 039–042, sem cópia manual do método ou escrita direta em fontes, e vínculo RH em P2 | pendente |
+| 0.3 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referência operacional atualizada para o playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.3 | Celso do Vale |

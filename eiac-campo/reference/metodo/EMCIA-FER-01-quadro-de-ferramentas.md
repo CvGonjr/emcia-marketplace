@@ -1,10 +1,10 @@
 # Quadro de ferramentas
 ## Instrumentos administrativos, de negócio, de IA e de Big Data selecionados por fase
 
-| Código | EMCIA-FER-01 | Versão | 0.2 |
+| Código | EMCIA-FER-01 | Versão | 1.0 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
 ---
@@ -186,3 +186,5 @@ Este artefato está pronto quando todo passo do método tem ao menos um instrume
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 10/09/2026 | Celso do Vale | Versão inicial: critério de seleção, quatro naturezas, siglas, quadro por fase, exclusões e lacunas | — |
 | 0.2 | 2026-10 | Celso do Vale | Ferramentas de operação do serviço em seção própria: formulários, drive e calendário, com papéis, confirmações e limites, preservando os instrumentos de análise | pendente |
+| 0.3 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; metadados de controle e histórico atualizados | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.3 | Celso do Vale |

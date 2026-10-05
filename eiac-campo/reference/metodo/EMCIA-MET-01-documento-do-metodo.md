@@ -1,10 +1,10 @@
 # Documento do método
 ## Cinco fases, dez passos, calibragem por nível de complexidade e critérios de encerramento
 
-| Código | EMCIA-MET-01 | Versão | 0.2 |
+| Código | EMCIA-MET-01 | Versão | 1.0 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 29/09/2026 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
 ---
@@ -269,3 +269,5 @@ Este artefato está pronto quando as cinco fases e os dez passos estão descrito
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 09/09/2026 | Celso do Vale | Versão inicial: consolidação das cinco fases, dez passos, calibragem e critérios de encerramento | — |
 | 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): habilitação fora do percurso (B2); registro do nível pelo engenheiro (A1); satisfação de inegociável como ato datado (C1); comprovação do encerramento e da emissão (A2, A3, A5); pessoa nomeada e papéis distintos (A6, C3); versão do método por caso e registro vigente (B4, C4) | — |
+| 0.3 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; metadados de controle e histórico atualizados | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.3 | Celso do Vale |

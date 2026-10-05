@@ -4,9 +4,9 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-TRA-01 | **Versão** | 0.4 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-TRA-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F0–F4 (transversal) | **Passo** | Todos |
 
 ## 1. Objetivo
@@ -197,7 +197,7 @@ O artefato está pronto quando os cinco procedimentos possuem passo a passo apli
 - EMCIA-TST-01 — Plano de testes da implementação.
 - EMCIA-GLO-01 — Glossário do método.
 - EMCIA-HAB-01, EMCIA-CTX-01 §3.7 e EMCIA-CAN-01 — Importação, restrições e canais externos.
-- emcia-marketplace — Decisões 039–042 e playbook 0.4.18.
+- emcia-marketplace — Decisões 039–043 e playbook 0.4.19.
 
 ## 6. Histórico de revisões
 
@@ -207,6 +207,8 @@ O artefato está pronto quando os cinco procedimentos possuem passo a passo apli
 | 0.2 | 17/09/2026 | Celso do Vale | Item de confronto passa a ser aberto para toda regra, não apenas para divergências; nomes de campo alinhados ao EMCIA-CTX-01 0.4; identificador padronizado como `confronto-NNN`; TRA-V01 e TRA-V02 ajustadas. | — |
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A6): condição TRA-V11 de pessoa nomeada, com o limite entre conferência do nome e garantia de origem | — |
 | 0.4 | 2026-10 | Celso do Vale | Origem REC e importação administrativa, limite probatório do hash e marca RH junto à asserção que cita fonte restrita | pendente |
+| 0.5 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referência operacional atualizada para o playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.5 | Celso do Vale |
 
 ---
 

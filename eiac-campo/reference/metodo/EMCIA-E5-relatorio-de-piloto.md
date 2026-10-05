@@ -1,6 +1,20 @@
 # Relatório de piloto
 ### O que foi testado, o que resultou contra a linha de base e quem mantém daqui em diante
 
+## Controle do modelo
+
+| Metadado | Valor | Metadado | Valor |
+| :--- | :--- | :--- | :--- |
+| **Código** | EMCIA-E5-01 | **Versão** | 0.1 |
+| **Data** | 2026-10 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale — 03/10/2026 |
+| **Fase** | F4 — Piloto e calibragem | **Passo** | 8, 9 e 10 |
+| **Tipo** | Modelo de entregável | **Origem** | EMCIA-MET-01 |
+
+## Identificação do entregável
+
+A tabela seguinte é preenchida por caso e registra a versão e o aceite do entregável.
+
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
 | **Organização** | «razão social» | **Engajamento** | «código do caso» |
@@ -87,3 +101,12 @@
 
 ## 7. O que permanece sem verificação
 «Restrições herdadas das fases anteriores que ainda limitam a leitura do resultado, ligadas ao item específico que cada uma afeta.»
+
+---
+
+## Histórico de revisões do modelo
+
+| Versão | Data | Autor | Descrição da alteração | Aprovação |
+| :---: | :---: | :--- | :--- | :---: |
+| Sem versão explícita | — | Celso do Vale | Edição anterior sem controle de versão do modelo; o campo de versão existente pertencia ao entregável de cada caso | — |
+| 0.1 | 2026-10 | Celso do Vale | Inclusão de tabela de metadados e histórico próprios do modelo; aprovação documental por Celso do Vale | Celso do Vale — 03/10/2026 |

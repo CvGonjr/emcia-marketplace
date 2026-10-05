@@ -4,16 +4,16 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CAM-01 | **Versão** | 0.4 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-CAM-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F0–F4 | **Passo** | F0 e P1–P10 |
 
 ## 1. Objetivo
 
 Tornar executáveis os cinco passos que o método descreve por calibragem e critério de encerramento, mas não por procedimento: P6 a P10. Cada passo recebe o mesmo enquadramento — entrada, atividade, saída, encerramento, fronteira de delegação e registro no estado — e os quatro formatos que os itens inegociáveis 2 a 5 exigem passam a existir como anexos.
 
-Identificar também, em cada etapa de F0 a P10, as finalidades dos canais de serviço e a condição de resolução das restrições em P2, conforme a operação entregue no playbook 0.4.18.
+Identificar também, em cada etapa de F0 a P10, as finalidades dos canais de serviço e a condição de resolução das restrições em P2, conforme a operação entregue no playbook 0.4.19.
 
 Sem este documento, as fases F3 e F4 não possuem habilidade carregável e os portões E4 e E5 validam a existência de artefatos cujo conteúdo mínimo nunca foi definido.
 
@@ -71,15 +71,15 @@ Antes do levantamento de P3b, aplicar selo confirmado no Git após o último enc
 
 #### 3.1.3 F0 — Decisão de prosseguimento e encerramento
 
-F0 só encerra após os critérios substantivos do MET-01 §3.3.3, o nível apurado e registrado pelo engenheiro e o ato humano `decidir-prosseguimento`. Nos três níveis, o engenheiro confere o conteúdo da ficha E1 preparado para o enquadramento e registra no próprio terminal, fora da sessão do agente, a decisão de prosseguir com referência à ficha e pessoa nomeada. Preparar a ficha ou confirmar no chat não substitui o ato. A emissão formal de E1 ocorre depois do portão e permanece sujeita à resolução de RH pendente.
+F0 só encerra após os critérios substantivos do MET-01 §3.3.3, o nível apurado e registrado pelo engenheiro e o ato humano `decidir-prosseguimento`. Nos três níveis, o engenheiro confere o conteúdo da ficha E1 preparado para o enquadramento e registra no próprio terminal, fora da sessão do agente, a decisão com referência à ficha, pessoa nomeada, data, desfecho e motivo. Os desfechos são prosseguir e não prosseguir; ambos encerram F0. Não prosseguir bloqueia as etapas seguintes até nova decisão que autorize prosseguir, preservando o registro anterior. Preparar a ficha ou confirmar no chat não substitui o ato. A emissão formal de E1 ocorre depois do portão e permanece sujeita à resolução de RH pendente.
 
-A habilidade hb-enquadrar executa a preparação de F0 por HB-01 a HB-05, sob AG-01, em EX1. O agente não registra a decisão humana. O ato e sua condição de encerramento ainda dependem de implementação no marketplace; o playbook 0.4.18 não os declara, conforme a conferência do MAN-01 v0.3.
+A habilidade hb-enquadrar executa a preparação de F0 por HB-01 a HB-05, sob AG-01, em EX1. O agente não registra a decisão humana. O ato e sua condição de encerramento estão implementados no playbook 0.4.19 conforme a decisão 043; o produto é Decisão de prosseguimento registrada, conforme o MAN-01 v1.0.
 
 #### 3.1.4 Correspondência de habilidades nas etapas iniciais
 
-A fonte da relação etapa → HBs → AG é o CAT-01 v0.5 Anexo C; este protocolo a utiliza sem criar relação concorrente. Em P1, hb-mapear-contexto prepara HB-08, sob AG-02; o levantamento de objetivos e o posicionamento nas quatro frentes permanecem no Anexo B do CAT-01, sem nova HB por ausência de execução comprovada. Em P2, hb-extrair-regras prepara HB-06 e HB-07, sob AG-02; a condição de RH e a verificação humana do dado permanecem conforme a seção 3.1.2.
+A fonte da relação etapa → HBs → AG é o CAT-01 v1.0 Anexo C; este protocolo a utiliza sem criar relação concorrente. Em P1, hb-mapear-contexto prepara HB-08, sob AG-02; o levantamento de objetivos e o posicionamento nas quatro frentes permanecem no Anexo B do CAT-01, sem nova HB por ausência de execução comprovada. Em P2, hb-extrair-regras prepara HB-06 e HB-07, sob AG-02; a condição de RH e a verificação humana do dado permanecem conforme a seção 3.1.2.
 
-O mapa de valor é instrumento distinto das quatro frentes. HB-09 permanece no passo 3, em P3d, sob AG-02, com o estado declarado selado após P2 como entrada e candidatos para P4 como saída. HB-20 prepara o confronto; o operador decide cada item. P3b permanece sem HB e sem execução por agente. As camadas das HBs são de preparação e não podem ser superiores à camada de encerramento da etapa no mesmo nível, conforme CAT-01 §3.3. Essa correspondência aguarda reprodução controlada no marketplace.
+O mapa de valor é instrumento distinto das quatro frentes. HB-09 permanece no passo 3, em P3d, sob AG-02, com o estado declarado selado após P2 como entrada e candidatos para P4 como saída. HB-20 prepara o confronto; o operador decide cada item. P3b permanece sem HB e sem execução por agente. As camadas das HBs são de preparação e não podem ser superiores à camada de encerramento da etapa no mesmo nível, conforme CAT-01 §3.3. Essa correspondência é reproduzida no playbook 0.4.19 e no catálogo operacional conforme a decisão 043 do marketplace.
 
 ### 3.2 P6 — Operacionalize a solução
 
@@ -171,7 +171,7 @@ O mapa de valor é instrumento distinto das quatro frentes. HB-09 permanece no p
 | N2 | Sombra, depois assistido | 50 a 100 | 6 a 12 semanas | Plano documentado |
 | N3 | Sombra, assistido e fatia limitada | Por cenário e subgrupo | 1 a 2 trimestres | Plano testado, com portões |
 
-**Fronteira.** HB-15 gera os casos e HB-16 executa a suíte, ambas híbridas. A revisão por quem executa o processo é condição de validade do conjunto, não etapa opcional de qualidade.
+**Fronteira.** HB-15 gera os casos em atividade híbrida; HB-16 executa a suíte em atividade automatizada, conforme o CAT-01 Anexo A e a decisão de Celso do Vale em 03/10/2026. A revisão por quem executa o processo é condição de validade do conjunto, não etapa opcional de qualidade.
 
 ### 3.5 P9 — Meça o valor gerado
 
@@ -265,7 +265,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
 ## 5. Referências
 
 - EMCIA-MET-01 — Documento do método, Passos 6 a 10.
-- EMCIA-CAT-01 v0.5 — Fronteira de delegação, catálogo de HBs e agentes no Anexo A e correspondência canônica por etapa no Anexo C.
+- EMCIA-CAT-01 v1.0 — Fronteira de delegação, catálogo de HBs e agentes no Anexo A e correspondência canônica por etapa no Anexo C.
 - EMCIA-CTX-01 — Instrumento de registro da camada de contexto.
 - EMCIA-ROT-01 — Roteiro de levantamento de regras não documentadas.
 - EMCIA-ESP-01 — Especificação executável do Estúdio de Trabalho.
@@ -273,7 +273,7 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
 - EMCIA-E4 — Modelo de guia operacional.
 - EMCIA-E5 — Modelo de relatório de piloto.
 - EMCIA-CAN-01, EMCIA-HAB-01 §3.4, EMCIA-CTX-01 §3.7 e EMCIA-MAN-01 — Canais e restrições.
-- emcia-marketplace — Decisões 039–042 e playbook 0.4.18.
+- emcia-marketplace — Decisões 039–043 e playbook 0.4.19.
 - NIST. *AI Risk Management Framework* (2023).
 
 ## 6. Histórico de revisões
@@ -284,6 +284,8 @@ O mapa operacional deve identificar finalidades em todas as etapas, distinguir c
 | 0.2 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3, item A7, e correção A24): responsável vigente da rotina de recalibragem, vínculo com a recorrência e com o E5; condições M11 e M12; campo de versão no Anexo D | — |
 | 0.3 | 2026-10 | Celso do Vale | Finalidades de canais em todas as etapas, vínculo ou dispensa de RH como condição de P2, confirmação dos efeitos externos e selo Git após P2 | pendente |
 | 0.4 | 2026-10 | Celso do Vale | Decidir-prosseguimento como condição humana de encerramento de F0, baseada na ficha E1 antes da emissão; HBs de F0, P1, P2 e P7 conforme CAT-01 v0.5 Anexo C; HB-09 em P3d com estado declarado selado após P2 e candidatos para P4; preparação do confronto por HB-20 e estado futuro por HB-21; camadas de preparação distintas da camada de encerramento. Implementação do ato e da correspondência pendente no marketplace; divergência anterior sobre a natureza de HB-16 preservada e registrada no CAT-01 Anexo D | pendente |
+| 0.5 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; HB-16 automatizada conforme decisão humana, mantendo HB-15 híbrida; dois desfechos de F0 e implementação da decisão 043 registrados; referências ao CAT-01 v0.6 e playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.5 | Celso do Vale |
 
 ---
 

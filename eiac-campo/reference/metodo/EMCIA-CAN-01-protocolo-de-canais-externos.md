@@ -3,9 +3,9 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-CAN-01 | **Versão** | 0.1 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-CAN-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | Habilitação e F0–F4 | **Passo** | Todos |
 
 ---
@@ -23,7 +23,7 @@ Assinatura eletrônica, aceite do cliente, gravação e transcrição estão for
 ### 3.1 Declaração do método e declaração do caso
 O método declara no playbook as finalidades, ferramentas, direções e etapas ou entregáveis a que se aplicam. O caso declara os endereços concretos por id, proprietário, acesso do cliente, sensibilidade, filtro e marcador. Cada definição tem versão, pessoa responsável e data; versões anteriores são preservadas e a definição gera evento com hash.
 
-| Finalidade | Direção | Uso declarado no playbook 0.4.18 |
+| Finalidade | Direção | Uso declarado no playbook 0.4.19 |
 | :--- | :--- | :--- |
 | habilitacao | Entrada | Formulários do expediente, vinculados à origem administrativa na importação; previstos em F0 |
 | triagem | Entrada | Respostas ao instrumento de F0; perguntas do TRI-01 §3.3 e pontuação do §3.4 |
@@ -88,12 +88,14 @@ Este protocolo está pronto quando cada operação distingue preparação, confi
 ## 5. Referências
 - EMCIA-HAB-01 — Protocolo de habilitação, §3.3.4 e §3.4.
 - EMCIA-ROT-02 — Roteiro de habilitação, em auxiliares.
-- EMCIA-MAN-01 — Manual de aplicação, §3.2–3.6; playbook operacional 0.4.18.
+- EMCIA-MAN-01 — Manual de aplicação, §3.2–3.6; playbook operacional 0.4.19.
 - EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-CTX-01 e EMCIA-TRA-01.
-- emcia-marketplace — decisões 039–042; referências de canais e habilitação; scripts de abertura, importação, canais, formulários, listagem, recebimento e entrega; evidências de habilitação-0d, canais-externos e parte-a-operacional.
+- emcia-marketplace — decisões 039–043; referências de canais e habilitação; scripts de abertura, importação, canais, formulários, listagem, recebimento e entrega; evidências de habilitação-0d, canais-externos e parte-a-operacional.
 
 ## 6. Histórico de revisões
 
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 | :---: | :---: | :--- | :--- | :---: |
 | 0.1 | 2026-10 | Celso do Vale | Versão inicial conforme a operação entregue nas decisões 039–042: canais por id, propriedade, confirmações, atos humanos, integridade e limites MCP | pendente |
+| 0.2 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referências operacionais atualizadas para o playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.2 | Celso do Vale |

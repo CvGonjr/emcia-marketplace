@@ -3,9 +3,9 @@
 
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
-| **Código** | EMCIA-HAB-01 | **Versão** | 0.3 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-HAB-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | Anterior a F0 | **Passo** | Não se aplica |
 
 ---
@@ -137,7 +137,7 @@ Este artefato está pronto quando:
 * **Product Leadership**, Cooper (1999) — portão como ponto de decisão, e não como formalidade
 * **The Tacit Dimension**, Polanyi (1966)
 * **Artefatos relacionados:** EMCIA-MET-01, EMCIA-CAT-01, EMCIA-TRI-01, EMCIA-ESC-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CTX-01 e EMCIA-TRA-01.
-* **Referência operacional:** emcia-marketplace, decisões 039–042 e playbook 0.4.18.
+* **Referência operacional:** emcia-marketplace, decisões 039–043 e playbook 0.4.19.
 
 ## 6. Histórico de revisões
 
@@ -145,5 +145,7 @@ Este artefato está pronto quando:
 | :---: | :---: | :--- | :--- | :---: |
 | **0.1** | 11/09/2026 | Celso do Vale | Versão inicial: quatro pré-requisitos, etapas 0a a 0d, três desfechos e regra de perda superveniente | — |
 | 0.3 | 2026-10 | Celso do Vale | 0d com abertura conferida, canais antes ou junto da importação, gravação validada e selo confirmado no Git; vínculo RH → F e dispensa humana em P2, com marca localizada; remissão ao ROT-02 | pendente |
+| 0.4 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referência operacional atualizada para o playbook 0.4.19; aprovação atual nominal sem alterar o registro histórico da revisão 0.2 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.4 | Celso do Vale |
 
 **Registro da revisão 0.2:** escopo administrativo anterior a 0d, reserva de identificador e assinatura por painel aprovados pelo usuário na sessão de 25/09/2026. Mantida a revisão humana da carta. Esta revisão não atribui autoria ou aprovação nominal a uma pessoa não identificada na sessão e não altera a aprovação geral pendente do documento.

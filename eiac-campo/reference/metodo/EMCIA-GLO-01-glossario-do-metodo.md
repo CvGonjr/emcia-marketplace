@@ -1,10 +1,10 @@
 # Glossário do método
 ## Vocabulário padronizado do percurso, índice de artefatos e índice de siglas
 
-| Código | EMCIA-GLO-01 | Versão | 0.4 |
+| Código | EMCIA-GLO-01 | Versão | 1.0 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | Todas | **Passo** | Todos |
 
 ---
@@ -158,7 +158,7 @@ Cada versão é datada. A alteração de uma definição exige registro do que m
 Este artefato está pronto quando todo termo empregado nos demais artefatos com sentido próprio consta aqui; quando cada entrada declara o que o termo não é; quando os termos padronizados registram o sinônimo recusado; e quando um engenheiro que não participou da construção lê um artefato do método sem precisar perguntar o que uma expressão significa.
 
 ## 5. Referências
-EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-CTX-01, EMCIA-TRA-01 e EMCIA-FER-01. Referência operacional: emcia-marketplace, decisões 039–042 e playbook 0.4.18. As remissões históricas ao VER-01 permanecem identificadas na seção 3.6.
+EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-CTX-01, EMCIA-TRA-01 e EMCIA-FER-01. Referência operacional: emcia-marketplace, decisões 039–043 e playbook 0.4.19. As remissões históricas ao VER-01 permanecem identificadas na seção 3.6.
 
 ## 6. Histórico de revisões
 
@@ -168,6 +168,8 @@ EMCIA-MET-01, EMCIA-HAB-01, EMCIA-ROT-02, EMCIA-CAN-01, EMCIA-MAN-01, EMCIA-CAT-
 | 0.2 | 29/09/2026 | Celso do Vale | Termos da verificação por duas execuções marcados como históricos, em razão da substituição do EMCIA-VER-01 (registro da ação 4.3, item E1) | — |
 | 0.3 | 2026-10 | Celso do Vale | Nove termos operacionais, índices e remissão ao ROT-02, com distinção entre origem, integridade, autenticação e aceite; manutenção inserida no conteúdo e referências em seção própria | pendente |
 | 0.4 | 2026-10 | Celso do Vale | Definição de camada de encerramento e camada de preparação conforme CAT-01 v0.5, com limite por nível e preservação dos atos humanos; faixa de habilidades atualizada até HB-21 | pendente |
+| 0.5 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referências operacionais atualizadas para a decisão 043 e playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.5 | Celso do Vale |
 
 ---
 
@@ -182,7 +184,7 @@ Artefatos produzidos na Sprint 1. O código é estável ao longo das versões; a
 | **EMCIA-HAB-01** | Protocolo de habilitação | Etapas 0a a 0d, quatro pré-requisitos e três desfechos | 1.4 |
 | **EMCIA-ROT-02** | Roteiro de habilitação | Perguntas e checklist de 0a–0d; substitui o identificador provisório do roteiro, distinto do template HAB-02 de confidencialidade | — |
 | **EMCIA-CAN-01** | Protocolo de canais externos | Finalidades, ids, confirmação de efeitos externos e registros humanos | — |
-| **EMCIA-MAN-01** | Manual de aplicação | Sequência operacional e tabela conferida contra o playbook 0.4.18 | — |
+| **EMCIA-MAN-01** | Manual de aplicação | Sequência operacional e tabela conferida contra o playbook 0.4.19 | — |
 | **EMCIA-TRI-01** | Instrumento de triagem | Nove perguntas em três eixos, regra de leitura e verificação posterior | 1.5 |
 | **EMCIA-E1-01** | Modelo · Ficha de enquadramento | Estrutura do entregável da Fase F0 | 1.6 |
 | **EMCIA-E2-01** | Modelo · Diagnóstico e oportunidade | Estrutura do entregável dos passos 1 a 3, em três partes por público | 1.6 |

@@ -4,10 +4,10 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-ROT-01 | **Versão** | 0.1 |
-| **Data** | 17/09/2026 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
-| **Fase** | Sprint 2 — Implementação | **Passo** | Ação 2.1 |
+| **Código** | EMCIA-ROT-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
+| **Fase** | F1 — Diagnóstico | **Passo** | 3 — P3b |
 
 ## 1. Objetivo
 
@@ -23,7 +23,7 @@ O Passo 3 desdobra-se em três etapas operacionais, e apenas a segunda é objeto
 
 | Etapa | Conteúdo | Camada |
 |---|---|---|
-| P3a | Preparação: lista de verificação derivada da Fase 0, recorte dos casos concretos, leitura das fontes | EX2 |
+| P3a | Preparação: lista de verificação derivada da Fase 0, recorte dos casos concretos, leitura das fontes | EX2 (N1) · EX3 (N2, N3) |
 | **P3b** | **Sessão presencial de levantamento e observação** | **EX4** |
 | P3d | Confronto entre regra escrita e regra praticada, placar e registro de divergência | EX3 |
 
@@ -47,11 +47,11 @@ A sessão não começa sem quatro itens prontos. Entrar em campo sem eles transf
 | Item | Produto | Origem |
 |---|---|---|
 | Lista de verificação de campo | Cada afirmação declarada na Fase 0 convertida em item a confirmar, com prioridade e método de verificação | E1 |
-| Recorte de casos concretos | De cinco a oito casos reais já resolvidos, cobrindo o comum e o atípico, extraídos do histórico com apoio do executor | HB-06, HB-09 |
-| Leitura das fontes escritas | Procedimentos, normas e telas de sistema que descrevem o processo-alvo | HB-07, HB-08 |
+| Recorte de casos concretos | De cinco a oito casos reais já resolvidos, cobrindo o comum e o atípico, extraídos do histórico com apoio do executor | Fontes de P2 e estado declarado selado após P2 |
+| Leitura das fontes escritas | Procedimentos, normas e telas de sistema que descrevem o processo-alvo | Inventário de fontes de P2 (HB-06) |
 | Termo de consentimento | Autorização escrita para observação, gravação e registro de autoria | HAB-01 |
 
-A preparação é delegável. A sessão não é.
+A preparação é delegável. A sessão não é. A correspondência etapa → HBs → AG e as camadas por nível seguem o CAT-01 Anexo C. HB-09 pertence a P3d, com candidatos para P4 como saída; não é pré-requisito de P3b.
 
 ### 3.3 Estrutura da sessão
 
@@ -163,6 +163,8 @@ O roteiro está pronto quando um engenheiro que não participou de sua construç
 | Versão | Data | Autor | Descrição da alteração | Aprovação |
 |---|---|---|---|---|
 | 0.1 | 17/09/2026 | Celso do Vale | Versão inicial: princípios, estrutura da sessão em seis momentos, calibragem por nível, critério de encerramento e fronteira de delegação. | — |
+| 0.2 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; metadados da aplicação em F1/P3b; camadas de P3a por nível conforme CAT-01; origens dos insumos de P3b alinhadas às fontes de P2; retirada de HB-09 da preparação de P3b, pois pertence a P3d | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.2 | Celso do Vale |
 
 ---
 

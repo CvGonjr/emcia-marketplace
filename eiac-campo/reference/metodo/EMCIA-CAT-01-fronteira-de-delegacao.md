@@ -1,10 +1,10 @@
 # Fronteira de delegação
 ## Camadas de execução e catálogo de agentes e habilidades
 
-| Código | EMCIA-CAT-01 | Versão | 0.5 |
+| Código | EMCIA-CAT-01 | Versão | 1.0 |
 | :--- | :--- | :--- | :--- |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F0 a F4 — todas | **Passo** | 1 a 10 — todos |
 
 ---
@@ -71,7 +71,7 @@ A tabela abaixo distribui as atividades de cada fase entre as três naturezas. A
 | F0 | Calcular o custo do problema | Híbrido | O cálculo é auditável; os números de entrada costumam estar errados |
 | F0 | Decidir o prosseguimento | Humano | Compromisso: inicia engajamento e aloca recurso |
 
-**Condição de encerramento.** Nos três níveis, o engenheiro registra o ato humano `decidir-prosseguimento` no próprio terminal, fora da sessão do agente, com base no conteúdo da ficha E1 preparado para o enquadramento. O registro da decisão de prosseguir é condição de encerramento de F0, além da apuração do nível e dos critérios substantivos do MET-01 §3.3.3. A emissão formal de E1 continua posterior ao portão de F0 e sujeita à resolução de RH pendente; o ato não exige uma E1 já emitida nem substitui esses controles. Sua implementação no marketplace permanece necessária.
+**Condição de encerramento.** Nos três níveis, o engenheiro registra o ato humano `decidir-prosseguimento` no próprio terminal, fora da sessão do agente, com base no conteúdo da ficha E1 preparado para o enquadramento. O registro da decisão, com decisor, data, desfecho e motivo, é condição de encerramento de F0, além da apuração do nível e dos critérios substantivos do MET-01 §3.3.3. Os desfechos são prosseguir e não prosseguir; ambos encerram F0. Não prosseguir bloqueia as etapas seguintes até nova decisão que autorize prosseguir, preservando o registro anterior. A emissão formal de E1 continua posterior ao portão de F0 e sujeita à resolução de RH pendente; o ato não exige uma E1 já emitida nem substitui esses controles. O ato está implementado no playbook 0.4.19, conforme a decisão 043 do marketplace.
 
 *Fase quase inteiramente delegável: alto volume, baixa consequência, saída verificável. O que a fase produz é nível declarado, nunca nível diagnosticado.*
 
@@ -190,7 +190,7 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 - *The Knowledge-Creating Company*, Nonaka e Takeuchi (1995)
 - *AI Risk Management Framework*, NIST (2023)
 - Artefatos relacionados: EMCIA-MET-01, EMCIA-TRI-01, EMCIA-GLO-01, EMCIA-CAN-01, EMCIA-HAB-01, EMCIA-CTX-01 e EMCIA-MAN-01.
-- Referência operacional: emcia-marketplace, decisões 039–042 e playbook 0.4.18.
+- Referência operacional: emcia-marketplace, decisões 039–043 e playbook 0.4.19, núcleo 0.2.45 e campo 0.8.23.
 
 ## 6. Histórico de revisões
 
@@ -201,6 +201,8 @@ Este artefato está pronto quando toda atividade dos dez passos tem natureza atr
 | 0.3 | 29/09/2026 | Celso do Vale | Consolidação da Sprint 4 (registro da ação 4.3): trava por origem da chamada (A4); levantamento das regras não documentadas movido para EX4 (D2); agente só prepara em EX3 e EX4 (D3); regra dos atos sobre o registro (D4); decisões humanas mantidas em todos os níveis (D1); situação das habilidades e atividades sem habilidade (D5) | — |
 | 0.4 | 2026-10 | Celso do Vale | Fronteira de ações externas, confirmação por efeito e compartilhamento; atos humanos de canais, importação, recebimento, listagem, entrega e vínculo de restrição | pendente |
 | 0.5 | 2026-10 | Celso do Vale | Aplicação das decisões humanas D2–D8: HB-04/05 em F0, HB-06 em P2 e HB-13 em P7/AG-03; D5 resolvida com instrumentos distintos, HB-09 mantida no passo 3/P3d, estado declarado selado em P2 como entrada e candidatos para P4 como saída, sem alterar MET-01; varredura e desenho discriminados, preservando natureza automatizada e registrando desenho sem execução comprovada; HB-19 a HB-21 criadas somente com evidência textual dos SKILL.md; Anexo B restrito à execução não comprovada; correspondência canônica no Anexo C; camadas de encerramento e preparação; ato humano decidir-prosseguimento em F0. Evidências e dependências operacionais no Anexo D | pendente |
+| 0.6 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; implementação da correspondência registrada na decisão 043; dois desfechos de F0 alinhados ao contrato; HB-16 mantida automatizada por decisão humana, com correção correspondente no CAM-01 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.6 | Celso do Vale |
 
 ---
 
@@ -258,7 +260,7 @@ Atividades automatizadas ou híbridas da seção 3.4 sem execução integral com
 
 ## Anexo C — Correspondência canônica entre etapa, habilidades e agentes
 
-Esta tabela é a fonte da relação etapa → HBs → AG. Declara a correspondência desta revisão do método, a ser implementada no marketplace; não afirma que o playbook 0.4.18 já a reproduz. Os identificadores e a ordem das treze etapas são os do playbook. A camada de encerramento conserva os valores atuais por nível; as HBs conservam sua camada de preparação do Anexo A.
+Esta tabela é a fonte da relação etapa → HBs → AG. Declara a correspondência desta revisão do método, reproduzida no playbook 0.4.19 e conferida por testes conforme a decisão 043 do marketplace. Os identificadores e a ordem das treze etapas são os do playbook. A camada de encerramento conserva os valores atuais por nível; as HBs conservam sua camada de preparação do Anexo A.
 
 | Etapa | Camada de encerramento N1 · N2 · N3 | Habilidade do Estúdio | HBs de preparação | AG |
 | :--- | :--- | :--- | :--- | :--- |
@@ -282,7 +284,7 @@ F0 executa HB-04 e HB-05 pela habilidade de enquadramento. P3b permanece sem HB 
 
 ### D.1 Fonte e critério
 
-Exame dos SKILL.md em eiac-campo/skills/hb-*/, de eiac-campo/reference/habilidades.json, do playbook 0.4.18 em eiac-campo/template-caso/registro/playbook.json, de decisoes/020-pendencia-cruzamento-cat01.md e de docs/cruzamento-cat01.md na branch master do emcia-marketplace, commit `ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f`, em 2026-10. Os caminhos abaixo são relativos à raiz desse repositório. Os trechos citados comprovam preparação documental, não aprovação humana nem execução em produção. As novas HBs pertencem somente a EX2, segundo a regra da seção 3.3, ainda que o front matter da habilidade declare EX3 para a etapa.
+Exame histórico que fundamentou a revisão 0.5: leitura dos SKILL.md em eiac-campo/skills/hb-*/, de eiac-campo/reference/habilidades.json, do playbook 0.4.18 em eiac-campo/template-caso/registro/playbook.json, de decisoes/020-pendencia-cruzamento-cat01.md e de docs/cruzamento-cat01.md na branch master do emcia-marketplace, commit `ebb6bbda55ea7403bc0e09a0bc316f0a1071cf4f`, em 2026-10. Os caminhos abaixo são relativos à raiz desse repositório. Os trechos citados comprovam preparação documental, não aprovação humana nem execução em produção. As novas HBs pertencem somente a EX2, segundo a regra da seção 3.3, ainda que o front matter da habilidade declare EX3 para a etapa.
 
 ### D.2 Exame das candidatas
 
@@ -301,8 +303,8 @@ Exame dos SKILL.md em eiac-campo/skills/hb-*/, de eiac-campo/reference/habilidad
 
 ### D.3 Divergências e aplicação controlada
 
-As decisões humanas D2–D8 e a resolução da D5 fixam a correspondência desta revisão. O playbook 0.4.18 ainda lista somente HB-01/02/03 em F0, HB-07 em P2 e HB-14 em P7; associa HB-09 a P1; não referencia as três novas HBs nem declara o ato decidir-prosseguimento. O catálogo operacional ainda atribui HB-13 a AG-02 e deixa HB-04/05/06/13 sem vínculo de habilidade. Essas diferenças dependem da implementação no marketplace e não são corrigidas neste repositório. A substituição da regra provisória da decisão 020 exige registro explícito de decisão naquele repositório.
+As decisões humanas D2–D8 e a resolução da D5 fixam a correspondência desta revisão. As diferenças registradas na revisão 0.5 contra o playbook 0.4.18 foram resolvidas no marketplace pela decisão 043: o playbook 0.4.19 referencia todas as 21 HBs, mantém HB-09 em P3d, atribui HB-13 a AG-03 e declara decidir-prosseguimento como condição de encerramento de F0. A 043 supera explicitamente a autoria provisória da decisão 020. A implementação foi conferida no commit `d9551a90b5ee3cec5006bbbfcbdebca4cbfe0f35`, com núcleo 0.2.45, campo 0.8.23, 958 verificações em 49 módulos e evidência em `.projectdocs/evidencias/correspondencia-cat01/`. Esse commit é a referência da implementação examinada; novos empacotamentos dependem de atualização explícita do manifesto e não migram casos existentes.
 
 P5, P8 e P9 deixam de apresentar contradição entre camada da HB e da etapa pela regra da seção 3.3. P3b já está em EX4 no CAT-01 v0.4; a comparação antiga com EX3 é histórica. Atividades humanas de P1, P2 e P4 continuam humanas em todos os níveis; a regra não cria atos nem comprova produtos ausentes do playbook.
 
-Permanece uma divergência documental anterior a esta revisão: o CAM-01 §3.4 descreve HB-15 e HB-16 como “ambas híbridas”, enquanto este Anexo A classifica HB-16 como automatizada. D2–D8 não decidem alteração dessa natureza; os textos são preservados, e a divergência fica registrada para decisão humana.
+A divergência anterior sobre HB-16 foi resolvida por Celso do Vale em 03/10/2026: HB-16 permanece automatizada, conforme o Anexo A; o CAM-01 v0.5 foi corrigido para distinguir HB-15 híbrida de HB-16 automatizada. A revisão humana do conjunto e o encerramento de P8 continuam obrigatórios; a natureza da execução da suíte não delega esses atos.

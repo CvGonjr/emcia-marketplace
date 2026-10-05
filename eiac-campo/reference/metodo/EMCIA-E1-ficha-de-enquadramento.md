@@ -1,6 +1,20 @@
 # Ficha de enquadramento
 ### Delimitação da dor, custo estimado e nível de complexidade declarado
 
+## Controle do modelo
+
+| Metadado | Valor | Metadado | Valor |
+| :--- | :--- | :--- | :--- |
+| **Código** | EMCIA-E1-01 | **Versão** | 0.1 |
+| **Data** | 2026-10 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale — 03/10/2026 |
+| **Fase** | F0 — Enquadramento | **Passo** | Triagem |
+| **Tipo** | Modelo de entregável | **Origem** | EMCIA-MET-01 |
+
+## Identificação do entregável
+
+A tabela seguinte é preenchida por caso e registra a versão e o aceite do entregável.
+
 | Metadado | Valor | Metadado | Valor |
 | :--- | :--- | :--- | :--- |
 | **Organização** | «razão social» | **Engajamento** | «código do caso» |
@@ -67,8 +81,19 @@
 ---
 
 ## 6. Trilha recomendada e decisão solicitada
-«Fases previstas, esforço estimado e o que a organização precisa disponibilizar. Encerrar com a pergunta que o patrocinador responde, e registrar a resposta com autor e data.»
+«Fases previstas, esforço estimado e o que a organização precisa disponibilizar. Registrar a decisão de prosseguimento fundamentada nesta ficha.»
 
-| Decisão | Responsável | Data |
-| :--- | :--- | :---: |
-| «prosseguir · prosseguir com restrição · não prosseguir» | «nome» | «dd/mm/aaaa» |
+O engenheiro registra decidir-prosseguimento no próprio terminal, com base na ficha preparada, antes da emissão formal de E1. Ambos os desfechos encerram F0; não prosseguir bloqueia as etapas seguintes até nova decisão que autorize prosseguir, preservando o registro anterior. A emissão permanece sujeita ao portão e à resolução de RH pendente.
+
+| Desfecho | Decisor | Data | Motivo | Referência do registro |
+| :--- | :--- | :---: | :--- | :--- |
+| «prosseguir · não prosseguir» | «pessoa nomeada» | «dd/mm/aaaa» | «fundamento da decisão» | «registro/prosseguimento/decisao-NNNN.yaml» |
+
+---
+
+## Histórico de revisões do modelo
+
+| Versão | Data | Autor | Descrição da alteração | Aprovação |
+| :---: | :---: | :--- | :--- | :---: |
+| Sem versão explícita | — | Celso do Vale | Edição anterior sem controle de versão do modelo; o campo de versão existente pertencia ao entregável de cada caso | — |
+| 0.1 | 2026-10 | Celso do Vale | Inclusão de tabela de metadados e histórico próprios do modelo; aprovação documental por Celso do Vale; decisão de F0 alinhada aos dois desfechos de decidir-prosseguimento | Celso do Vale — 03/10/2026 |

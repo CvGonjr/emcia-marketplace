@@ -4,9 +4,9 @@
 
 | | | | |
 |---|---|---|---|
-| **Código** | EMCIA-CTX-01 | **Versão** | 0.5 |
-| **Data** | 2026-10 | **Estado** | Em revisão |
-| **Responsável** | Celso do Vale | **Aprovação** | pendente |
+| **Código** | EMCIA-CTX-01 | **Versão** | 1.0 |
+| **Data** | 03/10/2026 | **Estado** | Aprovado |
+| **Responsável** | Celso do Vale | **Aprovação** | Celso do Vale · 03/10/2026 |
 | **Fase** | F1–F2 | **Passo** | 2 a 5 |
 
 ## 1. Objetivo
@@ -310,7 +310,7 @@ Quando houver RH importado, a condição inclui cobertura em P2 e marcas junto �
 - EMCIA-TST-01 — Plano de testes da implementação.
 - EMCIA-GLO-01 — Glossário do método.
 - EMCIA-HAB-01 §3.4, EMCIA-CAN-01 e EMCIA-TRA-01 — Restrições, recebimento e procedência.
-- emcia-marketplace — Decisão 041, playbook 0.4.18 e evidências parte-a-operacional/A3.
+- emcia-marketplace — Decisão 041, playbook 0.4.19 e evidências parte-a-operacional/A3.
 - EMCIA-VER-01 — Plano de verificação do método.
 - *Data Governance*, John Ladley (2019).
 
@@ -323,3 +323,5 @@ Quando houver RH importado, a condição inclui cobertura em P2 e marcas junto �
 | 0.3 | 17/09/2026 | Celso do Vale | Separação entre autoria do conteúdo e registro; calibragem N1–N3; revisão da zona crítica; condições CTX-V01–V10; escopo e metadados alinhados ao template oficial. | — |
 | 0.4 | 17/09/2026 | Celso do Vale | Divergência retirada do registro de Regra como conteúdo duplicado; `classificacao_confronto` passa a referenciar o item de P3d/Ação 2.4; adicionada validação CTX-V11 e ajustada a condição de aceite. | — |
 | 0.5 | 2026-10 | Celso do Vale | Relações explícitas REC → F e RH → F, vínculo humano em P2 e efeito localizado na emissão; CTX-V12 e CTX-V13; organização em seções 1 a 6 sem retirar limites anteriores | pendente |
+| 0.6 | 2026-10 | Celso do Vale | Aprovação documental por Celso do Vale; referência operacional atualizada para o playbook 0.4.19 | Celso do Vale — 03/10/2026 |
+| 1.0 | 03/10/2026 | Celso do Vale | Primeira linha de base aprovada (metodo-v1.0), sem alteração de conteúdo em relação à v0.6 | Celso do Vale |
