@@ -59,6 +59,11 @@ jobs:
       - name: Decisão humana fora da sessão (A12)
         run: python3 testes/decisao_a12.py
 
+      - name: Bloco inicial conduzido, guardas e retomada
+        run: |
+          python3 testes/bloco_inicial.py
+          python3 testes/iniciar_percurso.py
+
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
 
@@ -96,7 +101,7 @@ jobs:
         run: |
           git clone --depth 1 --branch metodo-v1.0 --single-branch https://github.com/CvGonjr/emcia-artefatos.git ../emcia-artefatos
           python3 testes/metodo_empacotado.py
-          python3 testes/manual_a25.py
+          python3 testes/apoio/falha_conhecida_a25.py
           python3 testes/citacoes.py
           python3 testes/catalogo_cat01.py
           python3 testes/prosseguimento.py
