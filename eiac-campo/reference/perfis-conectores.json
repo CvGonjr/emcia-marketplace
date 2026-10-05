@@ -1,5 +1,5 @@
 {
-  "versao": 1,
+  "versao": 2,
   "inventario_sha256": "16c14db2fe4c879f831642a1096ef89e1b63cc44ff49e9f36d9ae2a14bb58c24",
   "perfis": {
     "mcp__claude_ai_Google_Drive__search_files": {
@@ -519,6 +519,27 @@
         }
       ],
       "recusa": "Inventário sem filtro estruturado pelo campo oculto do caso; use coleta manual conferida"
+    },
+    "mcp__tally__load_form": {
+      "ferramenta": "mcp__tally__load_form",
+      "padrao": "mcp__tally__load_form",
+      "operacao": "ler",
+      "parametros": {
+        "formId": {
+          "description": "Form ID to load",
+          "type": "string"
+        }
+      },
+      "obrigatorios": [
+        "formId"
+      ],
+      "argumentos": [
+        {
+          "campo": "formId",
+          "tipo": "id_de_canal",
+          "campo_id": "formulario_id"
+        }
+      ]
     }
   }
 }

@@ -141,7 +141,7 @@ def calibrar(ferramentas):
     for nome,passo in [('mcp__tally__create_new_form','criar-formulario'),('mcp__tally__publish_form','publicar-formulario'),('mcp__tally__fetch_submissions','coletar-submissoes')]:
         if nome not in ativos:
             manuais.append(dict(passo=passo,ferramenta=nome if nome in inv else None,motivo=motivos.get(nome,'ferramenta ausente do inventário; ação manual do engenheiro')))
-    return dict(versao=3,regras=regras,recusadas=recusadas,motivos=motivos,manuais=manuais,
+    return dict(versao=4,regras=regras,recusadas=recusadas,motivos=motivos,manuais=manuais,
                 parametros_recusados=parametros_recusados,evento_aprovacao='AprovacaoExternaRegistrada')
 
 
@@ -326,12 +326,13 @@ def escopos(p,c,hab,caso,operacao):
             raise ValueError('escopo externo diverge do caso/responsável fixado no expediente')
         conhecidos['formulario_id'].extend(f['formulario'] for f in state['fontes'].values())
     for retorno in registros_externos(p,hab):
+        if (retorno['chamada'].get('caso') or hab)!=caso: continue
         for k,v in retorno['ids'].items():conhecidos.setdefault(k,[]).append(v)
         if retorno['chamada'].get('finalidade')=='entregas' and retorno['ids'].get('pasta_id'):
             conhecidos['entregas'].append(retorno['ids']['pasta_id'])
         conhecidos['objeto_id'].extend(retorno['resultado'].get('objetos',[]))
     for manual in declaracoes_manuais(p,hab):
-        if manual.get('formulario_id'): conhecidos['formulario_id'].append(manual['formulario_id'])
+        if manual.get('caso')==caso and manual.get('formulario_id'): conhecidos['formulario_id'].append(manual['formulario_id'])
     case=pathlib.Path(c['base_casos'])/H.identificador(caso)
     if (case/'registro/canais.json').exists():
         import canais_registro as K

@@ -219,6 +219,40 @@ class Administracao(unittest.TestCase):
         self.op('caminho-manual',passo='publicar-formulario',formulario_id='FORM',evidencia=str(self.evidencia),decisao='executar manualmente')
         self.denied(TALLY+'publish_form',dict(formId='FORM'))
 
+    def test_25_load_form_alheio_produz_tentativa_negada(self):
+        self.denied(TALLY+'load_form', dict(formId='ALHEIO'))
+
+    def test_26_load_form_parametro_extra_recusado(self):
+        self.denied(TALLY+'load_form', dict(formId='FORM', workspaceId='WORK'))
+
+    def test_27_load_form_criado_no_expediente(self):
+        d = dict(habilitacao='HAB', caso='CASO', ferramenta=TALLY+'create_new_form',
+                 argumentos=dict(title='Sintético', workspaceId='WORK'))
+        self.call(d['ferramenta'], d['argumentos'])
+        I.registrar_retorno(self.cfg, d, dict(ids={'formulario_id':'FORM'}))
+        self.call(TALLY+'load_form', dict(formId='FORM'))
+        with self.assertRaises(ValueError):
+            self.op('mcp', caso='OUTRO', ferramenta=TALLY+'load_form', argumentos=dict(formId='FORM'))
+        self.assertEqual(json.loads(self.cfg.with_name('eventos.jsonl').read_text().splitlines()[-1])['evento'], 'TentativaNegada')
+
+    def test_28_retorno_de_outro_contexto_nao_declara_formulario(self):
+        d = dict(habilitacao='HAB', caso='CASO', ferramenta=TALLY+'create_new_form',
+                 argumentos=dict(title='Sintético', workspaceId='WORK'))
+        self.call(d['ferramenta'], d['argumentos'])
+        I.registrar_retorno(self.cfg, d, dict(ids={'formulario_id':'FORM'}))
+        conhecidos = I.escopos(self.cfg, I.ler_config(self.cfg), 'HAB', 'CASO', 'ler')
+        self.assertIn('FORM', conhecidos['formulario_id'])
+        # Antes da criação do expediente, retornos continuam vinculados ao contexto.
+        (self.base/'expedientes/HAB/expediente.json').unlink()
+        with self.assertRaises(ValueError):
+            self.op('mcp', caso='OUTRO', ferramenta=TALLY+'load_form', argumentos=dict(formId='FORM'))
+        self.assertEqual(json.loads(self.cfg.with_name('eventos.jsonl').read_text().splitlines()[-1])['evento'], 'TentativaNegada')
+
+    def test_29_load_form_declarado_manualmente_no_expediente(self):
+        self.op('caminho-manual', passo='preparar-formulario', formulario_id='FORM',
+                evidencia=str(self.evidencia), decisao='executar manualmente')
+        self.call(TALLY+'load_form', dict(formId='FORM'))
+
 
 class CasoReal(CasoHook):
     def setUp(self):
@@ -239,6 +273,13 @@ class CasoReal(CasoHook):
 
     def test_05_tally_sem_filtro_recusa_no_nucleo(self):
         self.negado(TALLY+'fetch_submissions', dict(formId='SINTETICO-triagem-formulario_id'))
+
+    def test_06_load_form_alheio_recusa_no_caso(self):
+        self.negado(TALLY+'load_form', dict(formId='ALHEIO'))
+
+    def test_24_load_form_declarado_no_caso(self):
+        r = self.hook(TALLY+'load_form', dict(formId='SINTETICO-triagem-formulario_id'))
+        self.assertEqual(r.returncode, 0, r.stderr)
 
     def test_20_busca_limitada_aceita(self):
         self.assertEqual(self.hook(DRIVE+'search_files', dict(query=f"'{self.pasta}' in parents")).returncode, 0)

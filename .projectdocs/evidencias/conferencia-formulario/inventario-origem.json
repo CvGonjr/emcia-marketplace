@@ -1,0 +1,29 @@
+{
+  "arquivo": "/home/netiv-dn-1/emcia-op/ensaio/inventario-mcp.json",
+  "sha256": "16c14db2fe4c879f831642a1096ef89e1b63cc44ff49e9f36d9ae2a14bb58c24",
+  "ferramenta": {
+    "nome": "mcp__tally__load_form",
+    "descricao": "Load existing form for editing",
+    "parametros": [
+      {
+        "nome": "formId",
+        "tipo": "string",
+        "obrigatorio": true,
+        "valores_aceitos": null,
+        "descricao": "Form ID to load"
+      }
+    ],
+    "inputSchema": {
+      "properties": {
+        "formId": {
+          "description": "Form ID to load",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "type": "object"
+    }
+  }
+}
