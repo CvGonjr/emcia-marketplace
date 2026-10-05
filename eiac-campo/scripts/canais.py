@@ -202,6 +202,7 @@ def main():
     ap.add_argument('operacao', choices=['planejar', 'definir', 'resolver'])
     ap.add_argument('alvo', nargs='?'); ap.add_argument('direcao', nargs='?', choices=['entrada', 'saida', 'agenda'])
     ap.add_argument('--entrada'); ap.add_argument('--autor')
+    ap.add_argument('--aprovacao', help='testemunho conferido pela guarda da sessão')
     a = ap.parse_args()
     try:
         st, pb = contexto(a.autor)

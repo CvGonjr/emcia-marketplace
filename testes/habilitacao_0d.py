@@ -60,6 +60,8 @@ class Importacao(CasoHook):
         self.recusa('integridade')
 
     def test_07_sessao_do_agente(self):
+        # Decisão 002: casos anteriores conservam o contrato humano original.
+        (self.caso/'registro/playbook.json').write_bytes((RAIZ/'testes/apoio/playbook-0.4.19.json').read_bytes())
         r=self.negado('Bash',{'command':f'python3 {IMPORTADOR} --expediente {self.exp}'})
         self.assertIn('Comando exato:',r.stderr)
         self.assertEqual(self.eventos()[-1]['operacao'],'importar-habilitacao')

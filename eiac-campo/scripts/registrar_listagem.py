@@ -40,6 +40,7 @@ def registrar(entrada, autor=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--entrada', required=True); ap.add_argument('--autor')
+    ap.add_argument('--aprovacao', help='testemunho conferido pela guarda da sessão')
     a = ap.parse_args()
     try:
         with K.seguro('registro/.canais.lock').open('a') as lock:

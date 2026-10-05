@@ -96,6 +96,10 @@ def carregar():
             if type(sessoes.get(cam)) is not bool:
                 return None, f"encerramento_por_camada: {cam} precisa declarar booleano"
 
+    import aprovacao as A
+    erro_aprovacao=A.validar_contrato(pb)
+    if erro_aprovacao: return None,erro_aprovacao
+
     # Importação local evita ciclo: o avaliador também resolve etapas.
     import decisao_humana as H
     erro_humano = H.validar(pb.get("decisoes_humanas"))
@@ -168,7 +172,7 @@ def camada(pb, etapa_id, nivel):
     """Camada de execucao da etapa, resolvida pelo nivel do caso.
 
     Sem nivel definido, aplica a mais restritiva declarada — nao se assume
-    o nivel mais permissivo enquanto a triagem nao apurou.
+    o nivel mais permissivo enquanto a apuração nao apurou.
     """
     e = etapa(pb, etapa_id)
     if not e:

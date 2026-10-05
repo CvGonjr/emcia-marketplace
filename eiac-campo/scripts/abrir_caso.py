@@ -88,7 +88,7 @@ def abrir(nome,base,responsavel,expediente=None):
         commit=git(destino,'commit','-qm','abertura do caso '+nome)
     finally: os.chdir(anterior)
     print(f'caso "{nome}" criado em {destino}\nMétodo copiado e SHA-256 conferido; manifesto preservado.')
-    print('Importe a habilitação no terminal, grave o rascunho pelo validador e sele antes de F0.')
+    print('Importe a habilitação pelo fluxo aprovado ou pelo terminal; valide o rascunho e sele antes de F0.')
     print('Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.')
     if commit.returncode:
         print('ATENCAO: o commit inicial nao foi feito. Configure a identidade do git e commite; a trilha depende do historico.')
@@ -120,6 +120,7 @@ def main():
     ap.add_argument('nome');ap.add_argument('base',nargs='?',default=str(pathlib.Path.home()/'casos'))
     ap.add_argument('--responsavel',required=True)
     ap.add_argument('--expediente',type=pathlib.Path)
+    ap.add_argument('--aprovacao',help='testemunho conferido pela guarda da sessão')
     a=ap.parse_intermixed_args()
     try: abrir(a.nome,a.base,a.responsavel,a.expediente)
     except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:

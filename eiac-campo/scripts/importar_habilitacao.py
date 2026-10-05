@@ -202,6 +202,7 @@ def main():
     ap.add_argument('--decisao-reimportacao',type=pathlib.Path)
     ap.add_argument('--autor',help='recusado: autoria é fixada no caso')
     ap.add_argument('--canais', type=pathlib.Path, help='declaração humana completa de canais, com ids provisionados')
+    ap.add_argument('--aprovacao', help='testemunho conferido pela guarda da sessão')
     a=ap.parse_args()
     try:
         caminho_seguro('registro')

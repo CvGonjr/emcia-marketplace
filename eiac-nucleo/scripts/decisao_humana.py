@@ -28,8 +28,10 @@ def validar(regras):
         if arg is not None and (not isinstance(arg, str) or not arg.startswith('--')):
             return 'decisoes_humanas: argumento invalido'
         c = regra.get('condicao')
-        if not isinstance(c, dict) or c.get('tipo') not in ('sempre', 'arquivo', 'camada'):
+        if not isinstance(c, dict) or c.get('tipo') not in ('sempre', 'arquivo', 'camada', 'apos_etapa'):
             return 'decisoes_humanas: condicao desconhecida ou ausente'
+        if c['tipo'] == 'apos_etapa' and not isinstance(c.get('etapa'),str):
+            return 'decisoes_humanas: etapa de referência ausente'
         if c['tipo'] == 'camada' and (not arg or not isinstance(c.get('camadas'), list) or not c['camadas']
                                      or any(not isinstance(v, str) for v in c['camadas'])):
             return 'decisoes_humanas: condicao de camada invalida'
@@ -140,6 +142,9 @@ def avaliar(pb, st, comando):
             if argumento and not valores:
                 continue
             c = regra['condicao']
+            if c['tipo'] == 'apos_etapa':
+                if st.get('cumprimentos',{}).get(c['etapa'],{}).get('cumprido'):
+                    return regra['id'], 'Operação após etapa encerrada reservada ao terminal humano.'
             if c['tipo'] == 'sempre':
                 return regra['id'], 'Operacao declarada como decisao humana.'
             if c['tipo'] == 'camada':

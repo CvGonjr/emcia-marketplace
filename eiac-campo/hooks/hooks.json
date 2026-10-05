@@ -1,0 +1,5 @@
+{
+  "hooks": {
+    "PreToolUse": [{"matcher": "Bash|Write|Edit|NotebookEdit|mcp__.*", "hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/guarda_inicial.py\"", "timeout": 15}]}]
+  }
+}

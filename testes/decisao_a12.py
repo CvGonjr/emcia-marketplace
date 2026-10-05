@@ -197,7 +197,8 @@ class DecisaoA12(unittest.TestCase):
         self.assertEqual(json.loads(self.estado.read_text())['nivel'], 'N3')
 
     def test_29_template_declara_lista(self):
-        pb = json.loads((RAIZ/'eiac-campo/template-caso/registro/playbook.json').read_text())
+        # Contrato anterior preservado pela 002; o novo tem testes na 045.
+        pb = json.loads((RAIZ/'testes/apoio/playbook-0.4.19.json').read_text())
         declaradas = {r['id']: r for r in pb.get('decisoes_humanas', [])}
         for regra in REGRAS:
             self.assertEqual(declaradas.get(regra['id']), regra)

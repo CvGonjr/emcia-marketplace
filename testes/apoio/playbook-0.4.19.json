@@ -1,6 +1,6 @@
 {
   "nome": "Engenharia de IA de Campo",
-  "versao": "0.4.20",
+  "versao": "0.4.19",
   "referencia": "EMCIA-MET-01, EMCIA-CAT-01, EMCIA-CAM-01, EMCIA-ESP-01",
   "referencia_integridade": {
     "diretorio": "metodo",
@@ -155,8 +155,41 @@
       }
     },
     {
+      "id": "importar-habilitacao",
+      "script": "importar_habilitacao.py",
+      "escopo": "antes_do_percurso",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "definir-canais",
+      "script": "canais.py",
+      "argumento": "--entrada",
+      "escopo": "antes_do_percurso",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "receber-material",
+      "script": "receber.py",
+      "escopo": "fronteira_externa",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
       "id": "entregar-material",
       "script": "entregar.py",
+      "escopo": "fronteira_externa",
+      "condicao": {
+        "tipo": "sempre"
+      }
+    },
+    {
+      "id": "registrar-listagem",
+      "script": "registrar_listagem.py",
       "escopo": "fronteira_externa",
       "condicao": {
         "tipo": "sempre"
@@ -174,14 +207,6 @@
       "script": "prosseguimento.py",
       "condicao": {
         "tipo": "sempre"
-      }
-    },
-    {
-      "id": "selar-apos-P2",
-      "script": "selar.py",
-      "condicao": {
-        "tipo": "apos_etapa",
-        "etapa": "P2"
       }
     }
   ],
@@ -989,81 +1014,6 @@
       ],
       "evento_integridade": "ProsseguimentoDecidido",
       "descricao": "Decisão vigente deve autorizar o prosseguimento"
-    }
-  ],
-  "operacoes_sessao": [
-    {
-      "id": "definir-canais",
-      "script": "canais.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": [
-        "--entrada"
-      ],
-      "subcomandos": [
-        "definir"
-      ]
-    },
-    {
-      "id": "importar-habilitacao",
-      "script": "importar_habilitacao.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": [
-        "--canais",
-        "--decisao-reimportacao"
-      ],
-      "diretorios_entrada": [
-        {
-          "argumento": "--expediente",
-          "arquivo": "expediente.json"
-        }
-      ]
-    },
-    {
-      "id": "receber-material",
-      "script": "receber.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": [
-        "--arquivo",
-        "--manifesto",
-        "--nova-versao"
-      ]
-    },
-    {
-      "id": "registrar-listagem",
-      "script": "registrar_listagem.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": [
-        "--entrada"
-      ]
-    },
-    {
-      "id": "validar-habilitacao",
-      "script": "validar.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": [],
-      "argumento": "--arquivo",
-      "valor_argumento": "caso/00-habilitacao.md",
-      "artefatos": [
-        "rascunho/00-habilitacao.md"
-      ]
-    },
-    {
-      "id": "selar-inicial",
-      "script": "selar.py",
-      "etapas": [
-        "F0"
-      ],
-      "arquivos": []
     }
   ]
 }

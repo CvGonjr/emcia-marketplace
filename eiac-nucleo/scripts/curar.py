@@ -1,4 +1,4 @@
-"""Curadoria dos objetos CTX. Unico caminho de escrita em contexto/.
+"""Curadoria de objetos declarados. Unico caminho de escrita em contexto/.
 
 Uso:  python3 curar.py --tipo regra --arquivo contexto/regras/RN-001.yaml
 
@@ -14,7 +14,7 @@ Le o candidato de rascunho/<mesmo-nome>, valida a estrutura pelo schema do
 caso (estrutura.py), confere autoria e procedencia, e so grava em
 contexto/<tipo>s/ se tudo passar. Quando ja existe uma versao anterior do
 mesmo id, a gravacao so ocorre como nova versao com historico preservado
-(CTX-01 3.11-3.13) — nunca como sobrescrita do registro anterior.
+— nunca como sobrescrita do registro anterior.
 
 O nucleo nao decide merito de conteudo; decide apenas se a mudanca de
 procedencia e a trilha de versao estao presentes, conforme o schema
@@ -30,6 +30,18 @@ import estrutura as X
 import json
 
 
+ROTULOS = __import__('contextvars').ContextVar('rotulos_curadoria', default=None)
+
+def rotulo(chave, schema=None):
+    if schema is None:
+        schema=ROTULOS.get()
+    if schema is None:
+        try:schema=json.loads(pathlib.Path('registro/contexto.schema.json').read_text())
+        except (OSError,ValueError):schema={}
+    valor=schema.get('rotulos_validacao',{}).get(chave,chave)
+    return valor if isinstance(valor,str) and valor.strip() else chave
+
+
 def _campo(dados, nome):
     return dados.get(nome)
 
@@ -38,7 +50,7 @@ CAMPOS_AUTORIA = ("autoria_conteudo", "declarado_por", "registrado_por", "autor"
 
 
 def checar_autoria(dados):
-    """CTX-V09: autoria de conteudo e quem registra sao pessoa nomeada.
+    """Autoria: autoria de conteudo e quem registra sao pessoa nomeada.
 
     Nem todo objeto declara os mesmos campos de autoria (Fonte nao tem
     autoria_conteudo; um registro de confronto etapa de confronto usa so `autor`). Confere
@@ -52,19 +64,19 @@ def checar_autoria(dados):
         if valor is None:
             continue
         if not E.pessoa_nomeada(valor):
-            erros.append(f"CTX-V09: {campo} nao pode ser agente: '{valor}'")
+            erros.append(f"{rotulo('autoria')}: {campo} nao pode ser agente: '{valor}'")
     return erros
 
 
 def checar_versao(anterior, candidato, tipo):
-    """CTX-V04/V10: mudanca de procedencia so entra como versao nova,
+    """Versionamento: mudanca de procedencia so entra como versao nova,
     com historico que preserva a versao anterior recuperavel.
 
     ``anterior`` e o dict ja gravado em contexto/ (ou None se e registro
     novo). ``candidato`` e o dict lido do rascunho. Objetos que nao
     declaram `versao` (como o registro de confronto etapa de confronto, que e observacional
     e nao iterativo) nao entram nesta checagem — o campo e a marca de que
-    o objeto participa do regime de versionamento do CTX-01 3.11-3.13.
+    o objeto participa do regime de versionamento declarado no schema.
     """
     if "versao" not in candidato:
         return []
@@ -93,10 +105,10 @@ def checar_versao(anterior, candidato, tipo):
             f"procedencia {proc_antes} -> {proc_depois}" if mudou_procedencia
             else "classificacao_confronto"
         )
-        # CTX-V04 nomeia literalmente a transicao I->V; a mesma exigencia de
+        # O rótulo declarado nomeia literalmente a transicao I->V; a mesma exigencia de
         # versao crescente para outras mudancas relevantes (classificacao de
-        # confronto) segue o principio geral do CTX-01 3.12, sem codigo proprio.
-        codigo = "CTX-V04" if (proc_antes == "I" and proc_depois == "V") else "CTX-01 3.12"
+        # confronto) segue o regime geral de versionamento, sem codigo proprio.
+        codigo = rotulo("versao_procedencia" if (proc_antes == "I" and proc_depois == "V") else "versao_outros")
         try:
             cresceu = int(versao_depois) > int(versao_antes)
         except (TypeError, ValueError):
@@ -109,7 +121,7 @@ def checar_versao(anterior, candidato, tipo):
             )
         if not isinstance(historico, list) or len(historico) < 1:
             erros.append(
-                f"CTX-V10: mudanca de {motivo} exige historico com a versao anterior "
+                f"{rotulo('historico')}: mudanca de {motivo} exige historico com a versao anterior "
                 "preservada (data, responsavel e motivo)"
             )
         else:
@@ -120,16 +132,16 @@ def checar_versao(anterior, candidato, tipo):
                 faltando.append("registrado_por ou confirmado_por")
             if faltando:
                 erros.append(
-                    f"CTX-V10: entrada de historico incompleta para a versao anterior: "
+                    f"{rotulo('historico')}: entrada de historico incompleta para a versao anterior: "
                     f"faltando {faltando}"
                 )
             try:
                 if int(ultima.get("versao")) != int(versao_antes):
                     erros.append(
-                        "CTX-V10: historico nao referencia a versao imediatamente anterior"
+                        f"{rotulo('historico')}: historico nao referencia a versao imediatamente anterior"
                     )
             except (TypeError, ValueError):
-                erros.append("CTX-V10: historico sem numero de versao anterior valido")
+                erros.append(f"{rotulo('historico')}: historico sem numero de versao anterior valido")
     else:
         try:
             regressao = int(versao_depois) < int(versao_antes)
@@ -137,13 +149,13 @@ def checar_versao(anterior, candidato, tipo):
             regressao = False
         if regressao:
             erros.append(
-                f"CTX-V04: versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
+                f"{rotulo('versao_procedencia')}: versao nao pode retroceder: {versao_antes!r} -> {versao_depois!r}"
             )
     return erros
 
 
 def checar_referencias(candidato, schema, tipo):
-    """CTX-V05/V06/V07: toda referencia a Termo, Entidade ou Fonte listada
+    """Referências: toda referencia a Termo, Entidade ou Fonte listada
     num campo declarado em `references` precisa resolver para um objeto
     curado existente; quando o alvo e Fonte, o registro referenciado
     precisa ter o contrato minimo preenchido (mesma validacao que a
@@ -156,7 +168,7 @@ def checar_referencias(candidato, schema, tipo):
     """
     catalogo = schema.get("catalogo_referencias", {})
     campos_ref = (schema.get("objetos", {}).get(tipo, {}) or {}).get("references", {})
-    codigo_por_tipo = {"termo": "CTX-V05", "entidade": "CTX-V06", "fonte": "CTX-V07"}
+    codigo_por_tipo = {t: rotulo("referencia_"+t,schema) for t in schema.get("objetos",{})}
 
     erros = []
     for campo, prefixos_permitidos in campos_ref.items():
@@ -173,7 +185,7 @@ def checar_referencias(candidato, schema, tipo):
                     f"ou nao permitido; esperado um de {prefixos_permitidos}"
                 )
                 continue
-            codigo = codigo_por_tipo.get(entrada["tipo"], "CTX-V05/V06/V07")
+            codigo = codigo_por_tipo.get(entrada["tipo"], rotulo("referencia",schema))
             alvo = pathlib.Path(entrada["diretorio"]) / f"{ref_id}.yaml"
             if not alvo.exists():
                 erros.append(
@@ -201,9 +213,9 @@ DIRETORIO_DIVERGENCIAS = pathlib.Path("contexto/divergencias")
 
 
 def checar_confronto(candidato):
-    """CTX-V11: toda classificacao_confronto possui classe e referencia_p3d
+    """Confronto: toda classificacao_confronto possui classe e referencia_p3d
     resolvivel quando a classe exige vinculo com etapa de confronto. So a classe
-    `divergente` e verificada aqui — e a unica para a qual o CTX-01 3.5
+    `divergente` e verificada aqui — e a classe com vínculo obrigatório no contrato
     descreve o conteudo minimo exigido do registro referenciado.
     """
     confronto = candidato.get("classificacao_confronto")
@@ -215,11 +227,11 @@ def checar_confronto(candidato):
 
     referencia = confronto.get("referencia_p3d")
     if not referencia:
-        return [f"CTX-V11: classe '{classe}' exige referencia_p3d preenchida"]
+        return [f"{rotulo('confronto')}: classe '{classe}' exige referencia_p3d preenchida"]
 
     alvo = DIRETORIO_DIVERGENCIAS / f"{referencia}.yaml"
     if not alvo.exists():
-        return [f"CTX-V11: referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
+        return [f"{rotulo('confronto')}: referencia_p3d '{referencia}' nao resolve para registro existente em {DIRETORIO_DIVERGENCIAS}/"]
     return []
 
 
@@ -234,6 +246,7 @@ def curar(tipo, destino, registrado_por, schema_caminho="registro/contexto.schem
     except (OSError, json.JSONDecodeError, X.ErroYaml, ValueError) as erro:
         return f"estrutura invalida: {erro}"
 
+    ROTULOS.set(schema)
     erros = X.validar(candidato, schema, tipo)
     erros += checar_autoria(candidato)
     erros += checar_confronto(candidato)

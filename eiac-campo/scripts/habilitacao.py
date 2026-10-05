@@ -545,7 +545,7 @@ def aplicar(root, s, action, p):
     return {"operacao": action, "registrado": True, "formalizacao_completa": completa(s)}
 
 
-def executar(root, action, payload):
+def executar(root, action, payload, aprovacao=None):
     root = local_externo(root)
     exigir((root / "expediente.json").is_file(), "expediente ausente; inicialize fora da sessão do agente")
     exigir(not (root / "expediente.json").is_symlink() and not (root / ".lock").is_symlink(), "symlink recusado")
@@ -560,6 +560,8 @@ def executar(root, action, payload):
                 payload = json.loads(payload.read_text(encoding="utf-8"))
             exigir(isinstance(payload, dict), "entrada deve ser objeto JSON")
             integridade(root, s)
+            if aprovacao is not None:
+                evento(s, "AprovacaoChatRegistrada", testemunho=copy.deepcopy(aprovacao))
             result = aplicar(root, s, action, payload)
             evento(s, "OperacaoRegistrada", operacao=action,
                    entrada=copy.deepcopy(payload),
@@ -576,6 +578,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("operacao", help="iniciar, estado, tratamento, receber, pendencia, resolver, reabrir, consolidar, revisar, revisao-juridica, gerar, liberar, assinatura, ocorrencia, concluir-0b, acessos, preparar-0d, nao-prosseguir")
     parser.add_argument("--expediente", required=True, type=pathlib.Path)
+    parser.add_argument("--aprovacao", type=pathlib.Path, help="testemunho da aprovação no chat")
     parser.add_argument("--entrada", type=pathlib.Path, help="arquivo JSON conforme reference/habilitacao.md")
     parser.add_argument("--responsavel", help="somente na inicialização humana fora do agente")
     parser.add_argument("--id", help="identificador da habilitação na inicialização")

@@ -152,6 +152,13 @@ def main():
                 autor=st.get("responsavel"), etapa=etapa_id, ferramenta=ferramenta,
             )
 
+    if ferramenta == "Bash":
+        import aprovacao as A
+        recusa = A.avaliar(pb, st, comando)
+        if recusa:
+            operacao, motivo = recusa
+            negar(motivo, operacao=operacao, comando=comando)
+
     # A habilidade é identificada pelo nome declarado, em todas as rotas
     # de carregamento. O namespace e a localização da instalação não
     # fazem parte da regra do método.
@@ -212,7 +219,7 @@ def main():
             "Escrita direta em contexto/ nao e permitida. "
             "Grave pelo curador: python3 scripts/curar.py --tipo <tipo> --arquivo <rascunho>. "
             "Toda regra, termo, entidade ou fonte curada exige procedencia, "
-            "autoria de pessoa nomeada e passagem pela curadoria (CTX-01 3.11).",
+            "autoria de pessoa nomeada e passagem pela curadoria.",
             etapa=etapa_id, ferramenta=ferramenta, alvo=alvo,
         )
 

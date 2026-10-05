@@ -116,6 +116,7 @@ def main():
     ap.add_argument("--autor", default=None,
                      help="ignorado para fins de autoria -- ver docstring do modulo")
     ap.add_argument("--nota", required=True)
+    ap.add_argument("--aprovacao", help="testemunho conferido pelo contrato da sessão")
     a = ap.parse_args()
 
     estado = E.ler()

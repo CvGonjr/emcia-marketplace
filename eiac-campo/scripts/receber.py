@@ -87,6 +87,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--arquivo', required=True); ap.add_argument('--manifesto', required=True)
     ap.add_argument('--autor'); ap.add_argument('--nova-versao')
+    ap.add_argument('--aprovacao', help='testemunho conferido pela guarda da sessão')
     a = ap.parse_args()
     try:
         with K.seguro('registro/.canais.lock').open('a') as lock:
