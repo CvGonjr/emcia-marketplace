@@ -59,3 +59,19 @@ def receber_exportacao(root, s, p):
         original_sha256=H.digest(raw), arquivo=H.guardar(root, filtrado, '.csv'),
         conferencia_sha256=reg['relatorio_sha256'])
     H.invalidar(s)
+
+
+def receber_mensagem(root, s, p):
+    H.exigir(s.get('tratamento') and s['fontes'], 'mensagem exige tratamento e coleta inicial')
+    ident = H.identificador(p['id']); H.exigir(ident not in s['fontes'], 'fonte já registrada')
+    texto = H.texto(p.get('texto')); pergunta = H.texto(p.get('pergunta')); respondente = H.pessoa(p.get('respondente'))
+    origem = p.get('origem') or next(iter(s['fontes']))
+    H.exigir(origem in s['fontes'], 'origem da mensagem ausente')
+    rodada = max(f['rodada'] for f in s['fontes'].values())+1
+    reg = dict(caso=s['caso_reservado'], rodada=rodada, pergunta=pergunta, texto=texto, respondente=respondente)
+    import json
+    s['fontes'][ident] = dict(formulario=s['fontes'][origem]['formulario'], submissao='mensagem-'+ident,
+        rodada=rodada, canal='manual', respondente=respondente, origem=origem,
+        versao_perguntas=s['fontes'][origem]['versao_perguntas'], recebido_em=H.agora(),
+        arquivo=H.guardar(root, json.dumps(reg, ensure_ascii=False).encode(), '.json'))
+    H.invalidar(s)

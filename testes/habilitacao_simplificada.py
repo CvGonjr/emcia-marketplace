@@ -136,4 +136,18 @@ class Simplificada(unittest.TestCase):
         outro = self.base/'fora.csv'; outro.write_bytes(self.csv.read_bytes()); self.csv = outro
         with self.assertRaisesRegex(ValueError, 'entrada'): self.coletar()
 
+    def test_20_mensagem_vazia_recusa(self):
+        self.permanente(); self.exportacao(); self.coletar()
+        with self.assertRaisesRegex(ValueError, 'texto'):
+            H.executar(self.exp, 'receber-mensagem', dict(id='M1', respondente='Pessoa Cliente', texto='', pergunta='Limite?'))
+
+    def test_21_mensagem_sem_novo_formulario_ou_pendencia(self):
+        self.permanente(); self.exportacao(); self.coletar()
+        H.executar(self.exp, 'receber-mensagem', dict(id='M1', respondente='Pessoa Cliente',
+                   texto='O limite termina na entrega.', pergunta='Onde termina o processo?'))
+        s = json.loads((self.exp/'expediente.json').read_text()); f = s['fontes']['M1']
+        self.assertEqual(f['canal'], 'manual'); self.assertEqual(f['rodada'], 1)
+        self.assertEqual(f['formulario'], 'FORM'); self.assertFalse(s['pendencias'])
+        self.assertEqual(json.loads(H.ler_arquivo(self.exp, f['arquivo']))['texto'], 'O limite termina na entrega.')
+
 if __name__ == '__main__': unittest.main(verbosity=2)

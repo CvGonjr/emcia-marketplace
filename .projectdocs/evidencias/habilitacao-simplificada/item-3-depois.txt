@@ -1,0 +1,18 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+test_10_exportacao_sem_linha_do_caso (__main__.Simplificada.test_10_exportacao_sem_linha_do_caso) ... ok
+test_11_duas_submissoes_nao_escolhe (__main__.Simplificada.test_11_duas_submissoes_nao_escolhe) ... ok
+test_12_permanente_ausente_bloqueia_coleta (__main__.Simplificada.test_12_permanente_ausente_bloqueia_coleta) ... ok
+test_13_filtra_antes_de_persistir (__main__.Simplificada.test_13_filtra_antes_de_persistir) ... ok
+test_14_selecao_explicita_dentre_duas (__main__.Simplificada.test_14_selecao_explicita_dentre_duas) ... ok
+test_15_arquivo_fora_da_entrada_recusa (__main__.Simplificada.test_15_arquivo_fora_da_entrada_recusa) ... ok
+test_20_mensagem_vazia_recusa (__main__.Simplificada.test_20_mensagem_vazia_recusa) ... ok
+test_21_mensagem_sem_novo_formulario_ou_pendencia (__main__.Simplificada.test_21_mensagem_sem_novo_formulario_ou_pendencia) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.465s
+
+OK
