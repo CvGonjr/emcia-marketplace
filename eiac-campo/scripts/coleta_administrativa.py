@@ -75,3 +75,17 @@ def receber_mensagem(root, s, p):
         versao_perguntas=s['fontes'][origem]['versao_perguntas'], recebido_em=H.agora(),
         arquivo=H.guardar(root, json.dumps(reg, ensure_ascii=False).encode(), '.json'))
     H.invalidar(s)
+
+
+def tratamento_padrao(root, s, p):
+    import iniciar as I
+    config = pathlib.Path(p.get('config_emcia', I.CONFIG)); c = I.ler_config(config)
+    H.exigir(c['responsavel'] == s['responsavel'], 'responsável diverge do expediente')
+    H.exigir(not s['fontes'], 'condições devem preceder a coleta')
+    t = c.get('tratamento_administrativo')
+    H.exigir(isinstance(t, dict), 'configure as condições administrativas antes da coleta')
+    condicoes = H.texto(t.get('condicoes')); provedor = H.texto(t.get('provedor'))
+    raw = condicoes.encode('utf-8')
+    s['tratamento'] = dict(escopo='administrativo', condicoes=condicoes, provedor=provedor,
+        decisor=s['responsavel'], referencia=str(config.absolute())+'#tratamento_administrativo',
+        texto_sha256=H.digest(raw), evidencia=H.guardar(root, raw, '.md'))

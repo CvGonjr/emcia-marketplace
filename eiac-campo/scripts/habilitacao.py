@@ -325,6 +325,9 @@ def aplicar(root, s, action, p):
         s["tratamento"] = {"escopo": "administrativo", "condicoes": texto(p.get("condicoes")),
                            "provedor": texto(p.get("provedor")), "decisor": pessoa(p.get("decisor")),
                            "evidencia": importar(root, p.get("evidencia"))}
+    elif action == "tratamento-padrao":
+        import coleta_administrativa as C
+        C.tratamento_padrao(root, s, p)
     elif action == "receber-mensagem":
         import coleta_administrativa as C
         C.receber_mensagem(root, s, p)

@@ -150,4 +150,19 @@ class Simplificada(unittest.TestCase):
         self.assertEqual(f['formulario'], 'FORM'); self.assertFalse(s['pendencias'])
         self.assertEqual(json.loads(H.ler_arquivo(self.exp, f['arquivo']))['texto'], 'O limite termina na entrega.')
 
+    def test_30_tratamento_ausente_recusa(self):
+        H.iniciar(self.exp, 'HAB', 'Pessoa Engenheira', 'CASO')
+        with self.assertRaisesRegex(ValueError, 'condições administrativas'):
+            H.executar(self.exp, 'tratamento-padrao', {'config_emcia':str(self.cfg)})
+
+    def test_31_tratamento_padrao_com_hash_sem_aprovacao(self):
+        H.iniciar(self.exp, 'HAB', 'Pessoa Engenheira', 'CASO')
+        c = I.ler_config(self.cfg); c['tratamento_administrativo'] = dict(condicoes='Condições sintéticas', provedor='Provedor sintético')
+        I.escrever(self.cfg, c)
+        H.executar(self.exp, 'tratamento-padrao', {'config_emcia':str(self.cfg)})
+        s = json.loads((self.exp/'expediente.json').read_text())
+        self.assertEqual(s['tratamento']['texto_sha256'], H.digest('Condições sintéticas'.encode()))
+        self.assertEqual(s['tratamento']['referencia'], str(self.cfg)+'#tratamento_administrativo')
+        self.assertFalse(any(e['tipo']=='AprovacaoChatRegistrada' for e in s['eventos']))
+
 if __name__ == '__main__': unittest.main(verbosity=2)
