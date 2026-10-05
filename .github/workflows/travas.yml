@@ -63,6 +63,7 @@ jobs:
         run: |
           python3 testes/bloco_inicial.py
           python3 testes/iniciar_percurso.py
+          python3 testes/perfis_conectores.py
 
       - name: Habilitação administrativa
         run: python3 testes/habilitacao.py
