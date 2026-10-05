@@ -65,3 +65,35 @@ Linha de base no commit 70702c6: 1109 verificações em 53 módulos em Python
 3.12.12; 1111 em 3.14.4. Uma falha conhecida A25, zero falhas inesperadas.
 As duas verificações adicionais correspondem à disponibilidade de PyYAML.
 Evidência: `.projectdocs/evidencias/habilitacao-simplificada/`.
+
+### Entrega e conferência final
+
+Campo 0.8.30 e playbook 0.4.22; núcleo 0.2.48 intacto. O template exige triagem
+e calendário em F0, sem Drive; documentos/entrada continua exigido em P2.
+Canônicos/manifesto/APR e templates permanecem byte a byte, sem reempacotamento.
+
+Percurso sintético: três confirmações com literal ok, dois depósitos, uma rodada
+por mensagem e sete chamadas públicas proximo até F0 liberado. A fixture anterior
+modela 93 chamadas públicas (aprovar/executar/retomar/retorno), cinco grupos de
+aprovação e uma conferência de formulário por caso, excluindo perfil/aceitação
+reutilizáveis. São operações da fixture, não medição do runtime Claude.
+
+P2 usa seis criações e quatro compartilhamentos com uma aprovação posterior;
+raiz e trabalho-interno permanecem privados. Não compartilha a raiz para evitar
+herança de acesso ao trabalho-interno. A associação automática do PDF assinado
+exige texto integral do enviado; Poppler/pdftotext é necessário. PDF sem texto
+ou cuja organização pelo painel impeça essa comparação usa a alternativa manual.
+A confirmação humana e o caráter de testemunho continuam, sem autenticar assinatura.
+
+Regressão integral: 1140 verificações/54 módulos em Python 3.12.12 e 1142/54
+em 3.14.4, uma falha conhecida A25, zero inesperadas. PyYAML explica a diferença.
+Depois da regressão, o negativo de campos extras no payload da coleta reproduziu
+um risco de preservar entrada ignorada no histórico; a operação passou a recusá-los
+antes da persistência. Os 31 específicos passaram nas duas versões após a correção.
+Isso impede que um lote de outros casos seja anexado ao payload da coleta.
+
+Navegador e retornos MCP são substituídos por fixtures sintéticas no percurso;
+nenhuma conta real foi acessada. Configuração opcional pode ser completada pela
+operação configurar, sem trocar responsável ou bases fixados. Modelos, minutas,
+habilidades e decisões de método conservam seus contratos. Retomada é idempotente
+nos atos confirmados; API com retorno perdido ainda exige conferência remota.

@@ -11,8 +11,8 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 | Componente | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.29 | Método, scripts de campo, comandos, habilidades e template |
-| Playbook do template | 0.4.21 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+| eiac-campo | 0.8.30 | Método, scripts de campo, comandos, habilidades e template |
+| Playbook do template | 0.4.22 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
 Origem controlada: tag `metodo-v1.0`, commit `08bfb162d762935ed35f55e0a75bc700b81d5276`.
@@ -175,7 +175,9 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
 | 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
 | 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica | obrigatoriedade de ratificação parcialmente superada por 045 |
-| 045 | Bloco inicial conduzido com aprovação nominal e aceitação revogável | firme por instrução do engenheiro |
+| 045 | Bloco inicial conduzido com aprovação nominal e aceitação revogável | firme; emendada por 047 |
+| 046 | Comparador no formato real do conector Tally | firme |
+| 047 | Habilitação simplificada, formulário permanente e abertura sem Drive | firme; emenda 045 |
 
 ## Suítes e evidências
 
@@ -288,3 +290,21 @@ NBSP, bordas e formatação. Marcas/estrutura não reconhecidas são recusadas p
 blocks[i]. Prefixo de id nas perguntas continua divergindo. Bateria: 48 testes;
 regressão integral 1109/53 em 3.12 e 1111/53 em 3.14, somente A25 conhecida.
 Evidência: .projectdocs/evidencias/comparador-conector-real/.
+
+## Habilitação simplificada — decisão 047
+
+Campo 0.8.30 e playbook 0.4.22. Fluxo em fluxo_habilitacao.py, chamado por
+iniciar.py proximo; cartão de uma página, fontes em coleta_administrativa.py,
+formularios_permanentes.py, habilitacao_lotes.py e acessos_administrativos.py.
+Três confirmações, dois depósitos, uma rodada por mensagem; mesmos três templates
+APR-01. Tally/calendário na abertura; provisionamento_p2.py cria árvore e compartilha
+quatro pastas em P2 com uma aprovação, mantendo raiz e trabalho-interno privados.
+O canal documentos/entrada continua obrigatório em P2. Pacote canônico e núcleo
+não mudam. Scripts manuais e decisões de método no terminal permanecem.
+
+Evidência: .projectdocs/evidencias/habilitacao-simplificada/. A25 conserva somente
+selar-apos-P2 ausente das seções 3.3 e 3.4, conforme 045/047. Regressores antigos
+continuam cobrindo a alternativa anterior, sem migração automática de casos.
+
+Regressão 047: 1140/54 em 3.12, 1142/54 em 3.14, somente A25 conhecida;
+31 específicos finais nas duas versões após recusa de entrada extra na coleta.

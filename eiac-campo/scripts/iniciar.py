@@ -63,20 +63,27 @@ def log(p,c,tipo,**dados):
 
 def configurar(p,d):
     p=pathlib.Path(p)
-    if p.exists():
-        c=ler_config(p)
-        if any(c[k]!=d.get(k) for k in CAMPOS):raise ValueError('configuração já fixada; não substitua responsável ou bases silenciosamente')
-        return c
     opcionais={'pasta_drive','entrada_dir','tratamento_administrativo'}
     if not CAMPOS<=set(d)<=CAMPOS|opcionais:raise ValueError('informe os seis campos da configuração e somente os opcionais documentados')
     H.pessoa(d['responsavel'])
     for k in CAMPOS:H.texto(d[k])
-    for k in ('base_casos','base_expedientes'):
+    for k in ('base_casos','base_expedientes',*(['entrada_dir'] if 'entrada_dir' in d else [])):
         q=pathlib.Path(d[k]).expanduser()
         if not q.is_absolute():raise ValueError('bases exigem caminhos absolutos')
         H.local_externo(q)
     for k in ('workspace_tally','calendario_casos',*(['pasta_drive'] if 'pasta_drive' in d else [])):
         if not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',d[k]):raise ValueError('configuração exige id, não nome: '+k)
+    if 'tratamento_administrativo' in d:
+        t=d['tratamento_administrativo']
+        if not isinstance(t,dict) or set(t)!={'condicoes','provedor'}:raise ValueError('tratamento padrão exige condicoes e provedor')
+        H.texto(t['condicoes']);H.texto(t['provedor'])
+    if p.exists():
+        c=ler_config(p)
+        if any(c[k]!=d.get(k) for k in CAMPOS):raise ValueError('configuração já fixada; não substitua responsável ou bases silenciosamente')
+        alterados={k:d[k] for k in opcionais&set(d) if c.get(k)!=d[k]}
+        if alterados:
+            c.update(alterados);escrever(p,c);log(p,c,'ConfiguracaoAdministrativaAtualizada',campos=sorted(alterados))
+        return c
     escrever(p,d);log(p,d,'ConfiguracaoEMCIARegistrada')
     return d
 
@@ -580,8 +587,13 @@ def retomar(p,hab,caso):
     return dict(proximo=proximo,expediente=str(exp),caso=str(case),estado=s)
 
 
+def proximo(p,d):
+    import fluxo_habilitacao as F
+    return F.proximo(p,d)
+
+
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('operacao',choices=['calibrar','ambiente','configurar','aprovar','executar','retomar','retorno'])
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('operacao',choices=['calibrar','ambiente','configurar','aprovar','executar','retomar','retorno','proximo'])
     ap.add_argument('--config',type=pathlib.Path,default=CONFIG);ap.add_argument('--entrada',type=pathlib.Path,required=True)
     ap.add_argument('--aprovacao',type=pathlib.Path)
     a=ap.parse_args()
@@ -592,6 +604,7 @@ def main():
         elif a.operacao=='ambiente':r=ambiente(ler_config(a.config),d['ferramentas'])
         elif a.operacao=='aprovar':r=aprovar(a.config,d['operacao'],d['entrada'],d['literal'],d['resumo'])
         elif a.operacao=='executar':r=operar(a.config,d['operacao'],d['entrada'],A.ler(a.aprovacao) if a.aprovacao else None)
+        elif a.operacao=='proximo':r=proximo(a.config,d)
         elif a.operacao=='retorno':r=registrar_retorno(a.config,d['chamada'],d['resultado'])
         else:r=retomar(a.config,d['habilitacao'],d['caso'])
         print(json.dumps(r,ensure_ascii=False,indent=2))

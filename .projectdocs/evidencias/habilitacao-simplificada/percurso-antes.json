@@ -1,0 +1,14 @@
+{
+  "commit": "70702c6",
+  "aprovacoes_agrupadas": 5,
+  "conferencias_formulario": 1,
+  "chamadas_publicas_por_operacao": {
+    "aprovar": 38,
+    "operar": 38,
+    "retomar": 5,
+    "registrar_retorno": 12
+  },
+  "chamadas_script_modeladas": 93,
+  "criterio": "Uma chamada por operação pública iniciar.py da fixture, excluindo perfil e aceitação reutilizáveis. Hooks/MCPs e helpers internos não contam. Não é medição do runtime Claude.",
+  "arquivo_fixture": "testes/iniciar_percurso.py"
+}

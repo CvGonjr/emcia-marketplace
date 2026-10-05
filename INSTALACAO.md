@@ -2,7 +2,7 @@
 
 Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
 O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
-A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.29, playbook 0.4.21.
+A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.30, playbook 0.4.22.
 
 ## 1. Instalar os plugins
 
@@ -57,7 +57,7 @@ Não substitua leitura por id por busca global nem afrouxe expressões de escopo
 
 A primeira execução verifica ambiente e prepara `~/.emcia/config.json` com:
 responsável nominal, base local de casos, base local de expedientes, id do workspace
-Tally, id da pasta raiz Drive, id do calendário e navegador. O agente obtém ids pelos
+Tally, id do calendário e navegador. Pasta Drive é opcional até P2. O agente obtém ids pelos
 MCPs quando possível e pergunta somente o que faltar. As bases ficam fora de
 repositórios da ferramenta e do método. A configuração é privada e reutilizada.
 
@@ -83,8 +83,9 @@ executa `conferir-formulario`; o relatório MD com hash substitui arquivo extern
 quando não tem divergências e o engenheiro confirma “conferido” por
 `confirmar-formulario`. Divergência bloqueia publicação. O PDF conferido permanece
 como caminho manual alternativo. `fetch_submissions` não tem filtro pelo campo
-oculto; o engenheiro filtra/exporta no painel e entrega os bytes pelo caminho
-manual registrado. A API não é chamada para obter um lote amplo.
+oculto; o engenheiro deposita o CSV exportado em ~/emcia-op/entrada/.
+O script filtra pelo caso antes de gravar, conservando só as linhas do caso
+e o hash do original sem copiá-lo. A API não é chamada para obter um lote amplo.
 Publicação ausente ou criação sem workspace também exigem ação manual; registre
 a decisão e evidência por `caminho-manual`, conforme reference/canais.md.
 
@@ -98,16 +99,24 @@ revogável. Sem revisão aprovada ou aceitação ativa, a geração recusa. Revi
 prevalece para o hash coberto. Parecer condicionado não é registrado como aprovado.
 A situação jurídica fica no expediente e no checklist, nunca no documento do cliente.
 
-O percurso sem retrabalho reúne cinco aprovações: envio do formulário/plano de
-rodadas; carta; três PDFs/plano de assinatura; abertura com a árvore inteira; conjunto
-de compartilhamentos com destinatário, pasta e papel. Não existe efeito externo sem
-aprovação. Alterações de conteúdo ou destino exigem nova conferência. Indique os PDFs
-assinados e evidências quando devolvidos; a sessão aguarda esse retorno sem inventá-lo.
+Após confirmar cada formulário, declare formulario-permanente na configuração,
+com tipo, formId e relatório. Contrato/formulário alterado exige nova conferência.
+Configure tratamento_administrativo com condicoes e provedor; o script aplica
+o padrão com referência e hash antes da coleta. Consulte o cartão operacional.
 
-A sequência local é abertura → planejar/provisionar → definir (ou `--canais`) →
-importar → validar `00-habilitacao` → selar → conferir F0 liberado.
-A aprovação de abertura inclui uma aprovação da árvore inteira; a aprovação de
-compartilhamentos é separada. Trabalho-interno não é compartilhado com o cliente.
+Por caso, o engenheiro envia o link e faz dois depósitos em ~/emcia-op/entrada/:
+CSV e três PDFs assinados (relatórios opcionais HAB-01-relatorio.pdf etc.).
+Confirma três conjuntos: documentos apresentados; assinaturas; abertura/importação/
+validação/selo. Mensagens completam lacunas e confirmam/corrigem a matriz de acessos.
+“ok” é suficiente para o conjunto apresentado, com trecho real e hashes preservados.
+Associação automática de PDFs requer Poppler (`pdftotext`, pacote poppler-utils
+em Debian/Ubuntu); PDF sem texto ou com reorganização exige a alternativa manual.
+
+O comando carrega somente reference/cartao-habilitacao.md e usa iniciar.py proximo:
+uma chamada por avanço e saída curta. A abertura declara Tally/calendário, importa,
+valida 00-habilitacao e sela. Drive aguarda P2 e uma aprovação do plano de criação
+e compartilhamento. Raiz e trabalho-interno permanecem privados. P2 conserva
+a exigência de documentos/entrada. Nenhuma decisão de método muda.
 
 ## 5. Retomar e conferir
 

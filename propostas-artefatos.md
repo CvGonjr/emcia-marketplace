@@ -35,3 +35,17 @@ manuais. A falta da garantia não autoriza parâmetro fictício ou filtro local
 após coleta ampla. CAN-01 conserva o filtro de caso e a listagem antes da leitura.
 A emenda da decisão 045 autoriza o executor e registra esse limite, sem mudar
 documento controlado nem reempacotar o método.
+
+## Complemento — habilitação simplificada (decisão 047)
+
+| Documento | Revisão solicitada | Regra preservada |
+|---|---|---|
+| EMCIA-HAB-01 | Formulário permanente por tipo; CSV local filtrado antes da escrita; mensagem com rodada; condições padrão; três confirmações administrativas; matriz de 0c pré-preenchida | Três documentos APR separados, origem/hash, assinaturas conferidas, restrições e dados operacionais após abertura |
+| EMCIA-ROT-02 | Link com caso; dois depósitos; revisar/gerar/liberar conjunto; assinatura por pasta; abertura/importação/validação/selo agrupados; cartão e retomada | Aprovações reais, sem inferir silêncio; decisões de método no terminal |
+| EMCIA-CAN-01 | Tally/calendário na abertura; declaração/conferência reutilizável de formulários; exportação local; Drive em P2 com uma aprovação de criação/compartilhamento | API ampla recusada; ids exatos; raiz e trabalho-interno privados; P2 bloqueada sem documentos/entrada |
+| EMCIA-MAN-01 | Descrever proximo, três confirmações, mensagens, dois depósitos, abertura sem Drive e preparação de P2; manter revisão canônica do selo após P2 | F0–P10, camadas, produtos, procedência e decisões de método preservados |
+
+A25 conserva a divergência exata anterior; nenhuma nova divergência na tabela
+3.3/atos 3.4. As diferenças da habilitação/abertura ficam propostas, sem editar
+o pacote aprovado ou alterar hash dos templates. A decisão 047 aprova a interface
+operacional; aprovação de nova linha de base documental pertence ao canônico.

@@ -1,0 +1,31 @@
+{
+  "aprovacoes": 3,
+  "depositos": 2,
+  "chamadas_script": 7,
+  "passos": [
+    "depositar-exportacao",
+    "esclarecer",
+    "aprovar-documentos",
+    "depositar-assinaturas",
+    "aprovar-assinaturas",
+    "aprovar-abertura",
+    "F0"
+  ],
+  "mensagens_esclarecimento": 1,
+  "drive_na_abertura": false,
+  "isolamento": "nenhum SEGREDO-OUTRO em qualquer arquivo do expediente",
+  "documentos": {
+    "HAB-01": {
+      "enviado": "38ba73e0c0d416b2eac82e48bea80a99dce356140f7c1a1b4bcf17dbab6ae481",
+      "assinado": "50f1f4b2787d9b0a7dc45db8dce7febae796ae858b262c26216f4083443ebd77"
+    },
+    "HAB-02": {
+      "enviado": "9746a777add67423e9474b83c0e87a90152a93a8528fc47e9527d08fd61e05cc",
+      "assinado": "1c107bc68f0ec7ec2504f40b4accc97fd5b7174b8365941326e9122461546cab"
+    },
+    "HAB-03": {
+      "enviado": "15132328cd42ffd09c99882d2fada6a6050e8c0eec53b90ffe5580aef552622b",
+      "assinado": "b50247eb8d4b2c9c7dc0ac218ffb77d71032bb821db6e0b3f350d534a3228f7c"
+    }
+  }
+}

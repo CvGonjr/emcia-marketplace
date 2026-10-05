@@ -50,6 +50,6 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
 | 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
 | 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica | firme; obrigatoriedade de ratificação parcialmente superada por 045 |
-| 045 | Bloco inicial conduzido, aprovação nominal no chat e aceitação revogável sem ratificação | firme; emendas de perfis reais e conferência automática de formulário |
+| 045 | Bloco inicial conduzido, aprovação nominal no chat e aceitação revogável sem ratificação | firme; emendas de perfis reais, conferência automática e habilitação simplificada (047) |
 | 046 | Comparador de formulário no formato real do conector Tally, com normalização e recusa por caminho | firme |
 | 047 | Habilitação simplificada, formulário permanente e abertura sem Drive | firme; emenda 045 |

@@ -18,6 +18,9 @@ def planejar(root, s):
     itens = [dict(item=l, status='a-confirmar', evidencia=ident)
              for l in respostas.get('HAB-0c-3', '').splitlines() if l.strip()]
     s['proposta_acessos'] = dict(origem=ident, origem_sha256=fonte['arquivo']['sha256'], respostas_0c=respostas, itens=itens)
+    md='# Matriz de acessos proposta\n\nFonte: '+ident+' · '+fonte['arquivo']['sha256']+'\n\n'
+    md+='\n'.join(k+': '+v for k,v in respostas.items())+'\n\nStatus: a confirmar; não presume concessão.\n'
+    s['proposta_acessos']['relatorio']=H.guardar(root,md.encode(),'.md')
     return s['proposta_acessos']
 
 

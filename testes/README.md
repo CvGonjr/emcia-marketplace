@@ -2,10 +2,10 @@
 
 Revisão: 05/10/2026. Linha de base integral do bloco inicial: **986 verificações
 em 49 módulos**, Python 3.12.12, sem exclusões/falhas. Regressão final:
-**1109 verificações em 53 módulos em Python 3.12** (1111 em Python 3.14.4,
+**1140 verificações em 54 módulos em Python 3.12** (1142 em Python 3.14.4,
 com duas verificações adicionais de PyYAML), com A25 como única falha conhecida, preservada
 visível; quatro negativas de A25 passam. Evidência e runner:
-`.projectdocs/evidencias/conferencia-formulario/`. Os pacotes anteriores permanecem
+`.projectdocs/evidencias/habilitacao-simplificada/`. Os pacotes anteriores permanecem
 históricos em `linha-de-base-v1/` e `revisao-juridica-resultado/`.
 
 ## Executar
@@ -20,7 +20,7 @@ python3 testes/contexto.py
 Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
 
 ```bash
-python3 .projectdocs/evidencias/bloco-inicial-conduzido/reexecutar-suite.py /tmp/emcia-suite.txt
+python3 .projectdocs/evidencias/habilitacao-simplificada/reexecutar-suite.py /tmp/emcia-suite.txt
 ```
 
 O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
@@ -35,6 +35,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 |---|---:|---|
 | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
 | `bloco_inicial.py` | 19 | Recusas, testemunhos, escopo, decisões humanas, autoria/configuração, saída e núcleo sem instrumentos/conectores |
+| `habilitacao_simplificada.py` | 31 | Permanentes/contrato; isolamento CSV e recusa de entrada extra; mensagens/tratamento; três aprovações; PDFs; abertura sem Drive; P2 com criação/compartilhamento; retomada |
 | `iniciar_percurso.py` | 4 | Percurso completo com MCP simulado, cinco aprovações, três retomadas e selo Git; ratificação prevalece |
 | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
 | `campo_2_6_2.py` | 38 | Verificacao operacional de P6 e P7 -- pacote 2.6.2 |
@@ -182,3 +183,26 @@ A revisão 046 usa fixtures fornecidas com safeHTMLSchema e verifica normalizaç
 restrita, marcas malformadas/desconhecidas, elementos extras, bloco inválido com
 caminho, pontuação/palavras/acentos/espaços internos e prefixo de id divergente.
 Evidência integral em .projectdocs/evidencias/comparador-conector-real/.
+
+## Habilitação simplificada — decisão 047
+
+31 testes no novo módulo, negativos e percurso completo. Fixture nominal registra
+três confirmações, dois depósitos, sete chamadas públicas proximo e uma rodada
+por mensagem. Retomada não repete atos. CSV contém três casos; bytes de outros
+casos não aparecem no expediente nem no diagnóstico da CLI. Campos extras na
+entrada são recusados antes do evento que preserva o payload.
+P2 simulada após o percurso verifica canal ausente, plano/uma aprovação, seis
+criações, quatro compartilhamentos, hooks e definição dos canais. Não executa
+apuração ou decisão de método pela sessão. Raiz/trabalho-interno são privados.
+
+Navegador/PDFs e retorno MCP são sintéticos no percurso; teste não autentica
+assinaturas, conta remota ou interface de painel. Associação confere texto inteiro
+preservado e continua exigindo confirmação humana. Use checkout canônico da tag
+metodo-v1.0 para conferir também seus templates; o checkout com minutas posteriores
+é uma fonte diferente e não deve ser usado como template vigente.
+
+A regressão integral nas duas versões passou sem novas falhas. Depois foi reforçada
+a entrada CSV contra campos extras (negativo visto falhar); os 31 testes específicos
+foram repetidos nas duas versões. Logs iniciais, finais e dessa verificação estão em
+.projectdocs/evidencias/habilitacao-simplificada/. A25 mantém sua única divergência
+045/047 visível; nenhuma nova divergência documental é tolerada.

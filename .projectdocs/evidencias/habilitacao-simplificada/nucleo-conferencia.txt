@@ -1,0 +1,3 @@
+rg -n <vocabulário de instrumentos/conectores/atos> eiac-nucleo/scripts --glob *.py
+Saída: vazia. Código: 1 (sem correspondências).
+Núcleo inalterado em relação a 70702c6.

@@ -10,8 +10,8 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 | Componente | Versão | Responsabilidade |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.29 | Método, comandos, habilidades e operações administrativas |
-| Playbook dos casos novos | 0.4.21 | Atos administrativos aprovados; decisões de método humanas |
+| eiac-campo | 0.8.30 | Método, comandos, habilidades e operações administrativas |
+| Playbook dos casos novos | 0.4.22 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
 Caso real utiliza somente a linha de base documental aprovada **metodo-v1.0**,
@@ -23,8 +23,9 @@ o pacote. Documento em revisão ou fora dessa aprovação não entra em caso rea
 Alteração documental posterior requer aprovação e nova linha de base antes do uso.
 Nenhum documento do pacote foi editado para esta entrega.
 
-A [decisão 045](decisoes/045-bloco-inicial-conduzido.md) autoriza as diferenças
-operacionais do playbook 0.4.21. O MAN-01 v1.0 ainda descreve o contrato anterior:
+As [decisões 045](decisoes/045-bloco-inicial-conduzido.md) e
+[047](decisoes/047-habilitacao-simplificada.md) autorizam as diferenças
+operacionais do playbook 0.4.22. O MAN-01 v1.0 ainda descreve o contrato anterior:
 `manual_a25.py` é **falha conhecida**, mantida visível até revisão canônica.
 Propostas: [propostas-artefatos.md](propostas-artefatos.md).
 
@@ -49,45 +50,44 @@ Detalhes: [INSTALACAO.md](INSTALACAO.md).
 
 ## Percurso conduzido e retomada
 
-Na primeira execução, o agente obtém ids pelos MCPs quando possível, pergunta
-somente o que faltar e grava `~/.emcia/config.json`: responsável, bases de casos
-e expedientes, workspace Tally, pasta raiz Drive, calendário e navegador.
-Ele apresenta o perfil determinístico dos conectores para uma confirmação inicial.
-Ferramentas sem perfil permanecem recusadas e são listadas no diagnóstico.
-A calibração usa o inventário fornecido, com nomes e parâmetros literais. Neste
-conector Tally, a preparação ocorre no painel. A sessão lê por `load_form(formId)`
-e compara texto, ordem, tipo e campo oculto `caso` com o modelo, gerando relatório
-MD com hash. Publicação exige relatório sem divergências e confirmação “conferido”;
-PDF conferido permanece alternativa. A coleta filtrada exige ação manual registrada:
-não existe filtro por campo oculto em `fetch_submissions`.
+A preparação reutilizável configura responsável, bases externas, workspace Tally,
+calendário, navegador, condições administrativas e perfil calibrado pelo inventário
+real. Pasta Drive pode ser informada em P2. Ratificação ou aceitação revogável e
+formulários permanentes são conferidos uma vez. `load_form(formId)` e o comparador
+fixam texto, ordem, tipo e campo oculto caso; relatório sem divergências recebe
+“conferido”. `formularios_permanentes` guarda tipo, id, versão/hash do contrato,
+data/hash da conferência. Alteração exige nova conferência, sem recriar por cliente.
 
-O percurso sem alterações de conteúdo reúne cinco aprovações:
+O engenheiro envia o link `?caso=<caso>`, deposita o CSV e depois os três PDFs
+assinados em `~/emcia-op/entrada/`. Coleta local grava só a linha daquele caso,
+com hash filtrado e hash do original sem copiá-lo; zero ou várias submissões
+aguardam indicação humana. A API ampla de submissões continua recusada.
+Esclarecimentos vêm por mensagem, preservados como fonte manual com rodada.
+Matriz de 0c é pré-preenchida e confirmada/corrigida numa mensagem.
 
-1. Envio do formulário e plano administrativo de coleta e esclarecimentos.
-2. Conferência da carta, qualificação e campos consolidados com fonte.
-3. Conferência dos três PDFs, signatários e plano de retorno das assinaturas.
-4. Decisão de abrir, incluindo uma aprovação da árvore inteira e do plano local
-   de canais → importação → validação → selo.
-5. Conjunto dos compartilhamentos, listando destinatário, pasta/id e papel.
+O percurso nominal tem três confirmações, que podem ser “ok”:
 
-Cada operação recebe um testemunho com operação, resumo, trecho literal, pessoa,
-data, contexto, entrada e hashes dos arquivos conferidos. O mesmo trecho pode
-cobrir atos mecânicos do plano aprovado; não autoriza conteúdo, destinatário ou
-papel diferente. Mudanças exigem nova aprovação. Os PDFs devolvidos e comprovantes
-são indicados pelo engenheiro; o agente não inventa assinatura ou conferência.
-Não há mensagem, compartilhamento ou publicação sem aprovação explícita.
+1. Revisão conjunta dos três documentos apresentados: revisar, gerar e liberar.
+2. Conferência dos PDFs assinados, associação aos enviados e evidências.
+3. Abertura, declaração Tally/calendário, importação, validação e selo.
 
-A sessão registra condições administrativas antes de ler respostas; conserva
-perguntas, respostas e rodadas, prepara os campos e as conferências. Depois de 0d,
-abre o caso, provisiona os ids, define canais (ou usa `--canais`), importa, valida
-`00-habilitacao`, sela e roda [saida_inicial.py](eiac-campo/scripts/saida_inicial.py).
-O relatório confere o método, os canais, os arquivos e o selo confirmado no Git.
-Evento `SeloAplicado` deixado por commit recusado não libera F0.
+O testemunho conserva resumo, trecho real, data, pessoa e hashes. Silêncio não vale.
+Os PDFs emitidos preservam os bytes conferidos. Associação automática do retorno
+exige texto integral dos enviados, extraído por Poppler/pdftotext; arquivos sem
+texto ou com conteúdo divergente usam a alternativa manual com conferência humana.
+Não há integração com assinatura. Mudanças exigem nova revisão.
 
-`/eiac-campo:iniciar` lê expediente e caso e retoma a saída ausente. Não repete
-emissão, assinatura, importação ou selo já confirmados. Chamada MCP interrompida
-antes de preservar seu retorno exige conferência remota por id antes de repetição.
-Não há promessa de execução única de APIs sem essa conferência.
+`/eiac-campo:iniciar` carrega somente o [cartão](eiac-campo/reference/cartao-habilitacao.md)
+e chama `iniciar.py proximo` uma vez por avanço, com saída curta. Criação de
+expediente, tratamento padrão e coleta não têm aprovação própria. Retomada não
+repete emissão, assinatura, importação ou selo. O checklist confere F0 liberado,
+sem encerrá-lo; evento de selo sem commit confirmado não basta.
+
+Drive é planejado/provisionado em P2, com uma aprovação de criação e compartilhamento.
+A raiz e trabalho-interno ficam privados; cada efeito mantém ids, destinatário e
+papel aprovados. P2 permanece bloqueada sem o canal de documentos.
+Chamada MCP interrompida antes de preservar retorno exige conferir objeto remoto
+por id antes de repetir; não se promete execução única de APIs.
 
 ## Minutas e situação jurídica
 

@@ -27,9 +27,10 @@ def filtrar(raw, caso, coluna_id='Submission ID', submissao=None):
             H.exigir(None not in linha and all(v is not None for v in linha.values()), 'linha do caso inválida')
             H.texto(linha[coluna_id]); linhas.append(linha)
         H.exigir(linhas, 'nenhuma submissão do caso; deposite a exportação correta e indique qual vale')
+        disponiveis = [l[coluna_id] for l in linhas]
         if submissao is not None:
             linhas = [l for l in linhas if l[coluna_id] == submissao]
-        H.exigir(len(linhas) == 1, 'indique qual submissão do caso vale; nenhuma escolha automática')
+        H.exigir(len(linhas) == 1, 'indique qual submissão do caso vale; ids do caso: '+', '.join(disponiveis[:10])+(' (há mais ids do caso)' if len(disponiveis)>10 else ''))
         out = io.StringIO(newline=''); w = csv.DictWriter(out, fieldnames=cols, lineterminator='\n')
         w.writeheader(); w.writerows(linhas)
         return out.getvalue().encode('utf-8'), linhas[0]
@@ -38,6 +39,8 @@ def filtrar(raw, caso, coluna_id='Submission ID', submissao=None):
 
 
 def receber_exportacao(root, s, p):
+    H.exigir(set(p) <= {'config_emcia','arquivo','id','coluna_submissao','coluna_respondente','submissao','respondente'},
+             'campos extras na coleta recusados; entregue somente o caminho da exportação')
     import iniciar as I
     import formularios_permanentes as F
     config = pathlib.Path(p.get('config_emcia', I.CONFIG)); c = I.ler_config(config)
@@ -62,6 +65,7 @@ def receber_exportacao(root, s, p):
 
 
 def receber_mensagem(root, s, p):
+    H.exigir(set(p) <= {'id','texto','pergunta','respondente','origem'}, 'campos extras na mensagem recusados')
     H.exigir(s.get('tratamento') and s['fontes'], 'mensagem exige tratamento e coleta inicial')
     ident = H.identificador(p['id']); H.exigir(ident not in s['fontes'], 'fonte já registrada')
     texto = H.texto(p.get('texto')); pergunta = H.texto(p.get('pergunta')); respondente = H.pessoa(p.get('respondente'))

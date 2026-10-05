@@ -1,21 +1,26 @@
 # Interface dos canais externos
 
-O fluxo inicial é conduzido por `/eiac-campo:iniciar`, conforme decisão 045.
+O fluxo inicial é conduzido por `/eiac-campo:iniciar`, conforme decisões 045 e 047.
 O procedimento canônico é EMCIA-CAN-01, MAN-01 §3.2 e ROT-02 §3.6 na linha de
 base do manifesto. As diferenças aprovadas estão em `propostas-artefatos.md`;
 o pacote permanece byte a byte o da tag.
 
-## Planejar, provisionar e definir
+## Planejar em P2, provisionar e definir
 
 `canais.py planejar` é somente leitura: propõe a raiz do caso com
 `00-habilitacao`, `entrada-documentos`, `entrada-amostras`, `entregas` e
 `trabalho-interno`. Roteamento usa ids, não nomes. O agente executa os MCPs
 somente depois de registrar e conferir as aprovações dos efeitos externos.
 
-Uma aprovação cobre a árvore inteira, apresentada junto da decisão de abrir.
-Outra cobre o conjunto de compartilhamentos: destinatário, pasta/id e papel
-em cada linha. Trabalho-interno tem acesso do cliente `nenhum`. Uma alteração
-de destino, destinatário ou papel exige aprovação atualizada.
+A abertura simplificada declara somente os formulários permanentes e calendário.
+Em P2, uma aprovação cobre criação e compartilhamento: contêiner e drive declarados,
+raiz, cinco pastas, destinatário e papel. A raiz e trabalho-interno permanecem
+privados; somente 00-habilitacao, entrada-documentos, entrada-amostras e entregas
+são compartilhadas. Uma alteração exige aprovação atualizada. `proximo` com
+`passo: P2`, `conteiner_id`, `drive_id`, `destinatario` e `papel` apresenta o plano.
+Depois da confirmação (`confirmado: true`, `trecho` real), devolve uma chamada
+MCP autorizada por vez. Execute a ferramenta e preserve o retorno com `retorno`.
+Ao final, o script define os canais; P2 continua bloqueada sem documentos/entrada.
 
 A calibração usa exclusivamente o inventário fornecido; neste ensaio,
 `~/emcia-op/ensaio/inventario-mcp.json`. O formato contém `ferramentas`, `nome`,
@@ -121,9 +126,13 @@ O Tally fornecido cria o formulário vazio, mas as ferramentas para perguntas e
 campo oculto têm schema indisponível. O engenheiro prepara/confere no painel,
 com a especificação e id de caso entregues pela sessão. O parâmetro `filter`
 de `fetch_submissions` aceita apenas datas/status; não permite filtrar `caso`.
-A API fica recusada mesmo com formulário declarado. Não se coleta lote para
-filtrar localmente. O engenheiro filtra/exporta manualmente o formulário declarado
-com o campo oculto `caso` e entrega os bytes; `receber` da habilitação usa `canal: manual`.
+A API fica recusada mesmo com formulário declarado. A API ampla continua recusada. Pela decisão 047, o engenheiro deposita o CSV
+exportado em ~/emcia-op/entrada/; receber-exportacao seleciona localmente o caso
+antes de qualquer escrita. Somente linhas desse caso entram no expediente e na
+saída; conserva hash do original, sem copiá-lo, e hash do filtrado. A fonte usa
+canal tally-exportacao. Zero ou várias submissões pedem indicação humana.
+No fluxo simplificado, esse depósito não exige aprovação própria; o registro
+caminho-manual abaixo permanece alternativa às operações anteriores.
 
 Cada caminho manual exige aprovação registrada e evidência com SHA-256:
 
@@ -154,8 +163,9 @@ ainda não há contrato de canais no caso vazio. Os atos locais usam o wrapper e
 entram no caso pelo script. Dentro de caso com canais declarados, a guarda do
 núcleo também aplica seu contrato; a autorização local não contorna a guarda.
 
-A ordem é abertura → planejar/provisionar → definir (ou `--canais`) → importar
-→ validar `00-habilitacao` → selar → F0 liberado. Na sessão, `iniciar.py executar`
+Na decisão 047, a ordem é abertura → definir Tally/calendário → importar
+→ validar `00-habilitacao` → selar → F0 liberado. Drive só em P2, com aprovação.
+A alternativa manual admite provisionar antes da definição; não é exigido para F0. Na sessão, `iniciar.py executar`
 confere testemunho e hashes antes do ato. O responsável fixado é o autor.
 O núcleo aplica `operacoes_sessao` declarado no playbook, sem nomes do método.
 
@@ -228,3 +238,11 @@ fronteira de confiança da 022; não se verifica veracidade remota por modelo.
 Após atualizar para o comparador da decisão 046, leia novamente o formulário,
 gere o relatório e registre “conferido” para seu novo hash; os relatórios anteriores
 não recebem confirmação ou migração automática.
+
+## Formulários permanentes
+
+Depois de confirmar-formulario, formulario-permanente declara o tipo e formId na
+configuração, com versão/hash do contrato e data/hash do relatório. Clientes usam
+o mesmo link com ?caso=<caso>. Contrato alterado ou nova leitura invalida a
+conferência até novo relatório sem diferenças e conferido. Não se copia confirmação
+antiga para um contrato novo. Na coleta, o script reconfere evento e hashes.

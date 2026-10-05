@@ -10,44 +10,105 @@ por hash dos modelos e templates. Metadado interno do template não substitui
 o hash aprovado. Documento fora desse registro não rege caso real.
 Esta referência descreve a interface técnica, sem substituir o procedimento.
 
-## Fluxo conduzido
+## Fluxo simplificado
 
-Use `/eiac-campo:iniciar`. Ambiente, configuração reutilizada, calibração do perfil,
-coleta, rodadas, conferências humanas, assinaturas e passagem até F0 liberado são
-conduzidos pela sessão. A decisão 045 autoriza somente os atos administrativos.
-Cada execução tem aprovação registrada com operação, resumo, trecho literal,
-data, responsável e hashes. Aprovação é testemunho, não autenticação.
+Use `/eiac-campo:iniciar` e `reference/cartao-habilitacao.md`. A decisão 047 emenda
+as operações administrativas da 045. `iniciar.py proximo --entrada <json-local>`
+executa os atos automáticos e para na próxima informação ou aprovação necessária.
+Uma chamada por avanço; saída contém resumo, próximo passo e artefatos pertinentes,
+sem o estado inteiro. A retomada confere hashes e não repete atos já registrados.
 
-A sessão prepara entradas e executa `iniciar.py aprovar`/`executar`. O JSON externo
-para executar tem `operacao` e `entrada`; esta identifica `habilitacao` e `caso`,
-e `entrada` interna contém o payload da habilitação. Exemplo sintético:
+O percurso nominal tem três confirmações: revisão conjunta dos três documentos
+(inclui qualificação, revisar/gerar/liberar); conferência dos PDFs assinados e
+suas evidências; abertura/importação/validação/selo. “ok” é suficiente quando
+aprova o conjunto apresentado. O registro conserva o trecho real, resumo, data,
+pessoa e hashes; não autentica chat nem assinatura. Mudança exige nova conferência.
+Criar expediente, aplicar condições padrão e receber exportação não têm aprovação
+própria. Decisões de método continuam no terminal.
+
+### Preparação reutilizável
+
+A configuração exige responsavel, base_casos, base_expedientes, workspace_tally,
+calendario_casos e navegador. pasta_drive é opcional até P2. entrada_dir é opcional
+para instalações com outra pasta administrativa; padrão `~/emcia-op/entrada/`.
+As bases/pasta de entrada devem ser externas aos repositórios. Não coloque caso
+ou dado de cliente na ferramenta. Tratamento padrão é:
 
 ```json
-{"operacao":"revisar","entrada":{"habilitacao":"HAB-0001","caso":"caso-0001","entrada":{"decisor":"Nome Sobrenome","motivo":"Carta conferida","qualificacao_0a":true,"conteudo_conferido":true,"evidencia":"/pasta/revisao.md"}}}
+{"tratamento_administrativo":{"condicoes":"Texto das condições administrativas comunicadas","provedor":"Ambiente autorizado"}}
 ```
 
-Para `aprovar`, use o mesmo objeto e acrescente `literal` e `resumo`; preserve
-sua saída JSON como testemunho. Não invente aprovação nem registre silêncio.
+`tratamento-padrao` aplica o texto antes da coleta, com referência à configuração,
+SHA-256 e cópia só das condições. Condição diferente usa a operação `tratamento`
+a seguir, com evidência e indicação explícita do engenheiro. Não altera HAB-03.
+Perfil calibrado/aprovado e ratificação ou aceitação revogável seguem a 045.
 
-```bash
-python3 /caminho/eiac-campo/scripts/iniciar.py aprovar --entrada /pasta/ato-aprovado.json > /pasta/aprovacao.json
-python3 /caminho/eiac-campo/scripts/iniciar.py executar --entrada /pasta/ato.json --aprovacao /pasta/aprovacao.json
+`formulario-permanente` em `iniciar.py executar`, após comparação sem divergências
+e `confirmar-formulario`, declara modelo e formulario_id. A configuração guarda
+`formularios_permanentes: tipo → {formId, versao_contrato, contrato_sha256,
+data_conferencia, relatorio_sha256, relatorio, workspace_id, responsavel,
+habilitacao, caso}`. Modelo sem versão usa `sha256:<hash>` como versão do contrato.
+Na abertura também se exige formulário permanente de triagem, sem mudar F0.
+Uma nova leitura ou alteração do contrato invalida a conferência; coleta recusa
+até novo relatório e “conferido”. Não recrie formulário por cliente.
+
+### Exportação e esclarecimentos
+
+O engenheiro envia o link `https://tally.so/r/<formId>?caso=<caso>` e deposita o CSV
+exportado. A entrada opcional `exportacao` indica o arquivo quando houver mais
+de um. CSV UTF-8 exige cabeçalho único, `caso`, `Submission ID` e `Respondente`;
+`coluna_submissao`/`coluna_respondente` declaram os nomes reais se forem diferentes,
+e `respondente` pode indicar nominalmente quem respondeu. Não adivinhe colunas.
+`formId`/`workspaceId`, se presentes, precisam coincidir com a configuração.
+O script filtra pelo valor exato de `caso` antes de gravar; nunca copia o original.
+Fonte `tally-exportacao` conserva apenas o CSV filtrado, seu hash e hash do original.
+Zero ou múltiplas submissões recusam e pedem indicação, listando somente ids do caso; `submissao` seleciona uma
+das linhas daquele caso. API fetch_submissions permanece recusada.
+
+As lacunas são apresentadas; o comando redige a pergunta e o engenheiro cola a
+resposta do cliente. `mensagem` contém `id`, `pergunta`, `texto`, `respondente` e,
+opcionalmente, `origem`. Vira fonte manual com rodada posterior e literal intacto.
+Não exige formulário, pendencia/resolver/reabrir; esses comandos continuam abaixo.
+Informe `campos` com valor e fonte; consolidação recusa campo sem fonte.
+Não presuma resposta, qualificação, competência ou acesso pela ausência de texto.
+
+### Entradas das três confirmações
+
+Toda entrada de `proximo` identifica `habilitacao` e `caso`. A sessão prepara os
+campos/plano a partir das fontes e apresenta os documentos ao engenheiro:
+
+```json
+{"habilitacao":"HAB-0001","caso":"caso-0001","plano_documentos":{"qualificacao_0a":true,"conteudo_conferido":true,"liberacao":{"ferramenta":"Painel escolhido","operador":"Nome Cliente","signatarios":[{"nome":"Nome Cliente","papel":"organizacao","competencia":"Representante autorizado"},{"nome":"Nome Engenheiro","papel":"emcia","competencia":"Responsável EMCIA"}]}}}
 ```
 
-`retomar` recebe `{"habilitacao":"HAB-0001","caso":"caso-0001"}` e lê o estado.
-Na primeira configuração, `configurar` recebe os sete campos: responsavel,
-base_casos, base_expedientes, workspace_tally, pasta_drive, calendario_casos,
-navegador. As bases são absolutas e externas; ids são retornados pelo conector
-ou informados explicitamente. O perfil usa o arquivo de inventário real com `ferramentas`/`nome`/`inputSchema`/`parametros`.
-Confira o relatório e os caminhos manuais em reference/canais.md: o Tally fornecido
-não tem filtro pelo campo oculto em fetch_submissions. Preparação e coleta manual
-exigem decisão/evidência registrada; a API recusada não é chamada.
+O componente gera preparações, sem revisão humana presumida. `preparar-documentos`
+não libera emissão; a primeira confirmação incorpora revisar, gerar e liberar.
+A emissão reutiliza exatamente os PDFs apresentados, com templates resolvidos
+pelo APR-01, sem controle interno ou aviso jurídico no documento do cliente.
 
-As cinco aprovações do percurso sem retrabalho são envio/plano de rodadas, carta,
-PDFs/plano de assinaturas, abertura com árvore inteira/plano local, compartilhamentos
-com destinatário/pasta/papel. Um trecho pode cobrir operações mecânicas desse plano;
-mudança de conteúdo, árvore ou destino exige atualização. PDFs e evidências devolvidos
-precisam ser indicados e conferidos pelo engenheiro; o agente não autentica assinatura.
+```json
+{"habilitacao":"HAB-0001","caso":"caso-0001","aprovacao":{"ponto":"documentos","confirmado":true,"trecho":"ok"}}
+```
+
+Depois do segundo depósito, `plano_assinaturas` indica referência e signatários
+com nome, papel e data real; pode ser lista comum ou mapa por HAB-01/02/03.
+`preparar-assinaturas` associa por texto integral extraído dos PDFs enviados,
+com espaços de paginação normalizados; o assinado deve preservar esse texto.
+Exige Poppler/pdftotext. PDF de outro caso, conteúdo alterado, duplicata ou ausência
+recusa. PDFs sem texto ou com reorganização pelo painel usam o registro manual,
+com conferência humana; não há flag para ignorar divergência. Relatórios opcionais
+usam `HAB-01-relatorio.pdf` etc.; sem relatório separado, o próprio PDF é evidência.
+Comparação não autentica assinaturas nem certificados. A confirmação `assinaturas`
+registra os três retornos com hash enviado/assinado, evidências, nomes e datas.
+
+`planejar-acessos` pré-preenche literalmente as respostas de 0c (colunas com ids
+ou perguntas exatas do contrato). Não presume concessão. `acessos` em `proximo`
+recebe `{confirmado: true, trecho: <mensagem real>, matriz: <entrada acessos abaixo>}`;
+a mensagem confirma/corrige patrocinador, executor, sessão, itens e restrições.
+A terceira confirmação usa `ponto: abertura` e cobre abrir, declarar Tally/calendário,
+importar, validar 00-habilitacao e selar. Drive aguarda P2 e aprovação posterior.
+
+Os comandos manuais permanecem alternativas e conservam suas travas específicas.
 
 ## Inicialização manual alternativa
 
@@ -366,8 +427,10 @@ nem mudam o estado. Preserve o diretório completo no encaminhamento para 0d.
 
 ## Importação aprovada no caso e alternativa manual
 
-A sequência é abertura → planejar/provisionar → definir (ou `--canais`) →
-importar → gravar `00-habilitacao` pelo validador → selar → F0.
+No fluxo simplificado, a sequência é abertura → definir Tally/calendário →
+importar → gravar `00-habilitacao` pelo validador → selar → F0. Drive é
+planejado/provisionado em P2, com aprovação. A alternativa manual conserva
+planejar/provisionar antes de definir quando quiser preparar esses canais.
 
 Nos casos novos com canais externos, prepare a declaração com
 `/eiac-campo:canais` e confira `reference/canais.md`. No terminal humano,

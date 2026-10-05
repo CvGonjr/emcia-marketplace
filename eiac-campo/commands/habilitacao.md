@@ -5,7 +5,7 @@ Uso: `/eiac-campo:habilitacao <expediente> [ação]`
 
 Para o percurso completo, use `/eiac-campo:iniciar`. Leia `reference/habilitacao.md`,
 `reference/canais.md` e os instrumentos HAB-01, ROT-02, CAN-01 e APR-01 do pacote
-aprovado. Diferenças operacionais são autorizadas pela decisão 045; não edite o pacote.
+aprovado. Diferenças operacionais são autorizadas pelas decisões 045 e 047; não edite o pacote.
 
 Consulte o estado antes de executar. Prepare JSON fora dos repositórios da ferramenta
 e do método. Atos administrativos podem ser executados pela sessão depois de
@@ -31,8 +31,10 @@ Controle do modelo, aviso e histórico internos e registros de aceitação/situa
 jurídica ficam no expediente, nunca no MD/PDF do cliente. A emissão mostra
 “Para assinatura”. O checklist mostra “Minutas sem ratificação jurídica” sem bloquear.
 
-Depois da decisão de abrir e da aprovação da árvore e dos compartilhamentos,
-defina canais, importe, valide 00-habilitacao e sele, pelo plano aprovado.
+Na decisão 047, a confirmação de abertura cobre declarar Tally/calendário,
+importar, validar 00-habilitacao e selar. Drive é provisionado em P2, com
+aprovação do plano de criação/compartilhamento. Os comandos daqui são a
+alternativa manual; o percurso normal usa o cartão e iniciar.py proximo.
 Apuração, decidir-prosseguimento, sessões, restrições, autonomia, recalibragem,
 encerramentos EX3/EX4 e selo após P2 continuam no terminal humano. Caso antigo
 conserva o playbook; uma atualização do plugin não altera essa fronteira.

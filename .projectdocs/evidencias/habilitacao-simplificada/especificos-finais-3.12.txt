@@ -1,0 +1,36 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+test_10_exportacao_sem_linha_do_caso (__main__.Simplificada.test_10_exportacao_sem_linha_do_caso) ... ok
+test_11_duas_submissoes_nao_escolhe (__main__.Simplificada.test_11_duas_submissoes_nao_escolhe) ... ok
+test_12_permanente_ausente_bloqueia_coleta (__main__.Simplificada.test_12_permanente_ausente_bloqueia_coleta) ... ok
+test_13_filtra_antes_de_persistir (__main__.Simplificada.test_13_filtra_antes_de_persistir) ... ok
+test_14_selecao_explicita_dentre_duas (__main__.Simplificada.test_14_selecao_explicita_dentre_duas) ... ok
+test_15_arquivo_fora_da_entrada_recusa (__main__.Simplificada.test_15_arquivo_fora_da_entrada_recusa) ... ok
+test_20_mensagem_vazia_recusa (__main__.Simplificada.test_20_mensagem_vazia_recusa) ... ok
+test_21_mensagem_sem_novo_formulario_ou_pendencia (__main__.Simplificada.test_21_mensagem_sem_novo_formulario_ou_pendencia) ... ok
+test_30_tratamento_ausente_recusa (__main__.Simplificada.test_30_tratamento_ausente_recusa) ... ok
+test_31_tratamento_padrao_com_hash_sem_aprovacao (__main__.Simplificada.test_31_tratamento_padrao_com_hash_sem_aprovacao) ... ok
+test_40_revisao_conjunta_sem_aprovacao_recusa (__main__.Simplificada.test_40_revisao_conjunta_sem_aprovacao_recusa) ... ok
+test_41_ok_cobre_tres_documentos_com_mesmos_pdfs (__main__.Simplificada.test_41_ok_cobre_tres_documentos_com_mesmos_pdfs) ... ok
+test_42_assinatura_sem_aprovacao_recusa (__main__.Simplificada.test_42_assinatura_sem_aprovacao_recusa) ... ok
+test_43_pdf_assinado_de_outro_documento_recusa (__main__.Simplificada.test_43_pdf_assinado_de_outro_documento_recusa) ... ok
+test_44_aprovacao_de_documento_adulterado_recusa (__main__.Simplificada.test_44_aprovacao_de_documento_adulterado_recusa) ... ok
+test_50_matriz_nao_presume_acesso_concedido (__main__.Simplificada.test_50_matriz_nao_presume_acesso_concedido) ... ok
+test_51_acessos_sem_mensagem_explicita_recusa (__main__.Simplificada.test_51_acessos_sem_mensagem_explicita_recusa) ... ok
+test_60_abertura_canais_sem_drive (__main__.Simplificada.test_60_abertura_canais_sem_drive) ... ok
+test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa (__main__.Simplificada.test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa) ... ok
+test_70_proximo_executa_inicial_sem_aprovacao (__main__.Simplificada.test_70_proximo_executa_inicial_sem_aprovacao) ... ok
+test_71_abertura_sem_terceira_aprovacao_recusa (__main__.Simplificada.test_71_abertura_sem_terceira_aprovacao_recusa) ... ok
+test_80_percurso_completo_tres_aprovacoes_dois_depositos (__main__.Simplificada.test_80_percurso_completo_tres_aprovacoes_dois_depositos) ... ok
+test_81_p2_exige_aprovacao_e_cria_pastas (__main__.Simplificada.test_81_p2_exige_aprovacao_e_cria_pastas) ... ok
+test_90_config_existente_recebe_padrao_sem_trocar_responsavel (__main__.Simplificada.test_90_config_existente_recebe_padrao_sem_trocar_responsavel) ... ok
+test_91_proximo_composto_e_decisao_metodo_recusados (__main__.Simplificada.test_91_proximo_composto_e_decisao_metodo_recusados) ... ok
+test_92_coleta_na_cli_nao_expoe_outro_caso (__main__.Simplificada.test_92_coleta_na_cli_nao_expoe_outro_caso) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 2.867s
+
+OK

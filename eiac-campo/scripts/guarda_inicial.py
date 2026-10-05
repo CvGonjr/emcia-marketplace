@@ -19,6 +19,11 @@ def conferir(ev,config=I.CONFIG):
                         raise ValueError('ato operacional em código inline não inspecionável')
                     if script not in ('habilitacao.py','abrir_caso.py','iniciar.py'):continue
                     if script=='iniciar.py':
+                        if args and args[0]=='proximo':
+                            if len(segmentos)!=1 or composto or len(D._argumento(args,'--entrada'))!=1:
+                                raise ValueError('proximo exige chamada simples com entrada local')
+                            I.ler_config(config)
+                            continue
                         if not args or args[0]!='executar':continue
                         ps=D._argumento(args,'--entrada');rs=D._argumento(args,'--aprovacao')
                         if len(segmentos)!=1 or composto or len(ps)!=1 or len(rs)!=1:raise ValueError('execução exige entrada simples e aprovação registrada')
