@@ -240,4 +240,24 @@ class Simplificada(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'mensagem'):
             H.executar(self.exp, 'confirmar-acessos', {'matriz':{}})
 
+    def test_60_abertura_canais_sem_drive(self):
+        import canais as K
+        from formularios_permanentes import validar
+        self.permanente()
+        c = I.ler_config(self.cfg); c['formularios_permanentes']['triagem'] = dict(c['formularios_permanentes']['habilitacao'], formId='TRIAGEM')
+        pb = json.loads((ROOT/'eiac-campo/template-caso/registro/playbook.json').read_text())
+        with patch('formularios_permanentes.validar', side_effect=lambda p,c,t:c['formularios_permanentes'][t]):
+            reg = K.declaracao_inicial(self.cfg, c, 'CASO', pb)
+        K.validar(reg, {'caso':'CASO'}, pb)
+        self.assertEqual({x['ferramenta'] for x in reg['canais']}, {'tally','calendar'})
+        self.assertTrue(any(x['finalidade']=='triagem' for x in reg['canais']))
+        self.assertEqual(pb['canais_por_etapa']['P2'], [{'finalidade':'documentos','direcao':'entrada'}])
+
+    def test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa(self):
+        self.permanente(); c = I.ler_config(self.cfg); c['fluxo_habilitacao'] = 'simplificado'; I.escrever(self.cfg,c)
+        with self.assertRaisesRegex(ValueError, 'P2'):
+            self.op('mcp', ferramenta='mcp__claude_ai_Google_Drive__create_file',
+                argumentos={'title':'Pasta', 'parentId':'ROOT', 'contentMimeType':'application/vnd.google-apps.folder'})
+        self.assertEqual(json.loads(self.cfg.with_name('eventos.jsonl').read_text().splitlines()[-1])['evento'], 'TentativaNegada')
+
 if __name__ == '__main__': unittest.main(verbosity=2)

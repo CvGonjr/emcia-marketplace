@@ -25,7 +25,7 @@ import habilitacao as H
 import abrir_caso as B
 
 CONFIG=pathlib.Path.home()/'.emcia/config.json'
-CAMPOS={'responsavel','base_casos','base_expedientes','workspace_tally','pasta_drive','calendario_casos','navegador'}
+CAMPOS={'responsavel','base_casos','base_expedientes','workspace_tally','calendario_casos','navegador'}
 HAB={'tratamento','receber','pendencia','resolver','reabrir','consolidar','revisar','revisao-juridica',
      'gerar','liberar','assinatura','ocorrencia','concluir-0b','acessos','preparar-0d','nao-prosseguir','estado'}
 
@@ -67,14 +67,15 @@ def configurar(p,d):
         c=ler_config(p)
         if any(c[k]!=d.get(k) for k in CAMPOS):raise ValueError('configuração já fixada; não substitua responsável ou bases silenciosamente')
         return c
-    if set(d)!=CAMPOS:raise ValueError('informe os sete campos da configuração')
+    opcionais={'pasta_drive','entrada_dir','tratamento_administrativo'}
+    if not CAMPOS<=set(d)<=CAMPOS|opcionais:raise ValueError('informe os seis campos da configuração e somente os opcionais documentados')
     H.pessoa(d['responsavel'])
     for k in CAMPOS:H.texto(d[k])
     for k in ('base_casos','base_expedientes'):
         q=pathlib.Path(d[k]).expanduser()
         if not q.is_absolute():raise ValueError('bases exigem caminhos absolutos')
         H.local_externo(q)
-    for k in ('workspace_tally','pasta_drive','calendario_casos'):
+    for k in ('workspace_tally','calendario_casos',*(['pasta_drive'] if 'pasta_drive' in d else [])):
         if not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',d[k]):raise ValueError('configuração exige id, não nome: '+k)
     escrever(p,d);log(p,d,'ConfiguracaoEMCIARegistrada')
     return d
@@ -339,7 +340,11 @@ def escopos(p,c,hab,caso,operacao):
         declaracoes=[e for e in F.eventos(p) if e.get('evento')=='FormularioPermanenteDeclarado' and e.get('modelo')==tipo]
         if declaracoes and declaracoes[-1]['registro']==reg:
             conhecidos['formulario_id'].append(reg['formId'])
-    if operacao=='provisionar':conhecidos['pasta_id'].append(c['pasta_drive'])
+    if operacao=='provisionar' and c.get('pasta_drive'):conhecidos['pasta_id'].append(c['pasta_drive'])
+    if operacao=='provisionar':
+        import provisionamento_p2 as Q
+        raiz=Q.conteiner_aprovado(p,c,caso)
+        if raiz:conhecidos['pasta_id'].append(raiz)
     exp=pathlib.Path(c['base_expedientes'])/hab
     if (exp/'expediente.json').exists():
         state=json.loads((exp/'expediente.json').read_text());H.integridade(exp,state)
@@ -373,6 +378,13 @@ def autorizar_mcp(p,d,r=None):
     nome=d['ferramenta'];args=d['argumentos']
     regra=S.regra_aplicavel(cfg['perfil'],nome,args)
     hab=H.identificador(d['habilitacao']);caso=H.identificador(d.get('caso') or hab)
+    if c.get('fluxo_habilitacao')=='simplificado' and regra['operacao'] in ('provisionar','compartilhar'):
+        case=pathlib.Path(c['base_casos'])/caso
+        if not case.is_dir():raise ValueError('pastas Drive aguardam P2 aberta e aprovação')
+        with cwd(case):
+            st=E.ler()
+            if not st or st['etapa_atual']!='P2' or st['cumprimentos'].get('P2',{}).get('cumprido'):
+                raise ValueError('pastas Drive só podem ser criadas/compartilhadas em P2 aberta, com aprovação')
     conhecidos=escopos(p,c,hab,caso,regra['operacao'])
     for a in regra['argumentos']:
         val=S.argumento(args,a['campo'])
@@ -382,7 +394,7 @@ def autorizar_mcp(p,d,r=None):
         elif a['tipo']=='constante':ok=val==a['valor']
         else:ok=isinstance(val,str) and val in vals
         if not ok:raise ValueError('id/expressão fora do escopo declarado: '+a['campo'])
-    if regra['operacao']=='compartilhar' and args.get('fileId')==c['pasta_drive']:raise ValueError('não compartilhe a raiz EMCIA')
+    if regra['operacao']=='compartilhar' and args.get('fileId')==c.get('pasta_drive'):raise ValueError('não compartilhe a raiz EMCIA')
     if regra.get('exige_aprovacao') and r is None:raise ValueError('efeito externo sem aprovação no chat registrada')
     if r is not None:A.conferir(r,'mcp',c['responsavel'],caso,cmd_operacao('mcp',d))
     evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]

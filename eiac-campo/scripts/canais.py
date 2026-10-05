@@ -77,7 +77,7 @@ def validar(dados, st, pb):
     exigir(set(dados) == {'versao', 'caso', 'decidido_por', 'data', 'canais'}, 'campos da declaração inválidos')
     exigir(type(dados['versao']) is int and dados['versao'] > 0, 'versão precisa ser inteiro positivo')
     exigir(dados['caso'] == st['caso'], 'declaração pertence a outro caso')
-    exigir(E.pessoa_nomeada(dados['decidido_por']), 'decidido_por precisa ser pessoa nomeada')
+    exigir(E.pessoa_nomeada(dados['decidido_por'], pb['pessoa_nomeada']), 'decidido_por precisa ser pessoa nomeada')
     datetime.date.fromisoformat(dados['data'])
     exigir(isinstance(dados['canais'], list) and bool(dados['canais']), 'canais precisa ser lista não vazia')
     previstos = {r['finalidade']: r for r in pb.get('canais_previstos', [])}
@@ -221,3 +221,20 @@ def main():
 
 
 if __name__ == '__main__': main()
+
+
+def declaracao_inicial(config, c, caso, pb):
+    """Endereços aprovados reutilizáveis; nenhuma pasta antecipada."""
+    from formularios_permanentes import validar as permanente
+    canais = []
+    for f in pb['canais_previstos']:
+        if f['finalidade'] not in ('habilitacao', 'triagem', 'sessoes'): continue
+        if f['ferramenta'] == 'tally':
+            reg = permanente(config, c, f['finalidade'])
+            ids = dict(workspace_id=c['workspace_tally'], formulario_id=reg['formId'])
+        else:
+            ids = dict(calendario_id=c['calendario_casos'])
+        canais.append(dict(f, ids=ids, proprietario='emcia', acesso_cliente='nenhum', sensivel=False,
+            filtro={'campo':'caso','valor':caso} if f['ferramenta']=='tally' else None,
+            marcador='[{caso}/{etapa}]' if f['ferramenta']=='calendar' else None))
+    return dict(versao=1, caso=caso, decidido_por=c['responsavel'], data=datetime.date.today().isoformat(), canais=canais)
