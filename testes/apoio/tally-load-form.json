@@ -1,0 +1,315 @@
+{
+  "data": {
+    "formId": "FORM",
+    "workspaceId": "WORK",
+    "name": "Sintético",
+    "blocksCount": 33,
+    "blocks": [
+      {
+        "uuid": "d64fdf91-72cd-5357-b2bb-9401909436ba",
+        "type": "TITLE",
+        "groupUuid": "d64fdf91-72cd-5357-b2bb-9401909436ba",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Qual processo vocês querem tratar? Onde ele começa e onde termina?"
+        }
+      },
+      {
+        "uuid": "d79024c5-50db-5500-92f2-b2967f74f7f4",
+        "type": "TEXTAREA",
+        "groupUuid": "d79024c5-50db-5500-92f2-b2967f74f7f4",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "b5adec98-8789-5f09-84e4-9804fb0e2ebe",
+        "type": "TITLE",
+        "groupUuid": "b5adec98-8789-5f09-84e4-9804fb0e2ebe",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Qual é o problema concreto nesse processo hoje? O que dá errado, atrasa ou custa caro?"
+        }
+      },
+      {
+        "uuid": "b480243b-28eb-50e0-9897-3f126102e7e4",
+        "type": "TEXTAREA",
+        "groupUuid": "b480243b-28eb-50e0-9897-3f126102e7e4",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "fd9eb47c-9c95-5ea8-81f6-b5a3c7c0248a",
+        "type": "TITLE",
+        "groupUuid": "fd9eb47c-9c95-5ea8-81f6-b5a3c7c0248a",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Você decide sobre esse processo? Se não, quem decide?"
+        }
+      },
+      {
+        "uuid": "f0e530c5-72d3-5e15-b599-b1787b1908c9",
+        "type": "TEXTAREA",
+        "groupUuid": "f0e530c5-72d3-5e15-b599-b1787b1908c9",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "e20b1143-4195-5830-9f52-8abbef69cbc1",
+        "type": "TITLE",
+        "groupUuid": "e20b1143-4195-5830-9f52-8abbef69cbc1",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Quem executa esse processo no dia a dia? Quantas pessoas?"
+        }
+      },
+      {
+        "uuid": "b9de174e-4a7a-5989-8ff7-5895e092d21f",
+        "type": "TEXTAREA",
+        "groupUuid": "b9de174e-4a7a-5989-8ff7-5895e092d21f",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "39e1e3ef-34f5-5d1c-8473-0f54584ebe40",
+        "type": "TITLE",
+        "groupUuid": "39e1e3ef-34f5-5d1c-8473-0f54584ebe40",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Existem documentos, planilhas ou sistemas que registram esse processo?"
+        }
+      },
+      {
+        "uuid": "9c04b958-a995-5a27-8413-4dce6405bbe0",
+        "type": "TEXTAREA",
+        "groupUuid": "9c04b958-a995-5a27-8413-4dce6405bbe0",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "efcfedd2-5c9c-51f8-840d-9a7dce2285b3",
+        "type": "TITLE",
+        "groupUuid": "efcfedd2-5c9c-51f8-840d-9a7dce2285b3",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Vocês estariam dispostos a dar acesso a esses dados e documentos e a liberar quem executa o processo para conversar conosco?"
+        }
+      },
+      {
+        "uuid": "907c4d3f-878c-5a27-a191-3d220dc3a74d",
+        "type": "TEXTAREA",
+        "groupUuid": "907c4d3f-878c-5a27-a191-3d220dc3a74d",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "b256d1d8-bcb5-5ea7-a157-3c0234508db1",
+        "type": "TITLE",
+        "groupUuid": "b256d1d8-bcb5-5ea7-a157-3c0234508db1",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Quem tem competência para assinar a carta de escopo e o acordo de confidencialidade?"
+        }
+      },
+      {
+        "uuid": "61939f0d-0672-58aa-86c3-a06166140eea",
+        "type": "TEXTAREA",
+        "groupUuid": "61939f0d-0672-58aa-86c3-a06166140eea",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "bb81bad8-e18a-5f34-8d77-86926a5ecc02",
+        "type": "TITLE",
+        "groupUuid": "bb81bad8-e18a-5f34-8d77-86926a5ecc02",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Vocês autorizam a gravação das sessões de levantamento?"
+        }
+      },
+      {
+        "uuid": "5c45f38e-cbd8-5f37-b395-80c8c5cbd9dc",
+        "type": "TEXTAREA",
+        "groupUuid": "5c45f38e-cbd8-5f37-b395-80c8c5cbd9dc",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "7fd7a065-9fcc-54e8-ada8-2f058c4ceceb",
+        "type": "TITLE",
+        "groupUuid": "7fd7a065-9fcc-54e8-ada8-2f058c4ceceb",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Vocês autorizam que documentos e dados do processo sejam processados por um modelo de IA de terceiro? Qual provedor e qual localização de processamento são aceitáveis?"
+        }
+      },
+      {
+        "uuid": "de8933b7-113f-5c8f-991e-d42333accea2",
+        "type": "TEXTAREA",
+        "groupUuid": "de8933b7-113f-5c8f-991e-d42333accea2",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "e1d0311e-0af7-5986-b7f1-2ecea5ef806f",
+        "type": "TITLE",
+        "groupUuid": "e1d0311e-0af7-5986-b7f1-2ecea5ef806f",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há dado pessoal ou sensível no processo? Que regra de anonimização precisa ser seguida?"
+        }
+      },
+      {
+        "uuid": "c6841d8c-8d5f-5d6f-9b23-790ef061c5e6",
+        "type": "TEXTAREA",
+        "groupUuid": "c6841d8c-8d5f-5d6f-9b23-790ef061c5e6",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "4649946c-0f47-52af-b6ab-eb81eee28620",
+        "type": "TITLE",
+        "groupUuid": "4649946c-0f47-52af-b6ab-eb81eee28620",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Está claro que o serviço entrega diagnóstico e especificação, e não implanta, não integra sistemas e não opera a solução?"
+        }
+      },
+      {
+        "uuid": "3f50eb1a-2d43-5c36-af2e-75b9c0a2ec9e",
+        "type": "TEXTAREA",
+        "groupUuid": "3f50eb1a-2d43-5c36-af2e-75b9c0a2ec9e",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "f0664754-1bf2-5dfb-b1a9-37b3ce01eebe",
+        "type": "TITLE",
+        "groupUuid": "f0664754-1bf2-5dfb-b1a9-37b3ce01eebe",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Quem será o patrocinador nomeado do trabalho, com nome e cargo?"
+        }
+      },
+      {
+        "uuid": "95a1dda6-1d9d-5fa2-a208-6347fb47332b",
+        "type": "TEXTAREA",
+        "groupUuid": "95a1dda6-1d9d-5fa2-a208-6347fb47332b",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "584932ad-7f3a-5f91-bfb0-0d2ef2642a91",
+        "type": "TITLE",
+        "groupUuid": "584932ad-7f3a-5f91-bfb0-0d2ef2642a91",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Quem será o executor que participará da sessão presencial? Em que data?"
+        }
+      },
+      {
+        "uuid": "7dbc291c-ddae-5fc4-aa82-e3ec1268ef37",
+        "type": "TEXTAREA",
+        "groupUuid": "7dbc291c-ddae-5fc4-aa82-e3ec1268ef37",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "d1ac50d0-96e2-5767-81d9-f49a07b830ca",
+        "type": "TITLE",
+        "groupUuid": "d1ac50d0-96e2-5767-81d9-f49a07b830ca",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "A que dados, sistemas e documentos teremos acesso? Leitura direta ou amostra exportada?"
+        }
+      },
+      {
+        "uuid": "9cf346c3-ea71-540b-a5a9-7001efc3dd41",
+        "type": "TEXTAREA",
+        "groupUuid": "9cf346c3-ea71-540b-a5a9-7001efc3dd41",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "015c871c-2c5b-5d27-962e-8270802b3652",
+        "type": "TITLE",
+        "groupUuid": "015c871c-2c5b-5d27-962e-8270802b3652",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "De que período é a amostra? Ela representa o processo normal ou um período atípico?"
+        }
+      },
+      {
+        "uuid": "a97ca711-fa5f-5e6f-b8cf-c1ef6c9de021",
+        "type": "TEXTAREA",
+        "groupUuid": "a97ca711-fa5f-5e6f-b8cf-c1ef6c9de021",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "ecbdc468-eeba-571f-b672-81d50e4064ea",
+        "type": "TITLE",
+        "groupUuid": "ecbdc468-eeba-571f-b672-81d50e4064ea",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "O que **não** poderá ser acessado, e por quê?"
+        }
+      },
+      {
+        "uuid": "190cc0f3-59b8-5542-ae9a-6fa057e635b1",
+        "type": "TEXTAREA",
+        "groupUuid": "190cc0f3-59b8-5542-ae9a-6fa057e635b1",
+        "groupType": "TEXTAREA",
+        "payload": {
+          "isRequired": true
+        }
+      },
+      {
+        "uuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+        "type": "HIDDEN_FIELDS",
+        "groupUuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+        "groupType": "HIDDEN_FIELDS",
+        "payload": {
+          "hiddenFields": [
+            {
+              "uuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+              "name": "caso"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "context": {
+    "feedback": "Fixture sintética conforme esquema de blocos oficial; nenhuma chamada remota."
+  }
+}

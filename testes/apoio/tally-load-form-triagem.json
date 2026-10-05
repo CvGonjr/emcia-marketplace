@@ -1,0 +1,456 @@
+{
+  "data": {
+    "formId": "FORM",
+    "workspaceId": "WORK",
+    "name": "Triagem sintética",
+    "blocksCount": 37,
+    "blocks": [
+      {
+        "uuid": "4cac3e42-a9e2-5e3d-a740-75d0bb1f92a9",
+        "type": "TITLE",
+        "groupUuid": "4cac3e42-a9e2-5e3d-a740-75d0bb1f92a9",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Quantos sistemas-fonte relevantes alimentam o processo-alvo?"
+        }
+      },
+      {
+        "uuid": "e9ae5120-7b58-5b1a-b7bc-b99c3d3ceb13",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "e9ae5120-7b58-5b1a-b7bc-b99c3d3ceb13",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Até três",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "3895a59f-5d32-57de-b81c-8f38a6601b61",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "e9ae5120-7b58-5b1a-b7bc-b99c3d3ceb13",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "De quatro a dez",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "62db2830-cedf-5ef1-8c8c-a6cdf495a71f",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "e9ae5120-7b58-5b1a-b7bc-b99c3d3ceb13",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Mais de dez",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "e47be702-eae3-535a-be19-200f3121c268",
+        "type": "TITLE",
+        "groupUuid": "e47be702-eae3-535a-be19-200f3121c268",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há integração entre esses sistemas?"
+        }
+      },
+      {
+        "uuid": "ee535df6-d4d8-5e57-9e8a-e629279c7405",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "ee535df6-d4d8-5e57-9e8a-e629279c7405",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Nenhuma, ou por planilhas",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "c36c2c6d-979d-5176-b69c-cb689dfc17a1",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "ee535df6-d4d8-5e57-9e8a-e629279c7405",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Parcial",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "8799b7e1-18c8-5b6f-8783-eb1b993c0ec2",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "ee535df6-d4d8-5e57-9e8a-e629279c7405",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Repositório analítico central em uso",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "1c75236b-23ee-52c1-8c32-f38c0729810c",
+        "type": "TITLE",
+        "groupUuid": "1c75236b-23ee-52c1-8c32-f38c0729810c",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há área ou responsável formal por dados?"
+        }
+      },
+      {
+        "uuid": "63713516-f604-5285-8f98-a11a963f9d4e",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "63713516-f604-5285-8f98-a11a963f9d4e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não há",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "320fa6a3-262a-5717-9443-9eb579ec2439",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "63713516-f604-5285-8f98-a11a963f9d4e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Existe, de modo informal",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "c4647464-e5c4-5ee6-a4d6-e5979b284bca",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "63713516-f604-5285-8f98-a11a963f9d4e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Área constituída",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "e2a60768-c9d6-5bd7-a368-49ff9c61a9b5",
+        "type": "TITLE",
+        "groupUuid": "e2a60768-c9d6-5bd7-a368-49ff9c61a9b5",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "As políticas de segurança e de acesso estão documentadas?"
+        }
+      },
+      {
+        "uuid": "9b4adb78-8afb-5743-9017-70519f153703",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "9b4adb78-8afb-5743-9017-70519f153703",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não estão",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "d85843c3-b7b3-5237-a57c-0651b5ae6cf9",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "9b4adb78-8afb-5743-9017-70519f153703",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Parcialmente",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "0f8c5bfa-520c-57b8-ad3d-58619679063e",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "9b4adb78-8afb-5743-9017-70519f153703",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Formais e auditadas",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "9de89edb-12c5-543c-bad9-7681ba81f669",
+        "type": "TITLE",
+        "groupUuid": "9de89edb-12c5-543c-bad9-7681ba81f669",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há encarregado, comitê ou responsável por proteção de dados?"
+        }
+      },
+      {
+        "uuid": "3afba234-ac6a-5567-b94e-875929761d88",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "3afba234-ac6a-5567-b94e-875929761d88",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não há",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "3c37656d-808d-541a-a279-2f2fe5ecb5fc",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "3afba234-ac6a-5567-b94e-875929761d88",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "A função é acumulada",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "6957bf8e-5b7d-50fa-a50d-9463aad1fd0a",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "3afba234-ac6a-5567-b94e-875929761d88",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Função dedicada",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "33a9aeb4-f99b-5d31-9f8d-fbb0f509f488",
+        "type": "TITLE",
+        "groupUuid": "33a9aeb4-f99b-5d31-9f8d-fbb0f509f488",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há trilha de auditoria nos sistemas críticos?"
+        }
+      },
+      {
+        "uuid": "f18d19de-6786-5ef3-9186-198c55aa895e",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "f18d19de-6786-5ef3-9186-198c55aa895e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não há",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "54272284-d02e-5543-af0e-2d3fddc8cbc1",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "f18d19de-6786-5ef3-9186-198c55aa895e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Parcial",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "278ba69b-8a7d-56d2-b0cd-db0c2d238ab6",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "f18d19de-6786-5ef3-9186-198c55aa895e",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Completa",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "3e7deaa8-2716-58f4-9bb2-526892cefc45",
+        "type": "TITLE",
+        "groupUuid": "3e7deaa8-2716-58f4-9bb2-526892cefc45",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "O processo-alvo afeta dinheiro, crédito ou contrato?"
+        }
+      },
+      {
+        "uuid": "64131444-df14-5a79-8705-71b01d7dd897",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "64131444-df14-5a79-8705-71b01d7dd897",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não afeta",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "72f02d4f-e8e3-5a23-856d-1247f165194a",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "64131444-df14-5a79-8705-71b01d7dd897",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Afeta indiretamente",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "83753323-0581-528d-88d5-c5dd7ec87870",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "64131444-df14-5a79-8705-71b01d7dd897",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Afeta diretamente",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "8cf4f884-cd16-5c32-9943-41c2b15e285b",
+        "type": "TITLE",
+        "groupUuid": "8cf4f884-cd16-5c32-9943-41c2b15e285b",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Há exigência regulatória sobre o processo?"
+        }
+      },
+      {
+        "uuid": "4a5fb17b-68c1-5052-9fa2-c81aea19e509",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "4a5fb17b-68c1-5052-9fa2-c81aea19e509",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Não há",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "6293e86c-f21a-5e7c-91c7-032a40b05eb5",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "4a5fb17b-68c1-5052-9fa2-c81aea19e509",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Setorial, de baixa intensidade",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "20e93e18-ca7c-5908-ba71-00992ac7cdc4",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "4a5fb17b-68c1-5052-9fa2-c81aea19e509",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Setor regulado",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "670ef38c-9015-5940-8d9f-41297eda9efa",
+        "type": "TITLE",
+        "groupUuid": "670ef38c-9015-5940-8d9f-41297eda9efa",
+        "groupType": "QUESTION",
+        "payload": {
+          "html": "Um erro no processo é detectado com que rapidez?"
+        }
+      },
+      {
+        "uuid": "94bf7d82-456f-5eaa-8e4f-c4731f8c84ec",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "94bf7d82-456f-5eaa-8e4f-c4731f8c84ec",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "De imediato",
+          "index": 0,
+          "isFirst": true,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "e2563564-a522-5cc1-bf2a-0970cf665d0d",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "94bf7d82-456f-5eaa-8e4f-c4731f8c84ec",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Em dias",
+          "index": 1,
+          "isFirst": false,
+          "isLast": false,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "b927cc5b-0f3f-5f7a-8047-eb08abdad093",
+        "type": "MULTIPLE_CHOICE_OPTION",
+        "groupUuid": "94bf7d82-456f-5eaa-8e4f-c4731f8c84ec",
+        "groupType": "MULTIPLE_CHOICE_OPTION",
+        "payload": {
+          "text": "Pode passar despercebido",
+          "index": 2,
+          "isFirst": false,
+          "isLast": true,
+          "allowMultiple": false
+        }
+      },
+      {
+        "uuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+        "type": "HIDDEN_FIELDS",
+        "groupUuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+        "groupType": "HIDDEN_FIELDS",
+        "payload": {
+          "hiddenFields": [
+            {
+              "uuid": "98098fe5-e350-5282-bc90-865f3d99613d",
+              "name": "caso"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

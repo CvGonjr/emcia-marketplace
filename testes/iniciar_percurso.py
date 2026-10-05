@@ -34,17 +34,20 @@ class Percurso(unittest.TestCase):
         self.raw=self.base/'resposta.json';self.raw.write_text('{"tipo":"dados exclusivamente sintéticos", "caso":"CASO-SINTETICO"}')
     def op(self,nome,**kwargs):
         d=dict(habilitacao=self.hab,caso=self.caso,**kwargs)
-        r=I.aprovar(self.cfg,nome,d,self.literal[self.grupo],'Plano sintético; '+nome)
+        literal='conferido' if nome=='confirmar-formulario' else self.literal[self.grupo]
+        r=I.aprovar(self.cfg,nome,d,literal,'Plano sintético; '+nome)
         return I.operar(self.cfg,nome,d,r)
     def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
-    def mcp(self,nome,args,ids,**declaracao):
+    def mcp(self,nome,args,ids,resposta=None,**declaracao):
         d=dict(habilitacao=self.hab,caso=self.caso,ferramenta=nome,argumentos=args,**declaracao)
         r=I.aprovar(self.cfg,'mcp',d,self.literal[self.grupo],'Efeito MCP sintético explícito')
         I.operar(self.cfg,'mcp',d,r)
         ev=dict(tool_name=nome,tool_input=args,cwd=str(self.base))
         self.assertIsNone(GI.conferir(ev,self.cfg))
         # Esta é a única substituição da origem externa: chamada simulada.
-        I.registrar_retorno(self.cfg,d,dict(ids=ids,origem='MCP simulado, nenhum cliente real'))
+        retorno=dict(ids=ids,origem='MCP simulado, nenhum cliente real')
+        if resposta is not None:retorno['resposta']=resposta
+        I.registrar_retorno(self.cfg,d,retorno)
     def primeira_parte(self):
         d=dict(habilitacao=self.hab,caso=self.caso,ferramentas=self.inventory,perfil=I.calibrar(self.inventory))
         I.operar(self.cfg,'perfil',d,I.aprovar(self.cfg,'perfil',d,'Aprovo este perfil restrito','Perfil inicial'))
@@ -54,7 +57,11 @@ class Percurso(unittest.TestCase):
         self.habop('tratamento',escopo='administrativo',condicoes='Plano administrativo sintético',provedor='Provedor sintético',decisor=self.responsavel,evidencia=str(self.raw))
         I.retomar(self.cfg,self.hab,self.caso)
         self.mcp('mcp__tally__create_new_form',{'workspaceId':'WORK-SINTETICO','title':'Habilitação sintética'}, {'formulario_id':'FORM-SINTETICO'})
-        self.op('caminho-manual',passo='preparar-formulario',decisao='executar manualmente',formulario_id='FORM-SINTETICO',evidencia=str(self.raw))
+        resposta=json.loads((RAIZ/'testes/apoio/tally-load-form.json').read_text())
+        resposta['data'].update(formId='FORM-SINTETICO',workspaceId='WORK-SINTETICO')
+        self.mcp('mcp__tally__load_form',{'formId':'FORM-SINTETICO'}, {},resposta=resposta)
+        relatorio=self.op('conferir-formulario',formulario_id='FORM-SINTETICO',modelo='habilitacao')
+        self.op('confirmar-formulario',formulario_id='FORM-SINTETICO',relatorio_sha256=relatorio['sha256'])
         self.mcp('mcp__tally__publish_form',{'formId':'FORM-SINTETICO'}, {})
         self.op('caminho-manual',passo='coletar-submissoes',decisao='executar manualmente',evidencia=str(self.raw))
         self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',

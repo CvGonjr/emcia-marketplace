@@ -84,11 +84,13 @@ class Administracao(unittest.TestCase):
         self.op('iniciar', id='HAB')
         I.retomar(self.cfg, 'HAB', 'CASO')
         self.evidencia = self.base/'decisao.txt'; self.evidencia.write_text('Evidência exclusivamente sintética.')
+        self.pdf = self.base/'conferencia.pdf'; self.pdf.write_bytes(b'%PDF-1.4\nSintetico\n%%EOF\n')
         self.folder('ENT', finalidade='entregas')
 
     def op(self, nome, **extra):
         d = dict(habilitacao='HAB', caso='CASO'); d.update(extra)
-        r = I.aprovar(self.cfg, nome, d, 'Aprovo esta operação e estes bytes', 'Conferência sintética')
+        literal = 'conferido' if nome=='caminho-manual' and extra.get('passo')=='preparar-formulario' else 'Aprovo esta operação e estes bytes'
+        r = I.aprovar(self.cfg, nome, d, literal, 'Conferência sintética')
         return I.operar(self.cfg, nome, d, r)
 
     def call(self, nome, argumentos, **extra):
@@ -210,7 +212,7 @@ class Administracao(unittest.TestCase):
     def test_23_publicacao_apos_conferencia_manual(self):
         d = dict(habilitacao='HAB',caso='CASO',ferramenta=TALLY+'create_new_form',argumentos=dict(title='Sintético',workspaceId='WORK'))
         self.call(d['ferramenta'],d['argumentos']);I.registrar_retorno(self.cfg,d,dict(ids={'formulario_id':'FORM'}))
-        self.op('caminho-manual',passo='preparar-formulario',formulario_id='FORM',evidencia=str(self.evidencia),decisao='executar manualmente')
+        self.op('caminho-manual',passo='preparar-formulario',formulario_id='FORM',evidencia=str(self.pdf),decisao='executar manualmente')
         self.call(TALLY+'publish_form',dict(formId='FORM'))
 
     def test_24_formulario_sem_ferramenta_de_publicacao_caminho_manual(self):
@@ -250,7 +252,7 @@ class Administracao(unittest.TestCase):
 
     def test_29_load_form_declarado_manualmente_no_expediente(self):
         self.op('caminho-manual', passo='preparar-formulario', formulario_id='FORM',
-                evidencia=str(self.evidencia), decisao='executar manualmente')
+                evidencia=str(self.pdf), decisao='executar manualmente')
         self.call(TALLY+'load_form', dict(formId='FORM'))
 
 
