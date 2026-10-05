@@ -1,0 +1,30 @@
+{
+  "versao": "0.2.47",
+  "resultado_grep": "nenhuma ocorrência",
+  "arquivos": {
+    "eiac-nucleo/scripts/aprovacao.py": "0edbfb084e2b611116768d4bec6248b857a8e31f8f583246dd2729ad8b3aae09",
+    "eiac-nucleo/scripts/apuracao.py": "8613089b97bb655cdd92fb26644b5f83f42e1ac736145336427910ffbc9f630d",
+    "eiac-nucleo/scripts/avancar.py": "7bac87ad65714f4be0888139a59648d2321b56f4b0ef62d16633444a88131753",
+    "eiac-nucleo/scripts/caminhos.py": "e85142ca817dd5a28dc5e133f289d48e3497b136d3268ab9f43520c2c26882e6",
+    "eiac-nucleo/scripts/canais_registro.py": "f9d36128c86ecdb2dc1442be5296e4208f98b1e48e0b5c4294ff210e9ab4b9d8",
+    "eiac-nucleo/scripts/catalogo.py": "0e8bf41ddac0e3591032f81bbaf9ea457d83ae9d334a0bd5a816c91baf545223",
+    "eiac-nucleo/scripts/consultar.py": "a7191120a544a5d4d2496aca4ae10c1aff780d01be62897112873d85ce3a9d22",
+    "eiac-nucleo/scripts/curar.py": "af0e34deb3dfdc571efa42ce24171001cb60cb53f1baa1367c39251f25bf5e6d",
+    "eiac-nucleo/scripts/decisao_humana.py": "6be08a2d19d34bfe2c42a9b0ad0bc80dc1f393ed7a5dc1c2d22b6a9fc8ecb3a0",
+    "eiac-nucleo/scripts/escopo_externo.py": "1eeb5031e0c662f3b803341903ade19225e4537d03f4762fc4c03ec7ecb3e723",
+    "eiac-nucleo/scripts/esforco.py": "68f648f0f94282749254bd00e9396a83c5b1105143522594d1d21a3baa4edc5c",
+    "eiac-nucleo/scripts/estado.py": "68b0e277b4ff5b9bd2c1856c1c3aeb141f2254b8d9b601da25798b90efb8fa0a",
+    "eiac-nucleo/scripts/estrutura.py": "525259b62a7a95304d7c56e2b430925b92b0254e8ae072ac92ff1fcbe9e5f30a",
+    "eiac-nucleo/scripts/fontes_registro.py": "dcbbb83a0ad17dfee86a9816f3c94832a1ec46683e083edf4cc4fb564fefbbf0",
+    "eiac-nucleo/scripts/fronteira.py": "fdbdd4917d381da524b983a97b96910c5bbc58fa33587176161c455ebc14cbe0",
+    "eiac-nucleo/scripts/guarda.py": "096eae1f4eb8a2f5381c9f1a00bc8f4b8256951e87c7a3913d561c31da85403e",
+    "eiac-nucleo/scripts/integridade.py": "1f07d65674b6f299d45d3c31d5dd6704da692fd9da536c9ed5193cb517eb1b4c",
+    "eiac-nucleo/scripts/pessoa.py": "ef423eb56cb4a71165ced77a3ef747a6c636d3360df711a8d4436107206b4e5e",
+    "eiac-nucleo/scripts/playbook.py": "152914838dbd8062ac0cf727eb11f727e96fe1bcbfe3ba8ce3bb006b031646d7",
+    "eiac-nucleo/scripts/produtos.py": "f444552b2a6818ea601b2f8731872802945f9f65b1c74cc6489c00272553e399",
+    "eiac-nucleo/scripts/quadro.py": "26e4d2041347a33dc6d92a170a6696bace5a6185872a208ce06d6abb7fc7a195",
+    "eiac-nucleo/scripts/recorrencia.py": "570eb98c59809bcdfc7c22cf58fbccf87d3d3072a3af4b09a7f721532e047f8c",
+    "eiac-nucleo/scripts/selar.py": "6924d0b5fe7ebe1f9b58782ae27b879d10650572650c5e5c2dc450469a4e1ea0",
+    "eiac-nucleo/scripts/validar.py": "e43521cf38b5dda327665dd5c43ccb86a2d649e3fa6d4205da3466c305ea49ca"
+  }
+}
