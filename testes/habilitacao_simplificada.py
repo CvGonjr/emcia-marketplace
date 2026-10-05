@@ -136,10 +136,26 @@ class Simplificada(unittest.TestCase):
         linhas = list(csv.DictReader(io.StringIO(H.ler_arquivo(self.exp, fonte['arquivo']).decode())))
         self.assertEqual(len(linhas), 1); self.assertEqual(linhas[0]['Submission ID'], 'SUB-1')
 
-    def test_15_arquivo_fora_da_entrada_recusa(self):
+    def test_15_arquivo_em_repositorio_recusa(self):
         self.permanente(); self.exportacao()
-        outro = self.base/'fora.csv'; outro.write_bytes(self.csv.read_bytes()); self.csv = outro
-        with self.assertRaisesRegex(ValueError, 'entrada'): self.coletar()
+        repo = self.base/'repo'; repo.mkdir(); (repo/'.git').mkdir()
+        outro = repo/'fora.csv'; outro.write_bytes(self.csv.read_bytes()); self.csv = outro
+        with self.assertRaisesRegex(ValueError, 'repositórios'): self.coletar()
+
+    def test_16_exportacao_no_caminho_original_sem_mover(self):
+        self.permanente(); self.exportacao()
+        outro = self.base/'Downloads.csv'; original = self.csv.read_bytes()
+        self.csv.rename(outro); self.csv = outro; self.coletar()
+        fonte = json.loads((self.exp/'expediente.json').read_text())['fontes']['S1']
+        self.assertEqual(outro.read_bytes(), original)
+        self.assertEqual(fonte['original_sha256'], H.digest(original))
+        self.assertNotIn(b'SEGREDO-OUTRO', H.ler_arquivo(self.exp, fonte['arquivo']))
+
+    def test_17_arquivo_symlink_recusa_com_evento(self):
+        self.permanente(); self.exportacao()
+        link = self.base/'atalho.csv'; link.symlink_to(self.csv); self.csv = link
+        with self.assertRaisesRegex(ValueError, 'symlink'): self.coletar()
+        self.assertEqual(json.loads((self.exp/'expediente.json').read_text())['eventos'][-1]['tipo'], 'Recusado')
 
     def test_20_mensagem_vazia_recusa(self):
         self.permanente(); self.exportacao(); self.coletar()
@@ -228,6 +244,40 @@ class Simplificada(unittest.TestCase):
         (self.exp/s['rascunhos_documentos']['HAB-01']['pdf']['caminho']).write_bytes(b'alterado')
         with self.assertRaises(ValueError): H.executar(self.exp, 'aprovar-documentos', {'plano':self.plano_docs, 'testemunho':r})
 
+    def test_45_caminhos_assinados_nao_ignoram_ausente_ou_divergente(self):
+        import habilitacao_lotes as L
+        self.documentos(); self.aprovar_docs()
+        arq = self.base/'outro.pdf'; arq.write_bytes(b'%PDF-1.7\nOutro caso\n%%EOF')
+        with patch.object(L, 'texto_pdf', side_effect=lambda p:pathlib.Path(p).read_bytes().decode()):
+            for paths in ([], [str(arq)]*3):
+                with self.assertRaises(ValueError):
+                    H.executar(self.exp, 'preparar-assinaturas', {'config_emcia':str(self.cfg), 'assinados':paths})
+        s = json.loads((self.exp/'expediente.json').read_text())
+        self.assertFalse(s.get('rascunhos_assinaturas'))
+        self.assertEqual(s['eventos'][-1]['tipo'], 'Recusado')
+
+    def test_46_caminhos_originais_com_relatorios_e_aprovacao(self):
+        import habilitacao_lotes as L
+        self.documentos(); self.aprovar_docs(); s = json.loads((self.exp/'expediente.json').read_text())
+        paths = []; evidencias = {}
+        for n,doc in enumerate(H.CODIGOS_HAB):
+            pasta = self.base/('Downloads-'+str(n)); pasta.mkdir()
+            arq = pasta/'retorno.pdf'; arq.write_bytes(H.ler_arquivo(self.exp, s['documentos'][doc][-1]['pdf'])+b'\nAssinatura\n%%EOF')
+            paths.append(str(arq))
+            rel = pasta/'comprovante.pdf'; rel.write_bytes(b'%PDF-1.7\nEvidencia sintetica\n%%EOF'); evidencias[doc] = str(rel)
+        with patch.object(L, 'texto_pdf', side_effect=lambda p:' '.join(pathlib.Path(p).read_bytes().decode().split())):
+            retorno = I.proximo(self.cfg, dict(habilitacao='HAB', caso='CASO', assinados=paths, evidencias=evidencias))
+        self.assertEqual(retorno['proximo'], 'esclarecer-assinaturas')
+        s = json.loads((self.exp/'expediente.json').read_text())
+        for doc,path in zip(H.CODIGOS_HAB,paths):
+            self.assertEqual(s['rascunhos_assinaturas'][doc]['arquivo']['sha256'], H.digest(pathlib.Path(path).read_bytes()))
+            self.assertEqual(s['rascunhos_assinaturas'][doc]['evidencia']['sha256'], H.digest(pathlib.Path(evidencias[doc]).read_bytes()))
+        self.assertFalse(H.completa(s)); self.assertFalse(list(self.entrada.glob('*.pdf')))
+        plano = dict(referencia='Retorno sintético', signatarios=[dict(nome='Pessoa Cliente',papel='organizacao',data='2026-10-05'),dict(nome='Pessoa Engenheira',papel='emcia',data='2026-10-05')])
+        r = L.criar_aprovacao(self.exp, 'aprovar-assinaturas', plano, 'ok')
+        H.executar(self.exp, 'aprovar-assinaturas', dict(plano=plano,testemunho=r))
+        self.assertTrue(H.completa(json.loads((self.exp/'expediente.json').read_text())))
+
     def test_50_matriz_nao_presume_acesso_concedido(self):
         self.permanente()
         with self.csv.open('w', newline='') as f:
@@ -298,7 +348,7 @@ class Simplificada(unittest.TestCase):
         self.op('confirmar-formulario', formulario_id='TRIAGEM', relatorio_sha256=r['sha256'])
         self.op('formulario-permanente', formulario_id='TRIAGEM', modelo='triagem')
 
-    def percurso(self,direta=False):
+    def percurso(self,direta=False,originais=False):
         self.permanente(); self.triagem_permanente(); self.configurar_fluxo()
         c=I.ler_config(self.cfg); c.pop('pasta_drive'); I.escrever(self.cfg,c)
         self.chamadas = []
@@ -328,14 +378,16 @@ class Simplificada(unittest.TestCase):
         self.assertEqual(avancar(mensagem=dict(id='M1',respondente='Pessoa Cliente',pergunta='Onde termina?',texto='Na entrega.'),campos=campos,plano_documentos=plano)['proximo'],'aprovar-documentos')
         self.assertEqual(avancar(aprovacao=dict(ponto='documentos',confirmado=True,trecho='ok'))['proximo'],'depositar-assinaturas')
         s = json.loads((self.exp/'expediente.json').read_text())
+        paths = []
         for doc in H.CODIGOS_HAB:
             raw = H.ler_arquivo(self.exp,s['documentos'][doc][-1]['pdf'])
-            (self.entrada/(doc+'-assinado.pdf')).write_bytes(raw+'\nAssinatura sintética\n%%EOF'.encode())
+            arquivo = (self.base if originais else self.entrada)/(doc+'-assinado.pdf')
+            arquivo.write_bytes(raw+'\nAssinatura sintética\n%%EOF'.encode()); paths.append(str(arquivo))
         import habilitacao_lotes as L
         self.textpatch = patch.object(L,'texto_pdf',side_effect=lambda p:' '.join(pathlib.Path(p).read_bytes().decode().split()))
         self.textpatch.start();self.addCleanup(self.textpatch.stop)
         signatarios=[dict(nome='Pessoa Cliente',papel='organizacao',data='2026-10-05'),dict(nome='Pessoa Engenheira',papel='emcia',data='2026-10-05')]
-        self.assertEqual(avancar(plano_assinaturas=dict(referencia='Devolução sintética',signatarios=signatarios))['proximo'],'aprovar-assinaturas')
+        self.assertEqual(avancar(**({'assinados':paths} if originais else {}),plano_assinaturas=dict(referencia='Devolução sintética',signatarios=signatarios))['proximo'],'aprovar-assinaturas')
         acessos=dict(confirmado=True,trecho='Confirmo a matriz com acesso concedido à planilha e sistema negado',matriz=dict(
             patrocinador='Pessoa Cliente',executor='Pessoa Executora',decisor='Pessoa Engenheira',data_sessao='2026-10-15',
             autoridade_patrocinador='Responsável pelo processo',executor_liberado=True,agenda_reservada=True,

@@ -69,8 +69,9 @@ publicação; publicar ainda exige “ok”. PDF conferido permanece alternativa
 A coleta padrão usa fetch_submissions: leia todas as páginas e entregue o retorno
 completo a iniciar.py retorno. O script registra somente a submissão cujo campo
 oculto caso coincide com o expediente. Zero/várias exigem indicação humana.
-Não transcreva o lote na conversa nem o copie para fonte/evento. CSV filtrado em
-~/emcia-op/entrada/ é alternativa, selecionada por coleta: csv.
+Não transcreva o lote na conversa nem o copie para fonte/evento. CSV filtrado é
+alternativa, selecionada por coleta: csv e exportacao com o caminho original.
+~/emcia-op/entrada/ permanece opcional, sem exigir movimentação de arquivos.
 
 Disponibilize o inventário real para a preparação da abertura, no formato
 ferramentas/nome/inputSchema/parametros (padrão ~/emcia-op/ensaio/inventario-mcp.json;
@@ -97,9 +98,12 @@ com tipo, formId e relatório. Contrato/formulário alterado exige nova conferê
 Configure tratamento_administrativo com condicoes e provedor; o script aplica
 o padrão com referência e hash antes da coleta. Consulte o cartão operacional.
 
-Por caso, o engenheiro envia o link; a sessão coleta pelo conector e o engenheiro
-deposita os três PDFs assinados (relatórios opcionais HAB-01-relatorio.pdf etc.)
-em ~/emcia-op/entrada/. O depósito adicional de CSV é apenas alternativa manual.
+Por caso, o engenheiro envia o link; a sessão coleta pelo conector e recebe os
+três PDFs assinados pelo Drive ou pelos caminhos originais. A sessão baixa os
+bytes exatos pelo download_file_content, sem conversão do PDF assinado, em
+temporário externo, e prepara assinados/evidencias para o script importar com
+hashes. Relatórios são opcionais. Não pede exportação ou movimentação manual
+para ~/emcia-op/entrada/; essa pasta e a coleta CSV permanecem alternativas.
 Confirma três conjuntos: documentos apresentados; assinaturas; perfil/escopo e
 abertura/importação/validação/selo. Mensagens completam lacunas e confirmam/corrigem a matriz de acessos.
 “ok” é suficiente para o conjunto apresentado, com trecho real e hashes preservados.

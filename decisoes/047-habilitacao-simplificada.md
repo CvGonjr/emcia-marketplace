@@ -147,3 +147,34 @@ Percurso padrão sintético: três confirmações, um depósito, sete avanços p
 e um registro de coleta direta. MCP e PDFs do percurso são simulados; nenhuma conta
 real foi acessada. Cartão renderizado pelo Chrome em uma página A4. Núcleo,
 playbook e documentos/templates do pacote permanecem sem alterações.
+
+## Emenda — recebimento sem movimentação para a entrada
+
+**Data:** 05/10/2026 · **Autor:** Celso do Vale · **Origem:** instrução expressa do engenheiro.
+
+Esta emenda substitui a obrigatoriedade dos depósitos dos itens 2 e 5 no
+percurso normal. A coleta Tally direta permanece padrão. A sessão recebe os
+PDFs assinados pelo Drive ou por caminhos locais originais; não pede ao
+engenheiro exportação ou movimentação para a pasta de entrada. Para o Drive,
+usa download_file_content com fileId e entrega os bytes exatos baixados em
+temporário externo ao script, preservando o documento assinado. O script
+continua sem executar APIs; a sessão prepara as entradas técnicas.
+
+proximo e preparar-assinaturas aceitam assinados (lista dos três caminhos) e
+evidencias (mapa opcional por código HAB). A associação continua pelo conteúdo
+integral enviado, com hashes do enviado, recebido e comprovante, e confirmação
+humana do conjunto. Nomes e pastas podem variar. CSV manual aceita o caminho
+original em exportacao. Symlinks, repositórios e casos não são locais de entrada.
+Caminho explícito inválido recusa com evento, sem substituir por arquivo da
+pasta de entrada. Esta permanece alternativa para instalações existentes.
+Depois da importação, a sessão remove somente os temporários que criou.
+
+Não há novo efeito externo, aprovação por download, alteração de assinatura,
+dispensa de conferência ou mudança de perfil após a abertura. Núcleo, playbook
+e pacote canônico permanecem intactos. Campo 0.8.32. Evidência em
+`.projectdocs/evidencias/recebimento-sem-deposito/`.
+
+Recebimento sem depósito: regressão integral 1158/55 em Python 3.12.12 e
+1160/55 em 3.14.4, somente A25 conhecida e zero inesperadas. Percurso sintético
+com coleta direta, três confirmações e zero depósitos na entrada. Evidência em
+`.projectdocs/evidencias/recebimento-sem-deposito/`.

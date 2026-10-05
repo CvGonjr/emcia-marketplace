@@ -5,11 +5,13 @@ import pathlib
 import habilitacao as H
 
 
-def entrada_local(arquivo, pasta):
+def entrada_local(arquivo, pasta=None):
     import aprovacao as A
-    p = pathlib.Path(arquivo).expanduser().absolute(); base = pathlib.Path(pasta).expanduser().absolute()
-    H.local_externo(base)
-    H.exigir(p.is_relative_to(base), 'arquivo deve estar na pasta de entrada')
+    p = pathlib.Path(H.texto(str(arquivo))).expanduser().absolute()
+    H.local_externo(p)
+    if pasta is not None:
+        base = H.local_externo(pathlib.Path(pasta).expanduser().absolute())
+        H.exigir(p.is_relative_to(base), 'arquivo deve estar na pasta de entrada')
     A.hash_arquivo(p)  # Recusa symlinks, inclusive nos ancestrais.
     return p
 
@@ -47,7 +49,7 @@ def receber_exportacao(root, s, p):
     H.exigir(c['responsavel'] == s['responsavel'], 'responsável da configuração diverge do expediente')
     reg = F.validar(config, c, 'habilitacao')
     H.exigir(s.get('tratamento'), 'tratamento administrativo deve preceder a coleta')
-    arquivo = entrada_local(p['arquivo'], c.get('entrada_dir', pathlib.Path.home()/'emcia-op/entrada'))
+    arquivo = entrada_local(p['arquivo'])
     raw = arquivo.read_bytes()
     filtrado, linha = filtrar(raw, s['caso_reservado'], p.get('coluna_submissao', 'Submission ID'), p.get('submissao'))
     for coluna, valor in [('formId', reg['formId']), ('workspaceId', c['workspace_tally'])]:

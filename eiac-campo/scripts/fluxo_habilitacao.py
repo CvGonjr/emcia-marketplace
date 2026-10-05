@@ -161,7 +161,7 @@ def executar(config,d):
         base=pathlib.Path(c.get('entrada_dir',pathlib.Path.home()/'emcia-op/entrada'))
         arquivos=[pathlib.Path(d['exportacao'])] if d.get('exportacao') else sorted(base.glob('*.csv'))
         if len(arquivos)!=1:
-            return dict(proximo='depositar-exportacao',resumo='Envie o link; deposite um CSV ou indique o arquivo na pasta de entrada.',link=F.link(form,caso))
+            return dict(proximo='depositar-exportacao',resumo='Indique o caminho original do CSV; coleta direta por fetch_submissions é o padrão. Pasta de entrada é alternativa.',link=F.link(form,caso))
         H.executar(exp,'receber-exportacao',dict(config_emcia=str(config),arquivo=str(arquivos[0]),id='S1',
             **{k:d[k] for k in ('submissao','coluna_submissao','coluna_respondente','respondente') if k in d}))
         s=ler(exp)
@@ -196,10 +196,11 @@ def executar(config,d):
         if d.get('plano_assinaturas'):salvar_plano(exp,'plano_assinaturas',d['plano_assinaturas']);s=ler(exp)
         if not s.get('rascunhos_assinaturas'):
             base=pathlib.Path(c.get('entrada_dir',pathlib.Path.home()/'emcia-op/entrada'))
-            if not any(p for p in base.glob('*.pdf') if not p.name.endswith('-relatorio.pdf')):
-                H.exigir(not d.get('aprovacao'),'assinaturas ausentes; aprovação não substitui depósito')
-                return dict(proximo='depositar-assinaturas',resumo='Deposite os três PDFs assinados e relatórios, se houver; indique signatários, datas e referência do retorno.')
-            H.executar(exp,'preparar-assinaturas',{'config_emcia':str(config)});s=ler(exp)
+            if 'assinados' not in d and not any(p for p in base.glob('*.pdf') if not p.name.endswith('-relatorio.pdf')):
+                H.exigir(not d.get('aprovacao'),'assinaturas ausentes; aprovação não substitui recebimento')
+                return dict(proximo='depositar-assinaturas',resumo='Receba os três PDFs pelo Drive ou indique os caminhos originais; não é preciso mover para a entrada. Informe signatários, datas e referência.',
+                            recebimento={'assinados':'lista dos três caminhos locais, originais ou baixados pela sessão', 'evidencias':'mapa opcional HAB-01/02/03 para caminhos dos relatórios'})
+            H.executar(exp,'preparar-assinaturas',dict(config_emcia=str(config), **{k:d[k] for k in ('assinados','evidencias') if k in d}));s=ler(exp)
         plano=s.get('fluxo',{}).get('plano_assinaturas')
         if not plano:return dict(proximo='esclarecer-assinaturas',resumo='Informe nomes, papéis, datas reais de assinatura e referência do retorno.')
         literal=confirmar(d,'assinaturas')

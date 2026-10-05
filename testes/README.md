@@ -36,7 +36,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
 | `bloco_inicial.py` | 19 | Recusas, testemunhos, escopo, decisões humanas, autoria/configuração, saída e núcleo sem instrumentos/conectores |
 | `habilitacao_mcp.py` | 14 | Emenda 047 item 9: conectores sem perfil antes da abertura, efeitos com ok, coleta exclusiva/paginada, perfil na abertura e recusa posterior |
-| `habilitacao_simplificada.py` | 31 | Permanentes/contrato; isolamento CSV e recusa de entrada extra; mensagens/tratamento; três aprovações; PDFs; abertura sem Drive; P2 com criação/compartilhamento; retomada |
+| `habilitacao_simplificada.py` | 35 | Permanentes/contrato; isolamento CSV e recusa de entrada extra; caminhos originais, symlinks/repositórios e relatórios; mensagens/tratamento; três aprovações; PDFs; abertura sem Drive; P2 com criação/compartilhamento; retomada |
 | `iniciar_percurso.py` | 4 | Percurso completo com MCP simulado, cinco aprovações, três retomadas e selo Git; ratificação prevalece |
 | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
 | `campo_2_6_2.py` | 38 | Verificacao operacional de P6 e P7 -- pacote 2.6.2 |
@@ -223,3 +223,8 @@ estão em .projectdocs/evidencias/habilitacao-simplificada/item-9/.
 Resultado final do item 9: 1154 verificações/55 módulos em Python 3.12.12 e
 1156/55 em Python 3.14.4, zero inesperadas e somente a A25 conhecida. A diferença
 de dois checks vem de PyYAML disponível em 3.14. O runner não exclui módulos.
+
+Recebimento sem depósito: regressão integral 1158/55 em Python 3.12.12 e
+1160/55 em 3.14.4, somente A25 conhecida e zero inesperadas. Percurso sintético
+com coleta direta, três confirmações e zero depósitos na entrada. Evidência em
+`.projectdocs/evidencias/recebimento-sem-deposito/`.

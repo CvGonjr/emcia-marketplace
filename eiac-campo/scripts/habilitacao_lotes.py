@@ -73,26 +73,38 @@ def aplicar(root, s, op, p):
         import iniciar as I
         from coleta_administrativa import entrada_local
         c = I.ler_config(pathlib.Path(p.get('config_emcia', I.CONFIG)))
+        H.exigir(set(p) <= {'config_emcia', 'assinados', 'evidencias'}, 'campos extras no recebimento de assinaturas')
         H.exigir(c['responsavel'] == s['responsavel'], 'responsável diverge do expediente')
         base = pathlib.Path(c.get('entrada_dir', pathlib.Path.home()/'emcia-op/entrada'))
+        explicitos = 'assinados' in p
+        if explicitos:
+            H.exigir(isinstance(p['assinados'], list) and len(p['assinados']) == len(H.CODIGOS_HAB)
+                     and all(isinstance(a, str) and a.strip() for a in p['assinados']), 'indique os caminhos dos três PDFs assinados')
+        evidencias = p.get('evidencias', {})
+        H.exigir(isinstance(evidencias, dict) and set(evidencias) <= set(H.CODIGOS_HAB)
+                 and all(isinstance(a, str) and a.strip() for a in evidencias.values()), 'evidências exigem código HAB e caminho de arquivo')
         H.exigir(all(s['documentos'].get(d) and s['documentos'][d][-1]['vigente']
                      and s['documentos'][d][-1]['liberacao'] for d in H.CODIGOS_HAB), 'documentos enviados ausentes')
         textos = {d:texto_pdf(root/s['documentos'][d][-1]['pdf']['caminho']) for d in H.CODIGOS_HAB}
-        encontrados = {}; arquivos_pdf = sorted(base.glob('*.pdf'))
+        encontrados = {}; arquivos_pdf = p['assinados'] if explicitos else sorted(base.glob('*.pdf'))
         for arq in arquivos_pdf:
-            arq = entrada_local(arq, base)
-            if re.fullmatch(r'HAB-0[123]-relatorio\.pdf', arq.name): continue
+            arq = entrada_local(arq, None if explicitos else base)
+            if not explicitos and re.fullmatch(r'HAB-0[123]-relatorio\.pdf', arq.name): continue
             data = arq.read_bytes(); H.exigir(data.startswith(b'%PDF-') and b'%%EOF' in data[-2048:], 'PDF assinado incompleto')
             conteudo = texto_pdf(arq)
             candidatos = [d for d,t in textos.items() if t in conteudo]
             H.exigir(len(candidatos) == 1, 'PDF assinado não corresponde a um único documento enviado')
             doc = candidatos[0]; H.exigir(doc not in encontrados, 'mais de um PDF assinado para o mesmo documento')
-            evidencia = base/(doc+'-relatorio.pdf'); evidencia = evidencia if evidencia.exists() else arq
-            entrada_local(evidencia, base)
+            evidencia = arq if explicitos else base/(doc+'-relatorio.pdf')
+            evidencia = evidencia if evidencia.exists() else arq
+            if doc in evidencias: evidencia = entrada_local(evidencias[doc])
+            else: entrada_local(evidencia, None if explicitos else base)
+            comprovante = evidencia.read_bytes()
+            H.exigir(comprovante.startswith(b'%PDF-') and b'%%EOF' in comprovante[-2048:], 'evidência não é um PDF completo')
             encontrados[doc] = dict(documento=doc, versao=s['documentos'][doc][-1]['versao'],
                 enviado_sha256=s['documentos'][doc][-1]['pdf']['sha256'],
-                arquivo=H.guardar(root, data, '.pdf'), evidencia=H.guardar(root, evidencia.read_bytes(), '.pdf'))
-        H.exigir(set(encontrados) == set(H.CODIGOS_HAB), 'deposite os três PDFs assinados na pasta de entrada')
+                arquivo=H.guardar(root, data, '.pdf'), evidencia=H.guardar(root, comprovante, '.pdf'))
+        H.exigir(set(encontrados) == set(H.CODIGOS_HAB), 'informe os três PDFs assinados; pasta de entrada é alternativa')
         s['rascunhos_assinaturas'] = encontrados
         return {'documentos':encontrados, 'proximo':'aprovar-assinaturas'}
     plano, r = validar_aprovacao(root, s, op, p)

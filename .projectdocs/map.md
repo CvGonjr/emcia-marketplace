@@ -325,3 +325,14 @@ Testes: habilitacao_mcp.py; evidência em habilitacao-simplificada/item-9/.
 Regressão do item 9: 1154/55 em Python 3.12.12 e 1156/55 em 3.14.4, sem
 exclusões, uma A25 conhecida e zero falhas inesperadas. O caminho manual de
 abertura também fixa o hash do perfil e o instala no caso.
+
+## Emenda 047 — recebimento sem depósito obrigatório
+
+Campo 0.8.32. fluxo_habilitacao.py encaminha assinados/evidencias a
+habilitacao_lotes.py: PDFs no caminho original ou baixados pela sessão do Drive,
+com associação por conteúdo, importação com hash e confirmação humana.
+coleta_administrativa.py aceita CSV pelo caminho original, mantendo filtro do
+caso. Caminhos externos sem symlinks; entrada_dir permanece alternativa.
+O comando iniciar prepara o download e as entradas técnicas sem exigir
+exportação manual. Núcleo/playbook/pacote inalterados. Evidência em
+recebimento-sem-deposito/; quatro verificações novas no módulo simplificado.

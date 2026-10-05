@@ -18,6 +18,12 @@ versões e esclarecimentos, com campos consolidados vinculados a fontes. Carta,
 qualificação, PDFs, signatários e evidências de assinatura exigem conferência humana.
 Assinatura permanece externa no painel escolhido pelo cliente. Aguarde os PDFs
 devolvidos e comprovantes indicados pelo engenheiro; não invente retorno ou autenticação.
+Receba pelo Drive ou pelo caminho original: a sessão baixa os bytes exatos com
+download_file_content e prepara assinados/evidencias para proximo ou
+preparar-assinaturas. O engenheiro não precisa exportar ou mover para a entrada.
+CSV manual também aceita o caminho original; Tally direto continua padrão.
+Use temporário externo para o download e remova-o após a importação com hash;
+não apague originais locais nem altere PDFs assinados.
 
 Localize HAB-01/02/03 pelo código no APR-01, exatamente um arquivo por código;
 confira seus hashes, tanto no pacote quanto se usar checkout canônico na tag.

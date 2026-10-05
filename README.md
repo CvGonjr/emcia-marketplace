@@ -59,10 +59,13 @@ fixam texto, ordem, tipo e campo oculto caso; relatório sem divergências receb
 “conferido”. `formularios_permanentes` guarda tipo, id, versão/hash do contrato,
 data/hash da conferência. Alteração exige nova conferência, sem recriar por cliente.
 
-O engenheiro envia o link `?caso=<caso>` e deposita os três PDFs assinados em
-`~/emcia-op/entrada/`. A sessão lê fetch_submissions; o script registra apenas
+O engenheiro envia o link `?caso=<caso>` e indica os PDFs assinados no Drive ou
+nos caminhos locais originais. A sessão baixa e recebe os arquivos; não é preciso
+exportar ou movê-los para `~/emcia-op/entrada/`, que permanece alternativa.
+A sessão lê fetch_submissions; o script registra apenas
 a submissão cujo campo oculto caso corresponde ao expediente, com hashes.
-Zero ou várias aguardam indicação humana. CSV filtrado é alternativa manual.
+Zero ou várias aguardam indicação humana. CSV filtrado é alternativa manual,
+também pelo caminho original. A sessão prepara as entradas técnicas.
 Antes da abertura, Tally/Drive/Calendar leem, listam, criam rascunhos e comparam
 sem perfil/escopo por id. Publicar, enviar mensagem/convite ou compartilhar
 exige “ok” com resumo/data. load_form admite qualquer formId.

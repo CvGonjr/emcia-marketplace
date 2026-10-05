@@ -98,7 +98,8 @@ class Administrativa(unittest.TestCase):
         H.iniciar(self.exp,'HAB','Pessoa Engenheira','CASO');I.retomar(self.cfg,'HAB','CASO')
         for nome,args in [('mcp__tally__load_form',{'formId':'FORA'}),('mcp__tally__fetch_submissions',{'formId':'FORA'}),
             ('mcp__tally__create_new_form',{'title':'Sintético'}),('mcp__tally__create_blocks',{'formId':'FORA'}),(DRIVE+'search_files',{'query':'sem pasta'}),
-            (DRIVE+'read_file_content',{'fileId':'FORA'}),(DRIVE+'create_file',{'title':'Rascunho','parentId':'FORA'}),(CAL+'list_events',{'calendarId':'FORA'})]:
+            (DRIVE+'read_file_content',{'fileId':'FORA'}),(DRIVE+'download_file_content',{'fileId':'FORA'}),
+            (DRIVE+'create_file',{'title':'Rascunho','parentId':'FORA'}),(CAL+'list_events',{'calendarId':'FORA'})]:
             with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
         self.assertFalse(self.cfg.with_name('perfil-mcp.json').exists())
         with patch.object(I,'calibrar',side_effect=AssertionError('não calibra antes da abertura')):
@@ -147,11 +148,12 @@ class Administrativa(unittest.TestCase):
         with self.assertRaises(ValueError):I.registrar_retorno(self.cfg,d,self.resposta())
 
     def test_11_percurso_conector_e_perfil_na_abertura(self):
-        self.percurso(direta=True)
+        self.percurso(direta=True,originais=True)
+        self.assertFalse(list(self.entrada.iterdir()))
         self.assertTrue((self.case/'registro/ferramentas-externas.json').is_file())
         import os
         if os.environ.get('EMCIA_EVIDENCIA_MCP'):
-            pathlib.Path(os.environ['EMCIA_EVIDENCIA_MCP']).write_text(json.dumps(dict(aprovacoes_administrativas=3,depositos=1,coleta='fetch_submissions',
+            pathlib.Path(os.environ['EMCIA_EVIDENCIA_MCP']).write_text(json.dumps(dict(aprovacoes_administrativas=3,depositos=0,coleta='fetch_submissions',assinaturas='caminhos originais (download da sessão simulado)',
                 chamadas_proximo=len(self.chamadas),registro_retorno_coleta=1,perfil_antes_da_abertura=False,perfil_na_abertura=True,
                 estados=self.chamadas,isolamento='nenhum SEGREDO-OUTRO no expediente'),ensure_ascii=False,indent=2)+'\n')
         evs=[json.loads(l) for l in (self.case/'registro/eventos.jsonl').read_text().splitlines()]

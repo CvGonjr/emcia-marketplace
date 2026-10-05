@@ -18,8 +18,21 @@ Leia todas as páginas de fetch_submissions; entregue o retorno ao script pelo
 iniciar.py retorno. O script filtra pelo campo oculto caso antes de gravar a fonte.
 Não selecione por semelhança, não transcreva o lote na conversa nem o copie para
 o expediente. Zero ou várias submissões exigem indicação do engenheiro.
-A exportação CSV é alternativa: coleta: csv. Esclarecimentos e matriz usam mensagem;
-os três PDFs assinados são depositados em ~/emcia-op/entrada/.
+A exportação CSV é alternativa: coleta: csv, com exportacao indicando o caminho
+original. Esclarecimentos e matriz usam mensagem. Receba os três PDFs assinados
+pelos caminhos originais ou pelo Drive, sem exigir exportação/movimentação do
+engenheiro para ~/emcia-op/entrada/. Essa pasta permanece alternativa.
+
+Para arquivos do Drive, peça o link/id quando faltar; execute
+mcp__claude_ai_Google_Drive__download_file_content com fileId pelo fluxo MCP
+administrativo. Salve os bytes exatos do retorno em temporário externo aos
+repositórios e ao caso; não reconstrua nem converta PDF assinado. A sessão prepara
+assinados (três caminhos) e evidencias (mapa opcional por código HAB) para proximo,
+inclusive quando os arquivos vierem de pastas distintas. O script associa por
+conteúdo, importa e calcula hashes. Remova temporários criados pela sessão após
+o recebimento bem-sucedido; preserve arquivos originais do engenheiro.
+Não peça CSV, download manual nem JSON preparado pelo engenheiro quando o
+conector estiver disponível. A sessão prepara as entradas técnicas.
 
 Na terceira confirmação, apresente perfil/inventário/hash e escopo de canais junto
 da abertura. O inventário fornecido é a fonte dos nomes/parâmetros para esse perfil.

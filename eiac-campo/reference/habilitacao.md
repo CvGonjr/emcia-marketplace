@@ -31,6 +31,8 @@ própria. Decisões de método continuam no terminal.
 A configuração exige responsavel, base_casos, base_expedientes, workspace_tally,
 calendario_casos e navegador. pasta_drive é opcional até P2. entrada_dir é opcional
 para instalações com outra pasta administrativa; padrão `~/emcia-op/entrada/`.
+A pasta de entrada é alternativa; arquivos indicados por caminho original não
+precisam ser movidos. A sessão recebe pelo conector quando disponível.
 As bases/pasta de entrada devem ser externas aos repositórios. Não coloque caso
 ou dado de cliente na ferramenta. Tratamento padrão é:
 
@@ -86,8 +88,10 @@ não registra fonte; não invente a indicação de última página.
 ### Exportação manual
 
 O engenheiro envia o link `https://tally.so/r/<formId>?caso=<caso>`.
-Como alternativa manual, coleta: csv em proximo solicita o CSV exportado. A entrada opcional `exportacao` indica o arquivo quando houver mais
-de um. CSV UTF-8 exige cabeçalho único, `caso`, `Submission ID` e `Respondente`;
+Como alternativa manual, coleta: csv em proximo solicita o CSV exportado. A entrada
+opcional `exportacao` indica o caminho original, em qualquer pasta externa a
+repositórios e casos, sem symlinks. Sem caminho explícito, continua a busca na
+pasta de entrada. CSV UTF-8 exige cabeçalho único, `caso`, `Submission ID` e `Respondente`;
 `coluna_submissao`/`coluna_respondente` declaram os nomes reais se forem diferentes,
 e `respondente` pode indicar nominalmente quem respondeu. Não adivinhe colunas.
 `formId`/`workspaceId`, se presentes, precisam coincidir com a configuração.
@@ -128,14 +132,34 @@ pelo APR-01, sem controle interno ou aviso jurídico no documento do cliente.
 {"habilitacao":"HAB-0001","caso":"caso-0001","aprovacao":{"ponto":"documentos","confirmado":true,"trecho":"ok"}}
 ```
 
-Depois do segundo depósito, `plano_assinaturas` indica referência e signatários
+Depois do recebimento dos assinados, `plano_assinaturas` indica referência e signatários
 com nome, papel e data real; pode ser lista comum ou mapa por HAB-01/02/03.
 `preparar-assinaturas` associa por texto integral extraído dos PDFs enviados,
 com espaços de paginação normalizados; o assinado deve preservar esse texto.
+O recebimento aceita `assinados`: lista dos três caminhos locais originais ou
+baixados pela sessão. `evidencias` é um mapa opcional de código HAB para o caminho
+do comprovante; nomes e pastas podem ser diferentes. Os arquivos precisam estar
+fora de repositórios e casos, sem symlinks. O script importa cópias com hashes,
+preservando os originais. Não é preciso mover arquivos para a pasta de entrada.
+
+Para o Drive, a sessão usa `mcp__claude_ai_Google_Drive__download_file_content`
+com `fileId`, salva os bytes exatos retornados em temporário administrativo e
+entrega os caminhos ao script. Não há download/exportação manual pelo engenheiro
+nem nova aprovação para essa leitura anterior ao caso. Depois da importação
+bem-sucedida, a sessão remove somente seus temporários. Não converta ou reconstrua
+PDF assinado; leitura de texto não substitui o download do arquivo original.
+
+```json
+{"habilitacao":"HAB-0001","caso":"caso-0001","assinados":["/pasta-de-trabalho/retorno-1.pdf","/outra-pasta/retorno-2.pdf","/outra-pasta/retorno-3.pdf"],"evidencias":{"HAB-02":"/pasta-de-trabalho/comprovante.pdf"}}
+```
+
+Sem `assinados`, permanece a busca automática na pasta de entrada. Um caminho
+explícito inválido recusa; não usa arquivos da entrada para substituí-lo.
 Exige Poppler/pdftotext. PDF de outro caso, conteúdo alterado, duplicata ou ausência
 recusa. PDFs sem texto ou com reorganização pelo painel usam o registro manual,
 com conferência humana; não há flag para ignorar divergência. Relatórios opcionais
-usam `HAB-01-relatorio.pdf` etc.; sem relatório separado, o próprio PDF é evidência.
+usam `HAB-01-relatorio.pdf` etc. na busca pela entrada; com caminhos explícitos,
+use `evidencias`. Sem relatório separado, o próprio PDF é evidência.
 Comparação não autentica assinaturas nem certificados. A confirmação `assinaturas`
 registra os três retornos com hash enviado/assinado, evidências, nomes e datas.
 
