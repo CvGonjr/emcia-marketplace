@@ -1,0 +1,1233 @@
+{
+  "gerado_em": "2026-10-05",
+  "origem": "Fixture sintética: nomes, parâmetros e esquemas transcritos do inventário fornecido; sem credenciais, ids ou cliente.",
+  "conectores": {
+    "Google Drive": "mcp__claude_ai_Google_Drive__",
+    "Google Calendar": "mcp__claude_ai_Google_Calendar__",
+    "Tally": "mcp__tally__"
+  },
+  "ferramentas": [
+    {
+      "nome": "mcp__claude_ai_Google_Drive__search_files",
+      "descricao": "Search for Drive files using a structured query (syntax: query_term operator values).",
+      "parametros": [
+        {
+          "nome": "query",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "The search query."
+        },
+        {
+          "nome": "pageSize",
+          "tipo": "integer (int32)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "The maximum number of files to return in each page."
+        },
+        {
+          "nome": "pageToken",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "The page token to use for pagination."
+        },
+        {
+          "nome": "excludeContentSnippets",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "If true, the content snippet will be excluded from the response."
+        },
+        {
+          "nome": "snippetVerbosity",
+          "tipo": "string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "UNSPECIFIED",
+            "BRIEF",
+            "MEDIUM",
+            "DETAILED",
+            "MAX_ALLOWED"
+          ],
+          "descricao": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set."
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "excludeContentSnippets": {
+            "description": "If true, the content snippet will be excluded from the response.",
+            "type": "boolean"
+          },
+          "pageSize": {
+            "description": "The maximum number of files to return in each page.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "The page token to use for pagination.",
+            "type": "string"
+          },
+          "query": {
+            "description": "The search query.",
+            "type": "string"
+          },
+          "snippetVerbosity": {
+            "description": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set.",
+            "enum": [
+              "UNSPECIFIED",
+              "BRIEF",
+              "MEDIUM",
+              "DETAILED",
+              "MAX_ALLOWED"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__share_file",
+      "descricao": "Call this tool to share a Google Drive file with a user or group.",
+      "parametros": [
+        {
+          "nome": "fileId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "The ID of the file to share."
+        },
+        {
+          "nome": "emailAddress",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "The email address of the user or group to share with."
+        },
+        {
+          "nome": "role",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": [
+            "writer",
+            "commenter",
+            "reader"
+          ],
+          "descricao": "The role to grant. Supported roles (in descending order of access level)."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request to share a file.",
+        "properties": {
+          "emailAddress": {
+            "description": "Required. The email address of the user or group to share with.",
+            "type": "string"
+          },
+          "fileId": {
+            "description": "Required. The ID of the file to share.",
+            "type": "string"
+          },
+          "role": {
+            "description": "Required. The role to grant. Supported roles (in descending order of access level): * `writer` * `commenter` * `reader`",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileId",
+          "emailAddress",
+          "role"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__create_file",
+      "descricao": "Call this tool to create or upload a File to Google Drive.",
+      "parametros": [
+        {
+          "nome": "title",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. The title of the file."
+        },
+        {
+          "nome": "parentId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "The parent id of the file."
+        },
+        {
+          "nome": "textContent",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The (UTF-8) text content to upload. It's an error to set this and base64Content."
+        },
+        {
+          "nome": "base64Content",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The base64 encoded content to upload. It's an error to set this and textContent."
+        },
+        {
+          "nome": "contentMimeType",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "The mime type of the content being uploaded. Required when any type of content is provided."
+        },
+        {
+          "nome": "disableConversionToGoogleType",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Set to true to retain the passed in content mime type and not convert to a Google type."
+        },
+        {
+          "nome": "content",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Deprecated: Use base64Content or textContent instead."
+        },
+        {
+          "nome": "mimeType",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Deprecated: DO NOT USE!! Set contentMimeType instead."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request to upload a file.",
+        "properties": {
+          "base64Content": {
+            "description": "Optional. The base64 encoded content to upload. It's an error to set this and `textContent`.",
+            "type": "string"
+          },
+          "content": {
+            "deprecated": true,
+            "description": "Deprecated: Use `base64Content` or `textContent` instead. The content of the file encoded as base64. The content field should always be base64 encoded regardless of the mime type of the file.",
+            "type": "string"
+          },
+          "contentMimeType": {
+            "description": "The mime type of the content being uploaded. Required when any type of content is provided.",
+            "type": "string"
+          },
+          "disableConversionToGoogleType": {
+            "description": "Set to true to retain the passed in content mime type and not convert to a Google type. For example, without this a `text/plain` content mime type will be converted to to `application/vnd.google-apps.document`. Has no effect for types that do not have a Google equivalent.",
+            "type": "boolean"
+          },
+          "mimeType": {
+            "deprecated": true,
+            "description": "Deprecated: DO NOT USE!! Set `contentMimeType` instead.",
+            "type": "string"
+          },
+          "parentId": {
+            "description": "The parent id of the file.",
+            "type": "string"
+          },
+          "textContent": {
+            "description": "Optional. The (UTF-8) text content to upload. It's an error to set this and `base64Content`.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Required. The title of the file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__get_file_metadata",
+      "descricao": "Call this tool to find general metadata about a user's Drive file.",
+      "parametros": [
+        {
+          "nome": "fileId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. The ID of the file to retrieve."
+        },
+        {
+          "nome": "excludeContentSnippets",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "If true, the content snippet will be excluded from the response."
+        },
+        {
+          "nome": "snippetVerbosity",
+          "tipo": "string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "UNSPECIFIED",
+            "BRIEF",
+            "MEDIUM",
+            "DETAILED",
+            "MAX_ALLOWED"
+          ],
+          "descricao": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request to get the file.",
+        "properties": {
+          "excludeContentSnippets": {
+            "description": "If true, the content snippet will be excluded from the response.",
+            "type": "boolean"
+          },
+          "fileId": {
+            "description": "Required. The ID of the file to retrieve.",
+            "type": "string"
+          },
+          "snippetVerbosity": {
+            "description": "Optional. Set to specify how verbose the snippets should be. Defaults to DETAILED if not set.",
+            "enum": [
+              "UNSPECIFIED",
+              "BRIEF",
+              "MEDIUM",
+              "DETAILED",
+              "MAX_ALLOWED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__read_file_content",
+      "descricao": "Call this tool to fetch a natural language representation of a known Drive file, and if specified, its comments.",
+      "parametros": [
+        {
+          "nome": "fileId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. The ID of the file to retrieve."
+        },
+        {
+          "nome": "includeComments",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Whether to include comments in the response."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request to read file content with support for fetching comments.",
+        "properties": {
+          "fileId": {
+            "description": "Required. The ID of the file to retrieve.",
+            "type": "string"
+          },
+          "includeComments": {
+            "description": "Whether to include comments in the response. Comments will be inlined in the text content of the file with a mapping to the comment threads. Note: Comments are only supported for Google Docs, Slides, and Sheets.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "fileId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__download_file_content",
+      "descricao": "Call this tool to download the content of a Drive file as a base64 encoded string.",
+      "parametros": [
+        {
+          "nome": "fileId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. The ID of the file to retrieve."
+        },
+        {
+          "nome": "exportMimeType",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. For Google native files, the MIME type to export the file to."
+        },
+        {
+          "nome": "revisionId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The revision id for the version of the file to download."
+        }
+      ],
+      "inputSchema": {
+        "description": "Defines a request to download a file's content.",
+        "properties": {
+          "exportMimeType": {
+            "description": "Optional. For Google native files, the MIME type to export the file to, ignored otherwise. Defaults to text if not specified.",
+            "type": "string"
+          },
+          "fileId": {
+            "description": "Required. The ID of the file to retrieve.",
+            "type": "string"
+          },
+          "revisionId": {
+            "description": "Optional. The revision id for the version of the file to download. If not specified, the latest revision will be downloaded.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__copy_file",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__get_file_permissions",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__list_recent_files",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__trash_file",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Drive__update_file",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__list_calendars",
+      "descricao": "Returns the calendars this user has access to (their calendar list).",
+      "parametros": [
+        {
+          "nome": "pageSize",
+          "tipo": "integer (int32)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Max results per page. Default 100, max 250."
+        },
+        {
+          "nome": "pageToken",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Token specifying which result page to return."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request message for ListCalendars.",
+        "properties": {
+          "pageSize": {
+            "description": "Optional. Max results per page. Default `100`, max `250`.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "Optional. Token specifying which result page to return.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__list_events",
+      "descricao": "Returns events on the given calendar matching all specified constraints.",
+      "parametros": [
+        {
+          "nome": "calendarId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. ID of the calendar. Default: primary calendar."
+        },
+        {
+          "nome": "startTime",
+          "tipo": "string (ISO 8601)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The lower bound of a time range. Default: now."
+        },
+        {
+          "nome": "endTime",
+          "tipo": "string (ISO 8601)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The upper bound of a time range. Default: start_time + 7 days."
+        },
+        {
+          "nome": "fullText",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Free-form case-insensitive search matching title, description, location, or attendees."
+        },
+        {
+          "nome": "eventType",
+          "tipo": "array de string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "EVENT_TYPE_UNSPECIFIED",
+            "DEFAULT",
+            "OUT_OF_OFFICE",
+            "FOCUS_TIME",
+            "WORKING_LOCATION",
+            "BIRTHDAY",
+            "FROM_GMAIL"
+          ],
+          "descricao": "Optional. The event types to return."
+        },
+        {
+          "nome": "eventTypeFilter",
+          "tipo": "array de string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Deprecated: use event_type instead."
+        },
+        {
+          "nome": "orderBy",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "default",
+            "startTime",
+            "startTimeDesc",
+            "lastModified"
+          ],
+          "descricao": "Optional. The order in which events should be returned."
+        },
+        {
+          "nome": "pageSize",
+          "tipo": "integer (int32)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Max events per page (default 100, max 250)."
+        },
+        {
+          "nome": "pageToken",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Next page token."
+        },
+        {
+          "nome": "timeZone",
+          "tipo": "string (IANA)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Time zone used to resolve timezone-less dates."
+        }
+      ],
+      "inputSchema": {
+        "description": "Request message for ListEvents.",
+        "properties": {
+          "calendarId": {
+            "description": "Optional. ID of the calendar containing the events. Email address - can be resolved using `list_calendars`. Default: primary calendar.",
+            "type": "string"
+          },
+          "endTime": {
+            "description": "Optional. The upper bound of a time range. Must only be set when a specific timeframe or a time in the past is requested by the user. Must be an ISO 8601 timestamp greater than `start_time`. Default: `start_time` + 7 days.",
+            "type": "string"
+          },
+          "eventType": {
+            "description": "Optional. The event types to return. If empty, only the following event types are returned: `DEFAULT`, `OUT_OF_OFFICE`, `FOCUS_TIME`, `FROM_GMAIL`",
+            "items": {
+              "enum": [
+                "EVENT_TYPE_UNSPECIFIED",
+                "DEFAULT",
+                "OUT_OF_OFFICE",
+                "FOCUS_TIME",
+                "WORKING_LOCATION",
+                "BIRTHDAY",
+                "FROM_GMAIL"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "eventTypeFilter": {
+            "deprecated": true,
+            "description": "Optional. Deprecated: use `event_type` instead.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "fullText": {
+            "description": "Optional. Free-form case-insensitive search matching title, description, location, or attendees. Matches events containing all query terms verbatim (AND search).",
+            "type": "string"
+          },
+          "orderBy": {
+            "description": "Optional. The order in which events should be returned. Possible values are: - `default` - Unspecified, but deterministic ordering (default). - `startTime` - Order by start time ascending. - `startTimeDesc` - Order by start time descending. - `lastModified` - Order by last modification time ascending. ",
+            "type": "string"
+          },
+          "pageSize": {
+            "description": "Optional. Max events per page (default `100`, max `250`). Recommended: `10`.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "Optional. Next page token. Use the value from the previous page's `nextPageToken`.",
+            "type": "string"
+          },
+          "startTime": {
+            "description": "Optional. The lower bound of a time range. Must only be set when a specific timeframe is requested by the user. Must be an ISO 8601 timestamp less than `end_time`. Default: now.",
+            "type": "string"
+          },
+          "timeZone": {
+            "description": "Optional. Time zone (IANA ID, for example `Europe/Zurich`) used to resolve timezone-less dates. Default: calendar's timezone.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__create_event",
+      "descricao": "Creates an event on the given calendar.",
+      "parametros": [
+        {
+          "nome": "summary",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. Title."
+        },
+        {
+          "nome": "startTime",
+          "tipo": "string (ISO 8601)",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. Start time."
+        },
+        {
+          "nome": "endTime",
+          "tipo": "string (ISO 8601)",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Required. End time."
+        },
+        {
+          "nome": "calendarId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. ID of the calendar to create the event on. Default: primary calendar."
+        },
+        {
+          "nome": "description",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Description. Can contain HTML."
+        },
+        {
+          "nome": "location",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Location."
+        },
+        {
+          "nome": "timeZone",
+          "tipo": "string (IANA)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Overrides offsets in start_time and end_time."
+        },
+        {
+          "nome": "allDay",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Whether the event spans the entire day."
+        },
+        {
+          "nome": "addGoogleMeetUrl",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Create and add a Google Meet URL. Default: false."
+        },
+        {
+          "nome": "googleMeetUrl",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Specific Google Meet URL or meeting ID."
+        },
+        {
+          "nome": "attendees",
+          "tipo": "array de objeto Attendee",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Attendees of the event. Attendee exige email."
+        },
+        {
+          "nome": "attendeeEmails",
+          "tipo": "array de string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Deprecated: use attendees instead."
+        },
+        {
+          "nome": "attachments",
+          "tipo": "array de objeto Attachment",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. File attachments. Attachment exige fileUrl."
+        },
+        {
+          "nome": "availability",
+          "tipo": "string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "AVAILABILITY_UNSPECIFIED",
+            "AVAILABILITY_BUSY",
+            "AVAILABILITY_FREE"
+          ],
+          "descricao": "Optional. Availability setting."
+        },
+        {
+          "nome": "colorId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. The color of the event."
+        },
+        {
+          "nome": "eventType",
+          "tipo": "string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "EVENT_TYPE_UNSPECIFIED",
+            "DEFAULT",
+            "OUT_OF_OFFICE",
+            "FOCUS_TIME",
+            "WORKING_LOCATION",
+            "BIRTHDAY",
+            "FROM_GMAIL"
+          ],
+          "descricao": "Optional. Type of the event."
+        },
+        {
+          "nome": "guestPermissions",
+          "tipo": "objeto GuestPermissions",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Guest permissions (guestsCanInviteOthers, guestsCanModify, guestsCanSeeGuests)."
+        },
+        {
+          "nome": "notificationLevel",
+          "tipo": "string (enum)",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "NOTIFICATION_LEVEL_UNSPECIFIED",
+            "NONE",
+            "EXTERNAL_ONLY",
+            "ALL"
+          ],
+          "descricao": "Optional. Which email notification should be sent for this event update."
+        },
+        {
+          "nome": "overrideReminders",
+          "tipo": "array de objeto Reminder",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Reminders override calendar defaults. Reminder exige method e minutes."
+        },
+        {
+          "nome": "useDefaultReminders",
+          "tipo": "boolean",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Whether to use the default reminders for the event."
+        },
+        {
+          "nome": "recurrenceData",
+          "tipo": "array de string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Recurrence rules as RRULE, RDATE, or EXDATE strings."
+        },
+        {
+          "nome": "visibility",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": [
+            "default",
+            "public",
+            "private"
+          ],
+          "descricao": "Optional. Visibility of the event."
+        },
+        {
+          "nome": "workingLocationProperties",
+          "tipo": "objeto WorkingLocationProperties",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Optional. Working location properties (if eventType is WORKING_LOCATION)."
+        }
+      ],
+      "inputSchema": "Esquema completo com $defs (Attachment, Attendee, GuestPermissions, OfficeLocationDetails, Reminder, WorkingLocationProperties) e propriedades acima, conforme carregado via ToolSearch; a transcrição integral permanece na conversa da sessão e não foi reduzida nesta cópia.",
+      "observacao": "Parâmetros 'attendees', 'attachments', 'guestPermissions', 'overrideReminders' e 'workingLocationProperties' são objetos aninhados; o detalhe completo de seus campos está no esquema carregado."
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__get_event",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__search_events",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__update_event",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__delete_event",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__respond_to_event",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__claude_ai_Google_Calendar__suggest_time",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__list_workspaces",
+      "descricao": "List all workspaces the user can access. Use before creating a new form to select the target workspace.",
+      "parametros": [],
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__create_new_form",
+      "descricao": "Create a new draft form with the specified title and optional styling, and return its formId.",
+      "parametros": [
+        {
+          "nome": "title",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Form title"
+        },
+        {
+          "nome": "workspaceId",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Workspace ID from list_workspaces. Required when the user has more than one workspace."
+        },
+        {
+          "nome": "submitButtonText",
+          "tipo": "string",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Submit button text"
+        },
+        {
+          "nome": "logoUrl",
+          "tipo": "string (uri)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Logo image URL. Only set when the user explicitly provides a URL."
+        },
+        {
+          "nome": "coverImageUrl",
+          "tipo": "string (uri)",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Cover image URL. Only set when the user explicitly provides a URL."
+        }
+      ],
+      "inputSchema": {
+        "properties": {
+          "coverImageUrl": {
+            "description": "Cover image URL. Only set this when the user explicitly provides a URL in the conversation. Do NOT invent, guess, or use placeholder URLs just because a cover seems thematically appropriate. Public URL only — uploaded images cannot be used.",
+            "format": "uri",
+            "type": "string"
+          },
+          "logoUrl": {
+            "description": "Logo image URL. Only set this when the user explicitly provides a URL in the conversation. Do NOT invent, guess, or use placeholder URLs (e.g. tally.so/logo.png, example.com/logo.png) just because a logo seems thematically appropriate. Public URL only — uploaded images cannot be used.",
+            "format": "uri",
+            "type": "string"
+          },
+          "submitButtonText": {
+            "description": "Submit button text",
+            "type": "string"
+          },
+          "title": {
+            "description": "Form title",
+            "type": "string"
+          },
+          "workspaceId": {
+            "description": "Workspace ID from list_workspaces. Required when the user has more than one workspace; without it the form lands in their oldest workspace.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__publish_form",
+      "descricao": "Make the form's saved changes live for respondents and return the public form URL.",
+      "parametros": [
+        {
+          "nome": "formId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "The form to act on: its id, or a share, edit or embed link to it."
+        }
+      ],
+      "inputSchema": {
+        "properties": {
+          "formId": {
+            "description": "The form to act on: its id, or a share, edit or embed link to it. Use the formId from create_new_form or load_form.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "formId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__fetch_submissions",
+      "descricao": "Fetch submissions for a form. Returns paginated results with question labels and response data.",
+      "parametros": [
+        {
+          "nome": "formId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Form ID to fetch submissions for"
+        },
+        {
+          "nome": "limit",
+          "tipo": "integer",
+          "obrigatorio": false,
+          "valores_aceitos": "1 a 500 (padrão 50)",
+          "descricao": "Number of submissions per page"
+        },
+        {
+          "nome": "page",
+          "tipo": "integer",
+          "obrigatorio": false,
+          "valores_aceitos": "mínimo 1 (padrão 1)",
+          "descricao": "Page number for pagination"
+        },
+        {
+          "nome": "filter",
+          "tipo": "objeto",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Filter options: startDate, endDate (date ou date-time UTC), status (enum: all, completed, partial)."
+        }
+      ],
+      "inputSchema": {
+        "properties": {
+          "filter": {
+            "description": "Filter options for submissions",
+            "properties": {
+              "endDate": {
+                "description": "Inclusive upper bound for submittedAt, in UTC."
+              },
+              "startDate": {
+                "description": "Inclusive lower bound for submittedAt, in UTC."
+              },
+              "status": {
+                "description": "Submission status",
+                "enum": [
+                  "all",
+                  "completed",
+                  "partial"
+                ],
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "formId": {
+            "description": "Form ID to fetch submissions for",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Number of submissions per page",
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "page": {
+            "default": 1,
+            "description": "Page number for pagination",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "formId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__load_form",
+      "descricao": "Load existing form for editing",
+      "parametros": [
+        {
+          "nome": "formId",
+          "tipo": "string",
+          "obrigatorio": true,
+          "valores_aceitos": null,
+          "descricao": "Form ID to load"
+        }
+      ],
+      "inputSchema": {
+        "properties": {
+          "formId": {
+            "description": "Form ID to load",
+            "type": "string"
+          }
+        },
+        "required": [
+          "formId"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__list_forms",
+      "descricao": "List forms the user has access to. Returns paginated results with form metadata.",
+      "parametros": [
+        {
+          "nome": "filter",
+          "tipo": "objeto",
+          "obrigatorio": false,
+          "valores_aceitos": null,
+          "descricao": "Filter options. filter.workspaceIds: array de string."
+        },
+        {
+          "nome": "limit",
+          "tipo": "integer",
+          "obrigatorio": false,
+          "valores_aceitos": "1 a 500 (padrão 50)",
+          "descricao": "Number of forms per page"
+        },
+        {
+          "nome": "page",
+          "tipo": "integer",
+          "obrigatorio": false,
+          "valores_aceitos": "mínimo 1 (padrão 1)",
+          "descricao": "Page number for pagination"
+        }
+      ],
+      "inputSchema": {
+        "properties": {
+          "filter": {
+            "description": "Filter options for forms",
+            "properties": {
+              "workspaceIds": {
+                "description": "Filter forms by workspace IDs. Omit to list forms across all workspaces.",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Number of forms per page",
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "page": {
+            "default": 1,
+            "description": "Page number for pagination",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "nome": "mcp__tally__apply_logic",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__configure_blocks",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__create_blocks",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__extract_brand",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__fetch_insights",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__inspect_custom_css",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__list_blocks",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__move_blocks",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__remove_blocks",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__remove_pages",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__remove_questions",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__reposition_pages",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__reposition_questions",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__search_documentation",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__send_feedback",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__set_column_layout",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__set_form_title",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__update_custom_css",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__update_settings",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__update_styling",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    },
+    {
+      "nome": "mcp__tally__update_text",
+      "descricao": "indisponível",
+      "parametros": "indisponível",
+      "inputSchema": "indisponível"
+    }
+  ]
+}
