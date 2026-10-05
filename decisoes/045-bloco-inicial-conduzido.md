@@ -155,3 +155,39 @@ contrato, percurso sintético e grep. A25 conserva a mesma falha conhecida já
 registrada acima, sem alteração no teste ou no método empacotado. PyYAML está
 presente somente no ambiente 3.14 e acrescenta duas verificações; não é dependência
 nova. Não há chamadas a contas reais nem alteração do pacote do método.
+
+## Nota de emenda — conferência automática de formulário, 05/10/2026
+
+Por instrução do engenheiro, o perfil incorpora `mcp__tally__load_form` com o
+único parâmetro `formId`, conforme o inventário real. Somente ids criados ou
+declarados no expediente/caso corrente são permitidos; outro id produz
+TentativaNegada. Ferramentas fora do perfil e parâmetros extras continuam recusados.
+
+A sessão lê o formulário pelo conector, preserva seu retorno bruto e executa a
+comparação determinística com o modelo escolhido em reference/formularios/.
+Texto exato, ordem, tipo e campo oculto caso são conferidos; triagem também
+confere as alternativas. O adaptador utiliza o schema público de blocos Tally,
+referenciado na evidência; retorno desconhecido recusa, sem reconstrução por IA.
+O ciclo não fixa texto de perguntas e mantém conferência humana com PDF.
+Não se altera modelo nem método canônico por inferência.
+
+O relatório MD, com hash e vínculo ao modelo/retorno/contexto, passa a ser a
+evidência. Sem divergência, o responsável confirma com o literal “conferido”.
+confirmar-formulario vincula testemunho e hash; arquivo externo adicional não é
+obrigatório. A alternativa manual exige PDF completo e o mesmo literal.
+Divergências impedem publicação e aparecem no diagnóstico. Cada leitura nova
+invalida a confirmação anterior; após correção, repete-se leitura, comparação
+e confirmação. Aprovação anterior não sobrepõe relatório divergente.
+
+A pré-condição genérica do núcleo admite seleção do último evento, valores
+esperados e campo de diagnóstico, declarados pelo contrato do campo. O núcleo
+continua sem modelos, blocos, conectores ou vocabulário do método. Contratos
+anteriores preservam seu comportamento quando esses campos opcionais não existem.
+
+Núcleo 0.2.48 e campo 0.8.28; playbook 0.4.21. Evidência em
+.projectdocs/evidencias/conferencia-formulario/: linha de base e regressão
+integral em Python 3.12.12 e 3.14.4, negativas anteriores à implementação,
+fixtures sintéticas do schema oficial, relatórios/hash e calibração real.
+Permanece somente a divergência A25 já registrada nesta decisão, sem alteração
+do teste ou pacote canônico. Não foram chamadas contas remotas. Os dois testes
+adicionais em 3.14 correspondem à disponibilidade de PyYAML.

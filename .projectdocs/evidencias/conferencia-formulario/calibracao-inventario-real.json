@@ -480,7 +480,12 @@
       "precondicao_registrada": {
         "evento": "ConferenciaExternaRegistrada",
         "argumento": "formId",
-        "campo_evento": "objeto_id"
+        "campo_evento": "objeto_id",
+        "ultimo": true,
+        "valores": {
+          "resultado": "conferido"
+        },
+        "campo_motivo": "diferencas"
       }
     },
     {
@@ -621,7 +626,7 @@
     {
       "passo": "preparar-formulario",
       "ferramenta": null,
-      "motivo": "Inventário não contém schema auditável para inserir perguntas e campo oculto do caso; preparar e conferir no painel Tally"
+      "motivo": "Preparar perguntas/campo oculto no painel; conferência automática por load_form quando disponível ou manual com PDF e conferido"
     },
     {
       "passo": "coletar-submissoes",
@@ -649,5 +654,20 @@
       "filter"
     ]
   },
-  "evento_aprovacao": "AprovacaoExternaRegistrada"
+  "evento_aprovacao": "AprovacaoExternaRegistrada",
+  "conferencia_formulario": {
+    "leitura": "mcp__tally__load_form",
+    "argumento": "formId",
+    "escopo": "formulários criados/declarados no expediente ou caso corrente",
+    "comparar": [
+      "texto exato",
+      "ordem",
+      "tipo",
+      "campo oculto caso"
+    ],
+    "relatorio": "MD com SHA-256",
+    "confirmacao": "conferido",
+    "alternativa": "PDF conferido pelo engenheiro",
+    "bloqueio": "divergência ou formato não conferível impede publicação"
+  }
 }

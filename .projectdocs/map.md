@@ -10,8 +10,8 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 
 | Componente | Versão | Papel |
 |---|---|---|
-| eiac-nucleo | 0.2.47 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.27 | Método, scripts de campo, comandos, habilidades e template |
+| eiac-nucleo | 0.2.48 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+| eiac-campo | 0.8.28 | Método, scripts de campo, comandos, habilidades e template |
 | Playbook do template | 0.4.21 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
@@ -270,3 +270,13 @@ filtro de caso fica manual; schemas incompletos não são aproximados. Emenda da
 propostas canônicas preservadas e pacote sem alterações. perfis_conectores.py: 40 testes.
 Regressão integral: 1054/52 em 3.12 e 1056/52 em 3.14.4; somente a A25 conhecida.
 Evidência: .projectdocs/evidencias/perfis-conectores/.
+
+## Conferência automática de formulário
+
+Campo 0.8.28 e núcleo 0.2.48: load_form por formId corrente; retorno bruto com
+hash, comparação determinística em scripts/conferencia_formulario.py e relatório
+MD. iniciar.py conduz conferir-formulario e confirmar-formulario com literal
+conferido; publicação exige a última conferência vigente. PDF permanece alternativa.
+Ciclo sem textos fixos não é inferido. conferencia_formulario.py: 29 testes;
+perfis_conectores.py: 47. Regressão integral: 1090/53 em 3.12 e 1092/53 em 3.14,
+somente A25 conhecida. Evidência: .projectdocs/evidencias/conferencia-formulario/.

@@ -1,0 +1,69 @@
+{
+  "identico": {
+    "relatorio": {
+      "habilitacao": "HAB-SINTETICA",
+      "caso": "CASO-SINTETICO",
+      "formulario_id": "FORM",
+      "modelo": "habilitacao",
+      "modelo_sha256": "dce91c1c83d032443adb7371ba1e6514d28cacc54f4983871c3e16572c7aba4d",
+      "retorno_sha256": "a906bd3d57c61b2b0adcaf07e6fd98511a0190425b4bf3eb65c7857da1f0fafa",
+      "arquivo": "identico.md",
+      "sha256": "8e93a9d2a5cf2a3f78a1a11e3264b01c732209d88b41d780e6621f59af4a8daa",
+      "diferencas": []
+    },
+    "publicacao_autorizada": true,
+    "motivo": null
+  },
+  "texto-diferente": {
+    "relatorio": {
+      "habilitacao": "HAB-SINTETICA",
+      "caso": "CASO-SINTETICO",
+      "formulario_id": "FORM",
+      "modelo": "habilitacao",
+      "modelo_sha256": "dce91c1c83d032443adb7371ba1e6514d28cacc54f4983871c3e16572c7aba4d",
+      "retorno_sha256": "1cce6528c988dc3dd3bf2042cce49f260de51172138a1134b78ef47d4bb4c3e0",
+      "arquivo": "texto-diferente.md",
+      "sha256": "5b2cc6396057a6623cb6e72a5f52b383b43511b6beab261d30ef3cfa7b1cf2cd",
+      "diferencas": [
+        "pergunta 1 (HAB-0a-1): texto; esperado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\", encontrado \"Qual processo vocês querem tratar? Onde ele começa e onde termina? reformulado\""
+      ]
+    },
+    "publicacao_autorizada": false,
+    "motivo": "pré-condição externa não registrada: {'resultado': 'conferido'}; ['pergunta 1 (HAB-0a-1): texto; esperado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\", encontrado \"Qual processo vocês querem tratar? Onde ele começa e onde termina? reformulado\"']"
+  },
+  "ordem-trocada": {
+    "relatorio": {
+      "habilitacao": "HAB-SINTETICA",
+      "caso": "CASO-SINTETICO",
+      "formulario_id": "FORM",
+      "modelo": "habilitacao",
+      "modelo_sha256": "dce91c1c83d032443adb7371ba1e6514d28cacc54f4983871c3e16572c7aba4d",
+      "retorno_sha256": "b326513416af28faead7344c7edab71dff6da6c255e4fdbde3abd770655d7f83",
+      "arquivo": "ordem-trocada.md",
+      "sha256": "2d4f9c088d1271f85e4207a25c525c684cd6f674ed0e42f1f61d1cb97667507c",
+      "diferencas": [
+        "pergunta 1 (HAB-0a-1): ordem/texto; esperado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\", encontrado \"Qual é o problema concreto nesse processo hoje? O que dá errado, atrasa ou custa caro?\"",
+        "pergunta 2 (HAB-0a-2): ordem/texto; esperado \"Qual é o problema concreto nesse processo hoje? O que dá errado, atrasa ou custa caro?\", encontrado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\""
+      ]
+    },
+    "publicacao_autorizada": false,
+    "motivo": "pré-condição externa não registrada: {'resultado': 'conferido'}; ['pergunta 1 (HAB-0a-1): ordem/texto; esperado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\", encontrado \"Qual é o problema concreto nesse processo hoje? O que dá errado, atrasa ou custa caro?\"', 'pergunta 2 (HAB-0a-2): ordem/texto; esperado \"Qual é o problema concreto nesse processo hoje? O que dá errado, atrasa ou custa caro?\", encontrado \"Qual processo vocês querem tratar? Onde ele começa e onde termina?\"']"
+  },
+  "oculto-ausente": {
+    "relatorio": {
+      "habilitacao": "HAB-SINTETICA",
+      "caso": "CASO-SINTETICO",
+      "formulario_id": "FORM",
+      "modelo": "habilitacao",
+      "modelo_sha256": "dce91c1c83d032443adb7371ba1e6514d28cacc54f4983871c3e16572c7aba4d",
+      "retorno_sha256": "ed520c717ff54af3e781ee434526482b8776ed7f2fad030d3f63ea43603eab07",
+      "arquivo": "oculto-ausente.md",
+      "sha256": "031f3b32075317b731ff125896e058f209130e41d25d13449365724f4f8d6998",
+      "diferencas": [
+        "campo oculto caso ausente ou duplicado"
+      ]
+    },
+    "publicacao_autorizada": false,
+    "motivo": "pré-condição externa não registrada: {'resultado': 'conferido'}; ['campo oculto caso ausente ou duplicado']"
+  }
+}

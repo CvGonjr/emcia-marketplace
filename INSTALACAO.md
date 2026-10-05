@@ -2,7 +2,7 @@
 
 Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
 O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
-A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.47, campo 0.8.27, playbook 0.4.21.
+A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.28, playbook 0.4.21.
 
 ## 1. Instalar os plugins
 
@@ -77,7 +77,12 @@ listagem. Compartilhamento usa `share_file`, com pasta, `emailAddress` e `role`
 aprovados. Calendar exige `calendarId`, inclusive quando opcional no servidor.
 Tally cria com `create_new_form.workspaceId` e publica com `publish_form.formId`.
 Os schemas para montar perguntas/campo oculto não estão disponíveis no inventário:
-o engenheiro prepara no painel. `fetch_submissions` não tem filtro pelo campo
+o engenheiro prepara no painel. `load_form(formId)` lê somente formulários criados
+ou declarados no expediente/caso corrente. A sessão preserva os blocos brutos e
+executa `conferir-formulario`; o relatório MD com hash substitui arquivo externo
+quando não tem divergências e o engenheiro confirma “conferido” por
+`confirmar-formulario`. Divergência bloqueia publicação. O PDF conferido permanece
+como caminho manual alternativo. `fetch_submissions` não tem filtro pelo campo
 oculto; o engenheiro filtra/exporta no painel e entrega os bytes pelo caminho
 manual registrado. A API não é chamada para obter um lote amplo.
 Publicação ausente ou criação sem workspace também exigem ação manual; registre

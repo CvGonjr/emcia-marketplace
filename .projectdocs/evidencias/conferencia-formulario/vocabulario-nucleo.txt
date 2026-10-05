@@ -1,0 +1,2 @@
+Comando: rg -n -i tally|load_form|publish_form|habilitacao|formulario|triagem|preset|capability|assistant eiac-nucleo/scripts
+Código de saída: 1 (nenhuma ocorrência).

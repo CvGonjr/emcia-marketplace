@@ -35,7 +35,8 @@ parâmetro extra são recusados. O relatório lista a garantia faltante e a aç�
 | Compartilhar | `share_file`, `fileId`, `emailAddress`, `role` | Pasta declarada; valores exatos da aprovação; raiz EMCIA recusada |
 | Agenda | `mcp__claude_ai_Google_Calendar__list_events`/`create_event`, `calendarId` | Calendário declarado; criar exige aprovação dos parâmetros |
 | Criar formulário | `mcp__tally__create_new_form`, `title`, `workspaceId` | Workspace declarado, sem usar o padrão implícito do servidor |
-| Publicar formulário | `mcp__tally__publish_form`, `formId` | Formulário declarado; preparação manual conferida e aprovação |
+| Ler formulário | `mcp__tally__load_form`, `formId` | Somente formulário criado/declarado no expediente ou caso corrente; retorno bruto preservado |
+| Publicar formulário | `mcp__tally__publish_form`, `formId` | Formulário declarado; conferência vigente sem divergências, literal “conferido” e aprovação |
 | Submissões | `mcp__tally__fetch_submissions`, `formId` | **Recusada**: inventário não oferece filtro pelo campo oculto do caso |
 
 `finalidade` da pasta é declaração na entrada local aprovada de `iniciar.py`,
@@ -45,6 +46,68 @@ listagem: no expediente, retorno da busca com `conteiner_id` e `objetos`; no
 caso, também `registrar_listagem.py` com o manifesto e evento no contrato local.
 IDs retornados só entram no contexto do expediente e da operação correspondente.
 Retorno não autentica servidor nem comprova permissão remota.
+
+### Conferência automática e confirmação humana
+
+Após preparar o formulário no painel, a sessão autoriza `load_form` pelo wrapper,
+chama o conector e registra o retorno inteiro, sem resumir/reconstruir os blocos:
+
+```json
+{
+  "chamada": {
+    "habilitacao": "HAB-0001", "caso": "caso-0001",
+    "ferramenta": "mcp__tally__load_form", "argumentos": {"formId": "FORM-ID"}
+  },
+  "resultado": {"resposta": {"data": {"formId": "FORM-ID", "workspaceId": "WORK-ID", "blocks": []}}}
+}
+```
+
+Use a entrada acima em `iniciar.py retorno`; `resposta` recebe o JSON real completo
+(o array vazio é somente indicação de formato, nunca uma conferência positiva).
+Aceita-se também o envelope MCP `structuredContent.data`. O retorno e a chamada
+ficam vinculados por hashes e evento. Não se usa o ledger textual para decidir
+conformidade. O adaptador aceita o [schema público dos blocos Tally](https://developers.tally.so/api-reference/openapi.json):
+`TITLE` de `groupType: QUESTION`, `payload.html`, entradas subsequentes e
+`HIDDEN_FIELDS.payload.hiddenFields`. Formato desconhecido é divergência explícita.
+O ensaio usa fixtures desse schema; não autentica o servidor nem testa conta real.
+
+Execute as operações pelo mesmo `aprovar`/`executar` das demais entradas:
+
+```json
+{"operacao":"conferir-formulario","entrada":{"habilitacao":"HAB-0001","caso":"caso-0001","formulario_id":"FORM-ID","modelo":"habilitacao"}}
+```
+
+A aprovação dessa entrada fixa a seleção do modelo correspondente. Modelos
+permitidos: `habilitacao`, `triagem`, `ciclo`, sempre da pasta `reference/formularios/`.
+O relatório MD fica em `conferencias/` junto da configuração; registra contexto,
+formulário, modelo/hash, retorno/hash, perguntas observadas e diferenças.
+Compara caracteres exatos do texto (incluindo espaços, acentos e pontuação),
+ordem e tipo, e exige uma ocorrência do campo oculto `caso`. Tags HTML de
+formatação não mudam o texto; não se reformula nem corrige a redação. `texto`
+corresponde a uma única entrada `INPUT_TEXT` ou `TEXTAREA`. As alternativas da
+triagem exigem escolha única `MULTIPLE_CHOICE_OPTION`, mesmos textos e ordem,
+sem seleção múltipla ou aleatorização. O modelo de ciclo não fixa redação de
+perguntas; exige a alternativa humana com PDF, sem inventar textos.
+
+Sem diferenças, apresente o relatório e seu hash; o engenheiro responde
+**“conferido”**. Registre esse literal e execute:
+
+```json
+{"operacao":"confirmar-formulario","entrada":{"habilitacao":"HAB-0001","caso":"caso-0001","formulario_id":"FORM-ID","relatorio_sha256":"<hash-do-relatorio>"}}
+```
+
+O relatório automático é a evidência dessa confirmação; não se exige arquivo
+externo adicional. Sua integridade e a do modelo/retorno são reconferidas.
+Publicação ainda exige aprovação nominal do efeito externo. Cada nova leitura
+invalida a confirmação anterior. Divergência bloqueia publicação com a lista das
+diferenças; corrija no painel, leia novamente e repita comparação/“conferido”.
+Uma aprovação antiga ou um PDF não sobrepõe divergência registrada. O núcleo
+aplica somente a pré-condição declarada: último evento e valores esperados,
+com diagnóstico fornecido pelo contrato; não compara instrumentos ou blocos.
+
+Na alternativa manual, `caminho-manual`, passo `preparar-formulario`, exige
+`formulario_id`, `decisao: executar manualmente`, evidência PDF completo e
+aprovação com literal “conferido”. Outros passos manuais conservam seu contrato.
 
 ### Garantia ausente e caminho manual
 

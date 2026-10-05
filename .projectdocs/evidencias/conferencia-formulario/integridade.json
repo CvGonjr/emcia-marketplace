@@ -1,0 +1,147 @@
+{
+  "tag": "metodo-v1.0",
+  "commit": "08bfb162d762935ed35f55e0a75bc700b81d5276",
+  "pacote": [
+    {
+      "arquivo": "EMCIA-APR-01-registro-de-aprovacoes.md",
+      "sha256": "2997ec2607229c9a72c8cb981eb83fb7cc789472e2277279337604c8aee56be1",
+      "manifesto": "2997ec2607229c9a72c8cb981eb83fb7cc789472e2277279337604c8aee56be1",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-CAM-01-protocolo-de-campo-por-passo.md",
+      "sha256": "3cd0a67d14c16e7c05ff35a6e102e2db358ba79c073c0ff5f5f0e136da931e97",
+      "manifesto": "3cd0a67d14c16e7c05ff35a6e102e2db358ba79c073c0ff5f5f0e136da931e97",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-CAN-01-protocolo-de-canais-externos.md",
+      "sha256": "709b1dd923534e0e2f92d20d0a4198e28498abb831c55a5c9f72a47dd5dac580",
+      "manifesto": "709b1dd923534e0e2f92d20d0a4198e28498abb831c55a5c9f72a47dd5dac580",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-CAT-01-fronteira-de-delegacao.md",
+      "sha256": "6add6070b9293721f95616ac930726e9355f06832a4e4798cc776aa49b0a17c7",
+      "manifesto": "6add6070b9293721f95616ac930726e9355f06832a4e4798cc776aa49b0a17c7",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md",
+      "sha256": "c99fbe9485363f43b59fe5c7716d8293deed9d85597b0aa493ab91b8ed582ce8",
+      "manifesto": "c99fbe9485363f43b59fe5c7716d8293deed9d85597b0aa493ab91b8ed582ce8",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-E1-ficha-de-enquadramento.md",
+      "sha256": "3932e8ebcd341cd61f99b7cd0ffa4a3ba6c01a5f9b2e774a862bfa7107726fd8",
+      "manifesto": "3932e8ebcd341cd61f99b7cd0ffa4a3ba6c01a5f9b2e774a862bfa7107726fd8",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-E2-diagnostico-e-oportunidade.md",
+      "sha256": "bcf4ac51f6b16f6a4ddcb4c5d23217abaed3fc9205c1220cb27a0f880a1b6241",
+      "manifesto": "bcf4ac51f6b16f6a4ddcb4c5d23217abaed3fc9205c1220cb27a0f880a1b6241",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-E3-blueprint-da-solucao.md",
+      "sha256": "c42756ef1e792cc459610d0ed66ec0168933f796a86eab594c1356a065e06d0f",
+      "manifesto": "c42756ef1e792cc459610d0ed66ec0168933f796a86eab594c1356a065e06d0f",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-E4-guia-operacional.md",
+      "sha256": "846eef55b4de668539f5f4407cb95180028363212fa2ddf13a393ff6748b67e7",
+      "manifesto": "846eef55b4de668539f5f4407cb95180028363212fa2ddf13a393ff6748b67e7",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-E5-relatorio-de-piloto.md",
+      "sha256": "8da20155667f15cf8386b02961ca98dcb083ba3d595550bd81a735b9411e7dda",
+      "manifesto": "8da20155667f15cf8386b02961ca98dcb083ba3d595550bd81a735b9411e7dda",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-FER-01-quadro-de-ferramentas.md",
+      "sha256": "9570a293fefa441dd8bd0f3fd89365fce522979315a941d6daa231b67844287f",
+      "manifesto": "9570a293fefa441dd8bd0f3fd89365fce522979315a941d6daa231b67844287f",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-GLO-01-glossario-do-metodo.md",
+      "sha256": "67e04d9df838b49f3b4bbe7b1e6f6179a7a6091bdbd9d53a8625cd5d1eb4a660",
+      "manifesto": "67e04d9df838b49f3b4bbe7b1e6f6179a7a6091bdbd9d53a8625cd5d1eb4a660",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-HAB-01-protocolo-de-habilitacao.md",
+      "sha256": "17e2a35d751bc8085d24982566d08509f72e9e7bae0651deaa81f31191a1b8fe",
+      "manifesto": "17e2a35d751bc8085d24982566d08509f72e9e7bae0651deaa81f31191a1b8fe",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-MAN-01-manual-de-aplicacao.md",
+      "sha256": "31b9864cd299412e80cc8b9b60b6731ecf775afd530a39c86aedaf13d8b8ef39",
+      "manifesto": "31b9864cd299412e80cc8b9b60b6731ecf775afd530a39c86aedaf13d8b8ef39",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-MET-01-documento-do-metodo.md",
+      "sha256": "09c668ab35f73e0c9d6696c8a86208be7d8f1f21eda4148b8b85e8e3f92aa802",
+      "manifesto": "09c668ab35f73e0c9d6696c8a86208be7d8f1f21eda4148b8b85e8e3f92aa802",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md",
+      "sha256": "f703def61a798860051e01ef6bf16529ecd5fd27609033b49ef97ef5d4c4761c",
+      "manifesto": "f703def61a798860051e01ef6bf16529ecd5fd27609033b49ef97ef5d4c4761c",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-ROT-02-roteiro-de-habilitacao.md",
+      "sha256": "d51415c69cd1680d0c7f2ca91fcf77605cd716147f9ab881d34ce01df1baacc3",
+      "manifesto": "d51415c69cd1680d0c7f2ca91fcf77605cd716147f9ab881d34ce01df1baacc3",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-TRA-01-procedimentos-transversais-do-metodo.md",
+      "sha256": "9a88fc973299feb48c26fbe2eecd2f66e9028c8e651d82541d508d030edef160",
+      "manifesto": "9a88fc973299feb48c26fbe2eecd2f66e9028c8e651d82541d508d030edef160",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "EMCIA-TRI-01-instrumento-de-triagem.md",
+      "sha256": "2ced27d89b5886df5bf23b304741c4752a06dc3f2386e5c59557c6798b7d0d6f",
+      "manifesto": "2ced27d89b5886df5bf23b304741c4752a06dc3f2386e5c59557c6798b7d0d6f",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "HAB-01-carta-de-escopo.md",
+      "sha256": "88e77fcb1a3d3458172b73e6c7e43afda91467850dda97494ccac67dd3872a03",
+      "manifesto": "88e77fcb1a3d3458172b73e6c7e43afda91467850dda97494ccac67dd3872a03",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "HAB-02-acordo-confidencialidade.md",
+      "sha256": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+      "manifesto": "cd86b77fc51afa5e9fc5cbe042b03020c5c8f1bd42889329849c9f57d644c0b4",
+      "identico_a_tag": true
+    },
+    {
+      "arquivo": "HAB-03-termo-de-consentimento.md",
+      "sha256": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96",
+      "manifesto": "00c0f39ce36de8013fc7389a71292d6b4f60510de94f2e66feb5a5211f975f96",
+      "identico_a_tag": true
+    }
+  ],
+  "implementacao": {
+    "eiac-nucleo/scripts/escopo_externo.py": "caa18c3a9c60a15f3bed753001629278a7f5616a901f43423cfb5f5946a82766",
+    "eiac-campo/scripts/iniciar.py": "d93070e62a9c0d919b9dfb332f5efc332978eadb619f2e94cf09462af5e571b8",
+    "eiac-campo/scripts/conferencia_formulario.py": "c307a489af15999f46739b951197a1467b84ae5508b9956a256b09e7a601c5e8",
+    "eiac-campo/reference/perfis-conectores.json": "2923c5ffed228a966191edb1b3bdfab59069bcc3825c27edaf5457bc915b3c1c",
+    "testes/conferencia_formulario.py": "083432c1339f9390f19b162662e8cb866a201fc24ba626b1d51922e334d82285",
+    "testes/apoio/tally-load-form.json": "cf2b633a1fc6eeaebf7a3cd5767b37a20e05e2f36cbcda7cfb7601559d10cc64",
+    "testes/apoio/tally-load-form-triagem.json": "3d9a42d9c1893bce80326abee1f7ed1fa1c949f6933e1dde639980ff276fe187"
+  }
+}

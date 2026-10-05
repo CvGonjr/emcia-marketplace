@@ -9,8 +9,8 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 
 | Componente | Versão | Responsabilidade |
 |---|---|---|
-| eiac-nucleo | 0.2.47 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.27 | Método, comandos, habilidades e operações administrativas |
+| eiac-nucleo | 0.2.48 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
+| eiac-campo | 0.8.28 | Método, comandos, habilidades e operações administrativas |
 | Playbook dos casos novos | 0.4.21 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
@@ -55,8 +55,11 @@ e expedientes, workspace Tally, pasta raiz Drive, calendário e navegador.
 Ele apresenta o perfil determinístico dos conectores para uma confirmação inicial.
 Ferramentas sem perfil permanecem recusadas e são listadas no diagnóstico.
 A calibração usa o inventário fornecido, com nomes e parâmetros literais. Neste
-conector Tally, preparação do formulário e coleta filtrada de submissões exigem
-ação manual registrada: não existe filtro por campo oculto em `fetch_submissions`.
+conector Tally, a preparação ocorre no painel. A sessão lê por `load_form(formId)`
+e compara texto, ordem, tipo e campo oculto `caso` com o modelo, gerando relatório
+MD com hash. Publicação exige relatório sem divergências e confirmação “conferido”;
+PDF conferido permanece alternativa. A coleta filtrada exige ação manual registrada:
+não existe filtro por campo oculto em `fetch_submissions`.
 
 O percurso sem alterações de conteúdo reúne cinco aprovações:
 
