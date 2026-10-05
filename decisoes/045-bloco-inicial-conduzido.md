@@ -191,3 +191,12 @@ fixtures sintéticas do schema oficial, relatórios/hash e calibração real.
 Permanece somente a divergência A25 já registrada nesta decisão, sem alteração
 do teste ou pacote canônico. Não foram chamadas contas remotas. Os dois testes
 adicionais em 3.14 correspondem à disponibilidade de PyYAML.
+
+## Nota de emenda — habilitação simplificada, 05/10/2026
+
+A decisão 047 substitui o percurso de cinco aprovações pelo fluxo administrativo
+com formulário permanente por tipo, exportação local filtrada, esclarecimentos
+por mensagem, tratamento padrão e três confirmações por caso. O Drive passa a
+ser provisionado em P2, com aprovação própria. A reserva terminal das decisões
+de método, APR-01, hashes, autoria fixa, ratificação/aceitação e o caráter de
+testemunho das aprovações permanecem. Consulte a 047 para o contrato completo.

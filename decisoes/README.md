@@ -52,3 +52,4 @@ Uma decisão por arquivo, numerada e datada. Formato: contexto, decisão, conseq
 | 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica | firme; obrigatoriedade de ratificação parcialmente superada por 045 |
 | 045 | Bloco inicial conduzido, aprovação nominal no chat e aceitação revogável sem ratificação | firme; emendas de perfis reais e conferência automática de formulário |
 | 046 | Comparador de formulário no formato real do conector Tally, com normalização e recusa por caminho | firme |
+| 047 | Habilitação simplificada, formulário permanente e abertura sem Drive | firme; emenda 045 |

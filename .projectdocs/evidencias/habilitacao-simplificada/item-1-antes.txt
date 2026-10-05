@@ -1,0 +1,50 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ERROR
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ERROR
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ERROR
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ERROR
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ERROR
+
+======================================================================
+ERROR: test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 48, in test_01_permanente_sem_conferencia_recusa
+    import formularios_permanentes as F
+ModuleNotFoundError: No module named 'formularios_permanentes'
+
+======================================================================
+ERROR: test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 53, in test_02_contrato_anterior_recusa
+    import formularios_permanentes as F
+ModuleNotFoundError: No module named 'formularios_permanentes'
+
+======================================================================
+ERROR: test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 63, in test_03_relatorio_adulterado_recusa
+    import formularios_permanentes as F
+ModuleNotFoundError: No module named 'formularios_permanentes'
+
+======================================================================
+ERROR: test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 69, in test_04_reutiliza_sem_nova_aprovacao
+    import formularios_permanentes as F
+ModuleNotFoundError: No module named 'formularios_permanentes'
+
+======================================================================
+ERROR: test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_simplificada.py", line 77, in test_05_nova_leitura_invalida_permanente
+    import formularios_permanentes as F
+ModuleNotFoundError: No module named 'formularios_permanentes'
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+FAILED (errors=5)

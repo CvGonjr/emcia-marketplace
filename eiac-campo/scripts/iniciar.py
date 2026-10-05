@@ -224,7 +224,7 @@ def aprovar(p,op,entrada,literal,resumo):
 def operar(p,op,d,aprovacao):
     c=ler_config(p)
     try:
-        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario','confirmar-formulario'}:
+        if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario','confirmar-formulario','formulario-permanente'}:
             raise ValueError('decisão de método não executável pela sessão: '+op)
         contexto=d.get('caso') or d.get('id') or d.get('habilitacao')
         r=A.conferir(aprovacao,op,c['responsavel'],contexto,cmd_operacao(op,d))
@@ -272,6 +272,9 @@ def operar(p,op,d,aprovacao):
         if op=='caminho-manual':return caminho_manual(p,c,d,r)
         if op=='conferir-formulario':return conferir_formulario(p,c,d)
         if op=='confirmar-formulario':return confirmar_formulario(p,c,d,r)
+        if op=='formulario-permanente':
+            import formularios_permanentes as F
+            return F.registrar(p,c,d)
         with cwd(case):
             st=E.ler();pb=json.loads(pathlib.Path('registro/playbook.json').read_text())
             if not pb.get('operacoes_sessao'):raise ValueError('caso conserva playbook anterior; não delega estes atos')
@@ -331,6 +334,11 @@ def declaracoes_manuais(p,hab):
 def escopos(p,c,hab,caso,operacao):
     conhecidos={'workspace_id':[c['workspace_tally']],'calendario_id':[c['calendario_casos']],
                 'pasta_id':[],'formulario_id':[],'objeto_id':[],'entregas':[]}
+    for tipo,reg in c.get('formularios_permanentes',{}).items():
+        import formularios_permanentes as F
+        declaracoes=[e for e in F.eventos(p) if e.get('evento')=='FormularioPermanenteDeclarado' and e.get('modelo')==tipo]
+        if declaracoes and declaracoes[-1]['registro']==reg:
+            conhecidos['formulario_id'].append(reg['formId'])
     if operacao=='provisionar':conhecidos['pasta_id'].append(c['pasta_drive'])
     exp=pathlib.Path(c['base_expedientes'])/hab
     if (exp/'expediente.json').exists():

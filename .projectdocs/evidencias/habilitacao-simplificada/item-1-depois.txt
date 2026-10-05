@@ -1,0 +1,10 @@
+test_01_permanente_sem_conferencia_recusa (__main__.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (__main__.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (__main__.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (__main__.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (__main__.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.215s
+
+OK
