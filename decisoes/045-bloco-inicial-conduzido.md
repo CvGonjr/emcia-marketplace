@@ -113,3 +113,45 @@ condições de autoria, procedência, versão, histórico e referência permanec
 Casos sem rótulos continuam recusando pelas mesmas condições, com diagnóstico genérico.
 Remissões em comentários foram retiradas. Saída de grep anterior/final e teste de
 ausência de vocabulário de instrumentos/conectores acompanham a evidência.
+
+## Nota de emenda — perfis dos conectores reais, 05/10/2026
+
+O engenheiro determinou substituir as assinaturas hipotéticas pelo inventário
+fornecido em ~/emcia-op/ensaio/inventario-mcp.json, única fonte de nomes/parâmetros.
+Perfis literais conferidos por contrato ficam no campo. O núcleo apenas valida
+schemas, alternativas, constantes/ids e eventos declarados, sem vocabulário de
+ferramenta ou método. Parâmetro extra é recusado. Casos anteriores conservam seu
+contrato; a fixture do perfil anterior verifica essa compatibilidade.
+
+Drive search_files usa query com pai declarado; fileId de leitura/download
+exige listagem registrada. create_file separa pasta pelo tipo MIME, sem conteúdo,
+de arquivo comum só em entregas. parentId sempre é explícito. share_file exige
+fileId de pasta declarada e emailAddress/role idênticos à aprovação. Calendar
+usa calendarId, nunca o calendário padrão implícito. Tally create_new_form
+exige workspaceId; publish_form exige formId declarado e conferência registrada
+da preparação. Retornos ficam vinculados à chamada, finalidade e evento por hash.
+
+O inventário fornecido tem duas limitações: não há schema auditável para montar
+perguntas/campo oculto no Tally; fetch_submissions.filter só expõe datas/status,
+sem filtro pelo campo oculto do caso. O engenheiro prepara no painel e filtra/
+exporta manualmente as submissões do formulário declarado. O comando oferece
+caminho-manual, com decisão explícita, responsável, evidência/hash, motivo e
+aprovação nominal registrada. A API recusada não é executada por essa operação.
+Se não houver publicação no inventário, publicar fica como ação do engenheiro;
+se faltar workspaceId, criar também fica manual. Não há dispensa ou coleta
+ampla seguida de filtro local. O critério de não recusar as ferramentas do
+bloco se aplica às chamadas cuja garantia existe; o próprio pedido determina
+o caminho manual onde a garantia falta.
+
+create_event tem inputSchema integral não transcrito, mas parâmetros listados.
+Somente campos de tipo simples explícito têm perfil; objetos sem schema e
+parâmetros depreciados ficam recusados e aparecem no relatório. Não se inventam
+nomes de campos de objetos nem ferramentas para publicação.
+
+Núcleo 0.2.47, campo 0.8.27, playbook 0.4.21. Evidência em
+.projectdocs/evidencias/perfis-conectores/: linha de base e regressão integral
+em Python 3.12.12 e 3.14.4, inventário/hash, negativas anteriores à correção,
+contrato, percurso sintético e grep. A25 conserva a mesma falha conhecida já
+registrada acima, sem alteração no teste ou no método empacotado. PyYAML está
+presente somente no ambiente 3.14 e acrescenta duas verificações; não é dependência
+nova. Não há chamadas a contas reais nem alteração do pacote do método.

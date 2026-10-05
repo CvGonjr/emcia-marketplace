@@ -38,7 +38,10 @@ python3 /caminho/eiac-campo/scripts/iniciar.py executar --entrada /pasta/ato.jso
 Na primeira configuração, `configurar` recebe os sete campos: responsavel,
 base_casos, base_expedientes, workspace_tally, pasta_drive, calendario_casos,
 navegador. As bases são absolutas e externas; ids são retornados pelo conector
-ou informados explicitamente. O perfil usa inventário real `name`/`inputSchema`.
+ou informados explicitamente. O perfil usa o arquivo de inventário real com `ferramentas`/`nome`/`inputSchema`/`parametros`.
+Confira o relatório e os caminhos manuais em reference/canais.md: o Tally fornecido
+não tem filtro pelo campo oculto em fetch_submissions. Preparação e coleta manual
+exigem decisão/evidência registrada; a API recusada não é chamada.
 
 As cinco aprovações do percurso sem retrabalho são envio/plano de rodadas, carta,
 PDFs/plano de assinaturas, abertura com árvore inteira/plano local, compartilhamentos

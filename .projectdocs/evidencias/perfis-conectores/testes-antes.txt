@@ -1,0 +1,296 @@
+test_01_busca_sem_pasta (__main__.Administracao.test_01_busca_sem_pasta) ... ERROR
+test_02_criacao_pasta_fora_conteiner (__main__.Administracao.test_02_criacao_pasta_fora_conteiner) ... ERROR
+test_03_arquivo_comum_fora_entregas (__main__.Administracao.test_03_arquivo_comum_fora_entregas) ... ERROR
+test_04_compartilhar_id_nao_declarado (__main__.Administracao.test_04_compartilhar_id_nao_declarado) ... ERROR
+test_05_formulario_nao_declarado (__main__.Administracao.test_05_formulario_nao_declarado) ... ERROR
+test_06_ferramenta_sem_perfil (__main__.Administracao.test_06_ferramenta_sem_perfil) ... ERROR
+test_07_parametro_extra (__main__.Administracao.test_07_parametro_extra) ... ERROR
+test_08_leitura_sem_listagem (__main__.Administracao.test_08_leitura_sem_listagem) ... ERROR
+test_09_pasta_com_conteudo_nao_e_variante_pasta (__main__.Administracao.test_09_pasta_com_conteudo_nao_e_variante_pasta) ... ERROR
+test_10_destinatario_alterado_recusa (__main__.Administracao.test_10_destinatario_alterado_recusa) ... ERROR
+test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado (__main__.Administracao.test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado) ... ERROR
+test_12_workspace_alheio (__main__.Administracao.test_12_workspace_alheio) ... ERROR
+test_20_pasta_arquivo_entregas_compartilhamento_calendario (__main__.Administracao.test_20_pasta_arquivo_entregas_compartilhamento_calendario) ... ERROR
+test_21_listagem_registrada_antes_da_leitura (__main__.Administracao.test_21_listagem_registrada_antes_da_leitura) ... ERROR
+test_22_manual_decisao_e_evidencia_preservadas (__main__.Administracao.test_22_manual_decisao_e_evidencia_preservadas) ... ERROR
+test_01_parametro_extra_recusa_no_nucleo (__main__.CasoReal.test_01_parametro_extra_recusa_no_nucleo) ... ok
+test_02_criar_arquivo_fora_entregas (__main__.CasoReal.test_02_criar_arquivo_fora_entregas) ... ok
+test_03_compartilhamento_sem_aprovacao_recusa (__main__.CasoReal.test_03_compartilhamento_sem_aprovacao_recusa) ... ok
+test_04_calendar_alheio (__main__.CasoReal.test_04_calendar_alheio) ... ok
+test_05_tally_sem_filtro_recusa_no_nucleo (__main__.CasoReal.test_05_tally_sem_filtro_recusa_no_nucleo) ... ok
+test_20_busca_limitada_aceita (__main__.CasoReal.test_20_busca_limitada_aceita) ... FAIL
+test_01_nome_ausente_reprova_contrato (__main__.Contrato.test_01_nome_ausente_reprova_contrato) ... ERROR
+test_02_parametro_ausente_reprova_contrato (__main__.Contrato.test_02_parametro_ausente_reprova_contrato) ... ERROR
+test_03_cada_nome_e_parametro_consta_do_inventario (__main__.Contrato.test_03_cada_nome_e_parametro_consta_do_inventario) ... ERROR
+test_04_garantia_tally_ausente_e_manual_explicito (__main__.Contrato.test_04_garantia_tally_ausente_e_manual_explicito) ... ERROR
+test_05_criar_sem_workspace_fica_recusado (__main__.Contrato.test_05_criar_sem_workspace_fica_recusado) ... ERROR
+test_06_publicacao_ausente_vira_acao_humana (__main__.Contrato.test_06_publicacao_ausente_vira_acao_humana) ... ERROR
+test_07_schema_calendar_parcial_nao_inventa_subcampos (__main__.Contrato.test_07_schema_calendar_parcial_nao_inventa_subcampos) ... ERROR
+
+======================================================================
+ERROR: test_01_busca_sem_pasta (__main__.Administracao.test_01_busca_sem_pasta)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_02_criacao_pasta_fora_conteiner (__main__.Administracao.test_02_criacao_pasta_fora_conteiner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_03_arquivo_comum_fora_entregas (__main__.Administracao.test_03_arquivo_comum_fora_entregas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_04_compartilhar_id_nao_declarado (__main__.Administracao.test_04_compartilhar_id_nao_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_05_formulario_nao_declarado (__main__.Administracao.test_05_formulario_nao_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_06_ferramenta_sem_perfil (__main__.Administracao.test_06_ferramenta_sem_perfil)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_07_parametro_extra (__main__.Administracao.test_07_parametro_extra)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_08_leitura_sem_listagem (__main__.Administracao.test_08_leitura_sem_listagem)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_09_pasta_com_conteudo_nao_e_variante_pasta (__main__.Administracao.test_09_pasta_com_conteudo_nao_e_variante_pasta)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_10_destinatario_alterado_recusa (__main__.Administracao.test_10_destinatario_alterado_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado (__main__.Administracao.test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_12_workspace_alheio (__main__.Administracao.test_12_workspace_alheio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_20_pasta_arquivo_entregas_compartilhamento_calendario (__main__.Administracao.test_20_pasta_arquivo_entregas_compartilhamento_calendario)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_21_listagem_registrada_antes_da_leitura (__main__.Administracao.test_21_listagem_registrada_antes_da_leitura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_22_manual_decisao_e_evidencia_preservadas (__main__.Administracao.test_22_manual_decisao_e_evidencia_preservadas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 83, in setUp
+    self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
+                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_01_nome_ausente_reprova_contrato (__main__.Contrato.test_01_nome_ausente_reprova_contrato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 32, in test_01_nome_ausente_reprova_contrato
+    I.validar_contrato_perfis(self.inv, perfis)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'iniciar' has no attribute 'validar_contrato_perfis'
+
+======================================================================
+ERROR: test_02_parametro_ausente_reprova_contrato (__main__.Contrato.test_02_parametro_ausente_reprova_contrato)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 36, in test_02_parametro_ausente_reprova_contrato
+    perfis[DRIVE+'search_files']['argumentos'][0]['campo'] = 'q'
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+
+======================================================================
+ERROR: test_03_cada_nome_e_parametro_consta_do_inventario (__main__.Contrato.test_03_cada_nome_e_parametro_consta_do_inventario)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 41, in test_03_cada_nome_e_parametro_consta_do_inventario
+    I.validar_contrato_perfis(self.inv)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'iniciar' has no attribute 'validar_contrato_perfis'
+
+======================================================================
+ERROR: test_04_garantia_tally_ausente_e_manual_explicito (__main__.Contrato.test_04_garantia_tally_ausente_e_manual_explicito)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 48, in test_04_garantia_tally_ausente_e_manual_explicito
+    p = I.calibrar(self.inv)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_05_criar_sem_workspace_fica_recusado (__main__.Contrato.test_05_criar_sem_workspace_fica_recusado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 57, in test_05_criar_sem_workspace_fica_recusado
+    p = I.calibrar(self.inv)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_06_publicacao_ausente_vira_acao_humana (__main__.Contrato.test_06_publicacao_ausente_vira_acao_humana)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 63, in test_06_publicacao_ausente_vira_acao_humana
+    p = I.calibrar(self.inv)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+ERROR: test_07_schema_calendar_parcial_nao_inventa_subcampos (__main__.Contrato.test_07_schema_calendar_parcial_nao_inventa_subcampos)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 68, in test_07_schema_calendar_parcial_nao_inventa_subcampos
+    p = I.calibrar(self.inv)
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 113, in calibrar
+    if not isinstance(ferramentas,list):raise ValueError('inventário MCP precisa ser lista')
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: inventário MCP precisa ser lista
+
+======================================================================
+FAIL: test_20_busca_limitada_aceita (__main__.CasoReal.test_20_busca_limitada_aceita)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 196, in test_20_busca_limitada_aceita
+    self.assertEqual(self.hook(DRIVE+'search_files', dict(query=f"'{self.pasta}' in parents")).returncode, 0)
+AssertionError: 2 != 0
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.128s
+
+FAILED (failures=1, errors=22)

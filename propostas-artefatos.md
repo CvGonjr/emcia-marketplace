@@ -20,3 +20,18 @@ O teste permanece inalterado, com falha conhecida restrita a essa lista e ao tes
 01. Não há camada, produto ou comando de etapa alterado. Revisão do MAN-01 e
 aprovação de nova linha de base pertencem ao canônico; não se cria cópia local
 ajustada para silenciar a divergência. Qualquer divergência adicional é bloqueante.
+
+## Complemento — assinaturas reais dos conectores
+
+Proposta para EMCIA-CAN-01 e ROT-02: inventário é a fonte exclusiva de nomes e
+parâmetros. Drive usa `query`, `fileId`, `parentId` e `create_file` para pasta
+por `contentMimeType`; arquivo comum permanece só em entregas. `share_file`
+confere pasta, destinatário e papel com aprovação. Calendar exige `calendarId`.
+Tally exige `workspaceId` na criação e `formId` na publicação. Não há filtro
+pelo campo oculto em `fetch_submissions`: a coleta dessa API fica recusada;
+o engenheiro filtra/exporta pelo painel e a decisão/evidência ficam registradas.
+Montagem do formulário e publicação sem assinatura disponível também ficam
+manuais. A falta da garantia não autoriza parâmetro fictício ou filtro local
+após coleta ampla. CAN-01 conserva o filtro de caso e a listagem antes da leitura.
+A emenda da decisão 045 autoriza o executor e registra esse limite, sem mudar
+documento controlado nem reempacotar o método.

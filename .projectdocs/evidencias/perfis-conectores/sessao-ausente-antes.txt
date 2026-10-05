@@ -1,0 +1,15 @@
+test_18_mcp_sem_sessao_nao_passa (__main__.Administracao.test_18_mcp_sem_sessao_nao_passa) ... FAIL
+
+======================================================================
+FAIL: test_18_mcp_sem_sessao_nao_passa (__main__.Administracao.test_18_mcp_sem_sessao_nao_passa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 181, in test_18_mcp_sem_sessao_nao_passa
+    self.assertIsNotNone(G.conferir(dict(tool_name=DRIVE+'list_recent_files',tool_input={}),self.cfg))
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 1 test in 0.073s
+
+FAILED (failures=1)

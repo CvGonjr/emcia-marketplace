@@ -1,0 +1,15 @@
+test_19_id_do_expediente_nao_passa_para_outro_caso (__main__.Administracao.test_19_id_do_expediente_nao_passa_para_outro_caso) ... FAIL
+
+======================================================================
+FAIL: test_19_id_do_expediente_nao_passa_para_outro_caso (__main__.Administracao.test_19_id_do_expediente_nao_passa_para_outro_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 185, in test_19_id_do_expediente_nao_passa_para_outro_caso
+    with self.assertRaises(ValueError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.064s
+
+FAILED (failures=1)

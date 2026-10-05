@@ -1,0 +1,143 @@
+test_01_percurso_e_tres_retomadas (__main__.Percurso.test_01_percurso_e_tres_retomadas) ... ERROR
+test_02_ratificacao_sem_pendencia (__main__.Percurso.test_02_ratificacao_sem_pendencia) ... ERROR
+test_03_efeito_mcp_sem_aprovacao (__main__.Percurso.test_03_efeito_mcp_sem_aprovacao) ... ERROR
+test_04_id_alheio_recusado (__main__.Percurso.test_04_id_alheio_recusado) ... ERROR
+
+======================================================================
+ERROR: test_01_percurso_e_tres_retomadas (__main__.Percurso.test_01_percurso_e_tres_retomadas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 340, in aplicar
+    exigir(canal in {"manual", "tally-mcp"}, "canal inválido")
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 54, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: canal inválido
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 124, in test_01_percurso_e_tres_retomadas
+    self.primeira_parte();r=self.terminar();self.assertTrue(r['liberado'],r)
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 60, in primeira_parte
+    self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 39, in habop
+    def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 38, in op
+    return I.operar(self.cfg,nome,d,r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 256, in operar
+    return H.executar(exp,op,payload,aprovacao=r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: canal inválido
+
+======================================================================
+ERROR: test_02_ratificacao_sem_pendencia (__main__.Percurso.test_02_ratificacao_sem_pendencia)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 340, in aplicar
+    exigir(canal in {"manual", "tally-mcp"}, "canal inválido")
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 54, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: canal inválido
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 136, in test_02_ratificacao_sem_pendencia
+    self.primeira_parte();r=self.terminar(ratificar=True)
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 60, in primeira_parte
+    self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 39, in habop
+    def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 38, in op
+    return I.operar(self.cfg,nome,d,r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 256, in operar
+    return H.executar(exp,op,payload,aprovacao=r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: canal inválido
+
+======================================================================
+ERROR: test_03_efeito_mcp_sem_aprovacao (__main__.Percurso.test_03_efeito_mcp_sem_aprovacao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 340, in aplicar
+    exigir(canal in {"manual", "tally-mcp"}, "canal inválido")
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 54, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: canal inválido
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 139, in test_03_efeito_mcp_sem_aprovacao
+    self.primeira_parte()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 60, in primeira_parte
+    self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 39, in habop
+    def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 38, in op
+    return I.operar(self.cfg,nome,d,r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 256, in operar
+    return H.executar(exp,op,payload,aprovacao=r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: canal inválido
+
+======================================================================
+ERROR: test_04_id_alheio_recusado (__main__.Percurso.test_04_id_alheio_recusado)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 579, in executar
+    result = aplicar(root, s, action, payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 340, in aplicar
+    exigir(canal in {"manual", "tally-mcp"}, "canal inválido")
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 54, in exigir
+    raise Recusa(motivo)
+habilitacao.Recusa: canal inválido
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 143, in test_04_id_alheio_recusado
+    self.primeira_parte()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 60, in primeira_parte
+    self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 39, in habop
+    def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/iniciar_percurso.py", line 38, in op
+    return I.operar(self.cfg,nome,d,r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 256, in operar
+    return H.executar(exp,op,payload,aprovacao=r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/habilitacao.py", line 586, in executar
+    raise Recusa(str(error)) from error
+habilitacao.Recusa: canal inválido
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.337s
+
+FAILED (errors=4)

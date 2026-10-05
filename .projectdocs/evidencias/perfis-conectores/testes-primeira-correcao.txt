@@ -1,0 +1,52 @@
+test_01_busca_sem_pasta (__main__.Administracao.test_01_busca_sem_pasta) ... ok
+test_02_criacao_pasta_fora_conteiner (__main__.Administracao.test_02_criacao_pasta_fora_conteiner) ... ok
+test_03_arquivo_comum_fora_entregas (__main__.Administracao.test_03_arquivo_comum_fora_entregas) ... ok
+test_04_compartilhar_id_nao_declarado (__main__.Administracao.test_04_compartilhar_id_nao_declarado) ... ok
+test_05_formulario_nao_declarado (__main__.Administracao.test_05_formulario_nao_declarado) ... ok
+test_06_ferramenta_sem_perfil (__main__.Administracao.test_06_ferramenta_sem_perfil) ... ok
+test_07_parametro_extra (__main__.Administracao.test_07_parametro_extra) ... ok
+test_08_leitura_sem_listagem (__main__.Administracao.test_08_leitura_sem_listagem) ... ok
+test_09_pasta_com_conteudo_nao_e_variante_pasta (__main__.Administracao.test_09_pasta_com_conteudo_nao_e_variante_pasta) ... ok
+test_10_destinatario_alterado_recusa (__main__.Administracao.test_10_destinatario_alterado_recusa) ... ok
+test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado (__main__.Administracao.test_11_tally_sem_filtro_recusa_mesmo_formulario_declarado) ... ok
+test_12_workspace_alheio (__main__.Administracao.test_12_workspace_alheio) ... ok
+test_20_pasta_arquivo_entregas_compartilhamento_calendario (__main__.Administracao.test_20_pasta_arquivo_entregas_compartilhamento_calendario) ... ok
+test_21_listagem_registrada_antes_da_leitura (__main__.Administracao.test_21_listagem_registrada_antes_da_leitura) ... ok
+test_22_manual_decisao_e_evidencia_preservadas (__main__.Administracao.test_22_manual_decisao_e_evidencia_preservadas) ... ERROR
+test_01_parametro_extra_recusa_no_nucleo (__main__.CasoReal.test_01_parametro_extra_recusa_no_nucleo) ... ok
+test_02_criar_arquivo_fora_entregas (__main__.CasoReal.test_02_criar_arquivo_fora_entregas) ... ok
+test_03_compartilhamento_sem_aprovacao_recusa (__main__.CasoReal.test_03_compartilhamento_sem_aprovacao_recusa) ... ok
+test_04_calendar_alheio (__main__.CasoReal.test_04_calendar_alheio) ... ok
+test_05_tally_sem_filtro_recusa_no_nucleo (__main__.CasoReal.test_05_tally_sem_filtro_recusa_no_nucleo) ... ok
+test_20_busca_limitada_aceita (__main__.CasoReal.test_20_busca_limitada_aceita) ... ok
+test_01_nome_ausente_reprova_contrato (__main__.Contrato.test_01_nome_ausente_reprova_contrato) ... ok
+test_02_parametro_ausente_reprova_contrato (__main__.Contrato.test_02_parametro_ausente_reprova_contrato) ... ok
+test_03_cada_nome_e_parametro_consta_do_inventario (__main__.Contrato.test_03_cada_nome_e_parametro_consta_do_inventario) ... ok
+test_04_garantia_tally_ausente_e_manual_explicito (__main__.Contrato.test_04_garantia_tally_ausente_e_manual_explicito) ... ok
+test_05_criar_sem_workspace_fica_recusado (__main__.Contrato.test_05_criar_sem_workspace_fica_recusado) ... ok
+test_06_publicacao_ausente_vira_acao_humana (__main__.Contrato.test_06_publicacao_ausente_vira_acao_humana) ... ok
+test_07_schema_calendar_parcial_nao_inventa_subcampos (__main__.Contrato.test_07_schema_calendar_parcial_nao_inventa_subcampos) ... ok
+
+======================================================================
+ERROR: test_22_manual_decisao_e_evidencia_preservadas (__main__.Administracao.test_22_manual_decisao_e_evidencia_preservadas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 167, in test_22_manual_decisao_e_evidencia_preservadas
+    self.op('caminho-manual', passo='coletar-submissoes', evidencia=str(self.evidencia), decisao='executar manualmente')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/perfis_conectores.py", line 92, in op
+    return I.operar(self.cfg, nome, d, r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 261, in operar
+    if op=='caminho-manual':return caminho_manual(p,c,d,r)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 425, in caminho_manual
+    log(p,c,'CaminhoManualDecidido',**{k:v for k,v in reg.items() if k!='autor'},registro_sha256=registro_sha)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 57, in log
+    ev=dict(evento=tipo,autor=c['responsavel'],data=H.agora(),**dados)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument 'data'
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.611s
+
+FAILED (errors=1)

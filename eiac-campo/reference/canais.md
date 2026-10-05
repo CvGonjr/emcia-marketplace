@@ -17,13 +17,66 @@ Outra cobre o conjunto de compartilhamentos: destinatário, pasta/id e papel
 em cada linha. Trabalho-interno tem acesso do cliente `nenhum`. Uma alteração
 de destino, destinatário ou papel exige aprovação atualizada.
 
-A calibração lê nomes e `inputSchema` e gera regras pelos perfis embutidos de
-`iniciar.py`, para assinaturas conhecidas de Google Drive/Calendar e Tally oficial.
-O perfil e o inventário recebem confirmação inicial; ferramenta sem perfil ou
-sem parâmetro restritivo é recusada. Expressões não são fornecidas pelo agente.
-Uma busca Drive admite apenas `'<id>' in parents`, com opção `and trashed = false`.
+A calibração usa exclusivamente o inventário fornecido; neste ensaio,
+`~/emcia-op/ensaio/inventario-mcp.json`. O formato contém `ferramentas`, `nome`,
+`inputSchema` e `parametros`. Nomes e parâmetros são literais, sem aliases.
+Os perfis embutidos estão em `reference/perfis-conectores.json`; `iniciar.py`
+confere cada campo contra o inventário e gera `ferramentas-externas.json`.
+O engenheiro aprova perfil/inventário antes de usar. Schema parcial permite
+somente tipos simples explicitamente transcritos; estruturas sem schema e
+parâmetro extra são recusados. O relatório lista a garantia faltante e a ação manual.
+
+| Operação | Ferramenta e parâmetros reais | Restrição |
+|---|---|---|
+| Buscar | `mcp__claude_ai_Google_Drive__search_files`, `query` | Somente `'<pasta_id>' in parents`, opcional `and trashed = false` |
+| Ler/metadados/download | `get_file_metadata`, `read_file_content`, `download_file_content` do mesmo namespace, `fileId` | Id presente em listagem íntegra do contêiner declarado |
+| Criar pasta | `create_file`, `title`, `parentId`, `contentMimeType` | Tipo `application/vnd.google-apps.folder`; pai declarado; nenhum conteúdo |
+| Criar arquivo | `create_file`, mesmos campos, `textContent` ou `base64Content` | Pai com finalidade `entregas`/direção `saida`; conteúdo exclusivo |
+| Compartilhar | `share_file`, `fileId`, `emailAddress`, `role` | Pasta declarada; valores exatos da aprovação; raiz EMCIA recusada |
+| Agenda | `mcp__claude_ai_Google_Calendar__list_events`/`create_event`, `calendarId` | Calendário declarado; criar exige aprovação dos parâmetros |
+| Criar formulário | `mcp__tally__create_new_form`, `title`, `workspaceId` | Workspace declarado, sem usar o padrão implícito do servidor |
+| Publicar formulário | `mcp__tally__publish_form`, `formId` | Formulário declarado; preparação manual conferida e aprovação |
+| Submissões | `mcp__tally__fetch_submissions`, `formId` | **Recusada**: inventário não oferece filtro pelo campo oculto do caso |
+
+`finalidade` da pasta é declaração na entrada local aprovada de `iniciar.py`,
+sem envio à API. Retorno guarda chamada, finalidade, ids e hashes, vinculados
+ao evento; alteração posterior recusa. Antes de ler/download, registre a
+listagem: no expediente, retorno da busca com `conteiner_id` e `objetos`; no
+caso, também `registrar_listagem.py` com o manifesto e evento no contrato local.
 IDs retornados só entram no contexto do expediente e da operação correspondente.
 Retorno não autentica servidor nem comprova permissão remota.
+
+### Garantia ausente e caminho manual
+
+O Tally fornecido cria o formulário vazio, mas as ferramentas para perguntas e
+campo oculto têm schema indisponível. O engenheiro prepara/confere no painel,
+com a especificação e id de caso entregues pela sessão. O parâmetro `filter`
+de `fetch_submissions` aceita apenas datas/status; não permite filtrar `caso`.
+A API fica recusada mesmo com formulário declarado. Não se coleta lote para
+filtrar localmente. O engenheiro filtra/exporta manualmente o formulário declarado
+com o campo oculto `caso` e entrega os bytes; `receber` da habilitação usa `canal: manual`.
+
+Cada caminho manual exige aprovação registrada e evidência com SHA-256:
+
+```json
+{
+  "operacao": "caminho-manual",
+  "entrada": {
+    "habilitacao": "HAB-0001", "caso": "caso-0001",
+    "passo": "coletar-submissoes", "decisao": "executar manualmente",
+    "evidencia": "/base/expedientes/evidencia-da-decisao.txt"
+  }
+}
+```
+
+Use `iniciar.py aprovar` e `executar` como nas demais operações. Passos são
+`preparar-formulario` (inclua `formulario_id`), `coletar-submissoes` e, se
+faltarem as respectivas garantias/ferramentas, `criar-formulario` ou
+`publicar-formulario`. O registro preserva motivo da calibração, responsável,
+texto literal, data, evidência/hash e contexto. Ele registra a decisão humana;
+a sessão não executa a API recusada nem presume que a ação manual ocorreu.
+Sem `workspaceId`, criação também fica manual; sem publicação no inventário,
+o engenheiro publica no painel, com a instrução e aprovação preservadas.
 
 Antes de existir caso, `guarda_inicial.py` confere aprovações, tratamento e ids
 pela configuração/expediente. Durante o bloco, mantenha a sessão na pasta de

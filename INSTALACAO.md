@@ -2,7 +2,7 @@
 
 Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
 O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
-A regressão do projeto usa Python 3.12. Núcleo 0.2.46, campo 0.8.26, playbook 0.4.20.
+A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.47, campo 0.8.27, playbook 0.4.21.
 
 ## 1. Instalar os plugins
 
@@ -60,6 +60,28 @@ responsável nominal, base local de casos, base local de expedientes, id do work
 Tally, id da pasta raiz Drive, id do calendário e navegador. O agente obtém ids pelos
 MCPs quando possível e pergunta somente o que faltar. As bases ficam fora de
 repositórios da ferramenta e do método. A configuração é privada e reutilizada.
+
+Disponibilize o inventário real no formato `ferramentas`/`nome`/`inputSchema`/
+`parametros` (`~/emcia-op/ensaio/inventario-mcp.json` neste ensaio). Ele é a única
+fonte de nomes/parâmetros; se faltar, o comando para e pede o arquivo.
+Confira o relatório antes da aprovação:
+
+```bash
+python3 /caminho/eiac-campo/scripts/iniciar.py calibrar --entrada ~/emcia-op/ensaio/inventario-mcp.json
+```
+
+Drive cria pastas por `create_file` com `parentId` declarado e
+`contentMimeType: application/vnd.google-apps.folder`; arquivos comuns só em
+`entregas`. Busca usa `query` limitado à pasta; leitura por `fileId` exige
+listagem. Compartilhamento usa `share_file`, com pasta, `emailAddress` e `role`
+aprovados. Calendar exige `calendarId`, inclusive quando opcional no servidor.
+Tally cria com `create_new_form.workspaceId` e publica com `publish_form.formId`.
+Os schemas para montar perguntas/campo oculto não estão disponíveis no inventário:
+o engenheiro prepara no painel. `fetch_submissions` não tem filtro pelo campo
+oculto; o engenheiro filtra/exporta no painel e entrega os bytes pelo caminho
+manual registrado. A API não é chamada para obter um lote amplo.
+Publicação ausente ou criação sem workspace também exigem ação manual; registre
+a decisão e evidência por `caminho-manual`, conforme reference/canais.md.
 
 Confira uma vez o perfil de escopo mostrado. O perfil gerado é determinístico;
 o inventário e sua aprovação ficam preservados. Nome e assinatura incompatíveis

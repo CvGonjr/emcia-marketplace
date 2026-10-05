@@ -9,9 +9,9 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 
 | Componente | Versão | Responsabilidade |
 |---|---|---|
-| eiac-nucleo | 0.2.46 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.26 | Método, comandos, habilidades e operações administrativas |
-| Playbook dos casos novos | 0.4.20 | Atos administrativos aprovados; decisões de método humanas |
+| eiac-nucleo | 0.2.47 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
+| eiac-campo | 0.8.27 | Método, comandos, habilidades e operações administrativas |
+| Playbook dos casos novos | 0.4.21 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
 Caso real utiliza somente a linha de base documental aprovada **metodo-v1.0**,
@@ -24,7 +24,7 @@ Alteração documental posterior requer aprovação e nova linha de base antes d
 Nenhum documento do pacote foi editado para esta entrega.
 
 A [decisão 045](decisoes/045-bloco-inicial-conduzido.md) autoriza as diferenças
-operacionais do playbook 0.4.20. O MAN-01 v1.0 ainda descreve o contrato anterior:
+operacionais do playbook 0.4.21. O MAN-01 v1.0 ainda descreve o contrato anterior:
 `manual_a25.py` é **falha conhecida**, mantida visível até revisão canônica.
 Propostas: [propostas-artefatos.md](propostas-artefatos.md).
 
@@ -54,6 +54,9 @@ somente o que faltar e grava `~/.emcia/config.json`: responsável, bases de caso
 e expedientes, workspace Tally, pasta raiz Drive, calendário e navegador.
 Ele apresenta o perfil determinístico dos conectores para uma confirmação inicial.
 Ferramentas sem perfil permanecem recusadas e são listadas no diagnóstico.
+A calibração usa o inventário fornecido, com nomes e parâmetros literais. Neste
+conector Tally, preparação do formulário e coleta filtrada de submissões exigem
+ação manual registrada: não existe filtro por campo oculto em `fetch_submissions`.
 
 O percurso sem alterações de conteúdo reúne cinco aprovações:
 

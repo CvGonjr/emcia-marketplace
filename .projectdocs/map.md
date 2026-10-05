@@ -10,9 +10,9 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 
 | Componente | Versão | Papel |
 |---|---|---|
-| eiac-nucleo | 0.2.46 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.26 | Método, scripts de campo, comandos, habilidades e template |
-| Playbook do template | 0.4.20 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
+| eiac-nucleo | 0.2.47 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
+| eiac-campo | 0.8.27 | Método, scripts de campo, comandos, habilidades e template |
+| Playbook do template | 0.4.21 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
 Origem controlada: tag `metodo-v1.0`, commit `08bfb162d762935ed35f55e0a75bc700b81d5276`.
@@ -260,3 +260,13 @@ Evidência: .projectdocs/evidencias/bloco-inicial-conduzido/. Linha de base 986/
 em Python 3.12.12. Regressão final 1014 verificações/51 módulos, com somente A25
 como falha conhecida. O runner e o CI conferem a divergência exata e as quatro
 negativas de A25; não excluem o teste nem toleram outra falha.
+
+## Perfis reais dos conectores
+
+reference/perfis-conectores.json contém contratos auditados pelo inventário fornecido.
+Calibração literal, variantes de criação, parâmetros extras recusados, listagem/hash,
+aprovação dos valores de compartilhamento e caminhos manuais registrados. Tally sem
+filtro de caso fica manual; schemas incompletos não são aproximados. Emenda da 045,
+propostas canônicas preservadas e pacote sem alterações. perfis_conectores.py: 40 testes.
+Regressão integral: 1054/52 em 3.12 e 1056/52 em 3.14.4; somente a A25 conhecida.
+Evidência: .projectdocs/evidencias/perfis-conectores/.

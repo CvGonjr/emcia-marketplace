@@ -2,7 +2,8 @@
 
 Revisão: 05/10/2026. Linha de base integral do bloco inicial: **986 verificações
 em 49 módulos**, Python 3.12.12, sem exclusões/falhas. Regressão final:
-**1014 verificações em 51 módulos**, com A25 como única falha conhecida, preservada
+**1054 verificações em 52 módulos em Python 3.12** (1056 em Python 3.14.4,
+com duas verificações adicionais de PyYAML), com A25 como única falha conhecida, preservada
 visível; quatro negativas de A25 passam. Evidência e runner:
 `.projectdocs/evidencias/bloco-inicial-conduzido/`. Os pacotes anteriores permanecem
 históricos em `linha-de-base-v1/` e `revisao-juridica-resultado/`.
@@ -157,3 +158,17 @@ aprovação no contrato novo e seus controles positivos estão no bloco inicial.
 PDF é substituído por emissão sintética nos testes integrados; o pacote de
 evidência também confere um PDF real Chrome com texto extraído. APIs externas
 são simuladas, sem credenciais ou dados reais de cliente.
+
+### Perfis dos conectores reais
+
+`perfis_conectores.py` executa 40 testes de contrato/escopo/percurso administrativo.
+A fixture inventario-mcp-real.json conserva nomes, parâmetros e schemas do arquivo
+fornecido, sem ids ou dados reais. Perfil que cita ferramenta/parâmetro ausente
+reprova; schema parcial não inventa campos de objetos. Os negativos cobrem query
+sem pai, pai alheio, arquivo fora de entregas, compartilhamento/alteração de papel
+ou destinatário, formulário alheio, Tally sem filtro, parâmetros extras, leitura
+sem listagem e retorno adulterado. Publicação exige conferência do formulário.
+Escopo no núcleo também tem positivos de listagem e efeitos aprovados.
+`escopo_mcp.py` preserva por fixture o contrato anterior de casos já abertos.
+`iniciar_percurso.py` usa nomes reais e as decisões manuais exigidas pelo inventário.
+Evidência inicial/final nas duas versões: .projectdocs/evidencias/perfis-conectores/.
