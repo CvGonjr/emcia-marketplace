@@ -42,11 +42,18 @@ def conferir(ev,config=I.CONFIG):
                     I.log(config,c,'AprovacaoChatRegistrada',testemunho=A.evento(r))
         elif tool.startswith('mcp__'):
             sessao=pathlib.Path(config).with_name('sessao.json')
-            if not sessao.exists():return None
+            if not sessao.exists():raise ValueError('sessão inicial ausente; configure e use retomar antes de chamar MCP')
             s=json.loads(sessao.read_text());d=dict(habilitacao=s['habilitacao'],caso=s['caso'],ferramenta=tool,argumentos=entrada)
             r=None
             evs=[json.loads(l) for l in pathlib.Path(config).with_name('eventos.jsonl').read_text().splitlines()]
             for e in reversed(evs):
+                if (e.get('evento')=='ChamadaMCPAutorizada' and e.get('ferramenta')==tool
+                    and e.get('argumentos')==entrada and e.get('habilitacao')==s['habilitacao']
+                    and e.get('chamada',{}).get('caso')==s['caso']):
+                    # A finalidade é declaração local aprovada, nunca parâmetro inventado da API.
+                    d=e['chamada'];t=e.get('testemunho')
+                    r=dict(t,schema=1,aprovado=True) if t else None
+                    break
                 if e.get('evento')=='AprovacaoChatRegistrada':
                     t=e.get('testemunho',{})
                     if t.get('comando')==I.cmd_operacao('mcp',d):

@@ -158,18 +158,20 @@ def ambiente(c,inventory):
         r=subprocess.run(['git','config','--get',k],capture_output=True,text=True) if shutil.which('git') else None
         checks.append((k,bool(r and r.returncode==0 and r.stdout.strip()),'Configure git config --global '+k))
     p=calibrar(inventory)
-    for nome,ns in [('Tally','tally'),('Drive','drive'),('Calendar','calendar')]:
-        checks.append((nome,any(ns in f['name'].lower() for f in inventory),'Conecte '+nome+' e confira /mcp'))
-    necessarias={'Tally':{'create_form','get_submissions'},'Drive':{'create_folder','share_folder'},'Calendar':{'list_events'}}
-    nomes=[f['name'] for f in inventory if f['name'] not in p['recusadas']]
-    for conector,acoes in necessarias.items():
-        for acao in acoes:
-            alternativas={'create_form':('create_form','createForm'),'get_submissions':('get_submissions','getSubmissions')}.get(acao,(acao,))
-            ok=any(any(n.endswith('__'+a) for a in alternativas) for n in nomes)
-            checks.append((conector+'/'+acao,ok,'Conecte uma assinatura compatível; ferramenta sem perfil continua recusada'))
+    inv=inventario(inventory)
+    for nome,ns in [('Tally','tally'),('Drive','Google_Drive'),('Calendar','Google_Calendar')]:
+        checks.append((nome,any(ns in n for n in inv),'Conecte '+nome+' e confira /mcp'))
+    necessarias={'Drive/criar e entregar':'mcp__claude_ai_Google_Drive__create_file',
+                 'Drive/compartilhar':'mcp__claude_ai_Google_Drive__share_file',
+                 'Drive/buscar':'mcp__claude_ai_Google_Drive__search_files',
+                 'Calendar/listar':'mcp__claude_ai_Google_Calendar__list_events',
+                 'Calendar/criar':'mcp__claude_ai_Google_Calendar__create_event'}
+    ativos={r['ferramenta'] for r in p['regras'] if not r.get('recusa')}
+    for acao,nome in necessarias.items():
+        checks.append((acao,nome in ativos,'Conecte a assinatura do inventário; ferramenta sem perfil continua recusada'))
     versions={plugin:json.loads((RAIZ/plugin/'.claude-plugin/plugin.json').read_text())['version'] for plugin in ('eiac-campo','eiac-nucleo')}
     return dict(itens=[dict(item=n,presente=bool(ok),correcao='' if ok else fix) for n,ok,fix in checks],
-                versoes=versions,sem_perfil=p['recusadas'])
+                versoes=versions,sem_perfil=p['recusadas'],motivos=p['motivos'],caminhos_manuais=p['manuais'])
 
 
 @contextlib.contextmanager
@@ -256,6 +258,7 @@ def operar(p,op,d,aprovacao):
             if d.get('desfecho') not in ('prosseguir','prosseguir com restrição'):raise ValueError('decisão de abrir ausente; não prosseguir não abre caso')
             return {'caso':str(B.abrir(d['caso'],c['base_casos'],c['responsavel'],exp))}
         if op=='mcp':return autorizar_mcp(p,d,r)
+        if op=='caminho-manual':return caminho_manual(p,c,d,r)
         with cwd(case):
             st=E.ler();pb=json.loads(pathlib.Path('registro/playbook.json').read_text())
             if not pb.get('operacoes_sessao'):raise ValueError('caso conserva playbook anterior; não delega estes atos')
@@ -372,25 +375,63 @@ def autorizar_mcp(p,d,r=None):
 
 
 def registrar_retorno(p,chamada,resultado):
+    import escopo_externo as S
     c=ler_config(p);logfile=pathlib.Path(p).with_name('eventos.jsonl')
     evs=[json.loads(l) for l in logfile.read_text().splitlines()]
-    if not any(e.get('evento')=='ChamadaMCPAutorizada' and e.get('ferramenta')==chamada['ferramenta']
-               and e.get('argumentos')==chamada['argumentos'] and e.get('habilitacao')==chamada['habilitacao'] for e in evs):
+    if not any(e.get('evento')=='ChamadaMCPAutorizada' and e.get('chamada')==chamada for e in evs):
         raise ValueError('retorno sem chamada aprovada correspondente')
-    perfil_atual=json.loads(pathlib.Path(p).with_name('perfil-mcp.json').read_text())['perfil']
-    regra=next((x for x in perfil_atual['regras'] if re.fullmatch(x['padrao'],chamada['ferramenta'])),None)
-    if regra is None:raise ValueError('retorno de ferramenta sem perfil')
+    cfg=json.loads(pathlib.Path(p).with_name('perfil-mcp.json').read_text())
+    conferir_perfil(cfg['perfil'],cfg['inventario'])
+    regra=S.regra_aplicavel(cfg['perfil'],chamada['ferramenta'],chamada['argumentos'])
     nome=chamada['ferramenta']
-    tipos=({'pasta_id'} if nome.endswith('create_folder') else {'formulario_id'} if any(nome.endswith(n) for n in ('create_form','publish_form','createForm','publishForm')) else set())
+    tipos=({'pasta_id'} if nome=='mcp__claude_ai_Google_Drive__create_file' and regra['operacao']=='provisionar'
+           else {'formulario_id'} if nome=='mcp__tally__create_new_form' else set())
     ids=resultado.get('ids',{})
     if not isinstance(ids,dict) or not set(ids)<=tipos:raise ValueError('retorno não pode declarar ids de outra operação/ferramenta')
-    for k,v in ids.items():
-        if k not in ('pasta_id','formulario_id','objeto_id') or not isinstance(v,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',v):
-            raise ValueError('id de retorno inválido')
+    for v in ids.values():
+        if not isinstance(v,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',v):raise ValueError('id de retorno inválido')
+    objetos=resultado.get('objetos',[])
+    if not isinstance(objetos,list) or len(set(objetos))!=len(objetos):raise ValueError('objetos da listagem inválidos')
+    if objetos or 'conteiner_id' in resultado:
+        if regra['operacao']!='listar':raise ValueError('objetos precisam vir de listagem restrita')
+        conteiner=resultado['conteiner_id']
+        if not isinstance(conteiner,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',conteiner):raise ValueError('contêiner inválido')
+        if not any(a['tipo']=='expressao' and re.fullmatch(a['expressao'].replace('{id}',re.escape(conteiner)),S.argumento(chamada['argumentos'],a['campo'])) for a in regra['argumentos']):
+            raise ValueError('contêiner não corresponde à listagem autorizada')
+        for v in objetos:
+            if not isinstance(v,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',v):raise ValueError('objeto da listagem inválido')
     reg=pathlib.Path(p).with_name('mcp-retornos.json');anteriores=json.loads(reg.read_text()) if reg.exists() else []
     raw=json.dumps(resultado,sort_keys=True,ensure_ascii=False).encode()
-    anteriores.append(dict(habilitacao=chamada['habilitacao'],chamada=chamada,ids=ids,resultado=resultado,sha256=H.digest(raw)))
-    escrever(reg,anteriores);log(p,c,'RetornoMCPRegistrado',sha256=H.digest(raw),ferramenta=chamada['ferramenta'])
+    chamada_sha=H.digest(json.dumps(chamada,sort_keys=True,ensure_ascii=False).encode())
+    anteriores.append(dict(habilitacao=chamada['habilitacao'],chamada=chamada,ids=ids,resultado=resultado,sha256=H.digest(raw),chamada_sha256=chamada_sha))
+    escrever(reg,anteriores);log(p,c,'RetornoMCPRegistrado',sha256=H.digest(raw),chamada_sha256=chamada_sha,ferramenta=nome)
+    if regra['operacao']=='listar':log(p,c,'ListagemExternaRegistrada',conteiner_id=resultado.get('conteiner_id'),objetos=objetos,sha256=H.digest(raw))
+
+
+def caminho_manual(p,c,d,r):
+    cfg=json.loads(pathlib.Path(p).with_name('perfil-mcp.json').read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+    opcoes=[m for m in cfg['perfil']['manuais'] if m['passo']==d.get('passo')]
+    if len(opcoes)!=1:raise ValueError('passo manual não corresponde ao relatório da calibração')
+    if d.get('decisao')!='executar manualmente':raise ValueError('decisão manual explícita ausente')
+    evidencia=pathlib.Path(d['evidencia']);sha=A.hash_arquivo(evidencia)
+    formulario=d.get('formulario_id')
+    if formulario is not None and (not isinstance(formulario,str) or not re.fullmatch(r'[A-Za-z0-9_.@:+-]+',formulario)):
+        raise ValueError('formulário manual exige id')
+    if d['passo']=='preparar-formulario' and not formulario:raise ValueError('conferência manual exige formulário declarado')
+    if d.get('workspace_id',c['workspace_tally'])!=c['workspace_tally']:raise ValueError('workspace manual diverge da configuração')
+    reg=dict(opcoes[0],habilitacao=d['habilitacao'],caso=d['caso'],decisao=d['decisao'],autor=c['responsavel'],data=H.agora(),
+             evidencia=str(evidencia.absolute()),evidencia_sha256=sha,formulario_id=formulario,testemunho=A.evento(r))
+    arquivo=pathlib.Path(p).with_name('caminhos-manuais.json');anteriores=json.loads(arquivo.read_text()) if arquivo.exists() else []
+    anteriores.append(reg);escrever(arquivo,anteriores)
+    registro_sha=H.digest(json.dumps(reg,sort_keys=True,ensure_ascii=False).encode())
+    log(p,c,'CaminhoManualDecidido',**{k:v for k,v in reg.items() if k not in ('autor','data')},registro_sha256=registro_sha)
+    if d['passo']=='preparar-formulario':
+        evento=dict(objeto_id=formulario,contexto=d['caso'],evidencia_sha256=sha,testemunho=A.evento(r))
+        log(p,c,'ConferenciaExternaRegistrada',**evento)
+        case=pathlib.Path(c['base_casos'])/H.identificador(d['caso'])
+        if case.is_dir():
+            with cwd(case):E.evento('ConferenciaExternaRegistrada',autor=c['responsavel'],**evento)
+    return reg
 
 
 def retomar(p,hab,caso):
@@ -417,13 +458,14 @@ def retomar(p,hab,caso):
 
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('operacao',choices=['ambiente','configurar','aprovar','executar','retomar','retorno'])
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('operacao',choices=['calibrar','ambiente','configurar','aprovar','executar','retomar','retorno'])
     ap.add_argument('--config',type=pathlib.Path,default=CONFIG);ap.add_argument('--entrada',type=pathlib.Path,required=True)
     ap.add_argument('--aprovacao',type=pathlib.Path)
     a=ap.parse_args()
     try:
         d=json.loads(a.entrada.read_text())
-        if a.operacao=='configurar':r=configurar(a.config,d)
+        if a.operacao=='calibrar':r=calibrar(d)
+        elif a.operacao=='configurar':r=configurar(a.config,d)
         elif a.operacao=='ambiente':r=ambiente(ler_config(a.config),d['ferramentas'])
         elif a.operacao=='aprovar':r=aprovar(a.config,d['operacao'],d['entrada'],d['literal'],d['resumo'])
         elif a.operacao=='executar':r=operar(a.config,d['operacao'],d['entrada'],A.ler(a.aprovacao) if a.aprovacao else None)

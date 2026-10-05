@@ -29,11 +29,7 @@ class Percurso(unittest.TestCase):
             'Decido abrir o caso com esta árvore e o plano local até F0 liberado',
             'Aprovo os compartilhamentos listados, com pasta, destinatário e papel']
         self.grupo=0
-        self.inventory=[dict(name='mcp__tally__create_form',inputSchema={'properties':{'workspace_id':{'type':'string'}}}),
-            dict(name='mcp__tally__get_submissions',inputSchema={'properties':{'form_id':{'type':'string'}}}),
-            dict(name='mcp__drive__create_folder',inputSchema={'properties':{'parent_id':{'type':'string'}}}),
-            dict(name='mcp__drive__share_folder',inputSchema={'properties':{'folder_id':{'type':'string'}}}),
-            dict(name='mcp__calendar__list_events',inputSchema={'properties':{'calendar_id':{'type':'string'}}})]
+        self.inventory=json.loads((RAIZ/'testes/apoio/inventario-mcp-real.json').read_text())
         self.pdfpatch=patch.object(I.H,'pdf_bytes',side_effect=lambda md,b:b'%PDF-1.7\n'+md.encode()+b'\n%%EOF');self.pdfpatch.start();self.addCleanup(self.pdfpatch.stop)
         self.raw=self.base/'resposta.json';self.raw.write_text('{"tipo":"dados exclusivamente sintéticos", "caso":"CASO-SINTETICO"}')
     def op(self,nome,**kwargs):
@@ -41,8 +37,8 @@ class Percurso(unittest.TestCase):
         r=I.aprovar(self.cfg,nome,d,self.literal[self.grupo],'Plano sintético; '+nome)
         return I.operar(self.cfg,nome,d,r)
     def habop(self,nome,**entrada):return self.op(nome,entrada=entrada)
-    def mcp(self,nome,args,ids):
-        d=dict(habilitacao=self.hab,caso=self.caso,ferramenta=nome,argumentos=args)
+    def mcp(self,nome,args,ids,**declaracao):
+        d=dict(habilitacao=self.hab,caso=self.caso,ferramenta=nome,argumentos=args,**declaracao)
         r=I.aprovar(self.cfg,'mcp',d,self.literal[self.grupo],'Efeito MCP sintético explícito')
         I.operar(self.cfg,'mcp',d,r)
         ev=dict(tool_name=nome,tool_input=args,cwd=str(self.base))
@@ -57,14 +53,16 @@ class Percurso(unittest.TestCase):
         self.op('iniciar',id=self.hab)
         self.habop('tratamento',escopo='administrativo',condicoes='Plano administrativo sintético',provedor='Provedor sintético',decisor=self.responsavel,evidencia=str(self.raw))
         I.retomar(self.cfg,self.hab,self.caso)
-        self.mcp('mcp__tally__create_form',{'workspace_id':'WORK-SINTETICO','campo_oculto':{'caso':self.caso}}, {'formulario_id':'FORM-SINTETICO'})
-        self.mcp('mcp__tally__get_submissions',{'form_id':'FORM-SINTETICO'}, {})
+        self.mcp('mcp__tally__create_new_form',{'workspaceId':'WORK-SINTETICO','title':'Habilitação sintética'}, {'formulario_id':'FORM-SINTETICO'})
+        self.op('caminho-manual',passo='preparar-formulario',decisao='executar manualmente',formulario_id='FORM-SINTETICO',evidencia=str(self.raw))
+        self.mcp('mcp__tally__publish_form',{'formId':'FORM-SINTETICO'}, {})
+        self.op('caminho-manual',passo='coletar-submissoes',decisao='executar manualmente',evidencia=str(self.raw))
         self.habop('receber',id='S1',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',
-                   submissao='SUB-S1',respondente='Pessoa Cliente',versao_perguntas='sintetica-1',rodada=0,canal='tally-mcp')
+                   submissao='SUB-S1',respondente='Pessoa Cliente',versao_perguntas='sintetica-1',rodada=0,canal='manual')
         self.habop('pendencia',id='PEND',origem='S1',pergunta='Qual o limite?',efeito='carta',rodada=1)
         self.assertEqual(I.retomar(self.cfg,self.hab,self.caso)['proximo'],'rodadas')
         self.habop('receber',id='S2',arquivo=str(self.raw),formulario='FORM-SINTETICO',workspace_id='WORK-SINTETICO',submissao='SUB-S2',
-                   respondente='Pessoa Cliente',versao_perguntas='sintetica-rodada',rodada=1,canal='tally-mcp')
+                   respondente='Pessoa Cliente',versao_perguntas='sintetica-rodada',rodada=1,canal='manual')
         self.habop('resolver',id='PEND',resposta='S2',decisor=self.responsavel,motivo='Limite confirmado pela pessoa')
         campos={k:{'valor':'Controle sintético '+k,'fonte':'S2'} for f in H.TEMPLATES.values() for k in H.TOKEN.findall((RAIZ/'eiac-campo/reference/metodo'/f).read_text())}
         campos['signatario']['valor']='Pessoa Cliente'
@@ -90,7 +88,7 @@ class Percurso(unittest.TestCase):
             self.habop('assinatura',documento=doc,versao=versao,decisor=self.responsavel,arquivo=str(pdf),evidencia=str(self.raw),referencia='Devolução sintética informada pelo engenheiro',
                 conteudo_conferido=True,evidencias_conferidas=True,signatarios=[dict(nome='Pessoa Cliente',papel='organizacao',data='2026-10-05'),dict(nome=self.responsavel,papel='emcia',data='2026-10-05')])
         self.habop('concluir-0b')
-        self.mcp('mcp__calendar__list_events',{'calendar_id':'CAL-SINTETICO'}, {})
+        self.mcp('mcp__claude_ai_Google_Calendar__list_events',{'calendarId':'CAL-SINTETICO'}, {})
         self.habop('acessos',patrocinador='Pessoa Cliente',executor='Pessoa Executora',decisor=self.responsavel,autoridade_patrocinador='controle',executor_liberado=True,agenda_reservada=True,
             data_sessao='2026-10-15',itens=[dict(item='Fonte sintética',status='concedido',evidencia='conferência sintética')])
         self.habop('preparar-0d')
@@ -99,15 +97,15 @@ class Percurso(unittest.TestCase):
             self.op('abrir',desfecho='prosseguir')
         for args in [('user.name',self.responsavel),('user.email','controle@example.invalid'),('commit.gpgsign','false')]:
             subprocess.run(['git','config',*args],cwd=self.case,check=True)
-        self.mcp('mcp__drive__create_folder',{'parent_id':'ROOT-SINTETICA','name':self.caso},{'pasta_id':'PASTA-CASO'})
+        self.mcp('mcp__claude_ai_Google_Drive__create_file',{'parentId':'ROOT-SINTETICA','title':self.caso,'contentMimeType':'application/vnd.google-apps.folder'},{'pasta_id':'PASTA-CASO'},finalidade='raiz-caso')
         self.folders={}
         for n in ('00-habilitacao','entrada-documentos','entrada-amostras','entregas','trabalho-interno'):
             ident='PASTA-'+n
-            self.mcp('mcp__drive__create_folder',{'parent_id':'PASTA-CASO','name':n},{'pasta_id':ident})
+            self.mcp('mcp__claude_ai_Google_Drive__create_file',{'parentId':'PASTA-CASO','title':n,'contentMimeType':'application/vnd.google-apps.folder'},{'pasta_id':ident},finalidade=n)
             self.folders[n]=ident
-        self.mcp('mcp__tally__create_form',{'workspace_id':'WORK-SINTETICO','campo_oculto':{'caso':self.caso},'finalidade':'triagem'}, {'formulario_id':'FORM-triagem'})
+        self.mcp('mcp__tally__create_new_form',{'workspaceId':'WORK-SINTETICO','title':'Triagem sintética'}, {'formulario_id':'FORM-triagem'})
         self.grupo=4
-        self.mcp('mcp__drive__share_folder',{'folder_id':'PASTA-CASO','recipient':'Pessoa Cliente','role':'reader'}, {})
+        self.mcp('mcp__claude_ai_Google_Drive__share_file',{'fileId':'PASTA-CASO','emailAddress':'cliente@example.invalid','role':'reader'}, {})
         self.grupo=3
         pb=json.loads((self.case/'registro/playbook.json').read_text());canais=[]
         for f in pb['canais_previstos']:
@@ -140,10 +138,10 @@ class Percurso(unittest.TestCase):
     def test_03_efeito_mcp_sem_aprovacao(self):
         self.primeira_parte()
         with self.assertRaisesRegex(ValueError,'aprovação'):
-            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__drive__create_folder',argumentos={'parent_id':'ROOT-SINTETICA'}))
+            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__claude_ai_Google_Drive__create_file',argumentos={'parentId':'ROOT-SINTETICA','title':'Pasta sintética','contentMimeType':'application/vnd.google-apps.folder'}))
     def test_04_id_alheio_recusado(self):
         self.primeira_parte()
-        with self.assertRaisesRegex(ValueError,'escopo'):
-            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__tally__get_submissions',argumentos={'form_id':'OUTRO-CASO'}))
+        with self.assertRaisesRegex(ValueError,'campo oculto'):
+            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__tally__fetch_submissions',argumentos={'formId':'OUTRO-CASO'}))
 
 if __name__=='__main__':unittest.main(verbosity=2)
