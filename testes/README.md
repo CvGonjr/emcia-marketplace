@@ -1,11 +1,11 @@
 # Testes — inventário operacional
 
-Revisão: 03/10/2026. Linha de base em Python 3.12.12: **926 verificações,
-47 módulos**, sem exclusões e sem falhas. A correspondência CAT-01 acrescenta
-11 testes de catálogo, 20 de prosseguimento e uma conferência de citações:
-**958 verificações em 49 módulos**.
-As saídas integrais inicial e final e o executador estão em
-`.projectdocs/evidencias/correspondencia-cat01/`.
+Revisão: 04/10/2026. Linha de base antes das alterações em Python 3.12.12:
+**958 verificações em 49 módulos**, sem exclusões e sem falhas. A geração
+com templates aprovados acrescenta dez testes; o pacote passa de uma
+verificação por processo a oito testes. Suíte final: **975 verificações em
+49 módulos**. Saídas integrais, executador e exemplos sintéticos estão em
+`.projectdocs/evidencias/linha-de-base-v1/`.
 
 ## Executar
 
@@ -19,7 +19,7 @@ python3 testes/contexto.py
 Para a suíte completa, com Python 3.12 e o binário python3 correspondente no PATH:
 
 ```bash
-python3 .projectdocs/evidencias/correspondencia-cat01/reexecutar-suite.py /tmp/emcia-suite.txt
+python3 .projectdocs/evidencias/linha-de-base-v1/reexecutar-suite.py /tmp/emcia-suite.txt
 ```
 
 O executador descobre negativos.sh e todos os módulos Python na raiz de testes/,
@@ -55,11 +55,11 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `esforco.py` | 1 | Registro de esforço e cálculo |
 | `formularios.py` | 5 | Redação fixa da triagem e isolamento na preparação de submissões |
 | `habilidades_a18.py` | 13 | A18: rotas reais de carregamento, inclusive com sessão e selo |
-| `habilitacao.py` | 19 | Travas do expediente de habilitação; dados exclusivamente sintéticos |
+| `habilitacao.py` | 29 | Travas do expediente, hashes aprovados, revisão jurídica exata, separação do modelo e emissão; dados sintéticos |
 | `habilitacao_0d.py` | 35 | Passagem 0d: negativas primeiro, sobre componentes reais e dados sintéticos |
 | `integracao.py` | 17 | Integracao P2/P3 -> CTX -> P4/P5 do pacote 2.5.5 |
 | `manual_a25.py` | 5 | MAN-01 sem emenda: conformidade e quatro mutações negativas |
-| `metodo_empacotado.py` | 1 | Inventário, SHA-256 e comparação ao commit canônico quando disponível |
+| `metodo_empacotado.py` | 8 | Inventário aprovado, APR-01, tag → commit, bytes canônicos e templates do checkout; negativas de cada contrato |
 | `negativos.sh` | 51 | Regressão das guardas, procedência e controles positivos |
 | `nucleo_2_6_1.py` | 39 | Verificacao do nucleo generico de protocolos -- pacote 2.6.1 |
 | `nucleo_yaml.py` | 6 | Leitor mínimo, listas e validação de objetos |
@@ -80,21 +80,26 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 | `sessao_externa.py` | 6 | Referência de sessão genérica: camada, id declarado e marcador |
 | `triagem_a7.py` | 24 | A7: recusas primeiro; regra de apuração declarada no playbook do caso |
 | `verificacao_por_estados.py` | 7 | Verificacao por estados do caso (decisao 021, substitui 004/014-020) |
-| **Total** | **958** | **49 módulos** |
+| **Total** | **975** | **49 módulos** |
 
-metodo_empacotado.py e esforco.py são verificações por processo e contam como
-uma cada; os demais módulos declaram unittest ou imprimem verificações `ok`.
+esforco.py é uma verificação por processo e conta como uma; os demais módulos
+declaram unittest ou imprimem verificações `ok`.
 Estas contagens identificam a execução deste pacote, sem somar reexecuções.
 
 ## Contratos documentais
 
-`metodo_empacotado.py` exige o inventário exato de 21 documentos, manifesto v5
-com caminhos de origem e commit completo, hashes corretos e ausência de cópias
-no contraste. Com emcia-artefatos como checkout irmão, confere bytes contra
-`git show <commit>:<caminho>`; nunca compara a uma versão mutável de trabalho.
-Sem esse checkout, os hashes fixados permitem conferir o pacote offline.
+`metodo_empacotado.py` exige 22 documentos, manifesto v6, tag, commit completo,
+linha_de_base e caminhos canônicos. Os 21 arquivos além do APR-01 precisam estar
+aprovados pelo hash do registro. Com o checkout irmão canônico, resolve a tag
+para o commit, compara bytes via git show e confere os três templates HAB no
+checkout pelos hashes do APR-01; o CI obtém esse checkout da tag publicada.
+Sem checkout, o controle offline confere manifesto e registro de aprovação.
+As negativas alteram hash no APR-01 com manifesto coerente, destino da tag,
+bytes do template, hash do manifesto e origem/linha de base. Fixtures HAB e APR-01
+em testes/apoio/templates-hab-v1 são cópias exatas da tag, conferidas pelo pacote.
+ESP-01, VER-01 e fluxo auxiliar ficam fora do inventário aprovado.
 
-`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v0.4 e playbook
+`manual_a25.py` exige `conferir()` vazio diretamente para o MAN-01 v1.0 e playbook
 0.4.19. O produto de F0 é "Decisão de prosseguimento registrada", conforme
 correção aprovada antes do commit canônico. Não há sobreposição de emenda.
 Os negativos 02–05 continuam detectando etapa removida, camada trocada,
@@ -119,3 +124,15 @@ autenticam conteúdo remoto nem demonstram hooks em um cliente diferente.
 A prova real de runtime está em `.projectdocs/evidencias/canais-externos/pacote-E7/`:
 Claude Code 2.1.283, ferramenta MCP stdio sintética, disparo real de hook e
 negativa antes da chamada. Simulação de payload não substitui essa prova.
+
+## Geração da habilitação aprovada
+
+Os templates de teste são os três originais da tag, copiados para diretórios
+temporários sem modificar os fixtures. A revisão jurídica é exclusivamente
+sintética, registrada pelas operações reais com pessoa nomeada, data, hashes e
+evidência importada. Há negativas sem revisão, cobertura parcial, hash diferente,
+evidência adulterada e marcas ausentes. O controle positivo compara todo o
+conteúdo contratual e a identificação, verifica remoção do controle e histórico
+internos e do aviso jurídico e confere o estado “Para assinatura”. Somente o
+renderizador de PDF é substituído nas fixtures de integração; nenhuma trava
+é dispensada. A demonstração separada gera PDFs reais com Chrome e usa pdftotext.

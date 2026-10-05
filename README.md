@@ -1,13 +1,17 @@
 # emcia — marketplace de plugins
 
-O método é conferido pelo manifesto SHA-256 antes de abrir cada caso. Comece pelo
-[MAN-01 v0.4](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
-conferido contra o playbook 0.4.19. O pacote foi extraído, sem edição manual, do
-commit canônico `989e1e73796a356b660be8ed55b686ba716787ac` de
+O caso real usa somente o pacote da linha de base aprovada **metodo-v1.0**.
+Comece pelo [MAN-01 v1.0](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao.md),
+conferido contra o playbook 0.4.19. O pacote foi extraído, byte a byte, da tag
+`metodo-v1.0`, commit `08bfb162d762935ed35f55e0a75bc700b81d5276` de
 [emcia-artefatos](https://github.com/CvGonjr/emcia-artefatos).
-O manifesto v5 identifica origem, data, caminhos canônicos e hashes dos 21
-documentos, incluindo CAN-01, HAB-01, ROT-02 e o fluxo auxiliar. Empacotar uma
-revisão não altera seu estado nem lhe atribui aprovação.
+O manifesto v6 fixa tag, commit, linha de base, caminhos canônicos e SHA-256
+para 22 documentos: os 21 arquivos aprovados e o
+[APR-01](eiac-campo/reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md).
+Celso do Vale aprovou a linha de base em 03/10/2026. Modelos e templates são
+conferidos pelos hashes do APR-01. Documento em revisão ou fora dessa aprovação
+não entra em caso real. Qualquer alteração posterior exige nova aprovação e
+nova linha de base antes do uso real, conforme a [decisão 044](decisoes/044-linha-de-base-aprovada.md).
 
 Este repositório é a ferramenta. Casos e dados de clientes vivem em repositórios
 próprios; não entram no marketplace.
@@ -15,7 +19,7 @@ próprios; não entram no marketplace.
 | Plugin | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.45 | Guarda, procedência, etapas e trilha; aplica o contrato do caso |
-| eiac-campo | 0.8.23 | Método, habilidades, comandos, scripts e template de caso |
+| eiac-campo | 0.8.24 | Método, habilidades, comandos, scripts e template de caso |
 
 O núcleo lê `registro/playbook.json` do caso. Atualizar o plugin não substitui
 esse arquivo nem migra casos em andamento. Camadas EX1–EX4 e procedência D/I/V
@@ -52,6 +56,11 @@ expediente → gravar `00-habilitacao` pelo validador → selar → F0.**
    sendo os três templates e os códigos dos PDFs da formalização.
    A revisão humana da carta HAB-01 integra o procedimento normal:
    o engenheiro confere conteúdo, condições e evidências antes da formalização.
+   **Antes do primeiro cliente**, registre a revisão jurídica de HAB-02 e HAB-03
+   pela operação humana `revisao-juridica`, com os hashes exatos e evidência.
+   `gerar` exige essa cobertura e recusa sem ela; não há dispensa. O MD e o PDF
+   emitidos preservam identificação e cláusulas, declaram “Para assinatura” e
+   retiram controle, histórico e avisos internos do modelo.
 2. Conclua formalização e acessos, confira `preparar-0d` e abra o caso com o
    identificador reservado e o mesmo responsável. A abertura confere todos os
    hashes, copia os documentos e o manifesto para `metodo/` e prepara o Git.
@@ -139,7 +148,7 @@ preparada. Decisor, data, desfecho e motivo ficam registrados e materializados
 em E1. Ambos os desfechos permitem encerrar F0; `não prosseguir` bloqueia as
 etapas seguintes até nova decisão `prosseguir`, preservando o registro anterior.
 
-A correspondência etapa → HBs → AG vem do CAT-01 v0.5 Anexo C, implementada
+A correspondência etapa → HBs → AG vem do CAT-01 v1.0 Anexo C, implementada
 pela [decisão 043](decisoes/043-correspondencia-cat01-catalogo-playbook.md).
 P1 trata maturidade nas quatro frentes, patrocínio e caso de negócio. O mapa
 de valor pertence a P3d, com o estado declarado selado após P2 como entrada
@@ -227,7 +236,10 @@ Code 2.1.283 testado; não há demonstração de suporte em outros clientes.
 As atividades do CAT-01 Anexo B permanecem com o engenheiro por falta de
 execução integral comprovada. A conferência do manual cobre o contrato declarado, não julga a qualidade
 do levantamento. MAN-01 §3.6 registra os limites operacionais; ESP-01 conserva
-o recorte histórico da prova de conceito.
+o recorte histórico da prova de conceito no repositório canônico. ESP-01,
+VER-01 e o fluxo auxiliar de habilitação ficam fora do pacote e da aprovação.
+A revisão jurídica é registrada por pessoa nomeada; o sistema confere cobertura
+e integridade da evidência, sem substituir o julgamento jurídico.
 
 O material público de 0a fica fora do caso nessa etapa. Se usado depois da
 abertura, segue validação ou curadoria, com procedência, premissa, URL e limite
@@ -248,7 +260,7 @@ python3 testes/prosseguimento.py
 A suíte completa usa Python 3.12; módulos e contagens estão em
 [testes/README.md](testes/README.md). Negativa inesperadamente permitida é regressão
 de trava. As evidências deste pacote estão em
-[correspondencia-cat01](.projectdocs/evidencias/correspondencia-cat01/).
+[linha-de-base-v1](.projectdocs/evidencias/linha-de-base-v1/).
 Demonstrações sintéticas: `.projectdocs/demos/preparar-caso.sh`,
 `como-agente.sh` e `percurso-completo.sh`; este último congela o HEAD commitado.
 
@@ -256,4 +268,4 @@ Atualize os plugins pelo marketplace e reinicie a sessão. Migração de caso ex
 decisão humana e atualização explícita do seu contrato. Versão do plugin, versão
 do playbook e versão do manifesto são registradas separadamente. Mudança em
 scripts do núcleo exige incremento da versão do núcleo; esta revisão incrementa
-núcleo, campo e playbook. Casos anteriores não são migrados automaticamente.
+somente o campo para 0.8.24 e o manifesto para v6. Casos anteriores não são migrados automaticamente.

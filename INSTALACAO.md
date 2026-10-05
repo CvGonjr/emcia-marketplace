@@ -15,7 +15,7 @@ No Claude Code:
 ```
 
 Reinicie a sessão e confira os plugins e comandos. A revisão operacional usa
-núcleo 0.2.44, campo 0.8.22, playbook 0.4.18 e manifesto v4. Para trabalhar pelo
+núcleo 0.2.45, campo 0.8.24, playbook 0.4.19 e manifesto v6. Para trabalhar pelo
 checkout local:
 
 ```bash
@@ -25,10 +25,18 @@ python3 --version
 python3 testes/metodo_empacotado.py
 ```
 
-O teste confere os hashes; com o checkout irmão de emcia-artefatos disponível,
-compara também os bytes ao objeto Git do commit canônico fixado no manifesto.
-O pacote instalado funciona offline. Documentos em revisão continuam com sua
-aprovação pendente.
+O teste confere SHA-256 do manifesto e do APR-01. Com o checkout irmão de
+emcia-artefatos na tag metodo-v1.0, confere que a tag resolve para o commit
+`08bfb162d762935ed35f55e0a75bc700b81d5276`, compara os bytes aos objetos Git
+e confere os templates HAB do checkout pelos hashes aprovados. O CI obtém esse
+checkout pela tag publicada. O pacote instalado funciona offline.
+
+Caso real usa somente o pacote da linha de base aprovada **metodo-v1.0**,
+aprovada por Celso do Vale em 03/10/2026 no
+[APR-01](eiac-campo/reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md).
+Documento em revisão ou fora da aprovação não entra em caso real.
+Alteração posterior exige nova aprovação e nova linha de base antes do uso real.
+As três referências históricas ESP-01, VER-01 e fluxo auxiliar não são empacotadas.
 
 ## 2. Configurar os conectores
 
@@ -56,8 +64,17 @@ Leia [MAN-01 §3.2](eiac-campo/reference/metodo/EMCIA-MAN-01-manual-de-aplicacao
 [ROT-02](eiac-campo/reference/metodo/EMCIA-ROT-02-roteiro-de-habilitacao.md).
 Consulte [reference/habilitacao.md](eiac-campo/reference/habilitacao.md) para
 as operações e os campos JSON do expediente. Os templates HAB-01/02/03 são
-lidos de `auxiliares/` do checkout canônico, preservados com hash e revisados
-humanamente antes da liberação dos PDFs. A assinatura ocorre pelo painel externo.
+lidos de `eiac-campo/reference/metodo/` do pacote, ou de `auxiliares/` de um
+checkout canônico na tag metodo-v1.0, e precisam coincidir com os hashes do APR-01.
+
+Antes do primeiro cliente, registre a revisão jurídica de HAB-02 e HAB-03 pela
+operação humana `revisao-juridica`: revisor, decisor, data, hashes cobertos e
+evidência importada. `gerar` recusa sem a cobertura exata, sem flag de dispensa.
+O controle do modelo, seu histórico interno e o aviso jurídico não são enviados
+ao cliente. A identificação e as cláusulas são preservadas, e a emissão declara
+“Para assinatura”. Os templates originais e os documentos gerados conservam
+hashes próprios no expediente. Os PDFs exigem conferência humana antes da
+liberação; a assinatura ocorre pelo painel externo.
 
 Inicialize o expediente no terminal, antes da sessão, fora de repositórios:
 

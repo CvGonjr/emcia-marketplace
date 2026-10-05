@@ -1,6 +1,6 @@
 # Mapa de documentação — emcia-marketplace
 
-Retrato operacional de 03/10/2026; substitui integralmente o mapa anterior.
+Retrato operacional de 04/10/2026; substitui integralmente o mapa anterior.
 
 ## Repositórios e versões
 
@@ -11,11 +11,13 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 | Componente | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.45 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.23 | Método, scripts de campo, comandos, habilidades e template |
+| eiac-campo | 0.8.24 | Método, scripts de campo, comandos, habilidades e template |
 | Playbook do template | 0.4.19 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
-| Manifesto do método | 5 | 21 documentos, origem e caminhos canônicos, SHA-256 |
+| Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
-Origem controlada: commit `989e1e73796a356b660be8ed55b686ba716787ac`.
+Origem controlada: tag `metodo-v1.0`, commit `08bfb162d762935ed35f55e0a75bc700b81d5276`.
+APR-01 registra a aprovação de Celso do Vale em 03/10/2026. Só essa linha de base
+aprovada entra em caso real; revisão posterior exige nova aprovação e tag.
 Cada documento foi extraído do objeto Git, sem edição manual. A abertura confere
 os hashes e copia documentos e manifesto para metodo/. Não há leitura do
 playbook do plugin pelo caso; migração de caso existente é humana e explícita.
@@ -24,11 +26,13 @@ playbook do plugin pelo caso; migração de caso existente é humana e explícit
 
 README.md apresenta operação e limites; INSTALACAO.md apresenta instalação,
 conectores e provas locais. AGENTS.md e CLAUDE.md fixam as regras de trabalho.
-O manual de aplicação é MAN-01 v0.4, conferido contra o playbook vigente.
+O manual de aplicação é MAN-01 v1.0, conferido contra o playbook vigente.
 CAN-01 declara canais por id; HAB-01 rege habilitação e vínculo de restrição;
 ROT-02 substitui o identificador anterior do roteiro, preservando HAB-02 como
-template do acordo de confidencialidade. Os três templates HAB ficam no checkout
-canônico e não foram alterados.
+template do acordo de confidencialidade. Os três templates HAB são extraídos da tag e empacotados
+sem alteração. A geração confere seus hashes no APR-01; um checkout externo
+precisa estar na mesma tag. ESP-01, VER-01 e o fluxo auxiliar permanecem referências
+históricas canônicas, fora do pacote destinado a casos reais.
 
 O instrumento do contexto é
 `eiac-campo/reference/metodo/EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md`.
@@ -39,29 +43,30 @@ e citacoes.py confere a retirada e as remissões. O histórico Git conserva os r
 O README local antigo do pacote foi retirado; os procedimentos de empacotamento
 ficam neste mapa e no README principal, fora dos documentos canônicos.
 
-| Documento empacotado | Versão | Caminho no commit canônico |
+| Documento empacotado | Versão | Caminho no commit da tag |
 |---|---|---|
-| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 0.4 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
-| `EMCIA-CAN-01-protocolo-de-canais-externos.md` | 0.1 | `EMCIA-CAN-01-protocolo-de-canais-externos.md` |
-| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 0.5 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
-| `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` | 0.5 | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` |
-| `EMCIA-E1-ficha-de-enquadramento.md` | «0.1» | `EMCIA-E1-ficha-de-enquadramento.md` |
-| `EMCIA-E2-diagnostico-e-oportunidade.md` | «0.1» | `EMCIA-E2-diagnostico-e-oportunidade.md` |
-| `EMCIA-E3-blueprint-da-solucao.md` | «0.1» | `EMCIA-E3-blueprint-da-solucao.md` |
-| `EMCIA-E4-guia-operacional.md` | «0.1» | `EMCIA-E4-guia-operacional.md` |
-| `EMCIA-E5-relatorio-de-piloto.md` | «0.1» | `EMCIA-E5-relatorio-de-piloto.md` |
-| `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` | 0.4 | `EMCIA-ESP-01-especificacao-executavel-do-estudio-de-trabalho.md` |
-| `EMCIA-FER-01-quadro-de-ferramentas.md` | 0.2 | `EMCIA-FER-01-quadro-de-ferramentas.md` |
-| `EMCIA-GLO-01-glossario-do-metodo.md` | 0.4 | `EMCIA-GLO-01-glossario-do-metodo.md` |
-| `EMCIA-HAB-01-protocolo-de-habilitacao.md` | 0.3 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` |
-| `EMCIA-HAB-fluxo-operacional-proposta.md` | 0.2 | `auxiliares/EMCIA-HAB-fluxo-operacional-proposta.md` |
-| `EMCIA-MAN-01-manual-de-aplicacao.md` | 0.4 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
-| `EMCIA-MET-01-documento-do-metodo.md` | 0.2 | `EMCIA-MET-01-documento-do-metodo.md` |
-| `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` | 0.1 | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` |
-| `EMCIA-ROT-02-roteiro-de-habilitacao.md` | 0.2 | `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` |
-| `EMCIA-TRA-01-procedimentos-transversais-do-metodo.md` | 0.4 | `EMCIA-TRA-01-procedimentos-transversais-do-metodo.md` |
-| `EMCIA-TRI-01-instrumento-de-triagem.md` | 0.2 | `EMCIA-TRI-01-instrumento-de-triagem.md` |
-| `EMCIA-VER-01-plano-de-verificacao.md` | 0.2 | `EMCIA-VER-01-plano-de-verificacao.md` |
+| `EMCIA-APR-01-registro-de-aprovacoes.md` | 1.0 | `EMCIA-APR-01-registro-de-aprovacoes.md` |
+| `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` | 1.0 | `EMCIA-CAM-01-protocolo-de-campo-por-passo.md` |
+| `EMCIA-CAN-01-protocolo-de-canais-externos.md` | 1.0 | `EMCIA-CAN-01-protocolo-de-canais-externos.md` |
+| `EMCIA-CAT-01-fronteira-de-delegacao.md` | 1.0 | `EMCIA-CAT-01-fronteira-de-delegacao.md` |
+| `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` | 1.0 | `EMCIA-CTX-01-instrumento-de-registro-da-camada-de-contexto.md` |
+| `EMCIA-E1-ficha-de-enquadramento.md` | 0.1 | `EMCIA-E1-ficha-de-enquadramento.md` |
+| `EMCIA-E2-diagnostico-e-oportunidade.md` | 0.1 | `EMCIA-E2-diagnostico-e-oportunidade.md` |
+| `EMCIA-E3-blueprint-da-solucao.md` | 0.1 | `EMCIA-E3-blueprint-da-solucao.md` |
+| `EMCIA-E4-guia-operacional.md` | 0.1 | `EMCIA-E4-guia-operacional.md` |
+| `EMCIA-E5-relatorio-de-piloto.md` | 0.1 | `EMCIA-E5-relatorio-de-piloto.md` |
+| `EMCIA-FER-01-quadro-de-ferramentas.md` | 1.0 | `EMCIA-FER-01-quadro-de-ferramentas.md` |
+| `EMCIA-GLO-01-glossario-do-metodo.md` | 1.0 | `EMCIA-GLO-01-glossario-do-metodo.md` |
+| `EMCIA-HAB-01-protocolo-de-habilitacao.md` | 1.0 | `EMCIA-HAB-01-protocolo-de-habilitacao.md` |
+| `EMCIA-MAN-01-manual-de-aplicacao.md` | 1.0 | `EMCIA-MAN-01-manual-de-aplicacao.md` |
+| `EMCIA-MET-01-documento-do-metodo.md` | 1.0 | `EMCIA-MET-01-documento-do-metodo.md` |
+| `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` | 1.0 | `EMCIA-ROT-01-roteiro-de-levantamento-de-regras-nao-documentadas.md` |
+| `EMCIA-ROT-02-roteiro-de-habilitacao.md` | 1.0 | `auxiliares/EMCIA-ROT-02-roteiro-de-habilitacao.md` |
+| `EMCIA-TRA-01-procedimentos-transversais-do-metodo.md` | 1.0 | `EMCIA-TRA-01-procedimentos-transversais-do-metodo.md` |
+| `EMCIA-TRI-01-instrumento-de-triagem.md` | 1.0 | `EMCIA-TRI-01-instrumento-de-triagem.md` |
+| `HAB-01-carta-de-escopo.md` | 0.2 | `auxiliares/HAB-01-carta-de-escopo.md` |
+| `HAB-02-acordo-confidencialidade.md` | 0.2 | `auxiliares/HAB-02-acordo-confidencialidade.md` |
+| `HAB-03-termo-de-consentimento.md` | 0.2 | `auxiliares/HAB-03-termo-de-consentimento.md` |
 
 ## Sequência de operação
 
@@ -168,19 +173,26 @@ operacional sem emenda local, e a 021 recebeu a retirada dos resumos CTX.
 | 041 | Restrição vinculada a fonte curada, com marca no ponto do entregável | aprovada; completa o pacote D da 039 |
 | 042 | Selo confirmado no Git para a exigência após encerramento | aprovada; emenda 021 e completa a correção reservada em 039 |
 | 043 | Correspondência CAT-01, catálogo e playbook; decisão de prosseguimento em F0 | firme por instrução do engenheiro; supera 020 e registra D5 e MAN-01 v0.4 |
+| 044 | Linha de base aprovada metodo-v1.0; separação do modelo e emissão; revisão jurídica obrigatória | firme por instrução do engenheiro |
 
 ## Suítes e evidências
 
-A linha de base em Python 3.12.12 passou com 926 verificações em 47 módulos.
-Esta revisão acrescenta catalogo_cat01.py e prosseguimento.py e amplia citacoes.py.
-As contagens finais constam da evidência correspondencia-cat01 e de testes/README.md.
+A linha de base inicial em Python 3.12.12 passou com 958 verificações em 49 módulos.
+A geração acrescenta dez testes e a conferência do pacote passa de um controle
+por processo a oito testes, incluindo negativas de APR-01, tag e templates.
+As contagens finais constam da evidência linha-de-base-v1 e de testes/README.md.
 O inventário completo e o executador estão em testes/README.md e
-.projectdocs/evidencias/documentacao-operacional/. Registre códigos, saídas e
+.projectdocs/evidencias/linha-de-base-v1/. Registre códigos, saídas e
 contagens; falha de teste impede commit. Antes de alterações, rode negativos.sh
 e contexto.py; para pacote específico, rode seus módulos e a regressão completa.
 
 metodo_empacotado.py confere inventário, caminhos de origem e hashes; com checkout
-canônico irmão, compara bytes ao objeto do commit. manual_a25.py exige conferir()
+canônico irmão, resolve a tag, compara bytes aos objetos do commit e confere
+os templates do checkout pelos hashes do APR-01. habilitacao.py exige revisão
+jurídica de HAB-02 e HAB-03 para os hashes exatos antes de qualquer PDF e retira
+controle, histórico e avisos internos, preservando cláusulas e identificação.
+A evidência contém PDFs reais sintéticos antes/depois e extrações pdftotext.
+manual_a25.py exige conferir()
 vazio para o manual empacotado, sem emenda, mantendo quatro negativos.
 citacoes.py confere seções, instrumentos JSON, auxiliares e o TRI-01 real.
 restricoes.py e selo_p3b.py cobrem as decisões 041 e 042; habilitacao_0d.py cobre
@@ -192,7 +204,7 @@ sintético. Os demos em .projectdocs/demos/ preparam controles sintéticos;
 percurso-completo.sh usa o HEAD commitado congelado, incluindo decisões humanas
 fictícias. Simulação não é prova de execução de hook em outro cliente.
 
-## Limites e pendências
+## Limites vigentes
 
 Scripts conferem coerência local, contratos e hashes, sem autenticar origem
 remota, identidade, acesso ou recebimento efetivo. SHA-256 fixa bytes, não
@@ -208,7 +220,7 @@ selo confirmado de P3b e colisão do código do roteiro já foram resolvidos.
 
 ## Correspondência e prosseguimento — decisão 043
 
-CAT-01 v0.5 Anexo C é a fonte da relação etapa → HBs → AG. HB-09 está em P3d,
+CAT-01 v1.0 Anexo C é a fonte da relação etapa → HBs → AG. HB-09 está em P3d,
 com o estado declarado selado em P2 como entrada e candidatos para P4 como saída;
 as quatro frentes pertencem a P1 e são instrumento distinto. A camada das HBs
 é de preparação, limitada pela camada de encerramento da etapa em cada nível.
