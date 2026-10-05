@@ -1,7 +1,9 @@
 """Travas do expediente de habilitação; dados exclusivamente sintéticos."""
 import importlib.util
+import hashlib
 import json
 import pathlib
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -19,6 +21,10 @@ class Habilitacao(unittest.TestCase):
         self.base = pathlib.Path(self.tmp.name)
         self.root = self.base / "expediente"
         H.iniciar(self.root, "HAB-TESTE", "Pessoa Responsavel")
+        self.templates = self.base / 'templates'
+        shutil.copytree(ROOT / 'testes/apoio/templates-hab-v1', self.templates)
+        self.addCleanup(patch.stopall)
+        patch.object(H, 'APR', self.templates / 'EMCIA-APR-01-registro-de-aprovacoes.md', create=True).start()
 
     def run_action(self, action, **data):
         return H.executar(self.root, action, data)
@@ -94,17 +100,28 @@ class Habilitacao(unittest.TestCase):
         self.assertEqual(self.state()["campos"]["organizacao"]["fonte"], "S1")
         self.assertTrue(all(e["autor"] == "Pessoa Responsavel" for e in self.state()["eventos"]))
 
-    def prepare(self):
+    def revisao_juridica(self, documentos=None, **mudancas):
+        dados = dict(revisor='Pessoa Jurista', decisor='Pessoa Engenheira', data='2026-10-04',
+                     documentos=({doc: hashlib.sha256((self.templates / H.TEMPLATES[doc]).read_bytes()).hexdigest()
+                                  for doc in ('HAB-02', 'HAB-03')} if documentos is None else documentos),
+                     evidencia=str(self.base / 'S1.json'))
+        dados.update(mudancas)
+        return dados
+
+    def prepare(self, gerar=True, juridica=True):
         self.source()
-        self.run_action("consolidar", campos={"organizacao": {"valor": "Exemplo", "fonte": "S1"}})
+        campos = {k: {'valor': 'Controle sintético ' + k, 'fonte': 'S1'}
+                  for f in H.TEMPLATES.values() for k in H.TOKEN.findall((self.templates / f).read_text())}
+        campos['organizacao']['valor'] = 'Organização Sintética'
+        campos['signatario']['valor'] = 'Pessoa Cliente'
+        self.run_action("consolidar", campos=campos)
         self.run_action("revisar", decisor="Pessoa Engenheira", motivo="Conferência sintética",
                         evidencia=str(self.base / "S1.json"), qualificacao_0a=True, conteudo_conferido=True)
-        templates = self.base / "templates"
-        templates.mkdir(exist_ok=True)
-        for filename in H.TEMPLATES.values():
-            (templates / filename).write_text("# Exemplo\n{{organizacao}} {{caso_id}}\n")
-        with patch.object(H, "pdf_bytes", return_value=b"%PDF-1.7\nsintetico\n%%EOF"):
-            self.run_action("gerar", templates=str(templates))
+        if juridica:
+            self.run_action('revisao-juridica', **self.revisao_juridica())
+        if gerar:
+            with patch.object(H, "pdf_bytes", return_value=b"%PDF-1.7\nsintetico\n%%EOF"):
+                self.run_action("gerar", templates=str(self.templates))
 
     def release(self, doc="HAB-01", version=1):
         self.run_action("liberar", documento=doc, versao=version, decisor="Pessoa Engenheira",
@@ -186,10 +203,14 @@ class Habilitacao(unittest.TestCase):
 
     def test_17_missing_field_and_pdf_failure_do_not_publish_versions(self):
         self.prepare()
-        filename = self.base / "templates" / H.TEMPLATES["HAB-03"]
-        filename.write_text("{{campo_ausente}}")
+        campos = self.state()['campos']
+        del campos['processo_alvo']
+        self.run_action('consolidar', campos=campos)
+        self.run_action('revisar', decisor='Pessoa Engenheira', motivo='Conferência sintética',
+                        evidencia=str(self.base / 'S1.json'), qualificacao_0a=True, conteudo_conferido=True)
         with patch.object(H, "pdf_bytes", return_value=b"%PDF-1.7\n%%EOF"):
-            self.refused("gerar", templates=str(self.base / "templates"))
+            with self.assertRaisesRegex(H.Recusa, 'campos ausentes'):
+                self.run_action('gerar', templates=str(self.templates))
         self.assertTrue(all(len(v) == 1 for v in self.state()["documentos"].values()))
 
     def test_18_expiration_blocks_completion(self):
@@ -208,6 +229,135 @@ class Habilitacao(unittest.TestCase):
         self.run_action("reabrir", id="P1", rodada=2, decisor="Pessoa Engenheira", motivo="Nova divergência")
         self.refused("resolver", id="P1", resposta="S2", decisor="Pessoa Engenheira", motivo="Resposta antiga")
         self.assertEqual(len(self.state()["pendencias"]["P1"]["decisoes"]), 2)
+
+    def test_20_gerar_sem_revisao_juridica_recusa_antes_do_pdf(self):
+        self.prepare(gerar=False, juridica=False)
+        with patch.object(H, 'pdf_bytes') as pdf:
+            with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-02'):
+                self.run_action('gerar', templates=str(self.templates))
+            pdf.assert_not_called()
+        self.assertEqual(self.state()['documentos'], {})
+        self.assertEqual(self.state()['eventos'][-1]['tipo'], 'Recusado')
+
+    def test_21_cobertura_so_de_hab02_nao_autoriza_hab03(self):
+        self.prepare(gerar=False, juridica=False)
+        sha = self.revisao_juridica()['documentos']['HAB-02']
+        self.run_action('revisao-juridica', **self.revisao_juridica(documentos={'HAB-02': sha}))
+        with patch.object(H, 'pdf_bytes') as pdf:
+            with self.assertRaisesRegex(H.Recusa, 'revisao-juridica.*HAB-03'):
+                self.run_action('gerar', templates=str(self.templates))
+            pdf.assert_not_called()
+        self.assertEqual(self.state()['documentos'], {})
+
+    def test_22_revisao_exige_hash_aprovado_pessoa_data_e_evidencia(self):
+        self.source()
+        for mudanca in ({'revisor': 'AG-01'}, {'decisor': 'AG-02'}, {'data': '2026-02-30'},
+                        {'documentos': {'HAB-02': '0' * 64}}, {'documentos': {'OUTRO': '0' * 64}},
+                        {'documentos': []}, {'evidencia': str(self.base / 'ausente')}, {'dispensa': True}):
+            with self.subTest(mudanca=mudanca):
+                self.refused('revisao-juridica', **self.revisao_juridica(**mudanca))
+        self.assertFalse(self.state().get('revisoes_juridicas'))
+
+    def test_23_evidencia_juridica_adulterada_bloqueia_gerar(self):
+        self.prepare(gerar=False)
+        ref = self.state()['revisoes_juridicas'][0]['evidencia']
+        (self.root / ref['caminho']).write_text('adulterada')
+        self.refused('gerar', templates=str(self.templates))
+
+    def test_24_hash_do_template_alterado_nao_herda_revisao(self):
+        self.prepare(gerar=False)
+        p = self.templates / H.TEMPLATES['HAB-03']
+        p.write_bytes(p.read_bytes() + b'\nAlteracao de clausula.\n')
+        with self.assertRaisesRegex(H.Recusa, 'APR-01.*HAB-03'):
+            self.run_action('gerar', templates=str(self.templates))
+        self.assertEqual(self.state()['documentos'], {})
+
+    def test_25_documentos_emitidos_preservam_contrato_e_identificacao(self):
+        self.prepare(gerar=False)
+        with patch.object(H, 'pdf_bytes', side_effect=lambda md, browser: b'%PDF-1.7\n' + md.encode() + b'\n%%EOF'):
+            self.run_action('gerar', templates=str(self.templates))
+        s = self.state()
+        for doc, nome in H.TEMPLATES.items():
+            with self.subTest(doc=doc):
+                v = s['documentos'][doc][-1]
+                raw = (self.templates / nome).read_bytes()
+                md = H.ler_arquivo(self.root, v['markdown']).decode()
+                pdf = H.ler_arquivo(self.root, v['pdf']).decode()
+                for emitido in (md, pdf):
+                    for interno in ('Controle do modelo', 'Revisão jurídica', 'Histórico de revisões do modelo',
+                                    '**Aprovação**', 'Celso do Vale'):
+                        self.assertNotIn(interno, emitido)
+                    self.assertIn('Estado de emissão: Para assinatura', emitido)
+                    self.assertIn('## Identificação do caso', emitido)
+                    self.assertIn('Organização Sintética', emitido)
+                    self.assertIn('HAB-TESTE', emitido)
+                contrato = '## 1. Objetivo' + raw.decode().split('## 1. Objetivo', 1)[1].split('## 10. Histórico de revisões do modelo', 1)[0]
+                aviso = next((l for l in contrato.splitlines(keepends=True) if l.startswith('> **Revisão jurídica:**')), '')
+                contrato = contrato.replace(aviso, '')
+                campos = {k: val['valor'] for k, val in s['campos'].items()}
+                campos.update(caso_id='HAB-TESTE', responsavel_emcia='Pessoa Responsavel',
+                              status_assinatura='Aguardando assinatura', versao_assinada='Pendente',
+                              evidencia_assinatura='Pendente', data_assinatura_cliente='A registrar na assinatura',
+                              data_assinatura_emcia='A registrar na assinatura')
+                esperado = H.TOKEN.sub(lambda m: campos[m[1]], contrato).strip()
+                self.assertIn(esperado, md)
+                self.assertEqual(H.ler_arquivo(self.root, v['template']), raw)
+                self.assertEqual(v['template']['sha256'], hashlib.sha256(raw).hexdigest())
+                self.assertEqual(v['markdown']['sha256'], hashlib.sha256(md.encode()).hexdigest())
+                if doc != 'HAB-01':
+                    self.assertEqual(v['revisao_juridica']['documentos'][doc], v['template']['sha256'])
+
+    def test_26_marcas_ausentes_recusam_com_motivo_sem_publicar(self):
+        self.prepare(gerar=False)
+        nome = H.TEMPLATES['HAB-02']
+        original = (self.templates / nome).read_text()
+        for marca in ('## Controle do modelo', '## Identificação do caso', '> **Revisão jurídica:**',
+                      '## 10. Histórico de revisões do modelo'):
+            with self.subTest(marca=marca):
+                alterado = original.replace(marca, 'MARCA AUSENTE')
+                (self.templates / nome).write_text(alterado)
+                # Isola a checagem estrutural: APR sintético conserva a mesma linha,
+                # somente o hash da mutação é registrado nesta cópia temporária.
+                apr = self.templates / 'EMCIA-APR-01-registro-de-aprovacoes.md'
+                registro = (ROOT / 'testes/apoio/templates-hab-v1' / apr.name).read_text()
+                registro = registro.replace(hashlib.sha256(original.encode()).hexdigest(), hashlib.sha256(alterado.encode()).hexdigest())
+                apr.write_text(registro)
+                self.run_action('revisao-juridica', **self.revisao_juridica())
+                with self.assertRaisesRegex(H.Recusa, 'marcas.*HAB-02'):
+                    self.run_action('gerar', templates=str(self.templates))
+                self.assertEqual(self.state()['documentos'], {})
+
+    def test_27_blocos_juridicos_multilinha_sao_retirados_sem_comer_contrato(self):
+        self.prepare(gerar=False)
+        nome = H.TEMPLATES['HAB-03']
+        p = self.templates / nome
+        raw = p.read_bytes()
+        novo = raw.decode().replace('> **Revisão jurídica:**', '> **Revisão jurídica:**\n> Continuação interna.\n>')
+        p.write_text(novo)
+        apr = self.templates / 'EMCIA-APR-01-registro-de-aprovacoes.md'
+        apr.write_text(apr.read_text().replace(hashlib.sha256(raw).hexdigest(), hashlib.sha256(novo.encode()).hexdigest()))
+        self.run_action('revisao-juridica', **self.revisao_juridica())
+        with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\n%%EOF'):
+            self.run_action('gerar', templates=str(self.templates))
+        md = H.ler_arquivo(self.root, self.state()['documentos']['HAB-03'][-1]['markdown']).decode()
+        self.assertNotIn('Continuação interna', md)
+        self.assertIn('## 2. Identificação', md)
+
+    def test_28_nova_revisao_preserva_a_anterior_e_mostra_cobertura(self):
+        self.prepare(gerar=False)
+        self.run_action('revisao-juridica', **self.revisao_juridica(revisor='Outra Jurista', data='2026-10-05'))
+        s = self.state()
+        self.assertEqual(len(s['revisoes_juridicas']), 2)
+        self.assertEqual(s['revisoes_juridicas'][0]['revisor'], 'Pessoa Jurista')
+        self.assertEqual(s['revisoes_juridicas'][1]['revisor'], 'Outra Jurista')
+        self.assertEqual(self.run_action('estado')['revisoes_juridicas'], s['revisoes_juridicas'])
+
+    def test_29_falha_no_pdf_nao_publica_versoes_parciais(self):
+        self.prepare(gerar=False)
+        with patch.object(H, 'pdf_bytes', side_effect=[b'%PDF-1.7\n%%EOF', H.Recusa('falha sintética de PDF')]):
+            self.refused('gerar', templates=str(self.templates))
+        self.assertEqual(self.state()['documentos'], {})
+        self.assertEqual(self.state()['eventos'][-1]['motivo'], 'falha sintética de PDF')
 
 
 if __name__ == "__main__":

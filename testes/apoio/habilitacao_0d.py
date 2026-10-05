@@ -6,6 +6,8 @@ nenhuma guarda, assinatura ou condição de passagem é desativada.
 import importlib.util
 import json
 import pathlib
+import hashlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -29,13 +31,18 @@ def criar(root, caso, responsavel, acessos=True, assinaturas=True, restricao=Fal
         op('receber', id='S1', arquivo=str(origem), formulario='FORM-SINTETICO',
            submissao='SUB-SINTETICA', respondente='Pessoa Patrocinadora',
            versao_perguntas='controle-1', rodada=0, escopo='administrativo')
-        op('consolidar', campos={'organizacao': {'valor': 'Organização Sintética', 'fonte': 'S1'}})
+        templates = insumos/'templates'
+        shutil.copytree(RAIZ/'testes/apoio/templates-hab-v1', templates)
+        campos = {k: {'valor': 'Controle sintético '+k, 'fonte': 'S1'}
+                  for filename in H.TEMPLATES.values() for k in H.TOKEN.findall((templates/filename).read_text())}
+        campos['organizacao']['valor'] = 'Organização Sintética'
+        campos['signatario']['valor'] = 'Pessoa Patrocinadora'
+        op('consolidar', campos=campos)
         op('revisar', decisor=responsavel, motivo='Revisão exclusivamente sintética',
            qualificacao_0a=True, conteudo_conferido=True, evidencia=str(origem))
-        templates = insumos/'templates'
-        templates.mkdir()
-        for doc, filename in H.TEMPLATES.items():
-            (templates/filename).write_text('# Controle sintético '+doc+'\n{{organizacao}} {{caso_id}}\n')
+        op('revisao-juridica', revisor='Pessoa Jurista', decisor=responsavel, data='2026-10-04',
+           documentos={doc: hashlib.sha256((templates/H.TEMPLATES[doc]).read_bytes()).hexdigest()
+                       for doc in ('HAB-02', 'HAB-03')}, evidencia=str(origem))
         with patch.object(H, 'pdf_bytes', return_value=b'%PDF-1.7\ncontrole sintetico\n%%EOF'):
             op('gerar', templates=str(templates))
         if assinaturas:

@@ -31,6 +31,7 @@ TEMPLATES = {
     "HAB-03": "HAB-03-termo-de-consentimento.md",
 }
 TOKEN = re.compile(r"\{\{([a-z_]+)\}\}")
+APR = pathlib.Path(__file__).resolve().parents[1] / 'reference/metodo/EMCIA-APR-01-registro-de-aprovacoes.md'
 
 
 def exigir(condicao, motivo):
@@ -68,6 +69,54 @@ def agora():
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def aprovacoes(caminho=None, linha_de_base='metodo-v1.0'):
+    """Hashes declarados na tabela do APR-01; metadados do template não aprovam bytes."""
+    registro = (caminho or APR).read_text(encoding='utf-8')
+    exigir('| **Estado** | Aprovado |' in registro, 'APR-01 não aprovado')
+    exigir('## 2. Documentos aprovados' in registro and '## 3. Regra de aprovação' in registro,
+           'tabela de aprovação do APR-01 ausente')
+    tabela = registro.split('## 2. Documentos aprovados', 1)[1].split('## 3. Regra de aprovação', 1)[0]
+    hashes = {}
+    for linha in tabela.splitlines():
+        if not re.match(r'^\| (?:EMCIA-|HAB-)', linha):
+            continue
+        cols = [c.strip() for c in linha.strip('|').split('|')]
+        exigir(len(cols) == 7, 'linha inválida no APR-01')
+        codigo, nome, versao, sha, data, aprovador, base = cols
+        p = pathlib.PurePosixPath(nome)
+        exigir(not p.is_absolute() and '..' not in p.parts and nome not in hashes
+               and re.fullmatch(r'[0-9a-f]{64}', sha) and base == linha_de_base,
+               'hash, caminho ou linha de base inválidos no APR-01')
+        hashes[nome] = sha
+    exigir(bool(hashes), 'APR-01 sem documentos aprovados')
+    return hashes
+
+
+def documento_cliente(md, doc):
+    """Retira seções internas delimitadas, preservando os demais bytes do texto."""
+    linhas = md.splitlines(keepends=True)
+    controles = [i for i, l in enumerate(linhas) if l.rstrip('\r\n') == '## Controle do modelo']
+    identificacoes = [i for i, l in enumerate(linhas) if l.rstrip('\r\n') == '## Identificação do caso']
+    historicos = [i for i, l in enumerate(linhas)
+                 if re.fullmatch(r'## \d+\. Histórico de revisões do modelo', l.rstrip('\r\n'))]
+    avisos = [i for i, l in enumerate(linhas) if re.match(r'^>\s*\*\*Revisão jurídica:\*\*', l)]
+    exigir(len(controles) == len(identificacoes) == len(historicos) == 1
+           and controles[0] < identificacoes[0] < historicos[0]
+           and (doc == 'HAB-01' or bool(avisos)), 'marcas internas esperadas ausentes ou duplicadas em ' + doc)
+    retirar = set()
+    for inicio in (controles[0], historicos[0]):
+        fim = next((i for i in range(inicio + 1, len(linhas)) if linhas[i].startswith('## ')), len(linhas))
+        if inicio == controles[0]:
+            exigir(fim == identificacoes[0], 'marcas de identificação inesperadas em ' + doc)
+        retirar.update(range(inicio, fim))
+    for inicio in avisos:
+        fim = inicio + 1
+        while fim < len(linhas) and re.match(r'^>($|\s)', linhas[fim]):
+            fim += 1
+        retirar.update(range(inicio, fim))
+    return ''.join(l for i, l in enumerate(linhas) if i not in retirar)
 
 
 def salvar(root, state):
@@ -233,7 +282,8 @@ def aplicar(root, s, action, p):
         return {"habilitacao": s["habilitacao"], "caso_reservado": s["caso_reservado"],
                 "caso_aberto": False, "formalizacao_completa": completa(s),
                 "pendencias": s["pendencias"], "documentos": s["documentos"],
-                "tratamento_registrado": bool(s["tratamento"]), "acessos": s["acessos"]}
+                "tratamento_registrado": bool(s["tratamento"]), "acessos": s["acessos"],
+                "revisoes_juridicas": s.get('revisoes_juridicas', [])}
     if action == "tratamento":
         exigir(not s["fontes"], "condições devem ser registradas antes da coleta")
         exigir(p.get("escopo") == "administrativo", "somente informações administrativas antes de 0d")
@@ -305,15 +355,37 @@ def aplicar(root, s, action, p):
                "revisão exige qualificação e conferência humana do conteúdo canônico")
         s["revisao"] = dict(decisor=pessoa(p.get("decisor")), motivo=texto(p.get("motivo")),
                              evidencia=importar(root, p.get("evidencia")), data=agora())
+    elif action == 'revisao-juridica':
+        exigir(set(p) == {'revisor', 'decisor', 'data', 'documentos', 'evidencia'},
+               'revisao-juridica exige revisor, decisor, data, documentos e evidencia; não admite dispensa')
+        revisor, decisor = pessoa(p.get('revisor')), pessoa(p.get('decisor'))
+        data = texto(p.get('data'))
+        exigir(datetime.date.fromisoformat(data).isoformat() == data, 'data jurídica inválida; use AAAA-MM-DD')
+        docs = p.get('documentos')
+        exigir(isinstance(docs, dict) and bool(docs) and set(docs) <= TEMPLATES.keys(),
+               'documentos inválidos na revisao-juridica')
+        aprovados = aprovacoes()
+        for doc, sha in docs.items():
+            exigir(isinstance(sha, str) and re.fullmatch(r'[0-9a-f]{64}', sha)
+                   and aprovados.get('auxiliares/' + TEMPLATES[doc]) == sha,
+                   'APR-01: hash não aprovado para ' + doc)
+        s.setdefault('revisoes_juridicas', []).append(dict(revisor=revisor, decisor=decisor, data=data,
+            documentos=copy.deepcopy(docs), evidencia=importar(root, p.get('evidencia'))))
     elif action == "gerar":
         exigir(s["revisao"] is not None, "revisão humana ausente")
         template_root = pathlib.Path(texto(p.get("templates")))
         browser = p.get("navegador", "google-chrome")
         prepared = {}
+        aprovados = aprovacoes()
         for doc, filename in TEMPLATES.items():
             raw = (template_root / filename).read_bytes()
-            md = raw.decode("utf-8")
-            md = md.replace("| **Estado** | Template |", "| **Estado** | Para assinatura |")
+            exigir(aprovados.get('auxiliares/' + filename) == digest(raw),
+                   'APR-01: hash do template divergente em ' + doc)
+            md = documento_cliente(raw.decode('utf-8'), doc)
+            juridica = next((r for r in reversed(s.get('revisoes_juridicas', []))
+                             if r['documentos'].get(doc) == digest(raw)), None)
+            exigir(doc == 'HAB-01' or juridica is not None,
+                   'registre revisao-juridica para o hash exato de ' + doc + ' antes de gerar')
             n = len(s["documentos"].get(doc, [])) + 1
             controls = {"caso_id": s["caso_reservado"], "responsavel_emcia": s["responsavel"],
                         "status_assinatura": "Aguardando assinatura", "versao_assinada": "Pendente",
@@ -325,18 +397,22 @@ def aplicar(root, s, action, p):
             exigir(not missing, "campos ausentes em " + doc + ": " + ", ".join(sorted(missing)))
             md = TOKEN.sub(lambda m: fields[m[1]], md)
             md += (f"\n\n---\n\nIdentificação de emissão: {doc} · versão {n}.\n"
+                   "Estado de emissão: Para assinatura.\n"
                    f"Habilitação: {s['habilitacao']}. Identificador do futuro caso reservado: {s['caso_reservado']}. "
                    "O caso ainda não foi aberto.\n"
                    "O controle acima descreve a emissão; a conclusão da assinatura será registrada "
                    "no expediente, preservando este arquivo e os comprovantes do serviço escolhido.\n")
             exigir("{{" not in md and "}}" not in md, "placeholder não resolvido")
-            prepared[doc] = (raw, md, pdf_bytes(md, browser), n)
-        for doc, (raw, md, pdf, n) in prepared.items():
+            prepared[doc] = (raw, md, n, juridica)
+        # Todas as pré-condições são conferidas antes de iniciar qualquer PDF.
+        pdfs = {doc: pdf_bytes(md, browser) for doc, (raw, md, n, juridica) in prepared.items()}
+        for doc, (raw, md, n, juridica) in prepared.items():
             for previous in s["documentos"].get(doc, []):
                 previous["vigente"] = False
             s["documentos"].setdefault(doc, []).append(dict(versao=n, vigente=True,
                 template=guardar(root, raw, ".md"), markdown=guardar(root, md.encode(), ".md"),
-                pdf=guardar(root, pdf, ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+                pdf=guardar(root, pdfs[doc], ".pdf"), revisao=copy.deepcopy(s["revisao"]),
+                revisao_juridica=copy.deepcopy(juridica),
                 campos=copy.deepcopy(s["campos"]), liberacao=None, assinatura=None))
         s["acessos"] = None
     elif action in {"liberar", "assinatura", "ocorrencia"}:
@@ -455,7 +531,7 @@ def executar(root, action, payload):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operacao", help="iniciar, estado, tratamento, receber, pendencia, resolver, reabrir, consolidar, revisar, gerar, liberar, assinatura, ocorrencia, concluir-0b, acessos, preparar-0d, nao-prosseguir")
+    parser.add_argument("operacao", help="iniciar, estado, tratamento, receber, pendencia, resolver, reabrir, consolidar, revisar, revisao-juridica, gerar, liberar, assinatura, ocorrencia, concluir-0b, acessos, preparar-0d, nao-prosseguir")
     parser.add_argument("--expediente", required=True, type=pathlib.Path)
     parser.add_argument("--entrada", type=pathlib.Path, help="arquivo JSON conforme reference/habilitacao.md")
     parser.add_argument("--responsavel", help="somente na inicialização humana fora do agente")
