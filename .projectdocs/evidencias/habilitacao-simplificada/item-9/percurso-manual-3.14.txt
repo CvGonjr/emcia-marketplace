@@ -1,0 +1,21 @@
+test_01_percurso_e_tres_retomadas (__main__.Percurso.test_01_percurso_e_tres_retomadas) ... ok
+test_02_ratificacao_sem_pendencia (__main__.Percurso.test_02_ratificacao_sem_pendencia) ... ok
+test_03_efeito_mcp_sem_aprovacao (__main__.Percurso.test_03_efeito_mcp_sem_aprovacao) ... ok
+test_04_id_alheio_recusado_no_caso (__main__.Percurso.test_04_id_alheio_recusado_no_caso) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.855s
+
+OK
+caso "CASO-SINTETICO" criado em /tmp/tmpwb98qotj/casos/CASO-SINTETICO
+Método copiado e SHA-256 conferido; manifesto preservado.
+Importe a habilitação pelo fluxo aprovado ou pelo terminal; valide o rascunho e sele antes de F0.
+Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.
+caso "CASO-SINTETICO" criado em /tmp/tmp72iz_ubk/casos/CASO-SINTETICO
+Método copiado e SHA-256 conferido; manifesto preservado.
+Importe a habilitação pelo fluxo aprovado ou pelo terminal; valide o rascunho e sele antes de F0.
+Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.
+caso "CASO-SINTETICO" criado em /tmp/tmp760zyju8/casos/CASO-SINTETICO
+Método copiado e SHA-256 conferido; manifesto preservado.
+Importe a habilitação pelo fluxo aprovado ou pelo terminal; valide o rascunho e sele antes de F0.
+Os artefatos da organização entram em fontes/ pelo engenheiro; consulte seu README.

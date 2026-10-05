@@ -23,7 +23,7 @@ O percurso nominal tem três confirmações: revisão conjunta dos três documen
 suas evidências; abertura/importação/validação/selo. “ok” é suficiente quando
 aprova o conjunto apresentado. O registro conserva o trecho real, resumo, data,
 pessoa e hashes; não autentica chat nem assinatura. Mudança exige nova conferência.
-Criar expediente, aplicar condições padrão e receber exportação não têm aprovação
+Criar expediente, aplicar condições padrão e receber respostas não têm aprovação
 própria. Decisões de método continuam no terminal.
 
 ### Preparação reutilizável
@@ -41,7 +41,7 @@ ou dado de cliente na ferramenta. Tratamento padrão é:
 `tratamento-padrao` aplica o texto antes da coleta, com referência à configuração,
 SHA-256 e cópia só das condições. Condição diferente usa a operação `tratamento`
 a seguir, com evidência e indicação explícita do engenheiro. Não altera HAB-03.
-Perfil calibrado/aprovado e ratificação ou aceitação revogável seguem a 045.
+Ratificação ou aceitação revogável seguem a 045. Perfil/escopo são gerados e aprovados na abertura, pela emenda do item 9 da 047.
 
 `formulario-permanente` em `iniciar.py executar`, após comparação sem divergências
 e `confirmar-formulario`, declara modelo e formulario_id. A configuração guarda
@@ -52,10 +52,41 @@ Na abertura também se exige formulário permanente de triagem, sem mudar F0.
 Uma nova leitura ou alteração do contrato invalida a conferência; coleta recusa
 até novo relatório e “conferido”. Não recrie formulário por cliente.
 
-### Exportação e esclarecimentos
+### Coleta direta e esclarecimentos
 
-O engenheiro envia o link `https://tally.so/r/<formId>?caso=<caso>` e deposita o CSV
-exportado. A entrada opcional `exportacao` indica o arquivo quando houver mais
+Na habilitação, Tally, Drive e Calendar não exigem perfil nem escopo por id.
+Leitura, listagem, rascunho e comparação não pedem aprovação própria.
+load_form admite qualquer formId; conferir-formulario executa sem --aprovacao.
+Confirmação humana “conferido”, integridade e comparação do permanente permanecem.
+Publicar, enviar mensagem/convite ou compartilhar pede “ok” com resumo/data:
+use iniciar.py aprovar para operacao mcp e preserve a chamada no testemunho.
+Sem esse registro, o hook recusa.
+
+proximo indica coletar-submissoes e formId. Execute fetch_submissions e passe
+o retorno completo ao iniciar.py retorno, sem transcrever respostas na conversa.
+Entrada: chamada {habilitacao, caso, ferramenta, argumentos} e resultado
+{resposta: <JSON real>}. fonte opcional fica na chamada (padrão S1); submissao
+seleciona um id entre as submissões daquele caso; respondente informa a pessoa
+quando o retorno não a identifica. Esses campos locais não são enviados à API.
+O campo oculto caso precisa coincidir exatamente com caso_reservado. Um campo
+visível de mesmo nome não serve. Zero/várias respostas recusam e pedem indicação,
+mostrando somente ids do caso. O lote nunca entra em mcp-retornos ou no expediente;
+o temporário do script é removido inclusive na recusa. Fonte tally conserva
+CSV somente da submissão escolhida, hash do filtrado e hash do retorno original.
+
+O adaptador lê o [formato público de submissões Tally](https://developers.tally.so/api-reference/endpoint/forms/submissions/list):
+questions com id/title/type e submissions.responses com questionId/answer; também
+aceita responses/fields com label/type e hiddenFields.caso. Preserve metadados
+que demonstram que caso é oculto. Campos/formato ambíguos não são aproximados.
+Leia todas as páginas: para várias, resposta.paginas contém páginas completas
+em ordem, desde a primeira; hasMore precisa ser true nas anteriores e false
+na última. Aceita também pagination.page/totalPages explícitos. Página incompleta
+não registra fonte; não invente a indicação de última página.
+
+### Exportação manual
+
+O engenheiro envia o link `https://tally.so/r/<formId>?caso=<caso>`.
+Como alternativa manual, coleta: csv em proximo solicita o CSV exportado. A entrada opcional `exportacao` indica o arquivo quando houver mais
 de um. CSV UTF-8 exige cabeçalho único, `caso`, `Submission ID` e `Respondente`;
 `coluna_submissao`/`coluna_respondente` declaram os nomes reais se forem diferentes,
 e `respondente` pode indicar nominalmente quem respondeu. Não adivinhe colunas.
@@ -63,7 +94,8 @@ e `respondente` pode indicar nominalmente quem respondeu. Não adivinhe colunas.
 O script filtra pelo valor exato de `caso` antes de gravar; nunca copia o original.
 Fonte `tally-exportacao` conserva apenas o CSV filtrado, seu hash e hash do original.
 Zero ou múltiplas submissões recusam e pedem indicação, listando somente ids do caso; `submissao` seleciona uma
-das linhas daquele caso. API fetch_submissions permanece recusada.
+das linhas daquele caso. No caso já aberto, fetch_submissions conserva a recusa
+do perfil por falta de filtro remoto; a exceção administrativa terminou.
 
 As lacunas são apresentadas; o comando redige a pergunta e o engenheiro cola a
 resposta do cliente. `mensagem` contém `id`, `pergunta`, `texto`, `respondente` e,
@@ -74,7 +106,13 @@ Não presuma resposta, qualificação, competência ou acesso pela ausência de 
 
 ### Entradas das três confirmações
 
-Toda entrada de `proximo` identifica `habilitacao` e `caso`. A sessão prepara os
+Toda entrada de `proximo` identifica `habilitacao` e `caso`.
+Na preparação da abertura, inventario indica o arquivo fornecido (padrão
+~/emcia-op/ensaio/inventario-mcp.json). O script gera a proposta de perfil e
+apresenta arquivo/hash e ids dos canais junto do desfecho. A terceira confirmação
+aprova esse perfil/escopo e a abertura; só então o perfil é instalado no caso.
+A partir da existência do caso, a guarda e o escopo por id valem de F0 a P10.
+Listagens administrativas anteriores não dão acesso a ids dentro do caso. A sessão prepara os
 campos/plano a partir das fontes e apresenta os documentos ao engenheiro:
 
 ```json

@@ -1,0 +1,5 @@
+rg -n EMCIA|CTX-[0-9V]|CAT-01|MAN-01|HAB-0|HB-[0-9]|AG-[0-9]|\bF0\b|\bP[0-9][a-z]?\b|Tally|Google Drive|Google Calendar|habilitacao|triagem|prosseguimento eiac-nucleo/scripts -g *.py
+Saída: vazia; exit 1 (nenhuma ocorrência).
+
+git diff --exit-code 93bc1a1 -- eiac-nucleo eiac-campo/reference/metodo eiac-campo/template-caso/registro/playbook.json
+Saída: vazia; exit 0 (sem alterações).

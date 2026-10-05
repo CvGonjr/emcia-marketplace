@@ -31,7 +31,12 @@ Controle do modelo, aviso e histórico internos e registros de aceitação/situa
 jurídica ficam no expediente, nunca no MD/PDF do cliente. A emissão mostra
 “Para assinatura”. O checklist mostra “Minutas sem ratificação jurídica” sem bloquear.
 
-Na decisão 047, a confirmação de abertura cobre declarar Tally/calendário,
+Na decisão 047, item 9, Tally/Drive/Calendar operam sem perfil ou escopo por id
+antes da abertura. Leituras, listagens, rascunhos e comparação não têm aprovação
+própria; efeitos externos exigem “ok” com resumo/data. fetch_submissions entrega
+o retorno ao script, que registra só a submissão do campo oculto caso; CSV é
+alternativa. load_form admite qualquer formId. A confirmação de abertura cobre
+aprovar o perfil/escopo apresentados e declarar Tally/calendário,
 importar, validar 00-habilitacao e selar. Drive é provisionado em P2, com
 aprovação do plano de criação/compartilhamento. Os comandos daqui são a
 alternativa manual; o percurso normal usa o cartão e iniciar.py proximo.

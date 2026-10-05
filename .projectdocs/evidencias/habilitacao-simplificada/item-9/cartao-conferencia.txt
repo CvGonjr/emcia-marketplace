@@ -1,0 +1,23 @@
+Renderização real com Chrome (sandbox padrão), uma página A4.
+SHA-256 MD: 2c5ec94ed958e75aee1c94601998afa58eec0961ce2826841c7730b99d7aa298
+Title:           documento.html
+Creator:         Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36
+Producer:        Skia/PDF m154
+CreationDate:    Mon Oct  5 17:56:54 2026 -03
+ModDate:         Mon Oct  5 17:56:54 2026 -03
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          yes
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           1
+Encrypted:       no
+Page size:       594.96 x 841.92 pts (A4)
+Page rot:        0
+File size:       29787 bytes
+Optimized:       no
+PDF version:     1.4
+
+Texto extraído com Poppler; título conferido.

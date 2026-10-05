@@ -387,6 +387,9 @@ def aplicar(root, s, action, p):
     elif action == "receber-mensagem":
         import coleta_administrativa as C
         C.receber_mensagem(root, s, p)
+    elif action == "receber-submissoes":
+        from coleta_tally import receber
+        receber(root, s, p)
     elif action == "receber-exportacao":
         import coleta_administrativa as C
         C.receber_exportacao(root, s, p)

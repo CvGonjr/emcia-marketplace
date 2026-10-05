@@ -64,6 +64,7 @@ jobs:
           python3 testes/bloco_inicial.py
           python3 testes/iniciar_percurso.py
           python3 testes/habilitacao_simplificada.py
+          python3 testes/habilitacao_mcp.py
           python3 testes/perfis_conectores.py
 
       - name: Habilitação administrativa

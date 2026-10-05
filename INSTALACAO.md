@@ -2,7 +2,7 @@
 
 Instale os plugins, conecte Tally e Google, e execute o bloco inicial conduzido.
 O ambiente exige Python 3.12 ou superior, Git com identidade e Chrome/Chromium.
-A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.30, playbook 0.4.22.
+A regressão cobre Python 3.12 e o ambiente 3.14.4. Núcleo 0.2.48, campo 0.8.31, playbook 0.4.22.
 
 ## 1. Instalar os plugins
 
@@ -44,10 +44,10 @@ Não grave credenciais, tokens ou respostas de clientes neste repositório.
 
 Abra `/mcp` e confirme Google Drive e Google Calendar, com as contas EMCIA.
 Consulte a [documentação dos conectores Google no Claude](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors).
-O comando lê nomes completos e parâmetros disponíveis; uma ferramenta desconhecida
-ou sem parâmetro restritivo fica recusada. Conector presente sem operações necessárias
-não basta: o diagnóstico informa as ferramentas sem perfil e a correção necessária.
-Não substitua leitura por id por busca global nem afrouxe expressões de escopo.
+Na habilitação, esses conectores operam sem perfil e sem escopo por id.
+Leitura, listagem e rascunho não têm aprovação própria; publicar, enviar convite/
+mensagem ou compartilhar pede “ok” registrado com resumo/data. Depois da abertura,
+o perfil aprovado do caso recusa ferramenta/parâmetro incompatível e ids não declarados.
 
 ## 4. Rodar o bloco inicial
 
@@ -61,37 +61,30 @@ Tally, id do calendário e navegador. Pasta Drive é opcional até P2. O agente 
 MCPs quando possível e pergunta somente o que faltar. As bases ficam fora de
 repositórios da ferramenta e do método. A configuração é privada e reutilizada.
 
-Disponibilize o inventário real no formato `ferramentas`/`nome`/`inputSchema`/
-`parametros` (`~/emcia-op/ensaio/inventario-mcp.json` neste ensaio). Ele é a única
-fonte de nomes/parâmetros; se faltar, o comando para e pede o arquivo.
-Confira o relatório antes da aprovação:
+Antes da abertura, confirme o permanente por load_form, que admite qualquer
+formId, e conferir-formulario, sem aprovação própria. O relatório MD fixa texto,
+ordem, tipo e campo oculto caso; “conferido” fixa a conferência. Divergência bloqueia
+publicação; publicar ainda exige “ok”. PDF conferido permanece alternativa manual.
 
-```bash
-python3 /caminho/eiac-campo/scripts/iniciar.py calibrar --entrada ~/emcia-op/ensaio/inventario-mcp.json
-```
+A coleta padrão usa fetch_submissions: leia todas as páginas e entregue o retorno
+completo a iniciar.py retorno. O script registra somente a submissão cujo campo
+oculto caso coincide com o expediente. Zero/várias exigem indicação humana.
+Não transcreva o lote na conversa nem o copie para fonte/evento. CSV filtrado em
+~/emcia-op/entrada/ é alternativa, selecionada por coleta: csv.
 
-Drive cria pastas por `create_file` com `parentId` declarado e
-`contentMimeType: application/vnd.google-apps.folder`; arquivos comuns só em
-`entregas`. Busca usa `query` limitado à pasta; leitura por `fileId` exige
-listagem. Compartilhamento usa `share_file`, com pasta, `emailAddress` e `role`
-aprovados. Calendar exige `calendarId`, inclusive quando opcional no servidor.
-Tally cria com `create_new_form.workspaceId` e publica com `publish_form.formId`.
-Os schemas para montar perguntas/campo oculto não estão disponíveis no inventário:
-o engenheiro prepara no painel. `load_form(formId)` lê somente formulários criados
-ou declarados no expediente/caso corrente. A sessão preserva os blocos brutos e
-executa `conferir-formulario`; o relatório MD com hash substitui arquivo externo
-quando não tem divergências e o engenheiro confirma “conferido” por
-`confirmar-formulario`. Divergência bloqueia publicação. O PDF conferido permanece
-como caminho manual alternativo. `fetch_submissions` não tem filtro pelo campo
-oculto; o engenheiro deposita o CSV exportado em ~/emcia-op/entrada/.
-O script filtra pelo caso antes de gravar, conservando só as linhas do caso
-e o hash do original sem copiá-lo. A API não é chamada para obter um lote amplo.
-Publicação ausente ou criação sem workspace também exigem ação manual; registre
-a decisão e evidência por `caminho-manual`, conforme reference/canais.md.
+Disponibilize o inventário real para a preparação da abertura, no formato
+ferramentas/nome/inputSchema/parametros (padrão ~/emcia-op/ensaio/inventario-mcp.json;
+inventario na entrada permite outro caminho). É a fonte dos nomes/parâmetros para
+o perfil. Se faltar, a abertura para e pede o arquivo. O script calibra e apresenta
+perfil/hash e ids dos canais junto do desfecho; a terceira confirmação aprova
+perfil/escopo e abertura. Não há calibração exigida no começo da habilitação.
 
-Confira uma vez o perfil de escopo mostrado. O perfil gerado é determinístico;
-o inventário e sua aprovação ficam preservados. Nome e assinatura incompatíveis
-permanecem recusados. Não edite estado, expediente ou perfil com Write/Edit direto.
+No caso aberto, continuam as restrições: create_file de pasta sob pai declarado,
+arquivo comum somente em entregas, busca por query restrita à pasta, leitura por
+fileId depois da listagem e compartilhamento com destinatário/papel aprovados.
+Calendar usa calendarId declarado; Tally usa workspace/formulário declarados.
+fetch_submissions conserva a recusa do perfil do caso por ausência de filtro remoto.
+Não edite estado, expediente ou perfil com Write/Edit direto.
 
 Sem revisão jurídica aprovada para os hashes das minutas, a primeira execução pede
 **“uso as minutas sem ratificação jurídica”**. Essa aceitação nominal e datada é
@@ -104,10 +97,11 @@ com tipo, formId e relatório. Contrato/formulário alterado exige nova conferê
 Configure tratamento_administrativo com condicoes e provedor; o script aplica
 o padrão com referência e hash antes da coleta. Consulte o cartão operacional.
 
-Por caso, o engenheiro envia o link e faz dois depósitos em ~/emcia-op/entrada/:
-CSV e três PDFs assinados (relatórios opcionais HAB-01-relatorio.pdf etc.).
-Confirma três conjuntos: documentos apresentados; assinaturas; abertura/importação/
-validação/selo. Mensagens completam lacunas e confirmam/corrigem a matriz de acessos.
+Por caso, o engenheiro envia o link; a sessão coleta pelo conector e o engenheiro
+deposita os três PDFs assinados (relatórios opcionais HAB-01-relatorio.pdf etc.)
+em ~/emcia-op/entrada/. O depósito adicional de CSV é apenas alternativa manual.
+Confirma três conjuntos: documentos apresentados; assinaturas; perfil/escopo e
+abertura/importação/validação/selo. Mensagens completam lacunas e confirmam/corrigem a matriz de acessos.
 “ok” é suficiente para o conjunto apresentado, com trecho real e hashes preservados.
 Associação automática de PDFs requer Poppler (`pdftotext`, pacote poppler-utils
 em Debian/Ubuntu); PDF sem texto ou com reorganização exige a alternativa manual.

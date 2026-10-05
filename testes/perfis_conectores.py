@@ -79,6 +79,8 @@ class Administracao(unittest.TestCase):
         I.configurar(self.cfg, dict(responsavel='Pessoa Engenheira', base_casos=str(self.base/'casos'),
             base_expedientes=str(self.base/'expedientes'), workspace_tally='WORK', pasta_drive='ROOT',
             calendario_casos='CAL', navegador='google-chrome'))
+        # Estas negativas exercitam a fronteira depois da abertura (emenda 047).
+        I.B.abrir('CASO',self.base/'casos','Pessoa Engenheira')
         self.inv = json.loads(FIXTURE.read_text())
         self.op('perfil', ferramentas=self.inv, perfil=I.calibrar(self.inv))
         self.op('iniciar', id='HAB')
@@ -244,7 +246,8 @@ class Administracao(unittest.TestCase):
         I.registrar_retorno(self.cfg, d, dict(ids={'formulario_id':'FORM'}))
         conhecidos = I.escopos(self.cfg, I.ler_config(self.cfg), 'HAB', 'CASO', 'ler')
         self.assertIn('FORM', conhecidos['formulario_id'])
-        # Antes da criação do expediente, retornos continuam vinculados ao contexto.
+        # Mesmo sem expediente, retornos não ampliam ids de outro caso aberto.
+        I.B.abrir('OUTRO',self.base/'casos','Pessoa Engenheira')
         (self.base/'expedientes/HAB/expediente.json').unlink()
         with self.assertRaises(ValueError):
             self.op('mcp', caso='OUTRO', ferramenta=TALLY+'load_form', argumentos=dict(formId='FORM'))

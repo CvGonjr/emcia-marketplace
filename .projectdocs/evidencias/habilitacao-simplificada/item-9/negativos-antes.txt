@@ -1,0 +1,334 @@
+test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) ...
+  test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__tally__publish_form') ... FAIL
+  test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Drive__share_file') ... FAIL
+  test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Calendar__create_event') ... FAIL
+  test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Calendar__send_message') ... FAIL
+test_02_registrar_outro_caso_recusa_sem_copiar (__main__.Administrativa.test_02_registrar_outro_caso_recusa_sem_copiar) ... ERROR
+test_03_duas_submissoes_exigem_selecao (__main__.Administrativa.test_03_duas_submissoes_exigem_selecao) ... ERROR
+test_04_selecionar_id_alheio_recusa (__main__.Administrativa.test_04_selecionar_id_alheio_recusa) ... ERROR
+test_05_pagina_incompleta_nao_registra_fonte (__main__.Administrativa.test_05_pagina_incompleta_nao_registra_fonte) ... ERROR
+test_06_caso_nao_oculto_recusa (__main__.Administrativa.test_06_caso_nao_oculto_recusa) ... ERROR
+test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) ...
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__load_form') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__fetch_submissions') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__create_new_form') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__search_files') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__read_file_content') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__create_file') ... FAIL
+  test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Calendar__list_events') ... FAIL
+test_08_submissao_unica_so_registra_caso (__main__.Administrativa.test_08_submissao_unica_so_registra_caso) ... ERROR
+test_09_ok_simples_fixa_efeito_destinatario_resumo_data (__main__.Administrativa.test_09_ok_simples_fixa_efeito_destinatario_resumo_data) ... ERROR
+test_10_conferencia_sem_declaracao_de_formid (__main__.Administrativa.test_10_conferencia_sem_declaracao_de_formid) ... ERROR
+test_11_percurso_conector_e_perfil_na_abertura (__main__.Administrativa.test_11_percurso_conector_e_perfil_na_abertura) ... ERROR
+test_01_ferramenta_sem_perfil_continua_negada_pelo_nucleo (__main__.DepoisDaAbertura.test_01_ferramenta_sem_perfil_continua_negada_pelo_nucleo) ... ok
+test_01_permanente_sem_conferencia_recusa (habilitacao_simplificada.Simplificada.test_01_permanente_sem_conferencia_recusa) ... ok
+test_02_contrato_anterior_recusa (habilitacao_simplificada.Simplificada.test_02_contrato_anterior_recusa) ... ok
+test_03_relatorio_adulterado_recusa (habilitacao_simplificada.Simplificada.test_03_relatorio_adulterado_recusa) ... ok
+test_04_reutiliza_sem_nova_aprovacao (habilitacao_simplificada.Simplificada.test_04_reutiliza_sem_nova_aprovacao) ... ok
+test_05_nova_leitura_invalida_permanente (habilitacao_simplificada.Simplificada.test_05_nova_leitura_invalida_permanente) ... ok
+test_10_exportacao_sem_linha_do_caso (habilitacao_simplificada.Simplificada.test_10_exportacao_sem_linha_do_caso) ... ok
+test_11_duas_submissoes_nao_escolhe (habilitacao_simplificada.Simplificada.test_11_duas_submissoes_nao_escolhe) ... ok
+test_12_permanente_ausente_bloqueia_coleta (habilitacao_simplificada.Simplificada.test_12_permanente_ausente_bloqueia_coleta) ... ok
+test_13_filtra_antes_de_persistir (habilitacao_simplificada.Simplificada.test_13_filtra_antes_de_persistir) ... ok
+test_14_selecao_explicita_dentre_duas (habilitacao_simplificada.Simplificada.test_14_selecao_explicita_dentre_duas) ... ok
+test_15_arquivo_fora_da_entrada_recusa (habilitacao_simplificada.Simplificada.test_15_arquivo_fora_da_entrada_recusa) ... ok
+test_20_mensagem_vazia_recusa (habilitacao_simplificada.Simplificada.test_20_mensagem_vazia_recusa) ... ok
+test_21_mensagem_sem_novo_formulario_ou_pendencia (habilitacao_simplificada.Simplificada.test_21_mensagem_sem_novo_formulario_ou_pendencia) ... ok
+test_30_tratamento_ausente_recusa (habilitacao_simplificada.Simplificada.test_30_tratamento_ausente_recusa) ... ok
+test_31_tratamento_padrao_com_hash_sem_aprovacao (habilitacao_simplificada.Simplificada.test_31_tratamento_padrao_com_hash_sem_aprovacao) ... ok
+test_40_revisao_conjunta_sem_aprovacao_recusa (habilitacao_simplificada.Simplificada.test_40_revisao_conjunta_sem_aprovacao_recusa) ... ok
+test_41_ok_cobre_tres_documentos_com_mesmos_pdfs (habilitacao_simplificada.Simplificada.test_41_ok_cobre_tres_documentos_com_mesmos_pdfs) ... ok
+test_42_assinatura_sem_aprovacao_recusa (habilitacao_simplificada.Simplificada.test_42_assinatura_sem_aprovacao_recusa) ... ok
+test_43_pdf_assinado_de_outro_documento_recusa (habilitacao_simplificada.Simplificada.test_43_pdf_assinado_de_outro_documento_recusa) ... ok
+test_44_aprovacao_de_documento_adulterado_recusa (habilitacao_simplificada.Simplificada.test_44_aprovacao_de_documento_adulterado_recusa) ... ok
+test_50_matriz_nao_presume_acesso_concedido (habilitacao_simplificada.Simplificada.test_50_matriz_nao_presume_acesso_concedido) ... ok
+test_51_acessos_sem_mensagem_explicita_recusa (habilitacao_simplificada.Simplificada.test_51_acessos_sem_mensagem_explicita_recusa) ... ok
+test_60_abertura_canais_sem_drive (habilitacao_simplificada.Simplificada.test_60_abertura_canais_sem_drive) ... ok
+test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa (habilitacao_simplificada.Simplificada.test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa) ... ok
+test_70_proximo_executa_inicial_sem_aprovacao (habilitacao_simplificada.Simplificada.test_70_proximo_executa_inicial_sem_aprovacao) ... ok
+test_71_abertura_sem_terceira_aprovacao_recusa (habilitacao_simplificada.Simplificada.test_71_abertura_sem_terceira_aprovacao_recusa) ... ok
+test_80_percurso_completo_tres_aprovacoes_dois_depositos (habilitacao_simplificada.Simplificada.test_80_percurso_completo_tres_aprovacoes_dois_depositos) ... ok
+test_81_p2_exige_aprovacao_e_cria_pastas (habilitacao_simplificada.Simplificada.test_81_p2_exige_aprovacao_e_cria_pastas) ... ok
+test_90_config_existente_recebe_padrao_sem_trocar_responsavel (habilitacao_simplificada.Simplificada.test_90_config_existente_recebe_padrao_sem_trocar_responsavel) ... ok
+test_91_proximo_composto_e_decisao_metodo_recusados (habilitacao_simplificada.Simplificada.test_91_proximo_composto_e_decisao_metodo_recusados) ... ok
+test_92_coleta_na_cli_nao_expoe_outro_caso (habilitacao_simplificada.Simplificada.test_92_coleta_na_cli_nao_expoe_outro_caso) ... ok
+
+======================================================================
+ERROR: test_02_registrar_outro_caso_recusa_sem_copiar (__main__.Administrativa.test_02_registrar_outro_caso_recusa_sem_copiar)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 63, in test_02_registrar_outro_caso_recusa_sem_copiar
+    self.coletar(self.resposta(('OUTRO-A',)))
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp_5t29jk9/perfil-mcp.json'
+
+======================================================================
+ERROR: test_03_duas_submissoes_exigem_selecao (__main__.Administrativa.test_03_duas_submissoes_exigem_selecao)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 68, in test_03_duas_submissoes_exigem_selecao
+    with self.assertRaisesRegex(ValueError,'qual submissão') as exc:self.coletar(self.resposta(('CASO','OUTRO-A','CASO')))
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpbn2krdx9/perfil-mcp.json'
+
+======================================================================
+ERROR: test_04_selecionar_id_alheio_recusa (__main__.Administrativa.test_04_selecionar_id_alheio_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 73, in test_04_selecionar_id_alheio_recusa
+    self.coletar(submissao='SUB-0')
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpiwdu0bys/perfil-mcp.json'
+
+======================================================================
+ERROR: test_05_pagina_incompleta_nao_registra_fonte (__main__.Administrativa.test_05_pagina_incompleta_nao_registra_fonte)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 77, in test_05_pagina_incompleta_nao_registra_fonte
+    with self.assertRaisesRegex(ValueError,'páginas'):self.coletar(r)
+                                                      ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp195wto9d/perfil-mcp.json'
+
+======================================================================
+ERROR: test_06_caso_nao_oculto_recusa (__main__.Administrativa.test_06_caso_nao_oculto_recusa)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 83, in test_06_caso_nao_oculto_recusa
+    with self.assertRaisesRegex(ValueError,'nenhuma submissão'):self.coletar(r)
+                                                                ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpon9pqw0e/perfil-mcp.json'
+
+======================================================================
+ERROR: test_08_submissao_unica_so_registra_caso (__main__.Administrativa.test_08_submissao_unica_so_registra_caso)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 94, in test_08_submissao_unica_so_registra_caso
+    self.coletar();s=json.loads((self.exp/'expediente.json').read_text());f=s['fontes']['S1']
+    ^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 47, in coletar
+    self.permanente(); self.configurar_fluxo()
+    ^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp7xajo7vr/perfil-mcp.json'
+
+======================================================================
+ERROR: test_09_ok_simples_fixa_efeito_destinatario_resumo_data (__main__.Administrativa.test_09_ok_simples_fixa_efeito_destinatario_resumo_data)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 105, in test_09_ok_simples_fixa_efeito_destinatario_resumo_data
+    I.autorizar_mcp(self.cfg,d,r)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp86rmloyt/perfil-mcp.json'
+
+======================================================================
+ERROR: test_10_conferencia_sem_declaracao_de_formid (__main__.Administrativa.test_10_conferencia_sem_declaracao_de_formid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 115, in test_10_conferencia_sem_declaracao_de_formid
+    self.permanente()
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 32, in permanente
+    I.autorizar_mcp(self.cfg,d)
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/eiac-campo/scripts/iniciar.py", line 384, in autorizar_mcp
+    cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+                   ^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/netiv-dn-1/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpb83xl6pn/perfil-mcp.json'
+
+======================================================================
+ERROR: test_11_percurso_conector_e_perfil_na_abertura (__main__.Administrativa.test_11_percurso_conector_e_perfil_na_abertura)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 119, in test_11_percurso_conector_e_perfil_na_abertura
+    self.percurso(direta=True)
+TypeError: Simplificada.percurso() got an unexpected keyword argument 'direta'
+
+======================================================================
+FAIL: test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__tally__publish_form')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 58, in test_01_efeitos_externos_sem_ok_recusam_e_registram
+    self.assertIn('aprovação',G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+AssertionError: 'aprovação' not found in "[Errno 2] No such file or directory: '/tmp/tmpw8t6b7px/perfil-mcp.json'"
+
+======================================================================
+FAIL: test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Drive__share_file')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 58, in test_01_efeitos_externos_sem_ok_recusam_e_registram
+    self.assertIn('aprovação',G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+AssertionError: 'aprovação' not found in "[Errno 2] No such file or directory: '/tmp/tmpw8t6b7px/perfil-mcp.json'"
+
+======================================================================
+FAIL: test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Calendar__create_event')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 58, in test_01_efeitos_externos_sem_ok_recusam_e_registram
+    self.assertIn('aprovação',G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+AssertionError: 'aprovação' not found in "[Errno 2] No such file or directory: '/tmp/tmpw8t6b7px/perfil-mcp.json'"
+
+======================================================================
+FAIL: test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) (nome='mcp__claude_ai_Google_Calendar__send_message')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 58, in test_01_efeitos_externos_sem_ok_recusam_e_registram
+    self.assertIn('aprovação',G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+AssertionError: 'aprovação' not found in "[Errno 2] No such file or directory: '/tmp/tmpw8t6b7px/perfil-mcp.json'"
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__load_form')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__fetch_submissions')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__tally__create_new_form')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__search_files')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__read_file_content')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Drive__create_file')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+======================================================================
+FAIL: test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) (nome='mcp__claude_ai_Google_Calendar__list_events')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/netiv-dn-1/Projetos/emcia-marketplace/testes/habilitacao_mcp.py", line 90, in test_07_leituras_rascunhos_sem_perfil_sem_ids
+    with self.subTest(nome=nome):self.assertIsNone(G.conferir(dict(tool_name=nome,tool_input=args),self.cfg))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "[Errno 2] No such file or directory: '/tmp/tmp7xp0z9ln/perfil-mcp.json'" is not None
+
+----------------------------------------------------------------------
+Ran 43 tests in 3.046s
+
+FAILED (failures=11, errors=9)

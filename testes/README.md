@@ -35,6 +35,7 @@ recusa indevida também é falha. Nenhum teste usa dado real de cliente.
 |---|---:|---|
 | `autoria_responsavel.py` | 14 | Autoria de registro atribuida pelo componente, nao informada pelo agente |
 | `bloco_inicial.py` | 19 | Recusas, testemunhos, escopo, decisões humanas, autoria/configuração, saída e núcleo sem instrumentos/conectores |
+| `habilitacao_mcp.py` | 14 | Emenda 047 item 9: conectores sem perfil antes da abertura, efeitos com ok, coleta exclusiva/paginada, perfil na abertura e recusa posterior |
 | `habilitacao_simplificada.py` | 31 | Permanentes/contrato; isolamento CSV e recusa de entrada extra; mensagens/tratamento; três aprovações; PDFs; abertura sem Drive; P2 com criação/compartilhamento; retomada |
 | `iniciar_percurso.py` | 4 | Percurso completo com MCP simulado, cinco aprovações, três retomadas e selo Git; ratificação prevalece |
 | `caminhos_a19.py` | 62 | A19: caminhos reais e aliases não escapam das zonas protegidas |
@@ -206,3 +207,19 @@ a entrada CSV contra campos extras (negativo visto falhar); os 31 testes especí
 foram repetidos nas duas versões. Logs iniciais, finais e dessa verificação estão em
 .projectdocs/evidencias/habilitacao-simplificada/. A25 mantém sua única divergência
 045/047 visível; nenhuma nova divergência documental é tolerada.
+
+## Emenda 047, item 9
+
+As negativas de ids da conferência e dos perfis passam a usar caso aberto na
+fixture; não foram retiradas nem afrouxadas. O núcleo continua conferido pelo
+hook real. habilitacao_mcp.py cobre ausência de ok, coleta de outro caso, escolha
+de id alheio, múltiplas respostas, campo visível que não é oculto e paginação
+incompleta. O percurso completo por conector não exige perfil prévio e instala
+perfil/escopo com a terceira aprovação. CSV continua coberto pela fixture anterior.
+Fixtures de respostas são sintéticas, incluindo questions/questionId/answer no
+formato público do Tally; não comprovam contas reais. Logs inicial/final e hashes
+estão em .projectdocs/evidencias/habilitacao-simplificada/item-9/.
+
+Resultado final do item 9: 1154 verificações/55 módulos em Python 3.12.12 e
+1156/55 em Python 3.14.4, zero inesperadas e somente a A25 conhecida. A diferença
+de dois checks vem de PyYAML disponível em 3.14. O runner não exclui módulos.

@@ -10,7 +10,7 @@ Este repositório é a ferramenta. Não contém caso nem dado de cliente.
 | Componente | Versão | Responsabilidade |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, etapas e trilha; aplica contratos genéricos do caso |
-| eiac-campo | 0.8.30 | Método, comandos, habilidades e operações administrativas |
+| eiac-campo | 0.8.31 | Método, comandos, habilidades e operações administrativas |
 | Playbook dos casos novos | 0.4.22 | Atos administrativos aprovados; decisões de método humanas |
 | Pacote do método | manifesto v6 · metodo-v1.0 | 22 documentos, bytes canônicos preservados |
 
@@ -45,23 +45,27 @@ No Claude Code, confirme os conectores Google Drive e Google Calendar em `/mcp`
 e execute `/eiac-campo:iniciar`. O comando verifica Python ≥3.12, Git e identidade,
 Chrome/Chromium, versões, configuração e os três MCPs; faltas vêm com correção.
 A presença do conector não implica que todas as suas ferramentas sejam compatíveis.
-Inventário com nome e assinatura divergentes é recusado, sem afrouxar a trava.
+O perfil é calibrado e aprovado na abertura; dentro do caso, nome ou assinatura
+divergente é recusado, sem afrouxar a trava.
 Detalhes: [INSTALACAO.md](INSTALACAO.md).
 
 ## Percurso conduzido e retomada
 
 A preparação reutilizável configura responsável, bases externas, workspace Tally,
-calendário, navegador, condições administrativas e perfil calibrado pelo inventário
-real. Pasta Drive pode ser informada em P2. Ratificação ou aceitação revogável e
+calendário, navegador e condições administrativas. Não exige perfil antes da
+abertura; o inventário real será usado nessa transição. Pasta Drive pode ser informada em P2. Ratificação ou aceitação revogável e
 formulários permanentes são conferidos uma vez. `load_form(formId)` e o comparador
 fixam texto, ordem, tipo e campo oculto caso; relatório sem divergências recebe
 “conferido”. `formularios_permanentes` guarda tipo, id, versão/hash do contrato,
 data/hash da conferência. Alteração exige nova conferência, sem recriar por cliente.
 
-O engenheiro envia o link `?caso=<caso>`, deposita o CSV e depois os três PDFs
-assinados em `~/emcia-op/entrada/`. Coleta local grava só a linha daquele caso,
-com hash filtrado e hash do original sem copiá-lo; zero ou várias submissões
-aguardam indicação humana. A API ampla de submissões continua recusada.
+O engenheiro envia o link `?caso=<caso>` e deposita os três PDFs assinados em
+`~/emcia-op/entrada/`. A sessão lê fetch_submissions; o script registra apenas
+a submissão cujo campo oculto caso corresponde ao expediente, com hashes.
+Zero ou várias aguardam indicação humana. CSV filtrado é alternativa manual.
+Antes da abertura, Tally/Drive/Calendar leem, listam, criam rascunhos e comparam
+sem perfil/escopo por id. Publicar, enviar mensagem/convite ou compartilhar
+exige “ok” com resumo/data. load_form admite qualquer formId.
 Esclarecimentos vêm por mensagem, preservados como fonte manual com rodada.
 Matriz de 0c é pré-preenchida e confirmada/corrigida numa mensagem.
 
@@ -69,7 +73,7 @@ O percurso nominal tem três confirmações, que podem ser “ok”:
 
 1. Revisão conjunta dos três documentos apresentados: revisar, gerar e liberar.
 2. Conferência dos PDFs assinados, associação aos enviados e evidências.
-3. Abertura, declaração Tally/calendário, importação, validação e selo.
+3. Perfil/escopo apresentados, abertura, declaração Tally/calendário, importação, validação e selo.
 
 O testemunho conserva resumo, trecho real, data, pessoa e hashes. Silêncio não vale.
 Os PDFs emitidos preservam os bytes conferidos. Associação automática do retorno
@@ -145,8 +149,9 @@ pelo cliente, sem integração. Dados operacionais aguardam abertura e procedên
 O núcleo continua sem nomes de instrumentos, conectores ou atos do método:
 recebe regras pelo playbook do caso. Nenhuma flag desativa a guarda. O runtime precisa
 executar os hooks; os testes desta entrega usam MCPs simulados, não validam contas
-reais nem todas as versões de conectores. Ferramentas com interface sem perfil
-exigem um perfil novo conferido; não se admite busca global como alternativa.
+reais nem todas as versões de conectores. Depois da abertura, ferramentas com
+interface sem perfil exigem um perfil novo conferido; busca global não contorna
+a trava do caso. Não há escopo por id na habilitação anterior à abertura.
 
 Regressão completa em Python 3.12 e exceção A25 documentadas em
 [bloco-inicial-conduzido](.projectdocs/evidencias/bloco-inicial-conduzido/README.md).

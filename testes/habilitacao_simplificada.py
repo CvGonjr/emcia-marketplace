@@ -258,16 +258,16 @@ class Simplificada(unittest.TestCase):
         self.assertTrue(any(x['finalidade']=='triagem' for x in reg['canais']))
         self.assertEqual(pb['canais_por_etapa']['P2'], [{'finalidade':'documentos','direcao':'entrada'}])
 
-    def test_61_drive_antes_de_p2_mesmo_com_aprovacao_recusa(self):
+    def test_61_drive_rascunho_antes_da_abertura_sem_perfil(self):
         self.permanente(); c = I.ler_config(self.cfg); c['fluxo_habilitacao'] = 'simplificado'; I.escrever(self.cfg,c)
-        with self.assertRaisesRegex(ValueError, 'P2'):
-            self.op('mcp', ferramenta='mcp__claude_ai_Google_Drive__create_file',
-                argumentos={'title':'Pasta', 'parentId':'ROOT', 'contentMimeType':'application/vnd.google-apps.folder'})
-        self.assertEqual(json.loads(self.cfg.with_name('eventos.jsonl').read_text().splitlines()[-1])['evento'], 'TentativaNegada')
+        self.cfg.with_name('perfil-mcp.json').unlink()
+        r=I.autorizar_mcp(self.cfg,dict(habilitacao='HAB',caso='CASO',ferramenta='mcp__claude_ai_Google_Drive__create_file',
+                argumentos={'title':'Pasta','parentId':'QUALQUER','contentMimeType':'application/vnd.google-apps.folder'}))
+        self.assertTrue(r['autorizada'])
 
     def test_70_proximo_executa_inicial_sem_aprovacao(self):
         self.permanente(); self.configurar_fluxo()
-        r = I.proximo(self.cfg, {'habilitacao':'HAB-NOVA','caso':'CASO-NOVO'})
+        r = I.proximo(self.cfg, {'habilitacao':'HAB-NOVA','caso':'CASO-NOVO','coleta':'csv'})
         self.assertEqual(r['proximo'], 'depositar-exportacao')
         self.assertIn('?caso=CASO-NOVO', r['link'])
         s = json.loads((self.base/'expedientes/HAB-NOVA/expediente.json').read_text())
@@ -298,18 +298,25 @@ class Simplificada(unittest.TestCase):
         self.op('confirmar-formulario', formulario_id='TRIAGEM', relatorio_sha256=r['sha256'])
         self.op('formulario-permanente', formulario_id='TRIAGEM', modelo='triagem')
 
-    def percurso(self):
+    def percurso(self,direta=False):
         self.permanente(); self.triagem_permanente(); self.configurar_fluxo()
         c=I.ler_config(self.cfg); c.pop('pasta_drive'); I.escrever(self.cfg,c)
         self.chamadas = []
         def avancar(**d):
-            r = I.proximo(self.cfg, dict(habilitacao='HAB', caso='CASO', **d)); self.chamadas.append(r['proximo']); return r
-        self.assertEqual(avancar()['proximo'], 'depositar-exportacao')
+            r = I.proximo(self.cfg, dict(habilitacao='HAB', caso='CASO', inventario=str(ROOT/'testes/apoio/inventario-mcp-real.json'), **({} if direta else {'coleta':'csv'}), **d)); self.chamadas.append(r['proximo']); return r
+        self.assertEqual(avancar()['proximo'], 'coletar-submissoes' if direta else 'depositar-exportacao')
         with self.csv.open('w', newline='') as f:
             w = csv.DictWriter(f, fieldnames=['Submission ID','caso','Respondente','HAB-0a-1','HAB-0c-3','HAB-0c-5']); w.writeheader()
             for caso in ('OUTRO-A','CASO','OUTRO-B'):
                 w.writerow({'Submission ID':'SUB-'+caso,'caso':caso,'Respondente':'Pessoa Cliente',
                     'HAB-0a-1':'SEGREDO-'+caso,'HAB-0c-3':'Planilha de vendas', 'HAB-0c-5':'Sistema restrito'})
+        if direta:
+            chamada=dict(habilitacao='HAB',caso='CASO',ferramenta='mcp__tally__fetch_submissions',argumentos={'formId':'FORM'})
+            I.autorizar_mcp(self.cfg,chamada)
+            retorno={'resposta':{'submissions':[dict(id='SUB-'+caso,hiddenFields={'caso':caso},respondente='Pessoa Cliente',responses=[
+                dict(label='HAB-0a-1',answer='SEGREDO-'+caso),dict(label='HAB-0c-3',answer='Planilha de vendas'),dict(label='HAB-0c-5',answer='Sistema restrito')]) for caso in ('OUTRO-A','CASO','OUTRO-B')],'hasMore':False}}
+            I.registrar_retorno(self.cfg,chamada,retorno)
+            self.csv.unlink()
         self.assertEqual(avancar()['proximo'],'esclarecer')
         campos = {k:{'valor':'Conteúdo sintético '+k,'fonte':'M1'} for f in H.TEMPLATES.values()
                   for k in H.TOKEN.findall((ROOT/'eiac-campo/reference/metodo'/f).read_text())}
@@ -414,7 +421,7 @@ class Simplificada(unittest.TestCase):
     def test_92_coleta_na_cli_nao_expoe_outro_caso(self):
         import subprocess
         self.permanente(); self.configurar_fluxo(); self.exportacao(('OUTRO-A','OUTRO-B'))
-        entrada=self.base/'ato.json';entrada.write_text(json.dumps(dict(habilitacao='HAB',caso='CASO')))
+        entrada=self.base/'ato.json';entrada.write_text(json.dumps(dict(habilitacao='HAB',caso='CASO',coleta='csv')))
         r=subprocess.run([sys.executable,str(ROOT/'eiac-campo/scripts/iniciar.py'),'proximo','--config',str(self.cfg),'--entrada',str(entrada)],capture_output=True,text=True)
         self.assertNotEqual(r.returncode,0)
         self.assertIn('nenhuma submissão',r.stderr)

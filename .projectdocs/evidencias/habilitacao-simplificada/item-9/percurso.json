@@ -1,0 +1,19 @@
+{
+  "aprovacoes_administrativas": 3,
+  "depositos": 1,
+  "coleta": "fetch_submissions",
+  "chamadas_proximo": 7,
+  "registro_retorno_coleta": 1,
+  "perfil_antes_da_abertura": false,
+  "perfil_na_abertura": true,
+  "estados": [
+    "coletar-submissoes",
+    "esclarecer",
+    "aprovar-documentos",
+    "depositar-assinaturas",
+    "aprovar-assinaturas",
+    "aprovar-abertura",
+    "F0"
+  ],
+  "isolamento": "nenhum SEGREDO-OUTRO no expediente"
+}

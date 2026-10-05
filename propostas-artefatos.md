@@ -49,3 +49,17 @@ A25 conserva a divergência exata anterior; nenhuma nova divergência na tabela
 3.3/atos 3.4. As diferenças da habilitação/abertura ficam propostas, sem editar
 o pacote aprovado ou alterar hash dos templates. A decisão 047 aprova a interface
 operacional; aprovação de nova linha de base documental pertence ao canônico.
+
+## Complemento — decisão 047, item 9 (substitui limites anteriores na habilitação)
+
+HAB-01/ROT-02/MAN-01: coleta padrão por fetch_submissions, todas as páginas
+conferidas, somente uma submissão com campo oculto caso correspondente entra
+no expediente; zero/múltiplas requerem indicação. CSV permanece alternativa,
+com um depósito adicional. Mantêm-se mensagem, matriz e três documentos separados.
+CAN-01: Tally/Drive/Calendar sem perfil/escopo por id antes da abertura; leituras,
+listagens, rascunhos e comparação sem aprovação própria; publicar, enviar convite/
+mensagem ou compartilhar exige ok/resumo/data. load_form sem restrição de id.
+Perfil/escopo gerados e aprovados com a abertura e exigidos de F0 a P10.
+Substitui a recusa de API ampla e calibração prévia propostas acima somente
+nesse período administrativo. Dentro do caso, contratos de ids e procedência
+permanecem; nenhuma listagem administrativa amplia permissões. Sem edição do pacote.

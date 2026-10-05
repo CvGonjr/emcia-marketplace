@@ -11,7 +11,7 @@ aprovação. Casos são repositórios próprios, abertos por novo-caso.sh.
 | Componente | Versão | Papel |
 |---|---|---|
 | eiac-nucleo | 0.2.48 | Guarda, procedência, máquina de etapas, trilha e contratos genéricos |
-| eiac-campo | 0.8.30 | Método, scripts de campo, comandos, habilidades e template |
+| eiac-campo | 0.8.31 | Método, scripts de campo, comandos, habilidades e template |
 | Playbook do template | 0.4.22 | 13 etapas F0–P10, camadas por N1–N3 e contratos declarados |
 | Manifesto do método | 6 | 22 documentos, tag, commit, linha de base, caminhos e SHA-256 |
 
@@ -293,7 +293,7 @@ Evidência: .projectdocs/evidencias/comparador-conector-real/.
 
 ## Habilitação simplificada — decisão 047
 
-Campo 0.8.30 e playbook 0.4.22. Fluxo em fluxo_habilitacao.py, chamado por
+Campo 0.8.31 e playbook 0.4.22. Fluxo em fluxo_habilitacao.py, chamado por
 iniciar.py proximo; cartão de uma página, fontes em coleta_administrativa.py,
 formularios_permanentes.py, habilitacao_lotes.py e acessos_administrativos.py.
 Três confirmações, dois depósitos, uma rodada por mensagem; mesmos três templates
@@ -308,3 +308,20 @@ continuam cobrindo a alternativa anterior, sem migração automática de casos.
 
 Regressão 047: 1140/54 em 3.12, 1142/54 em 3.14, somente A25 conhecida;
 31 específicos finais nas duas versões após recusa de entrada extra na coleta.
+
+## Emenda 047, item 9 — habilitação por conectores
+
+mcp_administrativo.py delimita a fase anterior à existência do caso. Tally,
+Drive e Calendar leem/listam/criam rascunhos sem perfil/ids; efeitos externos
+exigem ok registrado. load_form não restringe ids. coleta_tally.py confere
+paginação e campo oculto, registra apenas uma submissão do caso e recusa
+zero/múltiplas sem seleção. O lote não entra em mcp-retornos/eventos/fontes.
+CSV continua alternativa. Perfil/inventário/hash e canais são apresentados
+na terceira confirmação e o perfil é instalado na abertura. Depois dela,
+núcleo e escopo conservam os contratos; listagens administrativas não ampliam ids.
+Núcleo 0.2.48, campo 0.8.31, playbook 0.4.22 e pacote metodo-v1.0 intactos.
+Testes: habilitacao_mcp.py; evidência em habilitacao-simplificada/item-9/.
+
+Regressão do item 9: 1154/55 em Python 3.12.12 e 1156/55 em 3.14.4, sem
+exclusões, uma A25 conhecida e zero falhas inesperadas. O caminho manual de
+abertura também fixa o hash do perfil e o instala no caso.

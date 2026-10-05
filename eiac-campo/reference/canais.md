@@ -5,6 +5,35 @@ O procedimento canônico é EMCIA-CAN-01, MAN-01 §3.2 e ROT-02 §3.6 na linha d
 base do manifesto. As diferenças aprovadas estão em `propostas-artefatos.md`;
 o pacote permanece byte a byte o da tag.
 
+## Habilitação antes da abertura — emenda 047, item 9
+
+Tally, Google Drive e Google Calendar funcionam sem perfil e sem restrição de ids.
+Leitura, listagem, criação de rascunho e comparação não exigem aprovação por chamada.
+O contexto da sessão identifica habilitacao/caso e o responsável; configure e use
+proximo ou retomar. Isso registra o expediente, sem declarar escopo de ferramentas.
+load_form lê qualquer formId; comparar não exige aprovação própria. Confirmação
+“conferido”, relatório íntegro e correspondência ao modelo permanecem obrigatórios.
+
+Publicar formulário, enviar mensagem/convite e compartilhar pede “ok” simples,
+com resumo, data, autor e chamada. Registre com iniciar.py aprovar (operacao mcp).
+O hook recusa efeito sem aprovação ou com parâmetros diferentes dos aprovados.
+A publicação exige também relatório conferido sem diferenças. Scripts não executam
+APIs nem enviam mensagem automaticamente; a sessão usa os conectores.
+
+fetch_submissions é a coleta padrão: a sessão lê todas as páginas e entrega o
+retorno ao script. Somente uma submissão com o campo oculto caso correspondente
+entra no expediente; zero/várias exigem indicação do engenheiro. Nenhum filtro
+inexistente é enviado à API. Não copie o lote para fontes/eventos ou conversa.
+O script não preserva esse lote em mcp-retornos. CSV filtrado continua alternativa.
+Formato e paginação: reference/habilitacao.md, seção Coleta direta.
+
+Na preparação da abertura, o script calibra a proposta a partir do inventário e
+apresenta perfil/hash e ids dos canais. A terceira confirmação aprova a proposta
+junto da abertura. O perfil é instalado no caso e passa a valer de F0 a P10.
+Não existe flag para desligá-lo; listagens administrativas não ampliam seus ids.
+As restrições abaixo descrevem o caso aberto. Drive administrativo pode criar
+rascunhos antes; canais/pastas do caso continuam planejados e provisionados em P2.
+
 ## Planejar em P2, provisionar e definir
 
 `canais.py planejar` é somente leitura: propõe a raiz do caso com
@@ -27,7 +56,7 @@ A calibração usa exclusivamente o inventário fornecido; neste ensaio,
 `inputSchema` e `parametros`. Nomes e parâmetros são literais, sem aliases.
 Os perfis embutidos estão em `reference/perfis-conectores.json`; `iniciar.py`
 confere cada campo contra o inventário e gera `ferramentas-externas.json`.
-O engenheiro aprova perfil/inventário antes de usar. Schema parcial permite
+O engenheiro aprova perfil/inventário na abertura, antes do uso dentro do caso. Schema parcial permite
 somente tipos simples explicitamente transcritos; estruturas sem schema e
 parâmetro extra são recusados. O relatório lista a garantia faltante e a ação manual.
 
@@ -77,13 +106,13 @@ conforme o retorno fornecido do conector (decisão 046), entradas subsequentes e
 `HIDDEN_FIELDS.payload.hiddenFields`. Formato desconhecido é divergência explícita.
 O ensaio usa fixtures desse schema; não autentica o servidor nem testa conta real.
 
-Execute as operações pelo mesmo `aprovar`/`executar` das demais entradas:
+Antes da abertura, execute conferir-formulario por `executar` sem aprovação própria:
 
 ```json
 {"operacao":"conferir-formulario","entrada":{"habilitacao":"HAB-0001","caso":"caso-0001","formulario_id":"FORM-ID","modelo":"habilitacao"}}
 ```
 
-A aprovação dessa entrada fixa a seleção do modelo correspondente. Modelos
+A entrada identifica o modelo; a confirmação “conferido” fixa o relatório. Modelos
 permitidos: `habilitacao`, `triagem`, `ciclo`, sempre da pasta `reference/formularios/`.
 O relatório MD fica em `conferencias/` junto da configuração; registra contexto,
 formulário, modelo/hash, retorno/hash, perguntas observadas e diferenças.
@@ -122,17 +151,11 @@ aprovação com literal “conferido”. Outros passos manuais conservam seu con
 
 ### Garantia ausente e caminho manual
 
-O Tally fornecido cria o formulário vazio, mas as ferramentas para perguntas e
-campo oculto têm schema indisponível. O engenheiro prepara/confere no painel,
-com a especificação e id de caso entregues pela sessão. O parâmetro `filter`
-de `fetch_submissions` aceita apenas datas/status; não permite filtrar `caso`.
-A API fica recusada mesmo com formulário declarado. A API ampla continua recusada. Pela decisão 047, o engenheiro deposita o CSV
-exportado em ~/emcia-op/entrada/; receber-exportacao seleciona localmente o caso
-antes de qualquer escrita. Somente linhas desse caso entram no expediente e na
-saída; conserva hash do original, sem copiá-lo, e hash do filtrado. A fonte usa
-canal tally-exportacao. Zero ou várias submissões pedem indicação humana.
-No fluxo simplificado, esse depósito não exige aprovação própria; o registro
-caminho-manual abaixo permanece alternativa às operações anteriores.
+Dentro do caso, o perfil conserva as garantias anteriores: se não há filtro
+remoto pelo campo oculto caso, fetch_submissions é recusada. A habilitação anterior
+à abertura usa coleta direta com filtragem determinística no script, pela emenda
+047 item 9. Exportação CSV e caminho manual permanecem alternativas. Operações
+com schema indisponível não são inventadas pela sessão.
 
 Cada caminho manual exige aprovação registrada e evidência com SHA-256:
 
@@ -156,8 +179,8 @@ a sessão não executa a API recusada nem presume que a ação manual ocorreu.
 Sem `workspaceId`, criação também fica manual; sem publicação no inventário,
 o engenheiro publica no painel, com a instrução e aprovação preservadas.
 
-Antes de existir caso, `guarda_inicial.py` confere aprovações, tratamento e ids
-pela configuração/expediente. Durante o bloco, mantenha a sessão na pasta de
+Antes de existir caso, `guarda_inicial.py` confere contexto e efeitos externos,
+sem perfil/escopo por id. Tratamento e filtragem do caso são conferidos pela coleta. Durante o bloco, mantenha a sessão na pasta de
 trabalho administrativa para provisionar a raiz antes da declaração dos canais;
 ainda não há contrato de canais no caso vazio. Os atos locais usam o wrapper e
 entram no caso pelo script. Dentro de caso com canais declarados, a guarda do
@@ -231,7 +254,7 @@ por camada. Agendamento não registra realização da sessão.
 
 Os hooks precisam disparar no runtime. A suíte usa MCP simulado; não comprova
 permissões em contas reais ou assinatura de todas as versões dos conectores.
-Ferramenta incompatível fica recusada e exige perfil conferido, sem ampliar escopo.
+Dentro do caso, ferramenta incompatível fica recusada e exige perfil conferido, sem ampliar escopo.
 Aprovação no chat é testemunho, não autenticação. Disco e autoria fixa mantêm a
 fronteira de confiança da 022; não se verifica veracidade remota por modelo.
 

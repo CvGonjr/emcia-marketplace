@@ -26,7 +26,12 @@ def conferir(ev,config=I.CONFIG):
                             continue
                         if not args or args[0]!='executar':continue
                         ps=D._argumento(args,'--entrada');rs=D._argumento(args,'--aprovacao')
-                        if len(segmentos)!=1 or composto or len(ps)!=1 or len(rs)!=1:raise ValueError('execução exige entrada simples e aprovação registrada')
+                        if len(segmentos)!=1 or composto or len(ps)!=1:raise ValueError('execução exige entrada simples')
+                        d=json.loads(pathlib.Path(ps[0]).read_text());c=I.ler_config(config)
+                        if d['operacao'] in ('mcp','conferir-formulario') and not (pathlib.Path(c['base_casos'])/d['entrada']['caso']).exists():
+                            if d['operacao']=='mcp':I.autorizar_mcp(config,d['entrada'],A.ler(rs[0]) if len(rs)==1 else None)
+                            continue
+                        if len(rs)!=1:raise ValueError('execução exige aprovação registrada')
                         d=json.loads(pathlib.Path(ps[0]).read_text());c=I.ler_config(config)
                         A.conferir(A.ler(rs[0]),d['operacao'],c['responsavel'],d['entrada'].get('caso') or d['entrada'].get('id') or d['entrada'].get('habilitacao'),I.cmd_operacao(d['operacao'],d['entrada']))
                         continue

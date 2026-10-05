@@ -97,3 +97,53 @@ nenhuma conta real foi acessada. Configuração opcional pode ser completada pel
 operação configurar, sem trocar responsável ou bases fixados. Modelos, minutas,
 habilidades e decisões de método conservam seus contratos. Retomada é idempotente
 nos atos confirmados; API com retorno perdido ainda exige conferência remota.
+
+## Emenda — item 9: conectores administrativos antes da abertura
+
+**Data:** 05/10/2026 · **Autor:** Celso do Vale · **Origem:** instrução expressa do engenheiro.
+
+Esta emenda substitui, no período anterior à abertura, a exigência de perfil e
+escopo por id e a recusa de fetch_submissions dos itens 1–2 e da preparação
+reutilizável. A habilitação usa Tally, Google Drive e Google Calendar sem
+calibração, sem escopo por id e sem aprovação por leitura, listagem, rascunho
+ou comparação. A seleção do modelo, os hashes e a confirmação “conferido” do
+formulário permanente conservam seu contrato; load_form admite qualquer formId.
+
+Publicar formulário, enviar mensagem/convite ou compartilhar arquivo exige
+confirmação simples (“ok”), com resumo, data, autor e chamada fixada. Sem
+confirmação, o hook recusa com TentativaNegada. Publicação também exige comparação
+vigente sem divergências e “conferido”. O script registra a autorização; a sessão
+executa o conector, sem envio automático por parte do script.
+
+A coleta padrão lê fetch_submissions. O script confere todas as páginas, reconhece
+o campo oculto caso e grava somente uma submissão do caso reservado, com hash.
+Zero ou várias submissões exigem indicação do engenheiro; seleção de id de outro
+caso recusa. O lote não entra em mcp-retornos, fonte, evento ou diagnóstico.
+O temporário administrativo de leitura é removido inclusive na recusa. A exportação
+CSV filtrada permanece alternativa manual, com coleta: csv.
+
+O perfil é calibrado a partir do inventário na preparação da abertura; relatório,
+inventário/hash e ids dos canais são apresentados ao engenheiro e incluídos na
+terceira confirmação. Na abertura, o script instala o perfil aprovado no caso.
+A existência do caso encerra a autorização administrativa: F0–P10 conservam
+perfil, escopo por id, listagem prévia, aprovação dos efeitos e negativas vigentes.
+Retornos de listagens administrativas não ampliam ids permitidos dentro do caso.
+Não existe flag para desativar a guarda, nem mudança no núcleo ou no playbook.
+Drive administrativo pode criar rascunhos antes da abertura; os canais e pastas
+do caso continuam provisionados em P2, com o contrato existente.
+
+Campo 0.8.31. Evidência do item 9 em
+`.projectdocs/evidencias/habilitacao-simplificada/item-9/`.
+A divergência A25 já registrada permanece visível; nenhuma revisão do pacote.
+
+### Verificação do item 9
+
+Linha de base: 1140/54 em Python 3.12.12 e 1142/54 em 3.14.4. Final: 1154/55 e
+1156/55 respectivamente, sem exclusões, somente A25 conhecida e zero inesperadas.
+Os 14 testes novos cobrem a fronteira administrativa, filtragem/paginação e caso
+aberto; as negativas anteriores de ids continuam no caso pelo hook real. O caminho
+manual também instala o perfil na abertura, com hash incluído na aprovação.
+Percurso padrão sintético: três confirmações, um depósito, sete avanços proximo
+e um registro de coleta direta. MCP e PDFs do percurso são simulados; nenhuma conta
+real foi acessada. Cartão renderizado pelo Chrome em uma página A4. Núcleo,
+playbook e documentos/templates do pacote permanecem sem alterações.

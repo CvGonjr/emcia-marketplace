@@ -1,0 +1,19 @@
+test_01_efeitos_externos_sem_ok_recusam_e_registram (__main__.Administrativa.test_01_efeitos_externos_sem_ok_recusam_e_registram) ... ok
+test_02_registrar_outro_caso_recusa_sem_copiar (__main__.Administrativa.test_02_registrar_outro_caso_recusa_sem_copiar) ... ok
+test_03_duas_submissoes_exigem_selecao (__main__.Administrativa.test_03_duas_submissoes_exigem_selecao) ... ok
+test_04_selecionar_id_alheio_recusa (__main__.Administrativa.test_04_selecionar_id_alheio_recusa) ... ok
+test_05_pagina_incompleta_nao_registra_fonte (__main__.Administrativa.test_05_pagina_incompleta_nao_registra_fonte) ... ok
+test_06_caso_nao_oculto_recusa (__main__.Administrativa.test_06_caso_nao_oculto_recusa) ... ok
+test_07_leituras_rascunhos_sem_perfil_sem_ids (__main__.Administrativa.test_07_leituras_rascunhos_sem_perfil_sem_ids) ... ok
+test_08_submissao_unica_so_registra_caso (__main__.Administrativa.test_08_submissao_unica_so_registra_caso) ... ok
+test_09_ok_simples_fixa_efeito_destinatario_resumo_data (__main__.Administrativa.test_09_ok_simples_fixa_efeito_destinatario_resumo_data) ... ok
+test_10_conferencia_sem_declaracao_de_formid (__main__.Administrativa.test_10_conferencia_sem_declaracao_de_formid) ... ok
+test_10b_formato_api_publica_paginado (__main__.Administrativa.test_10b_formato_api_publica_paginado) ... ok
+test_10c_coleta_nao_fica_liberada_apos_abrir (__main__.Administrativa.test_10c_coleta_nao_fica_liberada_apos_abrir) ... ok
+test_11_percurso_conector_e_perfil_na_abertura (__main__.Administrativa.test_11_percurso_conector_e_perfil_na_abertura) ... ok
+test_01_ferramenta_sem_perfil_continua_negada_pelo_nucleo (__main__.DepoisDaAbertura.test_01_ferramenta_sem_perfil_continua_negada_pelo_nucleo) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.312s
+
+OK

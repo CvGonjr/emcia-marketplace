@@ -145,9 +145,12 @@ class Percurso(unittest.TestCase):
     def test_03_efeito_mcp_sem_aprovacao(self):
         self.primeira_parte()
         with self.assertRaisesRegex(ValueError,'aprovação'):
-            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__claude_ai_Google_Drive__create_file',argumentos={'parentId':'ROOT-SINTETICA','title':'Pasta sintética','contentMimeType':'application/vnd.google-apps.folder'}))
-    def test_04_id_alheio_recusado(self):
+            I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__claude_ai_Google_Drive__share_file',argumentos={'fileId':'PASTA-SINTETICA','emailAddress':'cliente@example.invalid','role':'reader'}))
+    def test_04_id_alheio_recusado_no_caso(self):
         self.primeira_parte()
+        # A recusa por perfil começa na abertura; não restringe a habilitação.
+        I.B.abrir(self.caso,self.base/'casos',self.responsavel)
+        self.op('perfil',ferramentas=self.inventory,perfil=I.calibrar(self.inventory))
         with self.assertRaisesRegex(ValueError,'campo oculto'):
             I.autorizar_mcp(self.cfg,dict(habilitacao=self.hab,caso=self.caso,ferramenta='mcp__tally__fetch_submissions',argumentos={'formId':'OUTRO-CASO'}))
 

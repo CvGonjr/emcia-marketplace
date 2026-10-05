@@ -50,7 +50,11 @@ def plano_abertura(config,c,exp,d):
     M.conferir(exp,d['caso'],c['responsavel'])
     pbpath=I.RAIZ/'eiac-campo/template-caso/registro/playbook.json'
     pb=json.loads(pbpath.read_text()); canais=K.declaracao_inicial(config,c,d['caso'],pb)
-    return dict(habilitacao=d['habilitacao'],caso=d['caso'],destino=str(pathlib.Path(c['base_casos'])/d['caso']),
+    inventario=pathlib.Path(d.get('inventario',pathlib.Path.home()/'emcia-op/ensaio/inventario-mcp.json')).expanduser().absolute()
+    sha=A.hash_arquivo(inventario);inv=json.loads(inventario.read_text());perfil=I.calibrar(inv)
+    proposta=H.guardar(exp,json.dumps(dict(perfil=perfil,inventario=inv),sort_keys=True,ensure_ascii=False).encode(),'.json')
+    return dict(perfil=proposta,inventario_arquivo=str(inventario),inventario_sha256=sha,
+                habilitacao=d['habilitacao'],caso=d['caso'],destino=str(pathlib.Path(c['base_casos'])/d['caso']),
                 canais=canais,material_sha256=H.digest(json.dumps(material(s),sort_keys=True,ensure_ascii=False).encode()),
                 playbook_sha256=A.hash_arquivo(pbpath),desfecho=H.aplicar(exp,copy.deepcopy(s),'preparar-0d',{})['desfecho_proposto'])
 
@@ -67,10 +71,10 @@ def abrir(config,c,exp,d,literal):
         plano=s['fluxo']['plano_abertura']
         H.exigir(plano['material_sha256']==H.digest(json.dumps(material(s),sort_keys=True,ensure_ascii=False).encode()), 'habilitação mudou; confira novamente a abertura')
         snapshot=H.guardar(exp,json.dumps(material(s),sort_keys=True,ensure_ascii=False).encode(),'.json')
-        arquivos=[config,exp/snapshot['caminho'],I.RAIZ/'eiac-campo/template-caso/registro/playbook.json']
+        arquivos=[config,exp/snapshot['caminho'],exp/plano['perfil']['caminho'],pathlib.Path(plano['inventario_arquivo']),I.RAIZ/'eiac-campo/template-caso/registro/playbook.json']
         arquivos.extend(I.RAIZ/'eiac-campo/reference/metodo'/nome for nome in I.B.pacote())
         r=A.criar('abrir-simplificado',c['responsavel'],d['caso'],literal,
-            'Abrir caso, declarar Tally/calendário, importar, gravar 00-habilitacao e selar; Drive em P2',
+            'Abrir caso, aprovar perfil/escopo apresentados, declarar Tally/calendário, importar, gravar 00-habilitacao e selar; Drive do caso em P2',
             ['abrir-simplificado',json.dumps(plano,sort_keys=True,ensure_ascii=False)],arquivos)
         reg=dict(plano=plano,testemunho=r,snapshot=snapshot)
         s['fluxo']['abertura']=reg;H.evento(s,'AprovacaoLoteRegistrada',operacao='abrir-simplificado',testemunho=A.evento(r));H.salvar(exp,s)
@@ -86,12 +90,16 @@ def abrir(config,c,exp,d,literal):
         H.exigir(st['etapa_atual']=='F0' and not any(v.get('cumprido') for v in st['cumprimentos'].values()),'abertura simplificada não muda o percurso iniciado')
         if not any(e.get('evento')=='AprovacaoLoteRegistrada' and e.get('operacao')=='abrir-simplificado' for e in I.E.eventos()):
             I.E.evento('AprovacaoLoteRegistrada',operacao='abrir-simplificado',autor=c['responsavel'],testemunho=A.evento(r))
+        cfg=json.loads(H.ler_arquivo(exp,plano['perfil']));I.conferir_perfil(cfg['perfil'],cfg['inventario'])
+        cfg['aprovacao']=r
         perfilpath=pathlib.Path(config).with_name('perfil-mcp.json')
-        H.exigir(perfilpath.is_file(),'calibre e aprove o perfil antes da abertura')
-        perfil=json.loads(perfilpath.read_text());I.conferir_perfil(perfil['perfil'],perfil['inventario'])
         atual=case/'registro/ferramentas-externas.json'
-        if json.loads(atual.read_text())!=perfil['perfil']:
-            I.escrever(atual,perfil['perfil']);I.E.evento('PerfilExternoDefinido',autor=c['responsavel'],testemunho=A.evento(r))
+        definidos=[e for e in I.E.eventos() if e.get('evento')=='PerfilExternoDefinido']
+        if not definidos:
+            I.escrever(perfilpath,cfg);I.escrever(atual,cfg['perfil'])
+            I.E.evento('PerfilExternoDefinido',autor=c['responsavel'],sha256=A.hash_arquivo(atual),testemunho=A.evento(r))
+            I.log(config,c,'PerfilExternoDefinido',caso=d['caso'],fase='caso',testemunho=A.evento(r))
+        else:H.exigir(json.loads(atual.read_text())==cfg['perfil'],'perfil do caso diverge da abertura aprovada')
         if not (case/'registro/canais.json').exists():K.definir(plano['canais'],st,pb)
         if not (case/'registro/habilitacao.json').exists():M.importar(exp)
         else:
@@ -132,6 +140,7 @@ def executar(config,d):
     if d.get('passo')=='P2':
         import provisionamento_p2 as Q
         return Q.proximo(config,d)
+    I.retomar(config,hab,caso)
     form=F.validar(config,c,'habilitacao')
     exp=pathlib.Path(c['base_expedientes'])/hab
     if not (exp/'expediente.json').exists():
@@ -145,6 +154,9 @@ def executar(config,d):
     if c.get('fluxo_habilitacao')!='simplificado':
         c['fluxo_habilitacao']='simplificado';I.escrever(config,c)
     if not s.get('tratamento'):H.executar(exp,'tratamento-padrao',{'config_emcia':str(config)})
+    if not s['fontes'] and not (d.get('exportacao') or d.get('coleta')=='csv'):
+        return dict(proximo='coletar-submissoes',resumo='Envie o link; leia todas as páginas com fetch_submissions e passe o retorno ao script. Somente o caso será registrado.',
+                    link=F.link(form,caso),ferramenta='mcp__tally__fetch_submissions',argumentos={'formId':form['formId']})
     if not s['fontes']:
         base=pathlib.Path(c.get('entrada_dir',pathlib.Path.home()/'emcia-op/entrada'))
         arquivos=[pathlib.Path(d['exportacao'])] if d.get('exportacao') else sorted(base.glob('*.csv'))
@@ -209,7 +221,10 @@ def executar(config,d):
         salvar_plano(exp,'plano_abertura',plano_abertura(config,c,exp,d));s=ler(exp)
     literal=confirmar(d,'abertura')
     if literal is None:
-        return dict(proximo='aprovar-abertura',resumo='Abrir, declarar Tally/calendário, importar, gravar 00-habilitacao e selar. Drive aguarda P2.',
+        return dict(proximo='aprovar-abertura',resumo='Aprovar perfil/escopo, abrir, declarar Tally/calendário, importar, validar e selar. Drive do caso em P2.',
+                    perfil=str(exp/s['fluxo']['plano_abertura']['perfil']['caminho']),
+                    perfil_sha256=s['fluxo']['plano_abertura']['perfil']['sha256'],
+                    escopo=s['fluxo']['plano_abertura']['canais'],
                     destino=s['fluxo']['plano_abertura']['destino'],desfecho=s['fluxo']['plano_abertura']['desfecho'])
     return abrir(config,c,exp,d,literal)
 

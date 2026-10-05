@@ -1,29 +1,32 @@
 ---
-description: Conduz a habilitação simplificada até F0 liberado, com formulário permanente, dois depósitos e três confirmações registradas.
+description: Conduz habilitação por conectores, três confirmações e abertura com perfil aprovado.
 ---
 Uso: `/eiac-campo:iniciar [id-da-habilitacao] [id-do-caso]`
 
-Carregue somente `reference/cartao-habilitacao.md` para o percurso normal.
-Execute `scripts/iniciar.py proximo --entrada <json-local>` uma vez por avanço;
-apresente resumo, próximo passo, os artefatos para conferir e os hashes pertinentes.
-Não carregue referências completas a cada retomada nem apresente JSON do expediente.
+Carregue somente `reference/cartao-habilitacao.md` no percurso normal.
+Use `scripts/iniciar.py proximo --entrada <json-local>` por avanço e apresente
+resumo, próximo passo, artefatos e hashes. Consulte a referência específica
+somente para preparação, entradas, recusa ou alternativa manual.
 
-Quando faltar preparação ou houver recusa, abra somente a referência necessária:
-`reference/habilitacao.md` para entradas/alternativa manual, `reference/canais.md`
-para inventário/perfil/conferência dos formulários e P2. Configuração, aceitação ou
-ratificação jurídica e conferência do formulário são preparação reutilizável.
-O inventário fornecido é a única fonte de ferramentas/parâmetros. Não execute
-API ampla de submissões; não envie mensagens por ferramentas sem autorização.
+Antes da abertura, Tally, Google Drive e Google Calendar funcionam sem perfil
+nem escopo por id. Leia, liste, crie rascunhos e compare sem aprovação por chamada.
+Não calibre na preparação. Publicação, envio de mensagem/convite e compartilhamento
+exigem “ok” simples: registre chamada, resumo, trecho e data com iniciar.py aprovar.
+O hook confere essa autorização. Nenhum efeito externo é autorizado por silêncio.
 
-O engenheiro envia o link, deposita o CSV e depois os PDFs assinados em
-`~/emcia-op/entrada/`, cola esclarecimentos e confirma os três conjuntos apresentados.
-Capture o trecho real e a indicação explícita de aprovação; não deduza aprovação
-de silêncio, timeout ou resposta negativa. Registre a matriz numa mensagem.
-Nenhuma linha de outro caso pode ser copiada para entrada de script, fonte,
-rascunho ou saída da sessão; use somente o filtrado produzido pelo script.
+Leia todas as páginas de fetch_submissions; entregue o retorno ao script pelo
+iniciar.py retorno. O script filtra pelo campo oculto caso antes de gravar a fonte.
+Não selecione por semelhança, não transcreva o lote na conversa nem o copie para
+o expediente. Zero ou várias submissões exigem indicação do engenheiro.
+A exportação CSV é alternativa: coleta: csv. Esclarecimentos e matriz usam mensagem;
+os três PDFs assinados são depositados em ~/emcia-op/entrada/.
 
-A decisão 047 emenda a 045. APR-01 rege os três templates separados por hash;
-o pacote do método não é editado. Drive só em P2, com aprovação de criação e
-compartilhamento. Métodos e decisões continuam no terminal, sem migração de
-playbook de caso existente. Retorno de conector interrompido exige conferir o
-objeto remoto por id antes de repetir a chamada; script não executa APIs.
+Na terceira confirmação, apresente perfil/inventário/hash e escopo de canais junto
+da abertura. O inventário fornecido é a fonte dos nomes/parâmetros para esse perfil.
+A partir da existência do caso, perfil e escopo valem de F0 a P10; opere no contexto
+do caso. Retornos administrativos não dão acesso a ids dentro do caso.
+
+A decisão 047, item 9, emenda a 045. APR-01 rege os três templates separados;
+o pacote não é editado. Pastas/canais Drive do caso continuam em P2. Decisões de
+método permanecem no terminal. Confira objeto remoto antes de repetir API cujo
+retorno foi interrompido; o script não executa APIs nem autentica retornos.

@@ -6,8 +6,8 @@ import habilitacao as H
 
 
 def planejar(root, s):
-    fontes = [(i,f) for i,f in s['fontes'].items() if f['canal']=='tally-exportacao']
-    H.exigir(fontes, 'matriz exige exportação do caso')
+    fontes = [(i,f) for i,f in s['fontes'].items() if f['canal'] in ('tally-exportacao','tally')]
+    H.exigir(fontes, 'matriz exige coleta do caso')
     ident, fonte = fontes[-1]
     linhas = list(csv.DictReader(io.StringIO(H.ler_arquivo(root, fonte['arquivo']).decode())))
     H.exigir(len(linhas)==1 and linhas[0]['caso']==s['caso_reservado'], 'origem da matriz pertence a outro caso')

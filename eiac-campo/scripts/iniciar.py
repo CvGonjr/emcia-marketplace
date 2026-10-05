@@ -170,21 +170,12 @@ def ambiente(c,inventory):
     for k in ('user.name','user.email'):
         r=subprocess.run(['git','config','--get',k],capture_output=True,text=True) if shutil.which('git') else None
         checks.append((k,bool(r and r.returncode==0 and r.stdout.strip()),'Configure git config --global '+k))
-    p=calibrar(inventory)
     inv=inventario(inventory)
     for nome,ns in [('Tally','tally'),('Drive','Google_Drive'),('Calendar','Google_Calendar')]:
         checks.append((nome,any(ns in n for n in inv),'Conecte '+nome+' e confira /mcp'))
-    necessarias={'Drive/criar e entregar':'mcp__claude_ai_Google_Drive__create_file',
-                 'Drive/compartilhar':'mcp__claude_ai_Google_Drive__share_file',
-                 'Drive/buscar':'mcp__claude_ai_Google_Drive__search_files',
-                 'Calendar/listar':'mcp__claude_ai_Google_Calendar__list_events',
-                 'Calendar/criar':'mcp__claude_ai_Google_Calendar__create_event'}
-    ativos={r['ferramenta'] for r in p['regras'] if not r.get('recusa')}
-    for acao,nome in necessarias.items():
-        checks.append((acao,nome in ativos,'Conecte a assinatura do inventário; ferramenta sem perfil continua recusada'))
     versions={plugin:json.loads((RAIZ/plugin/'.claude-plugin/plugin.json').read_text())['version'] for plugin in ('eiac-campo','eiac-nucleo')}
     return dict(itens=[dict(item=n,presente=bool(ok),correcao='' if ok else fix) for n,ok,fix in checks],
-                versoes=versions,sem_perfil=p['recusadas'],motivos=p['motivos'],caminhos_manuais=p['manuais'])
+                versoes=versions,perfil='gerado e aprovado na abertura; exigido no caso')
 
 
 @contextlib.contextmanager
@@ -214,6 +205,10 @@ def aprovar(p,op,entrada,literal,resumo):
     c=ler_config(p);contexto=entrada.get('caso') or entrada.get('id') or entrada.get('habilitacao')
     if not contexto:raise ValueError('entrada precisa identificar habilitacao/caso')
     arquivos=[pathlib.Path(p),*arquivos_entrada(entrada)]
+    if op=='abrir':
+        perfil=pathlib.Path(p).with_name('perfil-mcp.json')
+        A.hash_arquivo(perfil)
+        arquivos.append(perfil);resumo+='; perfil/escopo incluídos na abertura'
     if op=='confirmar-formulario':
         evs=[json.loads(l) for l in pathlib.Path(p).with_name('eventos.jsonl').read_text().splitlines()]
         evs=[e for e in evs if e.get('evento')=='ConferenciaExternaRegistrada' and e.get('contexto')==contexto
@@ -235,6 +230,11 @@ def operar(p,op,d,aprovacao):
         if op not in HAB|{'iniciar','abrir','definir-canais','importar','validar','selar','perfil','mcp','registrar-listagem','receber-material','aceitar-minutas','revogar-minutas','caminho-manual','conferir-formulario','confirmar-formulario','formulario-permanente'}:
             raise ValueError('decisão de método não executável pela sessão: '+op)
         contexto=d.get('caso') or d.get('id') or d.get('habilitacao')
+        if op in ('mcp','conferir-formulario') and not (pathlib.Path(c['base_casos'])/H.identificador(d.get('caso') or contexto)).exists():
+            import mcp_administrativo as M
+            M.contexto(p,c,d)
+            if op=='mcp':return autorizar_mcp(p,d,aprovacao)
+            return conferir_formulario(p,c,d)
         r=A.conferir(aprovacao,op,c['responsavel'],contexto,cmd_operacao(op,d))
         for arq in [pathlib.Path(p),*arquivos_entrada(d)]:
             if str(arq.absolute()) not in r['arquivos']:raise ValueError('arquivo de entrada não conferido: '+str(arq))
@@ -275,7 +275,13 @@ def operar(p,op,d,aprovacao):
             return H.executar(exp,op,payload,aprovacao=r)
         if op=='abrir':
             if d.get('desfecho') not in ('prosseguir','prosseguir com restrição'):raise ValueError('decisão de abrir ausente; não prosseguir não abre caso')
-            return {'caso':str(B.abrir(d['caso'],c['base_casos'],c['responsavel'],exp))}
+            perfilpath=pathlib.Path(p).with_name('perfil-mcp.json')
+            if str(perfilpath.absolute()) not in r['arquivos']:raise ValueError('perfil sem hash na aprovação da abertura')
+            cfg=json.loads(perfilpath.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+            destino=B.abrir(d['caso'],c['base_casos'],c['responsavel'],exp)
+            escrever(destino/'registro/ferramentas-externas.json',cfg['perfil'])
+            with cwd(destino):E.evento('PerfilExternoDefinido',autor=c['responsavel'],testemunho=A.evento(r))
+            return {'caso':str(destino)}
         if op=='mcp':return autorizar_mcp(p,d,r)
         if op=='caminho-manual':return caminho_manual(p,c,d,r)
         if op=='conferir-formulario':return conferir_formulario(p,c,d)
@@ -360,6 +366,7 @@ def escopos(p,c,hab,caso,operacao):
         conhecidos['formulario_id'].extend(f['formulario'] for f in state['fontes'].values())
     for retorno in registros_externos(p,hab):
         if (retorno['chamada'].get('caso') or hab)!=caso: continue
+        if retorno.get('fase')=='habilitacao' and (pathlib.Path(c['base_casos'])/caso).exists():continue
         for k,v in retorno['ids'].items():conhecidos.setdefault(k,[]).append(v)
         if retorno['chamada'].get('finalidade')=='entregas' and retorno['ids'].get('pasta_id'):
             conhecidos['entregas'].append(retorno['ids']['pasta_id'])
@@ -378,10 +385,24 @@ def escopos(p,c,hab,caso,operacao):
 
 
 def autorizar_mcp(p,d,r=None):
+    import mcp_administrativo as M
+    c=ler_config(p)
+    try:
+        hab,caso,case=M.contexto(p,c,d)
+        if not case.exists():return M.autorizar(p,c,d,r)
+        return autorizar_mcp_escopo(p,d,r)
+    except (OSError,ValueError,KeyError,TypeError) as exc:
+        log(p,c,'TentativaNegada',operacao='mcp',motivo=str(exc));raise
+
+
+def autorizar_mcp_escopo(p,d,r=None):
     """Conferência anterior à chamada. Não executa API, não inventa retorno."""
     import escopo_externo as S
     c=ler_config(p);arq=pathlib.Path(p).with_name('perfil-mcp.json')
     cfg=json.loads(arq.read_text());conferir_perfil(cfg['perfil'],cfg['inventario'])
+    case=pathlib.Path(c['base_casos'])/H.identificador(d.get('caso') or d['habilitacao'])
+    if json.loads((case/'registro/ferramentas-externas.json').read_text())!=cfg['perfil']:
+        raise ValueError('perfil local diverge do perfil aprovado no caso')
     nome=d['ferramenta'];args=d['argumentos']
     regra=S.regra_aplicavel(cfg['perfil'],nome,args)
     hab=H.identificador(d['habilitacao']);caso=H.identificador(d.get('caso') or hab)
@@ -417,9 +438,26 @@ def autorizar_mcp(p,d,r=None):
 
 
 def registrar_retorno(p,chamada,resultado):
+    c=ler_config(p)
+    try:return _registrar_retorno(p,chamada,resultado)
+    except (OSError,ValueError,KeyError,TypeError) as exc:
+        log(p,c,'TentativaNegada',operacao='retorno',motivo=str(exc));raise
+
+
+def _registrar_retorno(p,chamada,resultado):
     import escopo_externo as S
     c=ler_config(p);logfile=pathlib.Path(p).with_name('eventos.jsonl')
     evs=[json.loads(l) for l in logfile.read_text().splitlines()]
+    import mcp_administrativo as M
+    hab,caso,case=M.contexto(p,c,chamada)
+    if not case.exists():
+        # Seleção/fonte/respondente são metadados locais que podem ser informados
+        # depois da leitura; a autorização do conector fixa os argumentos da API.
+        campos=('habilitacao','caso','ferramenta','argumentos')
+        def mesma(e):return all(e.get('chamada',{}).get(k)==chamada.get(k) for k in campos)
+        if not any(e.get('evento')=='ChamadaMCPAutorizada' and e.get('fase')=='habilitacao' and mesma(e) for e in evs):
+            raise ValueError('retorno sem chamada administrativa correspondente')
+        return M.registrar_retorno(p,c,chamada,resultado)
     if not any(e.get('evento')=='ChamadaMCPAutorizada' and e.get('chamada')==chamada for e in evs):
         raise ValueError('retorno sem chamada aprovada correspondente')
     cfg=json.loads(pathlib.Path(p).with_name('perfil-mcp.json').read_text())
@@ -472,7 +510,7 @@ def conferir_formulario(p,c,d):
     import conferencia_formulario as F
     formulario=d['formulario_id'];modelo=d['modelo']
     if modelo not in ('habilitacao','triagem','ciclo'):raise ValueError('modelo não declarado em reference/formularios')
-    if formulario not in escopos(p,c,d['habilitacao'],d['caso'],'ler')['formulario_id']:
+    if (pathlib.Path(c['base_casos'])/H.identificador(d['caso'])).exists() and formulario not in escopos(p,c,d['habilitacao'],d['caso'],'ler')['formulario_id']:
         raise ValueError('formulário fora do escopo declarado')
     leitura=leitura_formulario(p,d,formulario)
     arq_modelo=RAIZ/'eiac-campo/reference/formularios'/(modelo+'.json')

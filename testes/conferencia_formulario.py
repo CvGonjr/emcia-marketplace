@@ -19,6 +19,8 @@ class Conferencia(unittest.TestCase):
         I.configurar(self.cfg, dict(responsavel='Pessoa Engenheira', base_casos=str(self.base/'casos'),
             base_expedientes=str(self.base/'expedientes'), workspace_tally='WORK', pasta_drive='ROOT',
             calendario_casos='CAL', navegador='google-chrome'))
+        # A trava de ids começa no caso; a habilitação livre é coberta por habilitacao_mcp.py.
+        I.B.abrir('CASO',self.base/'casos','Pessoa Engenheira')
         inv = json.loads((ROOT/'testes/apoio/inventario-mcp-real.json').read_text())
         self.op('perfil', ferramentas=inv, perfil=I.calibrar(inv)); self.op('iniciar', id='HAB')
         d = self.chamada('create_new_form', title='Sintético', workspaceId='WORK')
